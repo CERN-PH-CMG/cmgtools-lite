@@ -23,9 +23,9 @@ CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss_em.* : normSymm : 1.02
 CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*3l.* : normSymm : 1.03
 CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*4l.* : normSymm : 1.04
 
-CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
-CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
-CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
+#CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
+#CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
+#CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
 
 CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.03\, 1.06)'
 CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss_ee.* : none
@@ -54,10 +54,10 @@ CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
 
 CMS_ttHl16_btag_LF    : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
 CMS_ttHl16_btag_HF    : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
-CMS_ttHl16_btag_LFStats1   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']		
-CMS_ttHl16_btag_HFStats1   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
-CMS_ttHl16_btag_LFStats2   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']		
-CMS_ttHl16_btag_HFStats2   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
+CMS_ttHl17_btag_LFStats1   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']
+CMS_ttHl17_btag_HFStats1   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
+CMS_ttHl17_btag_LFStats2   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']
+CMS_ttHl17_btag_HFStats2   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
 CMS_ttHl16_btag_cErr1   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
 CMS_ttHl16_btag_cErr2   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
 
@@ -77,9 +77,9 @@ CMS_ttHl_Convs		: Convs : .* : normSymm : 1.3
 
 # common theoretical uncertainties (fully correlated everywhere)
 # note: pdf_gg is entered as 1/kappa since it has to be anti-correlated with Hgg
-QCDscale_ttH   : $ttH  : .* : normAsymm : 0.915 : 1.058
-QCDscale_ttW   : TTW   : .* : normSymm : 1.12
-QCDscale_ttZ   : TTZ   : .* : normSymm : 1.11
+QCDscale_ttH   : $ttH  : .* : normAsymm : 0.907 : 1.058
+QCDscale_ttW   : TTW   : .* : normAsymm : 0.885 : 1.129
+QCDscale_ttZ   : TTZ   : .* : normAsymm : 0.904 : 1.112
 QCDscale_tHq   : $tHq  : .* : normAsymm : 0.933 : 1.041
 QCDscale_tHW   : $tHW  : .* : normAsymm : 0.939 : 1.046
 QCDscale_ttWW  : TTWW  : .* : normAsymm : 0.891 : 1.081
@@ -162,43 +162,43 @@ CMS_ttHl16_FRm_pt : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multile
 CMS_ttHl16_FRm_be : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be2.txt"], \
         Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
 
-CMS_ttHl16_Clos_e_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.2\, 1.1\, 1.0)'
-CMS_ttHl16_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.2
-CMS_ttHl16_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.1
-CMS_ttHl16_Clos_e_norm : $FRAll : .*2lss_mm.* : none
-CMS_ttHl16_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.1\, 1.0\,1.0)'
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*2lss_ee.* : none
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*2lss_em_bl.* : none
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*2lss_em_bt.* : normSymm : 1.1
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*2lss_mm* : none
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.1)'
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*3l_bl.* : none
-CMS_ttHl16_Clos_e_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.1
-CMS_ttHl16_Clos_m_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.1\, 1.2)'
-CMS_ttHl16_Clos_m_norm : $FRAll : .*2lss_ee.* : none
-CMS_ttHl16_Clos_m_norm : $FRAll : .*2lss_em.* : normSymm : 1.1
-CMS_ttHl16_Clos_m_norm : $FRAll : .*2lss_mm.* : normSymm : 1.2
-CMS_ttHl16_Clos_m_norm : $FRAll : .*3l.* : normSymm : 1.25
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.15\, 1.0\,1.3)'
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*2lss_ee.*    : none
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*2lss_em_bl.* : none
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*2lss_em_bt.* : normSymm : 1.15
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*2lss_mm_bl.* : none
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*2lss_mm_bt.* : normSymm : 1.3
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.2)'
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*3l_bl.* : none
-CMS_ttHl16_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
+CMS_ttHl17_Clos_e_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.2\, 1.1\, 1.0)'
+CMS_ttHl17_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.2
+CMS_ttHl17_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.1
+CMS_ttHl17_Clos_e_norm : $FRAll : .*2lss_mm.* : none
+CMS_ttHl17_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.1\, 1.0\,1.0)'
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*2lss_ee.* : none
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*2lss_em_bl.* : none
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*2lss_em_bt.* : normSymm : 1.1
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*2lss_mm* : none
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.1)'
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*3l_bl.* : none
+CMS_ttHl17_Clos_e_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.1
+CMS_ttHl17_Clos_m_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.1\, 1.2)'
+CMS_ttHl17_Clos_m_norm : $FRAll : .*2lss_ee.* : none
+CMS_ttHl17_Clos_m_norm : $FRAll : .*2lss_em.* : normSymm : 1.1
+CMS_ttHl17_Clos_m_norm : $FRAll : .*2lss_mm.* : normSymm : 1.2
+CMS_ttHl17_Clos_m_norm : $FRAll : .*3l.* : normSymm : 1.25
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.15\, 1.0\,1.3)'
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*2lss_ee.*    : none
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*2lss_em_bl.* : none
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*2lss_em_bt.* : normSymm : 1.15
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*2lss_mm_bl.* : none
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*2lss_mm_bt.* : normSymm : 1.3
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.2)'
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*3l_bl.* : none
+CMS_ttHl17_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 
 # 4) Closure: QCD vs. TT fake rate, shape
-CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.5\,1.25\,1.0)\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)' 
-CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_ee.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)' 
-CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.25\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)' 
-CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_mm.* : none
-CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.5\,1.8)\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)' 
-CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss_ee.* : none
-CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)' 
-CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)' 
+CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.5\,1.25\,1.0)\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)' 
+CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_ee.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)' 
+CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.25\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)' 
+CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_mm.* : none
+CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.5\,1.8)\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)' 
+CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_ee.* : none
+CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)' 
+CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)' 
 
 # Charge flip uncertainty
 CMS_ttHl_QF     : data_flips  : .* : normSymm : 1.3
