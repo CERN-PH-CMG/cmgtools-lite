@@ -13,7 +13,7 @@ $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 
 ### Uncertainties
 
-lumi_13TeV_2016		: $PromptFromMC : .* : normSymm : 1.026
+lumi_13TeV_2017		: $PromptFromMC : .* : normSymm : 1.023
 
 # lepton efficiencies
 CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.02\, 1.04)'
