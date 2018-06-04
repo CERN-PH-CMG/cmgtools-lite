@@ -50,7 +50,10 @@ if __name__ == "__main__":
        POIs += ['r_W{charge}_{pol}_W{charge}_{pol}_Ybin_{ib}'.format(charge=charge,pol=pol,ib=i) for i in xrange(nbins[charge+'_left']-1)]
     poiOpt = ' --redefineSignalPOIs '+','.join(POIs)
 
-    trackPars = ' \'rgx{pdf.*|mu.*|alphaS.*|wpt.*|CMS.*}\''
+    trackParsRgx = ['pdf.*','mu.*','alphaS.*','wpt.*','CMS.*']
+    if options.fitDiagnostics: trackParsRgx += ['r_.*']
+    trackPars = ' \'rgx{'+'|'.join(trackParsRgx)+'}\''
+
     raiseNormPars = "\"''rgx{r_.*}=1,10''\""
     #cmdBase = "combineTool.py -d {ws} -M {md} -t {nt} -m 999  " # combine method
     cmdBase = "combine -d {ws} -M {md} -t {nt} -m 999 " # combine method
