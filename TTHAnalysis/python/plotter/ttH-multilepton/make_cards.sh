@@ -37,8 +37,9 @@ FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
 FUNCTION_2L="kinMVA_2lss_ttV_withHj_rTT:kinMVA_2lss_ttbar_withBDTrTT 40,-1,1,40,-1,1"
 #FUNCTION_3L="kinMVA_3l_ttV_withMEM:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
 
-BINFUNCTION_2L="8:OurBin2l"
-BINFUNCTION_3L="5:OurBin3lMEM"
+BINFUNCTION_2L="11:OurBin2l"
+BINFUNCTION_3L="6:OurBin3l"
+#BINFUNCTION_3L="5:OurBin3lMEM"
 
 MCASUFFIX="mcdata-frdata"
 
