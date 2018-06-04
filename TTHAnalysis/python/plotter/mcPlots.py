@@ -316,19 +316,12 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pdfs   = ROOT.RooArgList()
     coeffs = ROOT.RooArgList()
     procNormMap = {}
-    pois = set()
+    pois = addMyPOIs(roofit, pmap, mca)
     for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
         if p not in pmap: continue
         if pmap[p].Integral() <= 0: continue
         (pdf,norm) = pmap[p].rooFitPdfAndNorm()
-        if mca.getProcessOption(p,'FreeFloat',False):
-            normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
-            print "%s scale as %s" % (p, normTermName)
-            poi = w.factory('r_%s[1,%g,%g]' % (normTermName, 0.0, 5)); w.nodelete.append(poi)
-            pois.add('r_%s' % normTermName)
-            norm.addOtherFactor(poi)
-            procNormMap[p] = norm.getVal()
-        elif pmap[p].hasVariations():
+        if mca.getProcessOption(p,'FreeFloat',False) or pmap[p].hasVariations():
             procNormMap[p] = norm.getVal()
         pdfs.add(pdf)
         coeffs.add(norm)
@@ -372,7 +365,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
 def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",yndiv=505,doWide=False,showStatTotLegend=False,textSize=0.035):
     numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) >= 4 and ratioDen in pmap:
+        if len(pmap) >= 2 and ratioDen in pmap:
             numkeys = []
             for p in pmap.iterkeys():
                 for s in ratioNums.split(","):
@@ -745,9 +738,9 @@ class PlotMaker:
                 if getattr(mca,'_altPostFits',None):
                     roofit = roofitizeReport(pmap)
                     if self._options.processesToPeg == []:
-                        addDefaultPOI(roofit,pmap,mca,"r")
+                        addExternalDefaultPOI(roofit,pmap,mca,"r")
                     else:
-                        addPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
+                        addExternalPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
                     for key,pfs in mca._altPostFits.iteritems():
                         for k,h in pmap.iteritems():
                             if k != "data":
@@ -774,7 +767,6 @@ class PlotMaker:
                         allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+["data"]
                         for k,h in pmap_slice.iteritems():
                             if k in allprocs:
-                                print "%s goes in style for %s" % (k, h.GetName())
                                 stylePlot(h,pspec_slice, lambda opt, deft: mca.getProcessOption(k, opt, deft))
                         self.printOnePlot(mca,pspec_slice,pmap_slice,
                                           xblind=xblind, makeCanvas=makeCanvas, outputDir=dir,

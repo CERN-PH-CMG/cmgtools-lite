@@ -150,9 +150,9 @@ class MCAnalysis:
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
                     if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
-                        if var.name in variations:
-                            print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
-                                    var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())
+                        #if var.name in variations:
+                        #    print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
+                        #            var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())
                         variations[var.name] = var
                 if 'NormSystematic' in extra:
                     del extra['NormSystematic']
@@ -313,6 +313,11 @@ class MCAnalysis:
         elif process in self._optionsOnlyProcesses:
             self._optionsOnlyProcesses[process][name] = value
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
+    def getProcessNuisances(self,process):
+        ret = set()
+        for tty in self._allData[process]: 
+            ret.update([v.name for v in tty.getVariations()])
+        return ret
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
     def setScales(self,process,scales):
@@ -471,6 +476,7 @@ class MCAnalysis:
                         self._altPostFits[resalias].label = self._options.altExternalFitResultLabels[i]
         if getattr(self, '_postFit', None):
             roofit = roofitizeReport(ret)
+            addMyPOIs(roofit, ret, self)
             for k,h in ret.iteritems():
                 if k != "data" and h.Integral() > 0:
                     h.setPostFitInfo(self._postFit,True)
@@ -670,6 +676,8 @@ class MCAnalysis:
             if k2 != to and re.match(patt,k2): k2 = to
             if k2 not in mergemap: mergemap[k2]=[]
             mergemap[k2].append(v)
+        for k3 in mergemap:
+            mergemap[k3].sort(key=lambda x: k3 not in x.GetName())
         return dict([ (k,mergePlots(pspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
     def stylePlot(self,process,plot,pspec,mayBeMissing=False):
         if process in self._allData:
@@ -759,6 +767,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
     parser.add_option("--binname", dest="binname", type="string", default='default', help="Bin name for uncertainties matching and datacard preparation [default]")
     parser.add_option("--unc", dest="variationsFile", type="string", default=None, help="Uncertainty file to be loaded")
+    parser.add_option("--su", "--select-uncertainty", dest="uncertaintiesToSelect", type="string", default=[], action="append", help="Uncertainties to select (comma-separated list of regexp, can specify multiple ones); if not specified, select all");
     parser.add_option("--xu", "--exclude-uncertainty", dest="uncertaintiesToExclude", type="string", default=[], action="append", help="Uncertainties to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--efr", "--external-fitResult", dest="externalFitResult", type="string", default=None, nargs=2, help="External fitResult")
     parser.add_option("--aefr", "--alt-external-fitResults", dest="altExternalFitResults", type="string", default=[], nargs=2, action="append", help="External fitResult")

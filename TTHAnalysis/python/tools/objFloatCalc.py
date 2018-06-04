@@ -18,10 +18,10 @@ class ObjFloatCalc:
             raise
         objs = [l for l in Collection(event,self.coll,"n"+self.coll)]
         ret = {"n"+self.coll : getattr(event,"n"+self.coll) }
-        for newvar in self.newvars.keys():
+        for newvar, func in self.newvars.iteritems():
             ret[self.coll+"_"+newvar]=[-999] * getattr(event,"n"+self.coll)
             for i,ob in enumerate(objs):
-                ret[self.coll+"_"+newvar][i] = self.newvars[newvar](ob)
+                ret[self.coll+"_"+newvar][i] = func(ob)
         return ret
 
 if __name__ == '__main__':

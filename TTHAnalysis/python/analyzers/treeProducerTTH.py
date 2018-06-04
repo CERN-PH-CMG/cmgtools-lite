@@ -9,21 +9,21 @@ ttH_globalVariables = [
 
             NTupleVariable("nJet25", lambda ev: sum([j.pt() > 25 for j in ev.cleanJets]), int, help="Number of jets with pt > 25, |eta|<2.4"),
             NTupleVariable("nJet25a", lambda ev: sum([j.pt() > 25 for j in ev.cleanJetsAll]), int, help="Number of jets with pt > 25, |eta|<4.7"),
-            NTupleVariable("nBJetLoose25", lambda ev: sum([j.btagWP("CSVv2IVFL") for j in ev.cleanJets if j.pt() > 25]), int, help="Number of jets with pt > 25 passing CSV loose"),
-            NTupleVariable("nBJetMedium25", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.bjetsMedium if j.pt() > 25]), int, help="Number of jets with pt > 25 passing CSV medium"),
-            NTupleVariable("nBJetTight25", lambda ev: sum([j.btagWP("CSVv2IVFT") for j in ev.bjetsMedium if j.pt() > 25]), int, help="Number of jets with pt > 25 passing CSV tight"),
+            NTupleVariable("nBJetLoose25", lambda ev: sum([j.btagWP("DeepCSVL") for j in ev.cleanJets if j.pt() > 25]), int, help="Number of jets with pt > 25 passing DeepCSV loose"),
+            NTupleVariable("nBJetMedium25", lambda ev: sum([j.btagWP("DeepCSVM") for j in ev.cleanJets if j.pt() > 25]), int, help="Number of jets with pt > 25 passing DeepCSV medium"),
+            NTupleVariable("nBJetTight25", lambda ev: sum([j.btagWP("DeepCSVT") for j in ev.cleanJets if j.pt() > 25]), int, help="Number of jets with pt > 25 passing DeepCSV tight"),
 
             NTupleVariable("nJet30", lambda ev: sum([j.pt() > 30 for j in ev.cleanJets]), int, help="Number of jets with pt > 30, |eta|<2.4"),
             NTupleVariable("nJet30a", lambda ev: sum([j.pt() > 30 for j in ev.cleanJetsAll]), int, help="Number of jets with pt > 30, |eta|<4.7"),
-            NTupleVariable("nBJetLoose30", lambda ev: sum([j.btagWP("CSVv2IVFL") for j in ev.cleanJets if j.pt() > 30]), int, help="Number of jets with pt > 30 passing CSV loose"),
-            NTupleVariable("nBJetMedium30", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.bjetsMedium if j.pt() > 30]), int, help="Number of jets with pt > 30 passing CSV medium"),
-            NTupleVariable("nBJetTight30", lambda ev: sum([j.btagWP("CSVv2IVFT") for j in ev.bjetsMedium if j.pt() > 30]), int, help="Number of jets with pt > 30 passing CSV tight"),
+            NTupleVariable("nBJetLoose30", lambda ev: sum([j.btagWP("DeepCSVL") for j in ev.cleanJets if j.pt() > 30]), int, help="Number of jets with pt > 30 passing DeepCSV loose"),
+            NTupleVariable("nBJetMedium30", lambda ev: sum([j.btagWP("DeepCSVM") for j in ev.cleanJets if j.pt() > 30]), int, help="Number of jets with pt > 30 passing DeepCSV medium"),
+            NTupleVariable("nBJetTight30", lambda ev: sum([j.btagWP("DeepCSVT") for j in ev.cleanJets if j.pt() > 30]), int, help="Number of jets with pt > 30 passing DeepCSV tight"),
 
             NTupleVariable("nJet40", lambda ev: sum([j.pt() > 40 for j in ev.cleanJets]), int, help="Number of jets with pt > 40, |eta|<2.4"),
             NTupleVariable("nJet40a", lambda ev: sum([j.pt() > 40 for j in ev.cleanJetsAll]), int, help="Number of jets with pt > 40, |eta|<4.7"),
-            NTupleVariable("nBJetLoose40", lambda ev: sum([j.btagWP("CSVv2IVFL") for j in ev.cleanJets if j.pt() > 40]), int, help="Number of jets with pt > 40 passing CSV loose"),
-            NTupleVariable("nBJetMedium40", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.bjetsMedium if j.pt() > 40]), int, help="Number of jets with pt > 40 passing CSV medium"),
-            NTupleVariable("nBJetTight40", lambda ev: sum([j.btagWP("CSVv2IVFT") for j in ev.bjetsMedium if j.pt() > 40]), int, help="Number of jets with pt > 40 passing CSV tight"),
+            NTupleVariable("nBJetLoose40", lambda ev: sum([j.btagWP("DeepCSVL") for j in ev.cleanJets if j.pt() > 40]), int, help="Number of jets with pt > 40 passing DeepCSV loose"),
+            NTupleVariable("nBJetMedium40", lambda ev: sum([j.btagWP("DeepCSVM") for j in ev.cleanJets if j.pt() > 40]), int, help="Number of jets with pt > 40 passing DeepCSV medium"),
+            NTupleVariable("nBJetTight40", lambda ev: sum([j.btagWP("DeepCSVT") for j in ev.cleanJets if j.pt() > 40]), int, help="Number of jets with pt > 40 passing DeepCSV tight"),
             ## ------- lheHT, needed for merging HT binned samples
             NTupleVariable("lheHT", lambda ev : getattr(ev,"lheHT",-999), mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
             NTupleVariable("lheHTIncoming", lambda ev : getattr(ev,"lheHTIncoming",-999), mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer (only LHE status<0 as mothers)"),
@@ -91,7 +91,7 @@ ttH_collections = {
             "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusyFwd,  6, help="Forward jets after full selection and cleaning, sorted by pt"),
             #"ivf"            : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
             ##------------------------------------------------
-            "LHE_weights"     : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
+            "LHE_weights"     : NTupleCollection("LHEweight",  weightsInfoType, 2000, mcOnly=True, help="LHE weight info"),
 }
 
 def setLossyFloatCompression(precision=12,highPrecision=-1):

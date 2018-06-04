@@ -165,7 +165,7 @@ def train_single(allcuts, variables, dsets, fOutName, options):
                                     friends=options.friends)
         datasets.append((name, trainclass, tree, weight))
 
-    fOut = ROOT.TFile(fOutName,"recreate")
+    fOut = ROOT.TFile(fOutName+'.root',"recreate")
     fOut.cd()
     factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I")
     dataloader = ROOT.TMVA.DataLoader('dataset')
@@ -173,25 +173,27 @@ def train_single(allcuts, variables, dsets, fOutName, options):
     for cut in options.addcuts:
         allcuts += cut
 
-    dataloader.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
-    dataloader.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
-    dataloader.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
+    dl = ROOT.TMVA.DataLoader("dataset_%s"%fOutName)
+
+    dl.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    dl.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    dl.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
 
     ## Add the variables
     for var in variables:
-        dataloader.AddVariable(var, 'F')
+        dl.AddVariable(var, 'F')
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
-        dataloader.AddTree(tree, trainclass, weight)
+        dl.AddTree(tree, trainclass, weight)
 
     fOut.cd()
     for trainclass in set([x[1] for x in dsets]):
-        dataloader.SetWeightExpression("genWeight*xsec", trainclass)
+        dl.SetWeightExpression("prescaleFromSkim*genWeight*xsec", trainclass)
 
     ## Start the training
-    dataloader.PrepareTrainingAndTestTree(allcuts, "!V")
-    factory.BookMethod(dataloader, ROOT.TMVA.Types.kBDT, 'BDTG',
+    dl.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.BookMethod(dl,ROOT.TMVA.Types.kBDT, 'BDTG',
                             ':'.join([
                                 '!H',
                                 '!V',
@@ -264,10 +266,8 @@ def train_2d(fOutName, training, options):
 #            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
+            ('TTJets_SingleLeptonFromT',        'Background', 1.0),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 1.0),
         ]
 
 
@@ -296,16 +296,10 @@ def train_2d(fOutName, training, options):
 #            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_DiLepton_part1',            'Background', 1.0/6),
-            ('TTJets_DiLepton_part2',            'Background', 1.0/6),
-            #('TTJets_DiLepton',            'Background', 1.0/6),
-            #('TTJets_DiLepton_ext_part1',            'Background', 2.0/6),
-            #('TTJets_DiLepton_ext_part2',            'Background', 2.0/6),
-            #('TTJets_DiLepton_ext_part3',            'Background', 1.0/6),
-            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
-            #('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
-            #('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
+            ('TTJets_DiLepton_part1',            'Background', 16156033.0/(16156033.0+987698.0)),
+            ('TTJets_DiLepton_part2',            'Background', 987698.0/(16156033.0+987698.0)),
+            ('TTJets_SingleLeptonFromT',        'Background', 1.0),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 1.0),
         ]
 
     if 'bdtv8_bestchoice' in training:
@@ -323,6 +317,14 @@ def train_2d(fOutName, training, options):
     if 'bdtv8_value' in training:
         variables += [
             'BDTv8_eventReco_mvaValue := max(-1.1,BDTv8_eventReco_mvaValue)',
+            ]
+    if 'bdtrTT_value' in training:
+        variables += [
+            'BDTrTT_eventReco_mvaValue := max(-1.1,BDTrTT_eventReco_mvaValue)',
+            ]
+    if 'bdthttTT_value' in training:
+        variables += [
+            'BDThttTT_eventReco_mvaValue := max(-1.1,BDThttTT_eventReco_mvaValue)',
             ]
     if 'bdtv8_reco' in training:
         variables += [
@@ -365,27 +367,38 @@ def train_2d(fOutName, training, options):
         variables += [
             "MEM_LR := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2))"
             ]
-    if 'hj_value' in training:
+    if 'hj_value_v8' in training:
         variables += [
             'BDTv8_eventReco_Hj_score := max(-1.1,BDTv8_eventReco_Hj_score)',
 #            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
             ]
+    if 'hj_value_rTT' in training:
+        variables += [
+            'BDTrTT_eventReco_Hj_score := max(-1.1,BDTrTT_eventReco_Hj_score)',
+            ]
+    if 'hj_value_httTT' in training:
+        variables += [
+            'BDThttTT_eventReco_Hj_score := max(-1.1,BDThttTT_eventReco_Hj_score)',
+            ]
 
-    outname = fOutName+'_'+training+'.root'
+    outname = fOutName+'_'+training
     train_single(allcuts, variables, dsets, outname, options)
 
 def main(args, options):
     global _treepath
     _treepath = options.treepath
-    if 'MultiClassICHEP16' in options.training:
-        train_multiclass(args[0]+'.root', options)
-        return
 
     if len(options.training):
         train_2d(args[0], options.training.lower(), options)
     else:
         train_2d(args[0], '2lss_ttv',   options)
+        train_2d(args[0], '2lss_ttv_hj_value_v8',   options)
+        train_2d(args[0], '2lss_ttv_hj_value_rTT',   options)
+        train_2d(args[0], '2lss_ttv_hj_value_httTT',   options)
         train_2d(args[0], '2lss_ttbar', options)
+        train_2d(args[0], '2lss_ttbar_bdtv8_value', options)
+        train_2d(args[0], '2lss_ttbar_bdtrTT_value', options)
+        train_2d(args[0], '2lss_ttbar_bdthttTT_value', options)
         train_2d(args[0], '3l_ttv',     options)
         train_2d(args[0], '3l_ttbar',   options)
 

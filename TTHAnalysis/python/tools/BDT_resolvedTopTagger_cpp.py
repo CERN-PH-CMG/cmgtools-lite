@@ -8,7 +8,11 @@ class BDT_resolvedTopTagger: # has to run on a recleaner with label _Recl
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.selection = selection
 
+        if "/libCommonToolsUtils.so" not in ROOT.gSystem.GetLibraries():
+            ROOT.gSystem.Load("libCommonToolsUtils")
+
         if "/BDT_resolvedTopTagger_C.so" not in ROOT.gSystem.GetLibraries():
+            if "/libCommonToolsUtils.so" not in ROOT.gSystem.GetLibraries(): raise RuntimeError
             ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDT_resolvedTopTagger.C" % os.environ['CMSSW_BASE'],"kO");
 
         self.run = ROOT.BDT_resolvedTopTagger(weightfile)
@@ -23,10 +27,10 @@ class BDT_resolvedTopTagger: # has to run on a recleaner with label _Recl
             "W_fromHadTop_eta",
             "W_fromHadTop_phi",
             "W_fromHadTop_mass",
-            "W_fromHadTop_maxCSVjj",
+            "W_fromHadTop_maxDeepCSVjj",
             "W_fromHadTop_dRjj",
             "W_fromHadTop_dRb",
-            "b_fromHadTop_CSV",
+            "b_fromHadTop_DeepCSV",
             "j1",
             "j2",
             "j3",
@@ -37,6 +41,11 @@ class BDT_resolvedTopTagger: # has to run on a recleaner with label _Recl
 
     def __call__(self,event):
         out = {}
+
+        all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
+        nFO = getattr(event,"nLepFO"+self.inputlabel)
+        chosen = getattr(event,"iLepFO"+self.inputlabel)
+        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
 
         for var in self.systsJEC:
             _var = var
@@ -62,7 +71,7 @@ class BDT_resolvedTopTagger: # has to run on a recleaner with label _Recl
 
             if good:
                 self.run.clear()
-                for i,j in enumerate(jets): self.run.addJet(j.pt*jetcorr[i],j.eta,j.phi,j.mass,j.btagCSV,j.ctagCsvL,j.ptd,j.axis1,j.mult)
+                for i,j in enumerate(jets): self.run.addJet(j.pt*jetcorr[i],j.eta,j.phi,j.mass,j.btagDeepCSV,j.btagDeepCSVCvsL,j.btagDeepCSVCvsB,j.ptd,j.axis1,j.mult)
                 res = self.run.EvalMVA()
 
             for i,x in enumerate(res): out["BDT_resolvedTopTagger_%s"%self.branches[i]+self.systsJEC[var]] = res[i]
@@ -80,9 +89,11 @@ if __name__ == '__main__':
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf = BDT_resolvedTopTagger('../../data/kinMVA/tth/resTop_xGBoost_v0.weights.xml')
+            self.sf = BDT_resolvedTopTagger('/data/peruzzi/resTop_xgb_csv_order_deepCTag.xml',#'../../data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
+                                            selection = [ lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                                                  lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,])
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print "\nrun %6d lumi %4d event %d: leps %d, jets %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood, getattr(ev,'nJetSel'+self.sf.inputlabel))
+            print sorted(self.sf(ev).iteritems())
     el = EventLoop([ Tester("tester") ])
-    el.loop([tree], maxEvents = 500)
+    el.loop([tree], maxEvents = 3)

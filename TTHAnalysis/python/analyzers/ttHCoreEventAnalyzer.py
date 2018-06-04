@@ -9,6 +9,7 @@ import os
 class ttHCoreEventAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(ttHCoreEventAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
+        self.btagAlgo = getattr(cfg_ana, 'btagAlgo', 'CSVv2IVF')
         self.maxLeps = cfg_ana.maxLeps
         self.mhtForBiasedDPhi = cfg_ana.mhtForBiasedDPhi
         self.jetForBiasedDPhi = cfg_ana.jetForBiasedDPhi
@@ -165,8 +166,8 @@ class ttHCoreEventAnalyzer( Analyzer ):
         self.readCollections( event.input )
         self.counters.counter('events').inc('all events')
 
-        event.bjetsLoose  = [ j for j in event.cleanJets if j.btagWP("CSVv2IVFL") ]
-        event.bjetsMedium = [ j for j in event.cleanJets if j.btagWP("CSVv2IVFM") ]
+        event.bjetsLoose  = [ j for j in event.cleanJets if j.btagWP(self.btagAlgo+"L") ]
+        event.bjetsMedium = [ j for j in event.cleanJets if j.btagWP(self.btagAlgo+"M") ]
 
         import ROOT
 
