@@ -61,7 +61,8 @@ def train_multiclass(fOutName, options):
 
     if '_3l' in options.training:
         dsets += [
-            ('TTJets_DiLepton',            'tt', 1),
+            ('TTJets_DiLepton_part1',            'tt', 1),
+            ('TTJets_DiLepton_part2',            'tt', 1),
 #            ('TTJets_DiLepton_ext_skim3l', 'tt', 0.9),
         ]
     else:
@@ -82,6 +83,8 @@ def train_multiclass(fOutName, options):
     fOut = ROOT.TFile(fOutName,"recreate")
     fOut.cd()
     factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I:AnalysisType=Multiclass")
+    dataloader = ROOT.TMVA.DataLoader('dataset')
+
     allcuts = ROOT.TCut('1')
     for cut in options.addcuts:
         allcuts += cut
@@ -109,31 +112,31 @@ def train_multiclass(fOutName, options):
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
 
-    factory.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
-    factory.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
-    factory.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
+    dataloader.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    dataloader.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    dataloader.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
 
-    factory.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", 'F')
-    factory.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
-    factory.AddVariable("numJets_float := nJet25_Recl", 'F')
-    factory.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
-    factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
-    factory.AddVariable("LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]", 'F')
-    factory.AddVariable("LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]", 'F')
-    factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F')
-    factory.AddVariable("met := min(met_pt, 400)", 'F')
+    dataloader.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", 'F')
+    dataloader.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
+    dataloader.AddVariable("numJets_float := nJet25_Recl", 'F')
+    dataloader.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
+    dataloader.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
+    dataloader.AddVariable("LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]", 'F')
+    dataloader.AddVariable("LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]", 'F')
+    dataloader.AddVariable("avg_dr_jet : = avg_dr_jet", 'F')
+    dataloader.AddVariable("met := min(met_pt, 400)", 'F')
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
-        factory.AddTree(tree, trainclass, weight)
+        dataloader.AddTree(tree, trainclass, weight)
 
     fOut.cd()
     for trainclass in set([x[1] for x in dsets]):
-        factory.SetWeightExpression("genWeight*xsec", trainclass)
+        dataloader.SetWeightExpression("genWeight*xsec", trainclass)
 
     ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V")
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+    dataloader.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.BookMethod(dataloader, ROOT.TMVA.Types.kBDT, 'BDTG',
                             ':'.join([
                                 '!H',
                                 '!V',
@@ -165,29 +168,30 @@ def train_single(allcuts, variables, dsets, fOutName, options):
     fOut = ROOT.TFile(fOutName,"recreate")
     fOut.cd()
     factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I")
+    dataloader = ROOT.TMVA.DataLoader('dataset')
 
     for cut in options.addcuts:
         allcuts += cut
 
-    factory.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
-    factory.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
-    factory.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
+    dataloader.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    dataloader.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    dataloader.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
 
     ## Add the variables
     for var in variables:
-        factory.AddVariable(var, 'F')
+        dataloader.AddVariable(var, 'F')
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
-        factory.AddTree(tree, trainclass, weight)
+        dataloader.AddTree(tree, trainclass, weight)
 
     fOut.cd()
     for trainclass in set([x[1] for x in dsets]):
-        factory.SetWeightExpression("genWeight*xsec", trainclass)
+        dataloader.SetWeightExpression("genWeight*xsec", trainclass)
 
     ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V")
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+    dataloader.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.BookMethod(dataloader, ROOT.TMVA.Types.kBDT, 'BDTG',
                             ':'.join([
                                 '!H',
                                 '!V',
@@ -292,14 +296,16 @@ def train_2d(fOutName, training, options):
 #            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_DiLepton',            'Background', 1.0/6),
-            ('TTJets_DiLepton_ext_part1',            'Background', 2.0/6),
-            ('TTJets_DiLepton_ext_part2',            'Background', 2.0/6),
-            ('TTJets_DiLepton_ext_part3',            'Background', 1.0/6),
+            ('TTJets_DiLepton_part1',            'Background', 1.0/6),
+            ('TTJets_DiLepton_part2',            'Background', 1.0/6),
+            #('TTJets_DiLepton',            'Background', 1.0/6),
+            #('TTJets_DiLepton_ext_part1',            'Background', 2.0/6),
+            #('TTJets_DiLepton_ext_part2',            'Background', 2.0/6),
+            #('TTJets_DiLepton_ext_part3',            'Background', 1.0/6),
             ('TTJets_SingleLeptonFromT',        'Background', 0.2),
             ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
+            #('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
+            #('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
         ]
 
     if 'bdtv8_bestchoice' in training:
