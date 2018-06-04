@@ -1,0 +1,25 @@
+brilcalc lumi -u /fb -i LSforPath_HLT_Ele27_WPTight_Gsf_withLowestSeed_L1_SingleIsoEG26_OR_L1_SingleIsoEG28.json -b "STABLE BEAMS" --without-checkjson --hltpath "HLT_Ele27_WPTight_Gsf_v*"
+
+#Summary:
++--------------------------+-------+------+-------+-------------------+------------------+
+| hltpath                  | nfill | nrun | ncms  | totdelivered(/fb) | totrecorded(/fb) |
++--------------------------+-------+------+-------+-------------------+------------------+
+| HLT_Ele27_WPTight_Gsf_v1 | 23    | 66   | 29601 | 2.728             | 2.617            |
+| HLT_Ele27_WPTight_Gsf_v2 | 4     | 12   | 7544  | 0.930             | 0.890            |
+| HLT_Ele27_WPTight_Gsf_v3 | 4     | 16   | 8541  | 1.089             | 1.046            |
+| HLT_Ele27_WPTight_Gsf_v4 | 24    | 85   | 56875 | 8.340             | 8.016            |
+| HLT_Ele27_WPTight_Gsf_v5 | 17    | 34   | 25797 | 4.331             | 4.132            |
+| HLT_Ele27_WPTight_Gsf_v6 | 38    | 73   | 48010 | 8.422             | 8.082            |
+| HLT_Ele27_WPTight_Gsf_v7 | 28    | 61   | 37468 | 6.358             | 6.135            |
++--------------------------+-------+------+-------+-------------------+------------------+
+
+brilcalc lumi -u /fb -i LSforPath_HLT_Ele27_WPTight_Gsf_withLowestSeed_L1_SingleIsoEG26_OR_L1_SingleIsoEG28.json -b "STABLE BEAMS" --without-checkjson
+
+#Summary: 
++-------+------+--------+--------+-------------------+------------------+
+| nfill | nrun | nls    | ncms   | totdelivered(/fb) | totrecorded(/fb) |
++-------+------+--------+--------+-------------------+------------------+
+| 137   | 347  | 213854 | 213836 | 32.200            | 30.918           |
++-------+------+--------+--------+-------------------+------------------+
+
+

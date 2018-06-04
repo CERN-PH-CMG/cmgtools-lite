@@ -78,15 +78,18 @@ if len(sys.argv) < 2:
 
 
 etabinning,ptbinning = args[1].split('*')    # args[1] is like "[a,b,c,...]*[d,e,f,...]", and is of type string. We need to get an array 
-etabinning = getArrayParsingString(etabinning)
-ptbinning = getArrayParsingString(ptbinning)
-tmpbinning = [float(x) for x in etabinning]  ## needed for constructor of TH2 below                                                                                      
-etabinning = tmpbinning
-tmpbinning = [float(x) for x in ptbinning]
-ptbinning = tmpbinning
+etabinning = getArrayParsingString(etabinning, makeFloat=True)
+ptbinning = getArrayParsingString(ptbinning, makeFloat=True)
+#tmpbinning = [float(x) for x in etabinning]  ## needed for constructor of TH2 below                                                                                      
+#etabinning = tmpbinning
+#tmpbinning = [float(x) for x in ptbinning]
+#ptbinning = tmpbinning
 nptbins = len(ptbinning)-1
 netabins = len(etabinning)-1
 nTotBins = (netabins)*(nptbins)
+print "eta binning " + str(etabinning)
+print "pt  binning " + str(ptbinning)
+print "%d eta bins and %d pt bins (%d in total)" % (netabins, nptbins, nTotBins)
     
 outdir = options.outdir
 if not outdir.endswith('/'): outdir += "/"

@@ -560,8 +560,9 @@ if __name__ == "__main__":
 
             newws = cardfile_xsec.replace('_card','_ws').replace('.txt','.root')
 
-            # marc txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
-            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-background --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-background -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
+            txt2wsCmd_noXsec = 'text2workspace.py {cf} -o {ws} -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} '.format(cf=cardfile, ws=ws, pos=multisig)
+
             #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
             combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
         ## here running the combine cards command first
@@ -569,9 +570,10 @@ if __name__ == "__main__":
         #os.system(ccCmd)
         ## then running the t2w command afterwards
         print txt2wsCmd
-        print 'AM NOT GOING TO RUN T2W!!!!!!!'
-        print '--------------------------------------------------'
-        #os.system(txt2wsCmd)
+        print '-- will run text2workspace -----------------------'
+        os.system(txt2wsCmd)
+        print "redoing also the noXsec workspace..."
+        os.system(txt2wsCmd_noXsec)
         ## print out the command to run in combine
         print combineCmd
     # end of loop over charges
