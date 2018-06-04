@@ -46,12 +46,7 @@ CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*4l.* : normSymm : 1.06
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee	: $PromptFromMC : .*2lss_ee.* : normSymm : 1.02
-CMS_ttHl16_trigger_em	: $PromptFromMC : .*2lss_em.* : normSymm : 1.01
-CMS_ttHl16_trigger_mm	: $PromptFromMC : .*2lss_mm.* : normSymm : 1.01
-CMS_ttHl16_trigger_3l	: $PromptFromMC : .*3l.* : normSymm : 1.03
-CMS_ttHl16_trigger_3l	: $PromptFromMC : .*4l.* : normSymm : 1.03
-
+CMS_ttHl17_trigger	: $PromptFromMC : .* : templateAsymm; AddWeights=['triggerUnc_up','triggerUnc_dn']
 
 CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
