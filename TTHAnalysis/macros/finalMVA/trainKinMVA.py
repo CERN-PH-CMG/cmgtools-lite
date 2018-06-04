@@ -52,6 +52,111 @@ def load_dataset(name, trainclass, addw=1, path=None, friends=[]):
 
     return tree, weight
 
+def train_multiclass(fOutName, options):
+    dsets = [
+        ('TTHnobb_pow', 'ttH', 1),
+        ('TTW_LO', 'ttV', 1),
+        ('TTZ_LO', 'ttV', 1),
+    ]
+
+    if '_3l' in options.training:
+        dsets += [
+            ('TTJets_DiLepton_part1',            'tt', 1),
+            ('TTJets_DiLepton_part2',            'tt', 1),
+#            ('TTJets_DiLepton_ext_skim3l', 'tt', 0.9),
+        ]
+    else:
+        dsets += [
+            ('TTJets_SingleLeptonFromT',        'tt', 0.1),
+            ('TTJets_SingleLeptonFromTbar',     'tt', 0.1),
+            ('TTJets_SingleLeptonFromT_ext',    'tt', 0.9),
+            ('TTJets_SingleLeptonFromTbar_ext', 'tt', 0.9),
+        ]
+
+    datasets = []
+    for name, trainclass, addw in dsets:
+        tree, weight = load_dataset(name, trainclass, addw,
+                                    path=options.treepath,
+                                    friends=options.friends)
+        datasets.append((name, trainclass, tree, weight))
+
+    fOut = ROOT.TFile(fOutName,"recreate")
+    fOut.cd()
+    factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I:AnalysisType=Multiclass")
+    dataloader = ROOT.TMVA.DataLoader('dataset')
+
+    allcuts = ROOT.TCut('1')
+    for cut in options.addcuts:
+        allcuts += cut
+
+    allcuts += "nLepFO_Recl>=2"
+    allcuts += "LepGood_conePt[iLepFO_Recl[0]]>25"
+    allcuts += "LepGood_conePt[iLepFO_Recl[1]]>15"
+
+    allcuts += "abs(mZ1_Recl-91.2) > 10"
+    allcuts += "(met_pt*0.00397 + mhtJet25_Recl*0.00265 > 0.2)"
+    allcuts += "(nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1)"
+    allcuts += "minMllAFAS_Recl>12"
+
+    if '_3l' in options.training:
+        allcuts += "nLepFO_Recl>=3"
+        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>15"
+        allcuts += "nJet25_Recl>=2"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[2]]"
+    else:
+        allcuts += "nLepTight_Recl<=2"
+        allcuts += "nJet25_Recl>=4"
+        allcuts += "(LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]] > 0)" #!
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
+
+    dataloader.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    dataloader.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    dataloader.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
+
+    dataloader.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", 'F')
+    dataloader.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
+    dataloader.AddVariable("numJets_float := nJet25_Recl", 'F')
+    dataloader.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
+    dataloader.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
+    dataloader.AddVariable("LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]", 'F')
+    dataloader.AddVariable("LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]", 'F')
+    dataloader.AddVariable("avg_dr_jet : = avg_dr_jet", 'F')
+    dataloader.AddVariable("met := min(met_pt, 400)", 'F')
+
+    ## Add the datasets
+    for name,trainclass,tree,weight in datasets:
+        dataloader.AddTree(tree, trainclass, weight)
+
+    fOut.cd()
+    for trainclass in set([x[1] for x in dsets]):
+        dataloader.SetWeightExpression("genWeight*xsec", trainclass)
+
+    ## Start the training
+    dataloader.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.BookMethod(dataloader, ROOT.TMVA.Types.kBDT, 'BDTG',
+                            ':'.join([
+                                '!H',
+                                '!V',
+                                'NTrees=200',
+                                # 'NTrees=500',
+                                'BoostType=Grad',
+                                'Shrinkage=0.10',
+                                '!UseBaggedGrad',
+                                'nCuts=200',
+                                # 'nCuts=2000',
+                                'nEventsMin=100',
+                                'MaxDepth=8',
+                                'NegWeightTreatment=PairNegWeightsGlobal',
+                                ]))
+    factory.TrainAllMethods()
+    factory.TestAllMethods()
+    factory.EvaluateAllMethods()
+
+    fOut.Close()
+
 def train_single(allcuts, variables, dsets, fOutName, options):
     datasets = []
     for name, trainclass, addw in dsets:
@@ -63,6 +168,7 @@ def train_single(allcuts, variables, dsets, fOutName, options):
     fOut = ROOT.TFile(fOutName+'.root',"recreate")
     fOut.cd()
     factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I")
+    dataloader = ROOT.TMVA.DataLoader('dataset')
 
     for cut in options.addcuts:
         allcuts += cut
