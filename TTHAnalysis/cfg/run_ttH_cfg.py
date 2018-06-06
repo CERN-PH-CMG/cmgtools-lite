@@ -27,6 +27,7 @@ forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 selectedEvents=getHeppyOption("selectEvents","")
 keepGenPart=getHeppyOption("keepGenPart",False)
+keepLHEweights = getHeppyOption("keepLHEweights",False)
 
 sample = "main"
 if runDataQCD or runFRMC: sample="qcd1l"
@@ -471,6 +472,27 @@ if removeJetReCalibration:
 if getHeppyOption("noLepSkim",False):
     ttHLepSkim.minLeptons=0
 
+if keepLHEweights:
+    ## Adding LHE Analyzer for saving lheHT and other LHE information
+    from PhysicsTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer
+    LHEAna = LHEAnalyzer.defaultConfig
+    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
+                            LHEAna)
+    lheWeightAna.savePSweights = True
+    treeProducer.globalVariables += [
+        NTupleVariable("lheNj", lambda ev : getattr(ev,"lheNj",-999), int, mcOnly=True, help="Number of jets in Heppy LHEAnalyzer"),
+        NTupleVariable("lheNb", lambda ev : getattr(ev,"lheNb",-999), int, mcOnly=True, help="Number of b-jets in Heppy LHEAnalyzer"),
+        NTupleVariable("lheNc", lambda ev : getattr(ev,"lheNc",-999), int, mcOnly=True, help="Number of c-jets in Heppy LHEAnalyzer"),
+        NTupleVariable("lheNl", lambda ev : getattr(ev,"lheNl",-999), int, mcOnly=True, help="Number of light jets in Heppy LHEAnalyzer"),
+        NTupleVariable("lheNg", lambda ev : getattr(ev,"lheNg",-999), int, mcOnly=True, help="Number of gluon jets in Heppy LHEAnalyzer"),
+        NTupleVariable("lheV_pt", lambda ev : getattr(ev,"lheV_pt",-999), mcOnly=True, help="Vector boson pT in Heppy LHEAnalyzer"),
+        NTupleVariable("LHEweight_original", lambda ev: getattr(ev,'LHE_originalWeight',-999), mcOnly=True, help="original LHE weight"),
+        NTupleVariable("LHEnpLO", lambda ev: getattr(ev,"npLO",-999), int, mcOnly=True, help="npLO from LHEEventProduct"),
+        NTupleVariable("LHEnpNLO", lambda ev: getattr(ev,"npNLO",-999), int, mcOnly=True, help="npNLO from LHEEventProduct"),
+        NTupleVariable("LHEnMEPartons", lambda ev: getattr(ev,"nMEPartons",-999), int, mcOnly=True, help="nMEPartons from GenEventInfoProduct"),
+        NTupleVariable("LHEnMEPartonsFiltered", lambda ev: getattr(ev,"nMEPartonsFiltered",-999), int, mcOnly=True, help="nMEPartonsFiltered from GenEventInfoProduct"),
+    ]
+
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
     for c in selectedComponents:
@@ -672,7 +694,7 @@ if getHeppyOption("prescaleskim"):
             useEventNumber = True)
     sequence.insert(sequence.index(metAna)+1, thePreskim)
 
-if not getHeppyOption("keepLHEweights",False):
+if not keepLHEweights:
     if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
