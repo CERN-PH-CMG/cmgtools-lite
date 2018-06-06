@@ -476,3 +476,6 @@ from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
 MODULES.append( ('vtxWeight', lambda : VertexWeightFriend(myfile=None, targetfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_2017_41p4fb_rereco_69p2mb.root",
                                                           myhist=None,targethist="pileup",name="vtxWeight2017",
                                                           verbose=False,vtx_coll_to_reweight="nTrueInt",autoPU=True)) )
+
+from CMGTools.TTHAnalysis.tools.bestHmm import BestHmm
+MODULES.append( ('bestHmm', lambda : BestHmm(label="_Recl")) )

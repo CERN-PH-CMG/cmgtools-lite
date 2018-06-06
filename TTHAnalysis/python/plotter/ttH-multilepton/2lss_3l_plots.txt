@@ -93,6 +93,7 @@ minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 mZ1:		mZ1					: 80,50,130; XTitle="Best Z candidate mass (GeV)"
+mH1mm:		mH1mm					: 60,110,140; XTitle="Best H #rightarrow #mu #mu candidate mass (GeV)"
 nVert:		nVert					: 240,0.5,60.5; XTitle="N_{vtx}"
 
 
