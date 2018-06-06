@@ -1075,7 +1075,7 @@ class PlotMaker:
                                 syst = plot.integralSystError(symmetrize=True)
                                 if p == "signal": dump.write(("-"*(maxlen+45))+"\n");
                                 dump.write(fmt % (_unTLatex(mca.getProcessOption(p,'Label',p) if p not in ["signal", "background","total"] else p.upper()), norm, stat))
-                                if syst: dump.write(" +/- %9.2f (syst)"  % syst)
+                                if syst: dump.write(" +/- %9.2f (syst) = +/- %9.2f (all)"  % (syst, math.hypot(stat,syst)))
                                 dump.write("\n")
                             if 'data' in pmap: 
                                 dump.write(("-"*(maxlen+45))+"\n");
