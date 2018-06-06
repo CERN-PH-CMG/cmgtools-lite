@@ -22,6 +22,26 @@ def cropNegativeBins(histo):
                         for bz in xrange(0,histo.GetNbinsZ()+2):
                             if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
 
+def _isNullHistogram(h):
+    if h.Integral() != 0: return False
+    if "TH1" in h.ClassName():
+        for b in xrange(0,h.GetNbinsX()+2):
+            if h.GetBinContent(b) != 0: return False
+        return True
+    elif "TH2" in h.ClassName():
+        for bx in xrange(1,h.GetNbinsX()+1):
+            for by in xrange(1,h.GetNbinsY()+1):
+                if h.GetBinContent(bx,by) != 0: return False
+        return True
+    elif "TH3" in h.ClassName():
+        for bx in xrange(1,h.GetNbinsX()+1):
+          for by in xrange(1,h.GetNbinsY()+1):
+            for bz in xrange(1,h.GetNbinsZ()+1):
+               if h.GetBinContent(bx,by,bz) != 0: return False
+        return True
+    elif "TGraph" in h.ClassName():
+        return (h.GetN() == 0)
+    return False
 
 class RooFitContext:
     def __init__(self,workspace):
@@ -58,9 +78,10 @@ class RooFitContext:
             scale = histo.GetXaxis().GetBinWidth(b) if self._density else 1.0
             ret.SetBinContent(b, scale * histo.GetBinContent(b))
         return ret
-    def roofit2hist(self,histo,norm,target=None):
+    def roofit2hist(self,histo,norm,target=None,add=False):
         """Transform input histogram produced by RooFit via createHistogram to undo what hist2roofit did, and set normalization
            Input histogram may be modified. Output may be the same object as input (but modified), or a new object."""
+        if add and not target: raise RuntimeError("roofit2hist: can't set add without target")
         if histo.Integral(): 
             histo.Scale(norm/histo.Integral())
         if self._rebin or target != None:
@@ -68,10 +89,11 @@ class RooFitContext:
                 target = _cloneNoDir(self._histo, histo.GetName())
             for b in xrange(1,histo.GetNbinsX()+1):
                 scale = 1.0/histo.GetXaxis().GetBinWidth(b) if self._density else 1.0
-                target.SetBinContent(b, scale * histo.GetBinContent(b))
+                if add: target.SetBinContent(b, scale * histo.GetBinContent(b) + target.GetBinContent(b))
+                else:   target.SetBinContent(b, scale * histo.GetBinContent(b))
             histo = target
         return histo
-    def roopdf2hist(self,name,pdf,normobj,target=None):
+    def roopdf2hist(self,name,pdf,normobj,target=None,add=False):
         """Create a new histogram from a pdf, and normalize it according to a given RooAbsReal.
            If a target histogram is provided, write the output into it with SetBinContent."""
         if normobj.getVal() == 0:
@@ -85,7 +107,7 @@ class RooFitContext:
         if ROOT.gROOT.FindObject(name+"__"+self.xvar.GetName()): ROOT.gROOT.FindObject(name+"__"+self.xvar.GetName()).Delete()
         histo = pdf.createHistogram(name, self.xvar)
         histo.SetDirectory(None)
-        return self.roofit2hist(histo,normobj.getVal(),target=target)
+        return self.roofit2hist(histo,normobj.getVal(),target=target,add=add)
     def imp(self,obj,*args):    
         self._import(obj,*args)
         if hasattr(self.workspace,'nodelete'):
@@ -125,21 +147,25 @@ class PostFitSetup:
         obs = ROOT.RooArgSet(self.params).snapshot()
         dtoy = ROOT.RooDataSet("postFitToys","",obs)
         #print "Throwing %d toys of %d nuisances" % (ntoys, obs.getSize())
+        #timer = ROOT.TStopwatch()
         for i in xrange(ntoys):
             obs.assignValueOnly(self.fitResult.randomizePars())
             dtoy.add(obs)
+        #print "Thrown %d toys of %d nuisances in %.3f s" % (ntoys, obs.getSize(), timer.RealTime())
         self._postFitToys = dtoy
     def _throwPreFit(self,ntoys):
         if self.params == None: raise RuntimeError("Can't throw pre-fit toys without nuisances")
         obs = ROOT.RooArgSet(self.params).snapshot()
         dtoy = ROOT.RooDataSet("preFitToys","",obs)
-        #print "Throwing %d toys of %d nuisances" % (ntoys, obs.getSize())
+        print "Throwing %d pre-fit toys of %d nuisances" % (ntoys, obs.getSize())
         #obs.Print("")
+        #timer = ROOT.TStopwatch()
         for i in xrange(ntoys):
             it = obs.fwdIterator()
             for i in xrange(obs.getSize()):
                 it.next().setVal(ROOT.gRandom.Gaus())
             dtoy.add(obs)
+        #print "Thrown %d pre-fit toys of %d nuisances in %.3f s" % (ntoys, obs.getSize(), timer.RealTime())
         self._preFitToys = dtoy
     def makeFitLog(self):
         if not self.fitResult: return []
@@ -197,6 +223,13 @@ class HistoWithNuisances:
         if len(self.variations) != 0: return False
         if self.nominal != self.central: return False
         if self._rooFit or self._postFit: return False
+        return True
+    def isZero(self):
+        if not _isNullHistogram(self.central): 
+            return False
+        for v,p in self.variations.iteritems():
+            for h in p:
+                if not _isNullHistogram(h): return False
         return True
     def Clone(self,newname):
         h = HistoWithNuisances(self.central)
@@ -256,13 +289,17 @@ class HistoWithNuisances:
             wvars    = self._rooFit["workspace"].allVars()
             pdf, norm = self._rooFit["pdf"], self._rooFit["norm"]
             roofit = self._rooFit["context"]
+            #timer = ROOT.TStopwatch()
             for i in xrange(toys.numEntries()):
                 wvars.assignValueOnly(toys.get(i))
                 roofit.roopdf2hist("_toy", pdf, norm, target=hempty)
                 for ib,x0 in enumerate(nom_bins):
                     #vals[ib].append(hempty.GetBinContent(ib+1))
                     sumw2s[ib] += (hempty.GetBinContent(ib+1)-x0)**2
+            #print "Used %d post-fit toys to make histograms in %.3f s" % (toys.numEntries(), timer.RealTime())
+            #print "postfit plot of %s" % (self.central.GetName())
             for ib,(x0,xw2) in enumerate(zip(nom_bins,sumw2s)):
+                #print "   bin %2d: %9.3f +- %6.3f" % (ib+1, x0, sqrt(xw2/toys.numEntries()))
                 htotup.SetBinContent(ib+1,       x0 + sqrt(xw2/toys.numEntries()))
                 htotdn.SetBinContent(ib+1, max(0,x0 - sqrt(xw2/toys.numEntries())))
         else:
@@ -309,6 +346,7 @@ class HistoWithNuisances:
                     wvars.assignValueOnly(toys.get(i))
                     sumw2 += (norm.getVal()-nominal)**2
                 wvars.assignValueOnly(self._postFit.fitResult.floatParsFinal()) # recover central values
+                #print "postfit norm of %-40s: %8.2f +- %5.2f (%.3f)" % (self.central.GetName(), nominal, sqrt(sumw2/toys.numEntries()), sqrt(sumw2/toys.numEntries())/nominal)
                 return sqrt(sumw2/toys.numEntries())
             else:
                 raise RuntimeError("Not implemented yet")
@@ -499,6 +537,7 @@ class HistoWithNuisances:
     def __iadd__(self,x):
         if not self._canAdd(x):
             return SumWithNuisances(self.central.GetName(), [self, x])
+        if x.isZero(): return self 
         vars1 = self.variations # writing on self.variations
         vars2 = copy(x.variations)
         for var in set(vars1.keys()+vars2.keys()):
@@ -588,6 +627,7 @@ class SumWithNuisances(HistoWithNuisances):
         self._nuisances = ROOT.RooArgSet()
         self._usePostFit = False # for now, will be reset later
         self._postFit    = None # for now, will be reset later
+        self._nodeletes  = []
         # make the sum
         for h in hsel: self._iadd(h)
         # set up post-fit if needed
@@ -598,7 +638,10 @@ class SumWithNuisances(HistoWithNuisances):
         self._makeNominal()
     def _makeNominal(self):
         if self._usePostFit: 
-            self._doPostFit()
+            #self._doPostFit()
+            self.nominal = _cloneNoDir(self._histos[0].nominal, "%s_postfit" % self.central.GetName())
+            for h in self._histos[1:]:
+                self.nominal.Add(h.nominal)
         else: 
             self.nominal = self.central
     ## HistoWithNuisance API that we cannot support
@@ -640,12 +683,14 @@ class SumWithNuisances(HistoWithNuisances):
     def _iadd(self,other):
         hi = other._histos if isinstance(other,SumWithNuisances) else [other]
         for h in hi:
+            #if h.isZero(): continue
             self.central.Add(h.getCentral())
             for v in h.getVariationList():
                 self.variations[v] = True
             (hpdf,hnorm) = h.rooFitPdfAndNorm(self._rooFit["context"])
             self._pdfs.add(hpdf)
             self._norms.add(hnorm)
+            self._nodeletes.append((hpdf,hnorm))
             self._nuisances.add(h._rooFit["nuisances"])
             self._histos.append(h)
     def __iadd__(self,other):
@@ -670,7 +715,6 @@ class SumWithNuisances(HistoWithNuisances):
         hempty = _cloneNoDir(self.central); hempty.Reset(); 
         htotup = _cloneNoDir(hempty, self.nominal.GetName()+'_systUp')
         htotdn = _cloneNoDir(hempty, self.nominal.GetName()+'_systDn')
-        if "pdf" not in self._rooFit: self._makePdfAndNorm()
         if not self._postFit:
             self._postFit = PostFitSetup(params = self._nuisances)
         toys = self._postFit.postFitToys() if self._usePostFit else self._postFit.preFitToys()
@@ -678,11 +722,16 @@ class SumWithNuisances(HistoWithNuisances):
         sumw2s   = [ 0. for x in nom_bins ]
         wvars    = self._rooFit["workspace"].allVars()
         snap = wvars.snapshot()
-        pdf, norm = self._rooFit["pdf"], self._rooFit["norm"]
         roofit = self._rooFit["context"]
         for i in xrange(toys.numEntries()):
             wvars.assignValueOnly(toys.get(i))
-            roofit.roopdf2hist("_toy", pdf, norm, target=hempty)
+            # calling createHistogram on the RooAddPdf seems to have not understood but bad side-effects.
+            # calling it on the individual components and adding them up works, so doing that for now
+            hempty.Reset()
+            for isub in xrange(self._norms.getSize()):
+                spdf  = self._pdfs.at(isub)
+                snorm = self._norms.at(isub)
+                roofit.roopdf2hist("_toy", spdf, snorm, target=hempty, add=True)
             for ib,x0 in enumerate(nom_bins):
                 sumw2s[ib] += (hempty.GetBinContent(ib+1)-x0)**2
         for ib,(x0,xw2) in enumerate(zip(nom_bins,sumw2s)):
@@ -707,6 +756,7 @@ class SumWithNuisances(HistoWithNuisances):
             wvars.assignValueOnly(toys.get(i))
             sumw2 += (norm.getVal()-nominal)**2
         wvars.assignValueOnly(snap)
+        #print "postfit swn norm of %-40s: %8.2f +- %5.2f (%.3f)" % (self.central.GetName(), nominal, sqrt(sumw2/toys.numEntries()), sqrt(sumw2/toys.numEntries())/nominal)
         return sqrt(sumw2/toys.numEntries())
 
 def mergePlots(name,plots):
