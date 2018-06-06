@@ -1,0 +1,14 @@
+
+
+# vim: syntax=sh
+* ; TreeName="treeProducerSusyMultilepton"
+
+
+WandZ  : WJetsToLNu_LO      : 3.*20508.9    : 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+WandZ  : DYJetsToLL_M50_LO_ext  : 6024.0     : 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+QCD    : QCD_Mu15        : 302673.0      : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+
+data: SingleMuon_2016*
+data: DoubleMuon_2016*
+
+data_sub  : -                                                  ; FillColor=ROOT.kOrange+8 , FillStyle=3005, Label="Data - EWK"

@@ -9,6 +9,7 @@ def submitFRrecursive(ODIR, name, cmd, dryRun=False):
     if not os.path.isdir(outdir): 
         os.system('mkdir -p '+outdir)
     os.system('cp ${{HOME}}/index.php {od}/../'.format(od=outdir))
+    os.system('cp ${{HOME}}/index.php {od}/../../'.format(od=outdir))
     os.system('cp ${{HOME}}/resubFRs.py {od}/../../'.format(od=outdir))
     srcfile = outdir+name+".sh"
     logfile = outdir+name+".log"
@@ -158,24 +159,25 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     print 'running: python', cmd
     subprocess.call(['python']+cmd.split())#+['/dev/null'],stderr=subprocess.PIPE)
 
-def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, splitCharge = True):
+def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, splitCharge = True):
 #def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts, disabledcuts, processes, scaleprocesses, extraopts = ''):
 #python makeShapeCardsSusy.py --s2v -P /afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/ --Fs /afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/ -l 12.9 dps-ww/final_mca.txt dps-ww/cutfinal.txt finalMVA_DPS 10,0.,1.0  --od dps-ww/cards -p DPSWW,WZ,ZZ,WWW,WpWpJJ,Wjets  -W 0.8874 --asimov dps-ww/syst.txt
     
     #sfs = calculateScalefactors(False, sfdate)
 
-    targetcarddir = 'cards_BDT2Dto1D/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetcarddir = 'cards_{date}{pf}_MuMu_MVA_gt_pt9_NewFakes'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends_latest_jets/', trees+'/friends_latest_bdt/']
-    #    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_with_MVA_gt_pt9/'.format(date=date, pf=('-'+postfix if postfix else '') )
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}ElMu_BDT_v13/'.format(date=date, pf=('-'+postfix if postfix else '') )
-    fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_MVA_gt_pt9_NewFakes/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt'#cuts_results.txt
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
 
 
     print '=========================================='
     print 'run results for MUMU'
+    print '=========================================='
+    print 'confirm the binning of 1D BDT histogram'
     print '=========================================='
 
     if splitCharge: 
@@ -184,42 +186,40 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     else:
         loop = [ [] ]
 
-    print 'did i split the charge?'
+    print 'did i split the charge? %i' %splitCharge
+
+
 
     processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
     processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo', 'DPSWW_alt']
 
     binningBDT   = ' Binnumberset1D(BDT_DPS_fakes,BDT_DPS_WZ) 15,1.0,16.0'
     nbinspostifx = '_15bins'
-    nbinspostifx1 = '_20bins'
-    fmca   = 'dpsww13TeV/dps2016/results/elmu_mca.txt'
+    fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca_v1.txt'
     
     for bdt in ['wz']:
         for ich,ch in enumerate(loop):
             #if not ich: continue
-            enable    = ['trigelmu','elmu'] + ch
+            enable    = ['trigmumu','mumu'] + ch
             disable   = []
             fittodata = []
             scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
                          'ZZ': '{sf:.3f}'.format(sf=1.21)}
+                         
             mumusf = 0.95
             extraopts = ' -W {sf:.3f} --showIndivSigs'.format(sf=mumusf) # --plotmode=norm
+            #makeplots = ['lepMVA1_mumu','lepMVA2_mumu']
             #            makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] 
-
-            makeplots = ['BDTforCombine_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx1),'BDT_fakes_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx1)]
-
-#            makeplots=['pt1_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'pt2_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'met_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'dphiLep_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'pt2_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'eta_sum_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'dphilll2_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'etaprod_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'mt1_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'met_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'mt2ll_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'mtll_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'dphil2met_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx1),'BDT_fakes_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx1),'BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]
-
-#            makeplots=['pt1_ll','pt2_ll','met_ll','dphiLep_ll','pt2_ll','eta_sum_ll','dphilll2_ll','etaprod_ll','mt1_ll','met_ll','mt2ll_ll','mtll_ll','dphil2met_ll','BDT_wz_ll_20bins','BDT_fakes_ll_20bins']
-
-
+            #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]
+            #            makeplots=['pt_eta_elel_OS','pt_eta_elel_OS','mll_elel']
+            makeplots=['pt2_mumu','met_mumu','pt1_mumu','mt1_mumu','mt2_mumu','dphiLep_mumu','pt2_mumu','eta_sum_mumu','dphilll2_mumu','etaprod_mumu','mt1_mumu','met_mumu','mt2ll_mumu','mtll_mumu','dphil2met_mumu','mll_mumu','BDT_wz_mumu_20bins','BDT_fakes_mumu_20bins']
 
             runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
             ## running datacards
             ## ==================================
-            extraoptscards = ' -W {sf:.3f} -o elmu{ch} -b elmu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-            runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
+            extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
+            #runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
             
 
 def simplePlot():
@@ -318,33 +318,33 @@ def makeFakeRatesFast(recalculate):
 
 
     ## this here is the usual stuff, but the paths are still wrong. we need to find the 1l skims that have mvaTTH inside
-    trees     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/'
-    friends   = '/eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/friends/'
-    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/w-helicity-13TeV/fakerates/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
-
+    trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_fr_2016/'
+    #friends   = trees+'/friends/'
+    friends   ='/afs/cern.ch/work/a/anmehta/work/Test/Test2/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/postprocessing/JetCleaning_1lskim_DblMu_friendsMay30_v1/'
+    targetdir = '/eos/user/a/anmehta/www/Muon_fakerates_Abseta_{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     ## accordingly we have to change the mca file here. we also need to adapt the cuts file here.
     ## also the tight cut should now be 0.9 if we are moving to what the tHq people use
-    fmca   = 'dpsww13TeV/dps2016/FRfast/mca_fr.txt' 
-    fcut   = 'dpsww13TeV/dps2016/FRfast/cuts_fr.txt'
-    fplots = 'dpsww13TeV/dps2016/FRfast/plots.txt'       
-    ftight = 'dpsww13TeV/dps2016/FRfast/tightCut.txt'    
+    fmca   = 'dpsww13TeV/dps2016/New_FRfast/mca_fr.txt' 
+    fcut   = 'dpsww13TeV/dps2016/New_FRfast/cuts_fr.txt'
+    fplots = 'dpsww13TeV/dps2016/New_FRfast/plots.txt'       
+    ftight = 'dpsww13TeV/dps2016/New_FRfast/tightCut.txt'    
 
     ## we need datasets in our mca that are called QCD, WandZ, and the data. WandZ should be a combo of W+jets and Z+jets
     processes = ['QCD', 'WandZ', 'data']
-    compprocs = ['QCD', 'WandZ', 'data', 'data_sub']
+    compprocs = ['QCD', 'WandZ', 'data','data_sub']
     fittodata = ['QCD', 'WandZ']
 
     ## these are the plots that are made. a scale factor is derived from the first plot in this list. in this case MT
-    makeplots = ['mtl1pf', 'reliso03']
+    makeplots = ['mtl1pf','l1mvaTTH']#'ptl1','etal1','nJetAll','nJet40','nJet30','nJet25','lep_jet_dphi']
     
     ## copy the pT binning here from the xvars.txt file which is in dpsww13TeV/dps2016/FRfast/xvars.txt
     binning = [20,23,26,29,32,35,38,41,45,50,55,65,100]
     ## we need/want a bit more granular binning in eta for the fakerates. those should then be pretty accurate
-    binningeta = [-2.5,-2.0,-1.5,-1.0,-0.5,0.,0.5,1.0,1.5,2.0,2.5]
-
+    #    binningeta = [-2.5,-2.0,-1.5,-1.0,-0.5,0.,0.5,1.0,1.5,2.0,2.5]
+    binningeta = [0.,0.5,1.0,1.5,2.0,2.5]
     ## now we construct the 2D histograms for the FR (and prompt rate) for data and MC
     h_name  = 'fakerate_mu'; h_title = 'fakerates muons'
-
+    ##we are computing FR from data and QCD MC
     h_fakerate_data = ROOT.TH2F(h_name+'_data',h_title+' - data', len(binning)-1, array.array('f',binning), len(binningeta)-1, array.array('f',binningeta))
     h_fakerate_mc   = ROOT.TH2F(h_name+'_qcd' ,h_title+' - qcd' , len(binning)-1, array.array('f',binning), len(binningeta)-1, array.array('f',binningeta))
     h_fakerate_data .Sumw2()
@@ -397,11 +397,11 @@ def makeFakeRatesFast(recalculate):
         disable   = ['muonTightMVA']
         newplots = [('mu_'+plot) for plot in makeplots]
         ## the next lines add options: the first one adds the eta cuts for the eta bin we are in
-        extraopts = ' -A alwaystrue ETA{eta} LepGood1_eta>={e1}&&LepGood1_eta<{e2} '.format(eta=etastring, e1=eta, e2=binningeta[j+1]) ## no whitespaces in the cutstring here!!
+        extraopts = ' -A alwaystrue ETA{eta} abs(LepGood1_eta)>={e1}&&abs(LepGood1_eta)<{e2} '.format(eta=etastring, e1=eta, e2=binningeta[j+1]) ## no whitespaces in the cutstring here!!
         
         ## the next line would add pileup and lepton SFs. but we don't have them yet...
         ## include at least the lepton SFs later (not super important though)
-        extraopts+= ' -W 1. '.format(wgt=pileupandSFs)
+        extraopts+= ''# -W 1. '.format(wgt=pileupandSFs)
 
         ## now if recalculate is set to true it will run the plots for the WandZ scale factor
         if recalculate: runplots(trees, friends, tmp_td, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, newplots, True, extraopts)
@@ -410,27 +410,28 @@ def makeFakeRatesFast(recalculate):
         scales['wandz_{eta}'.format(eta=etastring)] = readScaleFactor(tmp_td+'/mu_{plot}.txt'.format(plot=makeplots[0]), 'WandZ')
 
         ## IMPORTANT
-        ## now we enable the MT < 40 GeV cut, and diable again the tight mvaTTH cut
+        ## now we enable the MT < 40 GeV cut, and disable again the tight mvaTTH cut
         enable  = ['mtl1pf40max']
         disable = ['muonTightMVA']
+        ##why do we scale QCD. we need to subtract contributions from EWK processes only ??
         scalethem = {'QCD'  : scales['qcd_{eta}'  .format(eta=etastring)],
                      'WandZ': scales['wandz_{eta}'.format(eta=etastring)]}
 
         ## this file has the pT binning that we want for the FR
-        fxvar  = 'w-helicity-13TeV/wmass_mu/FRfast/xvars.txt'
+        fxvar  = 'dpsww13TeV/dps2016/New_FRfast/xvars.txt'
 
         ## this now remakes the plots with the MT cut included after scaling the QCD and the WandZ
         printAggressive('SCALING THE PROCESSES BY FACTORS')
         print scalethem
-        if recalculate: runplots(trees, friends, tmp_td+'/mTCutIncluded/', fmca, fcut, fplots, enable, disable, processes, scalethem, [], newplots, True, extraopts) ## don't fit to data anymore
-        extraopts += ' --ratioRange 0 2 --sp QCD '
+        if recalculate: runplots(trees, friends, tmp_td+'/mTCutIncluded/', fmca, fcut, fplots, enable, disable, processes, scalethem, [], newplots, True, extraopts) ## don't fit to data anymore  
+        extraopts += ' --ratioRange 0 2 --sp QCD '##we calculate ratios (in the ratio plot) w.r.t QCD sample
 
         ## runefficiencies now produces the actual FR numbers (and PR which is taken from the WandZ)
         ## the numbers are read from the output and filled into the proper dictionary and histograms
-        if recalculate: runefficiencies(trees, friends, tmp_td+'/fr_mu_{eta}'.format(eta=etastring), fmca, fcut, ftight, fxvar, enable, disable, scalethem, compprocs, True, extraopts)
+        if recalculate: runefficiencies(trees, friends, tmp_td+'/fr_mu_{eta}'.format(eta=etastring), fmca, fcut, ftight, fxvar, enable, disable, scalethem,compprocs, True, extraopts)
         fakerates['fr_mu_qcd_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'QCD')
-        fakerates['fr_mu_dat_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'Data - EWK')
-
+        fakerates['fr_mu_dat_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'Data - EWK') 
+        
         promptrates['fr_mu_qcd_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'WandZ')
         promptrates['fr_mu_dat_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'WandZ')
 
@@ -481,7 +482,7 @@ def makeFakeRatesFast(recalculate):
         h_promptrate_mc  .Draw('colz text45 e')
         canv.SaveAs(targetdir+'promptrate_mu_qcd_{date}.png'.format(date=date))
         canv.SaveAs(targetdir+'promptrate_mu_qcd_{date}.pdf'.format(date=date))
-        outfile = ROOT.TFile('dpsww13TeV/dps2016/fakerateMap_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
+        outfile = ROOT.TFile(targetdir+'/fakerateMap_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
         h_fakerate_data.Write()
         h_fakerate_mc  .Write()
         h_fakerate_data_frUp.Write()
@@ -490,7 +491,7 @@ def makeFakeRatesFast(recalculate):
         h_fakerate_mc_frDn  .Write()
         outfile.Close()
 
-        outfile = ROOT.TFile('dpsww13TeV/dps2016/promptrateMap_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
+        outfile = ROOT.TFile(targetdir+'/promptrateMap_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
         h_promptrate_data.Write()
         h_promptrate_mc  .Write()
         #h_promptrate_data_frUp.Write()
@@ -504,7 +505,7 @@ def makeFakeRatesFast(recalculate):
         print promptrates
 
         h_fr_smoothed_data = ROOT.TH2F('fakerates_smoothed_data'  ,' fakerates - smoothed data'  , len(binningeta)-1, array.array('f',binningeta), 2, array.array('f',[0., 1., 2.]))
-        h_pr_smoothed_data = ROOT.TH2F('promptrates_smoothed_data',' promptrates - smoothed data', len(binningeta)-1, array.array('f',binningeta), 2, array.array('f',[0., 1., 2.]))
+        h_pr_smoothed_data = ROOT.TH2F('promptrates_smoothed_data',' promptrates - smoothed data', len(binningeta)-1, array.array('f',binningeta), 3, array.array('f',[0., 1., 2.,3.]))
         #h_fr_smoothed_mc   = ROOT.TH2F(h_name+'_qcd' ,h_title+' - qcd' , len(binning)-1, array.array('f',binning), len(binningeta)-1, array.array('f',binningeta))
 
 
@@ -526,43 +527,62 @@ def makeFakeRatesFast(recalculate):
             mg = ROOT.TMultiGraph(); pols = []
             for rate in ['pr', 'fr']:
 
-                pol0 = ROOT.TF1("{r}_pol0_{eta}".format(r=rate,eta=etastring), "[0]        ", 25., 50.)
-                pol1 = ROOT.TF1("{r}_pol1_{eta}".format(r=rate,eta=etastring), "[1]*x + [0]", 25., 50.)
-
-
+                pol0 = ROOT.TF1("{r}_pol0_{eta}".format(r=rate,eta=etastring), "[0]        ", 20., 50.)
+                pol1 = ROOT.TF1("{r}_pol1_{eta}".format(r=rate,eta=etastring), "[1]*x + [0]", 20., 50.)
+                errf= ROOT.TF1("{r}_errf_{eta}".format(r=rate,eta=etastring), "[0]*TMath::Erf((x-[1])/[2])", 20., 100.)
+                
                 if rate == 'fr':
-                    graph = graph_file.Get('muonTightIso_pt_fine_binned_data_sub')
+                    graph = graph_file.Get('muonTightId_pt_fine_binned_data_sub')
                     pol0.SetLineColor(ROOT.kGreen); pol0.SetLineWidth(2)
                     pol1.SetLineColor(ROOT.kRed-3); pol1.SetLineWidth(2)
-                    pol0.SetParLimits(1, 0.1, 0.4)
-                    pol1.SetParLimits(1, -0.1  , 0.1)
-                    pol1.SetParLimits(0,  0.1  , 1.1)
+                    #pol0.SetParLimits(1, 0.1, 0.4)
+                    #pol1.SetParLimits(1, -0.1  , 0.1)
+                    #pol1.SetParLimits(0,  0.1  , 1.1)
 
                 else:
-                    graph = graph_file.Get('muonTightIso_pt_fine_binned_WandZ')
-                    graph.SetLineColor(ROOT.kRed); graph.SetMarkerColor(ROOT.kRed)
-                    pol0.SetLineColor(ROOT.kBlue)   ; pol0.SetLineWidth(2)
-                    pol1.SetLineColor(ROOT.kAzure-3); pol1.SetLineWidth(2)
-                    pol0.SetParLimits(1, 0.1, 1.1)
-                    pol1.SetParLimits(1, -0.1  , 0.1)
-                    pol1.SetParLimits(0,  0.1  , 1.1)
+                    graph = graph_file.Get('muonTightId_pt_fine_binned_WandZ')
+                    graph.SetLineColor(ROOT.kRed); 
+                    graph.SetMarkerColor(ROOT.kRed);
+                    #pol0.SetLineColor(ROOT.kBlue)   ; pol0.SetLineWidth(2)
+                    #pol1.SetLineColor(ROOT.kAzure-3); pol1.SetLineWidth(2)
+                    errf.SetLineColor(ROOT.kCyan); errf.SetLineWidth(2)
+                    errf.SetParameter(0, 2.5);
+                    errf.SetParameter(1, 2.5);
+                    errf.SetParameter(2, 1.52);
+
+                    #pol0.SetParLimits(1, 0.1, 1.1)
+                    #pol1.SetParLimits(1, -0.1  , 0.1)
+                    #pol1.SetParLimits(0,  0.1  , 1.1)
+                    
 
                 mg.Add(copy.deepcopy(graph))
 
-                graph.Fit("{r}_pol0_{eta}".format(r=rate,eta=etastring), "M", "", 25., 50.)
-                graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 25., 50.)
+                if rate == 'fr':
+                    graph.Fit("{r}_pol0_{eta}".format(r=rate,eta=etastring), "M", "", 20., 50.)
+                    graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 20., 50.)
 
-                pol0_chi2 = pol0.GetChisquare(); pol0_ndf = pol0.GetNDF()
-                pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
+                    pol0_chi2 = pol0.GetChisquare(); pol0_ndf = pol0.GetNDF()
+                    pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
+                    rchi2_0 = pol0_chi2/pol0_ndf
+                    rchi2_1 = pol1_chi2/pol1_ndf
+                    bestfunc = pol0 if rchi2_0 < rchi2_1 else pol1
+                    worstfun = pol0 if rchi2_0 > rchi2_1 else pol1
+                    print '{r} and {eta}: chi2 of pol0 = {chi0}/{ndf0} = {red0}'.format(r=rate,eta=etastring,chi0=pol0_chi2,ndf0=pol0_ndf, red0=rchi2_0)
+                    print '{r} and {eta}: chi2 of pol1 = {chi1}/{ndf1} = {red1}'.format(r=rate,eta=etastring,chi1=pol1_chi2,ndf1=pol1_ndf, red1=rchi2_1)
 
-                rchi2_0 = pol0_chi2/pol0_ndf
-                rchi2_1 = pol1_chi2/pol1_ndf
+                if rate == 'pr':
+                    graph.Fit("{r}_errf_{eta}".format(r=rate,eta=etastring), "M", "", 20., 100.)
+                    #graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 20., 100.)
+                    #pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
+                    errf_chi2 = errf.GetChisquare(); errf_ndf = errf.GetNDF()
+                    #rchi2_1 = pol1_chi2/pol1_ndf
+                    rchi2_0 = errf_chi2/errf_ndf
+                    bestfunc = errf #if rchi2_0 < rchi2_1 else pol1
+                    worstfun = '' #if rchi2_0 > rchi2_1 else pol1
 
-                bestfunc = pol0 if rchi2_0 < rchi2_1 else pol1
-                worstfun = pol0 if rchi2_0 > rchi2_1 else pol1
 
-                print '{r} and {eta}: chi2 of pol0 = {chi0}/{ndf0} = {red0}'.format(r=rate,eta=etastring,chi0=pol0_chi2,ndf0=pol0_ndf, red0=rchi2_0)
-                print '{r} and {eta}: chi2 of pol1 = {chi1}/{ndf1} = {red1}'.format(r=rate,eta=etastring,chi1=pol1_chi2,ndf1=pol1_ndf, red1=rchi2_1)
+                    print '{r} and {eta}: chi2 of errf = {chi0}/{ndf0} = {red0}'.format(r=rate,eta=etastring,chi0=errf_chi2,ndf0=errf_ndf, red0=rchi2_0)
+                    #print '{r} and {eta}: chi2 of pol1 = {chi1}/{ndf1} = {red1}'.format(r=rate,eta=etastring,chi1=pol1_chi2,ndf1=pol1_ndf, red1=rchi2_1)
 
                 print 'the better function is {func}'.format(func=bestfunc.GetName())
 
@@ -576,7 +596,8 @@ def makeFakeRatesFast(recalculate):
 
                     h_fr_smoothed_data.SetBinContent(etabin, 2, bestfunc.GetParameter(1) if bestfunc.GetNpar() > 1 else 0.)
                     h_fr_smoothed_data.SetBinError  (etabin, 2, bestfunc.GetParError (1) if bestfunc.GetNpar() > 1 else 0.)
-
+                    pols.append(copy.deepcopy(pol0))
+                    pols.append(copy.deepcopy(pol1))
                 else:
                     h_pr_smoothed_data.SetBinContent(etabin, 1, bestfunc.GetParameter(0))
                     h_pr_smoothed_data.SetBinError  (etabin, 1, bestfunc.GetParError (0))
@@ -584,8 +605,12 @@ def makeFakeRatesFast(recalculate):
                     h_pr_smoothed_data.SetBinContent(etabin, 2, bestfunc.GetParameter(1) if bestfunc.GetNpar() > 1 else 0.)
                     h_pr_smoothed_data.SetBinError  (etabin, 2, bestfunc.GetParError (1) if bestfunc.GetNpar() > 1 else 0.)
 
-                pols.append(copy.deepcopy(pol0))
-                pols.append(copy.deepcopy(pol1))
+                    h_pr_smoothed_data.SetBinContent(etabin, 3, bestfunc.GetParameter(2) if bestfunc.GetNpar() > 2 else 0.)
+                    h_pr_smoothed_data.SetBinError  (etabin, 3, bestfunc.GetParError (2) if bestfunc.GetNpar() > 2 else 0.)
+
+                    pols.append(copy.deepcopy(errf)) ##here
+                    #pols.append(copy.deepcopy(pol1))
+
                 mg.Add(copy.deepcopy(graph))
 
             #graph.Draw('ape')
@@ -597,7 +622,7 @@ def makeFakeRatesFast(recalculate):
             canv.SaveAs(targetdir+'fakeAndPromptRate_fit_data_{eta}.png'.format(eta=etastring))
             canv.SaveAs(targetdir+'fakeAndPromptRate_fit_data_{eta}.pdf'.format(eta=etastring))
         
-        h_fr_smoothed_data.Draw("colz text45")
+        h_fr_smoothed_data.Draw("colz text45 e")
         h_fr_smoothed_data.GetZaxis().SetRangeUser(-0.05, 0.45)
         h_fr_smoothed_data.GetXaxis().SetTitle('#eta_{#mu}')
         h_fr_smoothed_data.GetXaxis().SetTitleSize(0.045)
@@ -607,19 +632,21 @@ def makeFakeRatesFast(recalculate):
         h_fr_smoothed_data.GetYaxis().SetBinLabel(2, 'slope')
         canv.SaveAs(targetdir+'fakerate_smoothed_data_{date}.png'.format(date=date))
         canv.SaveAs(targetdir+'fakerate_smoothed_data_{date}.pdf'.format(date=date))
-        
-        h_pr_smoothed_data.Draw("colz text45")
-        h_pr_smoothed_data.GetZaxis().SetRangeUser(0.00, 1.0)
+
+        h_pr_smoothed_data.Draw("colz text45 e")
+        #h_pr_smoothed_data.GetZaxis().SetRangeUser(0.00, 1.0)
         h_pr_smoothed_data.GetXaxis().SetTitle('#eta_{#mu}')
         h_pr_smoothed_data.GetXaxis().SetTitleSize(0.045)
-        h_pr_smoothed_data.GetXaxis().SetLabelSize(0.05)
-        h_pr_smoothed_data.GetYaxis().SetLabelSize(0.08)
-        h_pr_smoothed_data.GetYaxis().SetBinLabel(1, 'offset')
-        h_pr_smoothed_data.GetYaxis().SetBinLabel(2, 'slope')
+        h_pr_smoothed_data.GetXaxis().SetLabelSize(0.035)
+        h_pr_smoothed_data.GetYaxis().SetLabelSize(0.035)
+        h_pr_smoothed_data.GetYaxis().SetBinLabel(1, 'Plateau')
+        h_pr_smoothed_data.GetYaxis().SetBinLabel(2, 'Edge')
+        h_pr_smoothed_data.GetYaxis().SetBinLabel(3, 'Resolution')
         canv.SaveAs(targetdir+'promptrate_smoothed_data_{date}.png'.format(date=date))
         canv.SaveAs(targetdir+'promptrate_smoothed_data_{date}.pdf'.format(date=date))
         
-        outfile = ROOT.TFile('dpsww13TeV/dps2016/frAndPr_fit_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
+        outfile = ROOT.TFile(targetdir+'/fakerate_promptrate_mu_smoothed_data{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
+
         h_fr_smoothed_data.Write()
         h_pr_smoothed_data.Write()
         outfile.Close()
@@ -652,7 +679,7 @@ if __name__ == '__main__':
 
     global date, postfix, lumi, date
     postfix = opts.postfix
-    lumi = 36.0 if not opts.lumi else opts.lumi
+    lumi = 36.0 if not opts.lumi else opts.lumi##here
     date = datetime.date.today().isoformat()
     if opts.date:
         date = opts.date
