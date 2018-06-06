@@ -5,6 +5,11 @@ if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
     T3L=" -P /data/peruzzi/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
     T4L=${T2L}
     J=8;
+elif [[ "$HOSTNAME" == "cmsphys10" ]]; then
+    T2L=" -P /data1/g/gpetrucc/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
+    T3L=" -P /data1/g/gpetrucc/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
+    T4L=${T2L}
+    J=8;
 else
     T2L=" -P /afs/cern.ch/work/p/peruzzi/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
     T3L=" -P /afs/cern.ch/work/p/peruzzi/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
