@@ -738,7 +738,11 @@ class PlotMaker:
                 if getattr(mca,'_altPostFits',None):
                     roofit = roofitizeReport(pmap)
                     if self._options.processesToPeg == []:
-                        addExternalDefaultPOI(roofit,pmap,mca,"r")
+                        hasR = False
+                        for pfs in mca._altPostFits.itervalues():
+                            if pfs.fitResult.floatParsFinal().find("r"):
+                                hasR = True
+                        if hasR: addExternalDefaultPOI(roofit,pmap,mca,"r")
                     else:
                         addExternalPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
                     for key,pfs in mca._altPostFits.iteritems():
