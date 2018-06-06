@@ -516,9 +516,10 @@ class HistoWithNuisances:
         for var,(hup,hdown) in self.variations.iteritems():
             nuis = roofitContext.workspace.var(var)
             if not nuis: raise RuntimeError("ERROR: can't find nuisance %s needed to parameterize %s" % var, self.central.GetName())
-            nuisances.add(nuis)
-            templates.Add(roofitContext.hist2roofit(hup))
-            templates.Add(roofitContext.hist2roofit(hdown))
+            if self.isShapeVariation(var):
+                nuisances.add(nuis)
+                templates.Add(roofitContext.hist2roofit(hup))
+                templates.Add(roofitContext.hist2roofit(hdown))
             if abs(hup.Integral()/norm0-1)>1e-5 or abs(hdown.Integral()/norm0-1)>1e-5:
                 normfactor.addAsymmLogNormal(hdown.Integral()/norm0, hup.Integral()/norm0, nuis) 
         pdf = ROOT.FastVerticalInterpHistPdf2("%s_pdf" % self.nominal.GetName(),     "", roofitContext.xvar, templates, nuisances, 1., 1)
