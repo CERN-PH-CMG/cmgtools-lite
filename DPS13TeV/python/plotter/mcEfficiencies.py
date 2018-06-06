@@ -28,10 +28,10 @@ def addMCEfficiencyOptions(parser):
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
 
 
-def doLegend(rocs,options,textSize=0.035):
+def doLegend(rocs,options,textSize=0.03):
         lwidth = options.legendWidth
         if options.legend == "TR":
-            (x1,y1,x2,y2) = (.93-lwidth, .98 - 1.2*textSize*max(len(rocs),3), .93, .98)
+            (x1,y1,x2,y2) = (.83-lwidth, .77 - 1.0*textSize*max(len(rocs),3), .83, .79)
         elif options.legend == "TL":
             (x1,y1,x2,y2) = (.2, .98 - 1.2*textSize*max(len(rocs),3), .2+lwidth, .98)
         else:
@@ -41,6 +41,7 @@ def doLegend(rocs,options,textSize=0.035):
         leg.SetShadowColor(0)
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
+        leg.SetNColumns(2);
         for key,val in rocs:
             leg.AddEntry(val, key, "LP")
         leg.Draw()

@@ -1,5 +1,5 @@
 event-filters : $DATA{Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonMoriond2017>=1 && Flag_badCloneMuonMoriond2017>=1} $MC{1}
-SameSign     : LepGood_charge[0] * LepGood_charge[1] < 0
+SameSign     : LepGood_charge[0] * LepGood_charge[1] > 0
 25/20        : LepGood1_pt > 25 && LepGood2_pt > 20
 metpt        : met_pt > 15
 met20        : met_pt > 20 ; Disable=True
@@ -8,10 +8,8 @@ met20        : met_pt > 20 ; Disable=True
 ## noTau        : nTauSel_Recl == 0
 bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
 01jets       : Sum$(Jet_Clean_pt > 30) < 2
-lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.75 
-#tighter cut 
-tightele     : (LepGood1_mvaTTH > 0.85 || abs(LepGood1_pdgId)==13 ) && (LepGood2_mvaTTH > 0.85 || abs(LepGood2_pdgId)==13 ) 
-#tighter cut
+lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.9
+tightele     : (LepGood1_mvaTTH > 0.9 || abs(LepGood1_pdgId)==13 ) && (LepGood2_mvaTTH > 0.9 || abs(LepGood2_pdgId)==13 ) 
 tightCharge  : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
 chargecon    : (LepGood1_chargeConsistency >= 3 || abs(LepGood1_pdgId)==11) && (LepGood2_chargeConsistency >= 3 || abs(LepGood2_pdgId)==11)
 lostHits     : (LepGood1_lostHits ==  0 || abs(LepGood1_pdgId)==13) &&  (LepGood2_lostHits ==  0 || abs(LepGood2_pdgId)==13)
@@ -35,10 +33,8 @@ mumuelmu     : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*L
 trigmumuelmu : (HLT_MuEG || HLT_SingleEl || HLT_DoubleMu || HLT_SingleMu)                                  ; Disable=True
 #
 elel         : abs(LepGood1_pdgId*LepGood2_pdgId) == 121   						   ; Disable=True
-trigelel     : (HLT_SingleEl)                   			      	           ; Disable=True
-orgele     : (HLT_SingleEl || HLT_DoubleEl)                   			      	           ; Disable=True
-tightCharge  : LepGood1_tightChargeFix > 1 && LepGood2_tightChargeFix > 1
-zveto        : abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-92) > 15
+trigelel     : (HLT_SingleEl || HLT_DoubleEl)                   			      	           ; Disable=True
+
 ### dilepton
 
 mumuelmuelel : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143 || abs(LepGood1_pdgId*LepGood2_pdgId) == 121     ; Disable=True

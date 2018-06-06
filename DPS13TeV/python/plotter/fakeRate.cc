@@ -115,6 +115,47 @@ float fakeRateWeight_2lssMVA(float l1pt, float l1eta, int l1pdgId, float l1mva,
     }
 }
 
+/////////////////////////////////////////////////
+
+float fakeRateWeight_2lssMVA_smoothed_FR(float l1pt, float l1eta, int l1pdgId, float l1mva,
+                         float l2pt, float l2eta, int l2pdgId, float l2mva, float WP)
+{
+    int nfail = (l1mva < WP)+(l2mva < WP);
+    switch (nfail) {
+        case 1: {
+            double fpt,feta; int fid;
+            if (l1mva < l2mva) { fpt = l1pt; feta = std::abs(l1eta); fid = abs(l1pdgId); }
+            else               { fpt = l2pt; feta = std::abs(l2eta); fid = abs(l2pdgId); }
+            TH2 *hist = (fid == 11 ? FR_el : FR_mu);
+	    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
+	    float p0 = hist->GetBinContent(etabin, 1);
+	    float p1 = hist->GetBinContent(etabin, 2);
+	    float fr = p0 + p1*fpt;
+	    //	    if(l1pt > 25 && l2pt > 20) cout<<"FT/TF "<<"\t eta \t"<<feta<<"\t pt \t"<<fpt<<" \t p0 \t"<<p0<<" \t p1 \t"<<p1<<"\t FR \t"<<(fr/(1-fr))<<endl;
+            return fr/(1-fr);
+
+        }
+        case 2: {
+            TH2 *hist1 = (abs(l1pdgId) == 11 ? FR_el : FR_mu);
+            int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
+	    float p0_1 = hist1->GetBinContent(etabin1, 1);
+            float p1_1 = hist1->GetBinContent(etabin1, 2);
+            float fr1 = p0_1 + p1_1*l1pt;
+            TH2 *hist2 = (abs(l2pdgId) == 11 ? FR_el : FR_mu);
+            int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
+	    float p0_2 = hist2->GetBinContent(etabin2, 1);
+            float p1_2 = hist2->GetBinContent(etabin2, 2);
+            float fr2 = p0_2 + p1_2*l2pt;
+	    // if(l1pt > 25 && l2pt > 20)cout<<"FF"<<"\t pt l1 \t"<<l1pt<<"\t eta l1 \t"<<abs(l1eta)<<"\t pt l2 \t"<<l2pt<<"\t eta l2 \t"<<abs(l2eta)<<" \t p0_1 \t"<<p0_1<<" \t p1_1 \t"<<p1_1<<" \t p0_2 \t"<<p0_2<<" \t p1_2 \t"<<p1_2<<"\t FR \t"<<(-fr1*fr2/((1-fr1)*(1-fr2)))<<endl;
+         return -fr1*fr2/((1-fr1)*(1-fr2));
+        }
+        default: return 0;
+    }
+}
+
+
+//////////////////////////////////////////////////////////
+
 
 // float fakeRateWeight_1l_i_smoothed_FRcorr(float lpt, float leta, int lpdgId, bool passWP, int iFR, float pfmet) {
 //   if (!passWP) {
@@ -257,4 +298,48 @@ float weights_TT_and_TL(float iso1, float iso2, float cut, int category){
   else if (sum == 0 && category == 2) return 1;
   else return 0;
 }
+
+
+/*
+
+float fakeRateWeight_2lssMVA_TL(float l1pt, float l1eta, int l1pdgId, float l1mva,
+                         float l2pt, float l2eta, int l2pdgId, float l2mva, float WP)
+{
+    int nfail = (l1mva < WP)+(l2mva < WP);
+    
+    if (nfail == 1) {
+    double fpt,feta; int fid;
+    if (l1mva < l2mva) { fpt = l1pt; feta = std::abs(l1eta); fid = abs(l1pdgId); }
+    else               { fpt = l2pt; feta = std::abs(l2eta); fid = abs(l2pdgId); }
+    TH2 *hist = (fid == 11 ? FR_el : FR_mu);
+    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
+    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
+    double fr = hist->GetBinContent(ptbin,etabin);
+    return fr/(1-fr);
+    }
+    else return 0;
+
+}
+
+float fakeRateWeight_2lssMVA_LL(float l1pt, float l1eta, int l1pdgId, float l1mva,
+                         float l2pt, float l2eta, int l2pdgId, float l2mva, float WP)
+{
+    int nfail = (l1mva < WP)+(l2mva < WP);
+    if (nfail == 2) {
+  
+      TH2 *hist1 = (abs(l1pdgId) == 11 ? FR_el : FR_mu);
+            int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
+            int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
+            double fr1 = hist1->GetBinContent(ptbin1,etabin1);
+            TH2 *hist2 = (abs(l2pdgId) == 11 ? FR_el : FR_mu);
+            int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
+            int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
+            double fr2 = hist2->GetBinContent(ptbin2,etabin2);
+            return -fr1*fr2/((1-fr1)*(1-fr2));
+        }
+    else return 0;
+}
+
+*/
+
 //#endif

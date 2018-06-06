@@ -13,12 +13,12 @@ muonLooseIso  : LepGood1_relIso03 < 1.
 ## =============================================
 lpt25         : LepGood1_pt > 25.
 
-awayJet40 : Sum$( Jet_pt > 40. && abs(deltaPhi(LepGood1_phi,Jet_phi)) > 0.7 ) >= 1
+awayJet40 : Sum$( Jet_pt > 40. && abs(deltaPhi(LepGood1_phi,Jet_phi)) > 0.7 ) = 1
 
 
 tkmet15max   : met_trkPt < 15.                                          ; Disable=True
 mtl1tk40max : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi) < 40. ; Disable=True
-pfmet15max   : met_pt < 15.                                             ; Disable=True
+#pfmet15max   : met_pt < 15.                                             ; Disable=True
 mtl1pf40max : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)  < 40.      ; Disable=True
 
 barrel      : abs(LepGood1_eta) <=1.2                                   ; Disable=True
