@@ -575,9 +575,14 @@ class MCAnalysis:
         nfmtX = "  %8.4f" if self._options.weight else nfmtL
 
         if self._options.errors:
-            nfmtS+=u" %7.2f"
-            nfmtX+=u" %7.4f"
-            nfmtL+=u" %7.2f"
+            if self._options.txtfmt in ("md","jupyter"):
+                nfmtS+=u" &plusmn;%.2f"
+                nfmtX+=u" &plusmn;%.4f"
+                nfmtL+=u" &plusmn;%.2f"
+            else:
+                nfmtS+=u" %7.2f"
+                nfmtX+=u" %7.4f"
+                nfmtL+=u" %7.2f"
             fmtlen+=9
         if self._options.fractions:
             nfmtS+=" %7.1f%%"
@@ -585,9 +590,26 @@ class MCAnalysis:
             nfmtL+=" %7.1f%%"
             fmtlen+=8
 
+        fmttable = []; fmthead = [h for (h,r) in table]
+        for i,(cut,dummy) in enumerate(table[0][1]):
+            row = []
+            for name,report in table:
+                (nev,err,nev_run_upon) = report[i][1]
+                den = report[i-1][1][0] if i>0 else 0
+                fraction = nev/float(den) if den > 0 else 1
+                if self._options.nMinusOne: 
+                    fraction = report[-1][1][0]/float(nev) if nev > 0 else 1
+                elif self._options.nMinusOneInverted: 
+                    fraction = float(nev)/report[-1][1][0] if report[-1][1][0] > 0 else 1
+                toPrint = (nev,)
+                if self._options.errors:    toPrint+=(err,)
+                if self._options.fractions: toPrint+=(fraction*100,)
+                if self._options.weight and nev < 1000: row.append( ( nfmtS if nev > 0.2 else nfmtX) % toPrint )
+                else                                  : row.append( nfmtL % toPrint )
+            fmttable.append((cut,row))
         if self._options.txtfmt == "text":
             print "CUT".center(clen),
-            for h,r in table: 
+            for h in fmthead: 
                 if len("   "+h) <= fmtlen:
                     print ("   "+h).center(fmtlen),
                 elif len(h) <= fmtlen:
@@ -596,39 +618,47 @@ class MCAnalysis:
                     print h[:fmtlen],
             print ""
             print "-"*((fmtlen+1)*len(table)+clen)
-            for i,(cut,dummy) in enumerate(table[0][1]):
+            for (cut,row) in fmttable:
                 print cfmt % cut,
-                for name,report in table:
-                    (nev,err,nev_run_upon) = report[i][1]
-                    den = report[i-1][1][0] if i>0 else 0
-                    fraction = nev/float(den) if den > 0 else 1
-                    if self._options.nMinusOne: 
-                        fraction = report[-1][1][0]/float(nev) if nev > 0 else 1
-                    elif self._options.nMinusOneInverted: 
-                        fraction = float(nev)/report[-1][1][0] if report[-1][1][0] > 0 else 1
-                    toPrint = (nev,)
-                    if self._options.errors:    toPrint+=(err,)
-                    if self._options.fractions: toPrint+=(fraction*100,)
-                    if self._options.weight and nev < 1000: print ( nfmtS if nev > 0.2 else nfmtX) % toPrint,
-                    else                                  : print nfmtL % toPrint,
+                print " ".join(row)
                 print ""
-        elif self._options.txtfmt in ("tsv","csv","dsv","ssv"):
-            sep = { 'tsv':"\t", 'csv':",", 'dsv':';', 'ssv':' ' }[self._options.txtfmt]
+        elif self._options.txtfmt in ("tsv","csv","dsv","ssv","md","jupyter"):
+            sep = { 'tsv':"\t", 'csv':",", 'dsv':';', 'ssv':' ', 'md':' | ', 'jupyter':' | ' }[self._options.txtfmt]
+            ret = []
+            procEscape = {}
+            for k,r in table:
+                if sep in k:
+                    if self._options.txtfmt in ("tsv","ssv"):
+                        procEscape[k] = k.replace(sep,"_")
+                    else:
+                        procEscape[k] = '"'+k.replace('"','""')+'"'
+                else:
+                    procEscape[k] = k
             if len(table[0][1]) == 1:
+                headers = [ "process", "yield" ]
+                if self._options.errors: headers.append("uncert")
+                if self._options.fractions: headers.append("eff[%]")
                 for k,r in table:
-                    if sep in k:
-                        if self._options.txtfmt in ("tsv","ssv"):
-                            k = k.replace(sep,"_")
-                        else:
-                            k = '"'+k.replace('"','""')+'"'
                     (nev,err,fraction) = r[0][1][0], r[0][1][1], 1.0
                     toPrint = (nev,)
                     if self._options.errors:    toPrint+=(err,)
                     if self._options.fractions: toPrint+=(fraction*100,)
                     if self._options.weight and nev < 1000: ytxt = ( nfmtS if nev > 0.2 else nfmtX) % toPrint
                     else                                  : ytxt = nfmtL % toPrint
-                    print "%s%s%s" % (k,sep,sep.join(ytxt.split()))
-                print ""
+                    ret.append([procEscape[k]]+ytxt.split())
+                ret.append("\n")
+            else:
+                headers = [ "CUT" ] + fmthead
+                for cut,row in fmttable: ret.append([cut]+row)
+            if self._options.txtfmt in ("md","jupyter"):
+                ret.insert(0,headers)
+                ret.insert(1,(("---:" if i else "---") for i in xrange(len(headers))))
+            ret = "\n".join(sep.join(c) for c in ret) 
+            if self._options.txtfmt == "jupyter":
+                import IPython.display
+                IPython.display.display(IPython.display.Markdown(ret))
+            else:
+                print ret
 
     def __str__(self):
         mystr = ""
