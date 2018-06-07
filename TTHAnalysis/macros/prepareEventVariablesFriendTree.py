@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import os.path, re, types, itertools, sys
+import os, re, types, sys, subprocess
+from collections import defaultdict
 if "--tra2" in sys.argv:
     print "Will use the new experimental version of treeReAnalyzer"
     from CMGTools.TTHAnalysis.treeReAnalyzer2 import Module, EventLoop, Booker, PyTree
@@ -51,7 +52,6 @@ class VariableProducer(Module):
         self.t.fill()
 
 
-import os, itertools
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] <TREE_DIR> <OUT>")
 parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run these modules");
@@ -63,8 +63,13 @@ parser.add_option("--fineSplit", dest="fineSplit",    type="int",    default=Non
 parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
 parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
 parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
+parser.add_option("--justcount", dest="justcount",   action="store_true", default=False, help="Don't run anything");
+parser.add_option("--checkchunks", dest="checkchunks",   action="store_true", default=False, help="Check chunks that have been produced");
+parser.add_option("--checkrunning", dest="checkrunning",   action="store_true", default=False, help="Check chunks that have been produced");
+parser.add_option("--quiet", dest="quiet",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("-T", "--tree-dir",   dest="treeDir",     type="string", default="sf", help="Directory of the friend tree in the file (default: 'sf')");
-parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
+parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch queue or condor instead of locally");
+parser.add_option("--maxruntime", "--time",  dest="maxruntime", type="int", default=360, help="Condor job wall clock time in minutes (default: 6h)");
 parser.add_option("-t", "--tree",    dest="tree",      default='ttHLepTreeProducerTTH', help="Pattern for tree name");
 parser.add_option("-V", "--vector",  dest="vectorTree", action="store_true", default=True, help="Input tree is a vector");
 parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename")
@@ -74,6 +79,7 @@ parser.add_option("-L", "--list-modules",  dest="listModules", action="store_tru
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
+parser.add_option("--sub", "--subfile", dest="subfile", type="string", default="condor.sub", help="Subfile for condor (default: condor.sub)");
 parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
 parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
@@ -115,6 +121,52 @@ if len(options.chunks) != 0 and len(options.datasets) != 1:
     print "must specify a single dataset with -d if using -c to select chunks"
     exit()
 
+done_chunks = defaultdict(set)
+done_subchunks = defaultdict(set)
+#chunks_with_subs = defaultdict(dict)
+if options.checkchunks:
+    npass, nfail = 0,0
+    lsls = subprocess.check_output(["ls", "-l", args[1]])
+    for line in lsls.split("\n"):
+        if "evVarFriend" not in line: continue
+        fields = line.split()
+        size = int(fields[4])
+        fname = fields[8]
+        m1 = re.match(r"evVarFriend_(\w+).chunk(\d+).sub(\d+).root", fname);
+        m2 = re.match(r"evVarFriend_(\w+).chunk(\d+).root", fname);
+        good = (size > 2048)
+        if m1:
+            raise RuntimeError("Subchunks not yet commissioned")
+            sample = m1.group(1)
+            chunk = int(m1.group(2))
+            sub = int(m1.group(3))
+            if good: done_subchunks[(sample,chunk)].add(sub)
+            done_chunks[sample].discard(chunk)
+        elif m2:
+            sample = m2.group(1)
+            chunk = int(m2.group(2))
+            sub = None
+            if good: done_chunks[sample].add(chunk)
+        else:
+            continue
+        if good: npass += 1
+        else: nfail += 1
+    print "Found %d good chunks, %d bad chunks" % (npass, nfail)
+if options.checkrunning:
+    nrunning = 0
+    if options.queue == "condor":
+        running = subprocess.check_output(["condor_q", "-nobatch","-wide"])
+    else:
+        running = subprocess.check_output(["bjobs", "-ww"])
+    tomatch = re.compile(r"\s{self}\s.(?:.*\s)?{input}\s.*\s*{output}\s(?:.*\s)?-d\s+(\w+)\s+-c\s+(\d+)\b".format(self=sys.argv[0], input=args[0], output=args[1]))
+    for line in running.split("\n"):
+        if os.path.basename(sys.argv[0]) not in line: continue
+        if args[1]+" " not in line: continue
+        m = re.search(tomatch, line)
+        if not m: continue
+        nrunning += 1
+        done_chunks[m.group(1)].add(int(m.group(2)))
+    print "Found %d chunks running" % (nrunning)
 jobs = []
 for D in glob(args[0]+"/*"):
     treename = options.tree
@@ -151,19 +203,33 @@ for D in glob(args[0]+"/*"):
                 f = ROOT.TFile.Open(fname);
                 t = f.Get(treename)
                 if t.GetEntries() != entries:
-                    print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries())
+                    if not options.quiet: print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries())
                     f.Close()
                 else:
-                    print "Component %s exists already and has matching number of entries (%d)" % (short, entries)
+                    if not options.quiet: print "Component %s exists already and has matching number of entries (%d)" % (short, entries)
                     continue
         chunk = options.chunkSize
         if entries < chunk:
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
-            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1,None))
+            if not options.quiet: print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk (%d events)" % entries
+            if 1 in done_chunks[short]: continue
+            if options.queue == "condor":
+                jobs.append((short,data,1))
+            else:
+                jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1,None))
         else:
             nchunk = int(ceil(entries/float(chunk)))
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk
+            if not options.quiet: print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks (%d events)" % (nchunk, entries)
+            if options.queue == "condor":
+                if options.fineSplit: raise RuntimeError
+                if options.checkchunks:
+                    for i in xrange(nchunk):
+                        if i not in done_chunks[short]: 
+                            jobs.append((short,data,i))
+                else:
+                    jobs.append((short,data,nchunk))
+                continue
             for i in xrange(nchunk):
+                if i in done_chunks[short]: continue
                 if options.chunks != []:
                     if i not in options.chunks: continue
                 if not options.fineSplit:
@@ -176,11 +242,29 @@ for D in glob(args[0]+"/*"):
                         r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
                         jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
-print "I have %d task(s) to process" % len(jobs)
+njobs = len(jobs)
+if options.queue == "condor": 
+    if not options.checkchunks: njobs = sum((r[-1] for r in jobs),0)
+print "I have %d task(s) to process" % njobs
+if options.justcount: sys.exit()
+if options.queue == "condor":
+    subfile = open(options.subfile, "w")
+    logdir = (options.logdir if options.logdir else args[1]+"/logs").replace("{P}", args[0]).replace("{O}", args[1])
+    os.system("mkdir -p "+logdir)
+    subfile.write("""##### BEGIN condor submit file
+Executable = {runner}
+Universe   = vanilla
+Error      = {logdir}/err.$(cluster).$(Dataset).$({chunk})
+Output     = {logdir}/out.$(cluster).$(Dataset).$({chunk})
+Log        = {logdir}/log.$(cluster).$(Dataset).$({chunk})
 
+use_x509userproxy = $ENV(X509_USER_PROXY)
+getenv = True
+request_memory = 2000
++MaxRuntime = {maxruntime}
+
+""".format(runner = options.runner, logdir = logdir, maxruntime = options.maxruntime * 60, chunk = ("Chunk" if options.checkchunks else "Step")))
 if options.queue:
-    import os, sys
-
     runner = ""
     super = ""
     theoutput = args[1]
@@ -213,7 +297,24 @@ if options.queue:
     friendPost += "".join([" --FD %s %s " % (fn,ft) for fn,ft in options.friendTreesData])
     friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
     friendPost += "".join(["  -I  '%s'  " % m for m in options.imports])
-    for (name,fin,fout,data,range,chunk,fs) in jobs:
+
+    if options.queue == "condor":
+      baseargs = basecmd[len(os.getcwd())+len(runner)+2:] + friendPost
+      baseargs = baseargs.replace("'","")
+      if options.checkchunks:
+          subfile.write("\nArguments = {base} -d $(Dataset) -c $(Chunk)\n\n".format(base = baseargs))
+          subfile.write("Queue Dataset, Chunk from (\n")
+          for (name, data, chunk) in jobs:
+            subfile.write("    {name}, {chunk}\n".format(name=name, chunk=chunk))
+          subfile.write(")\n")
+      else:
+          subfile.write("\nArguments = {base} -d $(Dataset) -c $(Step)\n\n".format(base = baseargs))
+          for (name, data, nchunks) in jobs:
+            subfile.write("Queue {njobs} Dataset in {name}\n".format(name=name, njobs=nchunks))
+      subfile.close()
+      print "Saved condor submit file to %s" % options.subfile
+    else:
+      for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
             cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
