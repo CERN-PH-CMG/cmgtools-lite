@@ -29,7 +29,7 @@ class CheckEventVetoList:
         mylist=self._store.get((run,lumi),None)
         return ((not mylist) or (long(evt) not in mylist))
 
-def findPs(tty,mycut,options,selectors,verbose=True,forceps=None):
+def findPs(tty,mycut,options,selectors,verbose=2,forceps=None):
         mytree = tty.getTree()
         ntot  = mytree.GetEntries() 
         #mytree.SetEntryList(None) # make sure things are clean
@@ -69,27 +69,27 @@ def findPs(tty,mycut,options,selectors,verbose=True,forceps=None):
             else:
                 ps = min(max(ps_abserr,ps_relerr,1), max(1,nev2/options.minEvents))
             #if verbose: print "%-60s:  entries %8d/%8d  yield %8.3f +- %8.3f (%.4f, %8d)  -> PS rel %5d, PS abs %5d, final %5d (%7d events)" % (tty.cname(), elist.GetN(), ntot, evyield, err, err/evyield, nev2, ps_relerr, ps_abserr, ps, elist.GetN()/ps)
-            if verbose: print "%-60s:  entries %8d/%8d  yield %8.3f +- %8.3f (%.4f, %8d)  -> PS rel %5d, PS abs %5d, final %5d (%7d events)" % (tty.cname(), nev2, ntot, evyield, err, err/evyield, nev2, ps_relerr, ps_abserr, ps, nev2/ps)
             if ps > 1:
+                if verbose > 1: print "%-60s:  entries %8d/%8d  yield %9.2f +- %8.2f (%.4f, %8d)  -> PS rel %5d, PS abs %5d, final %5d (%7d events)" % (tty.cname(), nev2, ntot, evyield, err, err/evyield, nev2, ps_relerr, ps_abserr, ps, nev2/ps)
                 mycut_postps = "(%s) * ((evt %% %d) == 0)" % (mycut, ps)
                 evyield_postps, err_postps, nev2_postps = tty._getYield(mytree, mycut_postps, cutNeedsPreprocessing=False)
                 wfactor = float(evyield)/evyield_postps
-                print "%-60s   entries %8d/%8d  yield %8.3f +- %8.3f (%.4f, %8d)  post prescale %d; upweight by %.3f" % ("", nev2_postps, ntot, evyield_postps, err_postps, err_postps/evyield_postps, nev2_postps, ps, wfactor)
-                return (ps, wfactor)
+                if verbose > 0: print "%-60s   entries %8d/%8d  yield %9.2f +- %8.2f (%.4f, %8d)  post prescale %d; upweight by %.3f" % ("", nev2_postps, ntot, evyield_postps, err_postps, err_postps/evyield_postps, nev2_postps, ps, wfactor)
+                return (ps, wfactor, nev2_postps)
             else:
-                return (1, 1.0)
+                if verbose > 0: print "%-60s:  entries %8d/%8d  yield %9.2f +- %8.2f (%.4f, %8d)  -> PS rel %5d, PS abs %5d, final %5d (%7d events)" % (tty.cname(), nev2, ntot, evyield, err, err/evyield, nev2, ps_relerr, ps_abserr, 1, nev2)
+                return (1, 1.0, nev2)
         else:
             #if verbose: print "%-60s:  entries %8d/%8d " % (tty.cname(), elist.GetN(), ntot)
-            if verbose: print "%-60s:  entries %8d/%8d " % (tty.cname(), nev2, ntot)
-            return (0, 1.0)
+            if verbose > 0: print "%-60s:  entries %8d/%8d " % (tty.cname(), nev2, ntot)
+            return (0, 1.0, 0)
 
 
 def _runIt(args):
         print "in runIt"
-        (tty,mysource,myoutpath,cut,mycut,options,selectors,ps,wfactor) = args
+        (tty,mysource,myoutpath,cut,mycut,options,selectors,ps,wfactor,nev) = args
         mytree = tty.getTree()
         ntot  = mytree.GetEntries() 
-        #if not options.justcount: print "  Start  %-40s: %8d" % (tty.cname(), ntot)
         timer = ROOT.TStopwatch(); timer.Start()
         # now we do
         os.system("mkdir -p "+myoutpath)
@@ -164,12 +164,14 @@ if __name__ == "__main__":
     parser.add_option("--oldstyle",    dest="oldstyle", default=False, action="store_true",  help="Oldstyle naming (e.g. file named as <analyzer>_tree.root)") 
     parser.add_option("--vetoevents",  dest="vetoevents", type="string", default=[], action="append",  help="File containing list of events to filter out")
     parser.add_option("--pretend",     dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
-    parser.add_option("--justcount",   dest="justcount", default=False, action="store_true",  help="Pretend to skim, up to the point of counting passing events") 
+    parser.add_option("--justcount",   dest="pretend", default=False, action="store_true",  help="Pretend to skim, up to the point of counting passing events") 
     parser.add_option("--consolidate", dest="consolidate", default="minps", type="string",  help="Consolidate N components: 'minps' = use minimum prescale, 'orps' = compute PS for the OR") 
     parser.add_option("--relAcc",      dest="relAcc", default=0.05, type="float",  help="Target this relative accuracy on the yields") 
     parser.add_option("--absAcc",      dest="absAcc", default=0.07, type="float",  help="Target this absolute accuracy on the yields") 
     parser.add_option("--minEv",       dest="minEvents", default=10, type="int",  help="Minimum number of events") 
     parser.add_option("--ps-offset",   dest="psoffset", default=0, type="int",  help="Offset on the prescale") 
+    parser.add_option("-v", "--verbose",     dest="verbose", default=4, type="int",  help="Minimum number of events") 
+    parser.add_option("--skim-friends",  dest="skimFriends", default=False, action="store_true",  help="Also run skimFTrees") 
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
     options.final = True
@@ -198,21 +200,23 @@ if __name__ == "__main__":
             mysource  = path+"/"+tty.cname()
             if os.path.exists(mysource): break
         if len(ttycuts) > 1:
-            print "Consolidating cuts for %s (%d different cuts), strategy = %s" % (ttyn, len(ttycuts), options.consolidate)
+            if options.verbose > 2: print "Consolidating cuts for %s (%d different cuts), strategy = %s" % (ttyn, len(ttycuts), options.consolidate)
             #for ttyi, mycuti, proc in ttycuts: print "\t",proc,"\t",mycuti,"\t",hx(mycuti)
             if options.consolidate == 'minps':
-                pses = [ findPs(tty,mycuti,options,selectors) for (ttyi,mycuti,p) in ttycuts ]
+                pses = [ findPs(tty,mycuti,options,selectors,verbose=options.verbose-2) for (ttyi,mycuti,p) in ttycuts ]
                 pses_nonzero = [ p[0] for p in pses if p[0] != 0 ]
                 ps = min(pses_nonzero) if len(pses_nonzero) else 1
                 mycut = "(" + "||".join("((%s) != 0)" % c for (t,c,p) in ttycuts) + ")"
-                (ps, wfactor) = findPs(tty,mycut,options,selectors,forceps=ps)
+                (ps, wfactor, nev) = findPs(tty,mycut,options,selectors,forceps=ps)
             else:
                 mycut = "(" + "||".join("((%s) != 0)" % c for (t,c,p) in ttycuts) + ")"
-                (ps, wfactor) = findPs(tty,mycut,options,selectors)
+                (ps, wfactor, nev) = findPs(tty,mycut,options,selectors,verbose=options.verbose)
         else:
-            (ps, wfactor) = findPs(tty,mycut,options,selectors)
-        if options.pretend: continue
-        tasks.append((tty,mysource,myoutpath,cut,mycut,options,selectors,ps,wfactor))
+            (ps, wfactor, nev) = findPs(tty,mycut,options,selectors,verbose=options.verbose)
+        tasks.append((tty,mysource,myoutpath,cut,mycut,options,selectors,ps,wfactor,nev))
+    print "Total number of selected events: %d; largest contributors:" % sum((r[-1] for r in tasks), 0)
+    for n,e in sorted([ (r[0].cname(), r[-1]) for r in tasks ], key = lambda p : p[1], reverse = True)[:20]:
+        print "    %-40s: %8d" % (n,e)
     if options.pretend: exit()
     print "\n\n"
     if options.jobs == 0: 
@@ -221,3 +225,12 @@ if __name__ == "__main__":
         raise RuntimeError, 'Multithreading crashes with skimTreesWithPrescales, please run with -j 0'
         from multiprocessing import Pool
         Pool(options.jobs).map(_runIt, tasks)
+    if options.skimFriends:
+        if not os.path.exists("skimFTrees.py"): raise RuntimeError("missing skimFTrees")
+        for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
+            for P in options.path:
+                d = D.replace("{P}",P)
+                if not os.path.exists(d): continue
+                os.system("python skimFTrees.py %s %s %s > /dev/null" % (outdir, d, outdir))
+            print "Skimmed %s" % os.path.basename(D)
+
