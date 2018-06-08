@@ -97,19 +97,7 @@ if __name__ == "__main__":
         if xspec.name == fitvarname: continue
         for fspec in xvars:
             if fspec.name != fitvarname: continue
-            if xspec.bins[0] == "[":
-                if fspec.bins[0] == "[":        
-                    fbind = fspec.bins
-                else:
-                    (nbins,fmin,fmax) = map(float, fspec.bins.split(','))
-                    fbins = "[" + ",".join(map(str, [fmin+i*(fmax-fmin)/nbins for i in xrange(0,int(nbins+1))]))  + "]"
-                bins2d = xspec.bins + "*" + fbins
-            elif fspec.bins[0] == "[":
-                (nbins,xmin,xmax) = map(float, xspec.bins.split(','))
-                xbins = "[" + ",".join(map(str, [xmin+i*(xmax-xmin)/nbins for i in xrange(0,int(nbins+1))])) + "]"
-                bins2d = xbins + "*" + fspec.bins
-            else:
-                bins2d = xspec.bins + "," + fspec.bins
+            bins2d = makeBinningProductString(xspec.bins, fspec.bins)
             pspec = PlotSpec("%s_%s"  % (fspec.name, xspec.name), "%s:%s" % (fspec.expr, xspec.expr), bins2d, xspec.opts) 
             pspec.xvar = xspec
             pspec.fvar = fspec

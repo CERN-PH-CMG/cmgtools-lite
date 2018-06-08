@@ -68,6 +68,20 @@ def stylePlot(plot,spec,getOption):
             plot.GetXaxis().SetNdivisions(spec.getOption('XNDiv',510))
             plot.GetXaxis().SetMoreLogLabels(True)
 
+def makeBinningProductString(xbins,ybins):
+    if xbins[0] == "[":
+        if ybins[0] != "[":
+            (nbins,ymin,ymax) = map(float, ybins.split(','))
+            ybins = "[" + ",".join(map(str, [ymin+i*(ymax-ymin)/nbins for i in xrange(0,int(nbins+1))])) + "]"
+        return xbins+"*"+ybins
+    elif ybins[0] == "[":
+        if xbins[0] != "[":
+            (nbins,xmin,xmax) = map(float, xbins.split(','))
+            xbins = "[" + ",".join(map(str, [xmin+i*(xmax-xmin)/nbins for i in xrange(0,int(nbins+1))])) + "]"
+        return xbins+"*"+ybins
+    else:
+        return xbins+","+ybins
+    
 def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
         profile1D      = plotspec.getOption('Profile1D',False) if plotspec != None else False
         profile2D      = plotspec.getOption('Profile2D',False) if plotspec != None else False
