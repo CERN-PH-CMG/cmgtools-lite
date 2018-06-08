@@ -92,12 +92,12 @@ class Uncertainty:
             if h0 != 0:
                 if up.Integral(): 
                     up.Scale(h0/up.Integral())
-                else:             
-                    for b in xrange(1,up.GetNbinsX()+1): up.SetBinContent(b, central.GetBinContent(b))
+                else:   
+                    up.Reset(); up.Add(h0) 
                 if down.Integral(): 
                     down.Scale(h0/down.Integral())
                 else:             
-                    for b in xrange(1,up.GetNbinsX()+1): up.SetBinContent(b, central.GetBinContent(b))
+                    down.Reset(); down.Add(h0) 
             else:
                 up.Scale(0); down.Scale(0);
     def isNorm(self):
