@@ -74,7 +74,7 @@ from CMGTools.VVResonances.analyzers.tree_JJ_cff import *
 #-------- SEQUENCE
 
 sequence = cfg.Sequence(
-    coreSequence + [vvAna, vvSkimmer, vvTreeProducer])
+    coreSequence + [vvAna, trigWeightAna, vvSkimmer, vvTreeProducer])
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
 
 
