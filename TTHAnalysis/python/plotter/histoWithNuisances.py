@@ -63,6 +63,7 @@ class RooFitContext:
         self.xvar = None
         self._rebin = False
     def prepareXVar(self,histo,density,name="x"):
+        if "TH1" not in histo.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         self.xname = name
         self._histo = _cloneNoDir(histo, "_template_"); 
         if density: 
@@ -86,6 +87,7 @@ class RooFitContext:
         """If needed, transform input histogram produced by ROOT via Draw to deal with non-uniform binning, so that it can be used in RooFit without worries
            Input histogram is not modified"""
         if not self._rebin: return histo
+        if "TH1" not in histo.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         ret = _cloneNoDir(self._xdummy, histo.GetName()+"_rebin")
         for b in xrange(1,histo.GetNbinsX()):
             scale = histo.GetXaxis().GetBinWidth(b) if self._density else 1.0
@@ -98,6 +100,7 @@ class RooFitContext:
         if histo.Integral(): 
             histo.Scale(norm/histo.Integral())
         if self._rebin or target != None:
+            if "TH1" not in histo.ClassName(): raise RuntimeError("Unsupported for non-TH1")
             if target == None:
                 target = _cloneNoDir(self._histo, histo.GetName())
             for b in xrange(1,histo.GetNbinsX()+1):
@@ -295,6 +298,7 @@ class HistoWithNuisances:
         if self._postFit and self._usePostFit:
             if "pdf" not in self._rooFit: self._makePdfAndNorm()
             toys = self._postFit.postFitToys()
+            if "TH1" not in self.nominal.ClassName(): raise RuntimeError("Unsupported for non-TH1")
             nom_bins = [ self.nominal.GetBinContent(b) for b in xrange(1,self.nominal.GetNbinsX()+1) ]
             sumw2s   = [ 0. for x in nom_bins ]
             #vals     = [ [] for x in nom_bins ]
@@ -375,6 +379,7 @@ class HistoWithNuisances:
             iup /= i0; idown /= i0
         return sqrt(0.5*(iup**2+idown**2)) if symmetrize else (-idown,iup)
     def graphAsymmTotalErrors(self,toadd=None,relative=False):
+        if "TH1" not in self.central.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         h = self.raw()
         hup, hdn = self.sumSystUncertainties(toadd)
         xaxis = h.GetXaxis()
@@ -425,6 +430,7 @@ class HistoWithNuisances:
             self._rooFit  = None
             self._postFit = None
     def addBinByBin(self, namePattern="{name}_bbb_{bin}", ycutoff=1e-3, relcutoff=1e-2, verbose=False, norm=False, conservativePruning=False):
+        if "TH1" not in self.central.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         ref = self.central
         ytot = ref.Integral()
         if (ytot == 0): return 
@@ -453,16 +459,20 @@ class HistoWithNuisances:
             print "WARNING: addBinByBinn on an object that already has roofit/postfit info"
             self._rooFit  = None
             self._postFit = None
-    def isShapeVariation(self,name,tolerance=1e-5):
+    def isShapeVariation(self,name,tolerance=1e-5,debug=False):
         """return true if the specified variation alters the shape of the histogram.
            this is tested by checking if the ratio between non-empty bins of the 
            nominal and varied histogram are identical within the tolerance"""
+        if "TH1" not in self.central.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         h0 = self.central
         for h in self.variations[name]:
             ratio = None 
             for b in xrange(1,h0.GetNbinsX()+1):
                 y0 = h0.GetBinContent(b)
                 y  =  h.GetBinContent(b)
+                if debug: 
+                    print "  bin %3d  nominal %9.4f  varied %9.4f   ratio %8.5f   diff %8.5f" % (
+                                b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
                 if (y0 == 0):
                     if (y != 0): return True
                 elif y == 0: 
@@ -509,6 +519,7 @@ class HistoWithNuisances:
         else:
             roofit.roopdf2hist("_toy", self._rooFit["pdf"], self._rooFit["norm"], target=self.nominal)
         # FIXME this should be improved
+        if "TH1" not in self.central.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         for b in xrange(1,self.central.GetNbinsX()+1):
             if self.central.GetBinContent(b) == 0: continue
             self.nominal.SetBinError(b, self.nominal.GetBinContent(b) * self.central.GetBinError(b)/self.central.GetBinContent(b))
