@@ -43,7 +43,8 @@ if __name__ == "__main__":
         nY[charge+'_right'] = max( int(i.split('_')[-2]) for i in siglist if 'pdf' in i and 'right' in i)
         nPDF = max( int(i.split('_')[-1].replace('pdf','').replace('Down','').replace('Up','')) for i in siglist if 'pdf' in i)
 
-        bkgs = ['data_fakes','Flips','DiBosons','Top','TauDecaysW','Z','W%s_long'%charge] # other than W_{L,R}
+        ## bkgs = ['data_fakes','Flips','DiBosons','Top','TauDecaysW','Z','W%s_long'%charge] # other than W_{L,R}
+        bkgs = []#['data_fakes'] # other than W_{L,R}
         wlr = ['W{ch}_{p}_W{ch}_{p}_{flav}_Ybin_0'.format(ch=charge,p=pol,flav=channel) for pol in ['left','right'] ]
         procs=wlr+bkgs
 
@@ -98,13 +99,15 @@ if __name__ == "__main__":
                     histo_syst = None
                     fullsyst = syst if any(sfx in syst for sfx in ['Up','Down']) else syst+"Up"
                     if 'W{ch}'.format(ch=charge) in proc:
-                        for pol in ['right', 'left']:
+                        for pol in [proc.split('_')[1]]:#'right', 'left']:
                             cp = charge+'_'+pol
                             hname = 'x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_0_{syst}'.format(ch=charge,pol=pol,flav=channel,syst=fullsyst)
                             histo_syst = infile.Get(hname) if hname in keylist else None
                             for iy in xrange(1,nY[cp]+1):
                                 hname_iy = 'x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_{iy}_{syst}'.format(ch=charge,pol=pol,flav=channel,iy=iy,syst=fullsyst)
                                 histo_syst_iy = infile.Get(hname_iy) if hname in keylist else None
+                                if histo_syst_iy == None: 
+                                    print 'ERROR!!! DID NOT FIND SYSTEMATIC', syst, 'AND YBIN', iy
                                 if histo_syst_iy: histo_syst.Add(histo_syst_iy)
                             title2D = 'W{ch} {pol} : variation={syst}'.format(pol=pol,ch=chs,syst=syst)
                             key = 'syst_W{ch}_{pol}_W{ch}_{pol}_{flav}_{syst}'.format(ch=charge,pol=pol,flav=channel,syst=syst)
@@ -115,14 +118,22 @@ if __name__ == "__main__":
                         title2D = '{proc} : variation={syst}'.format(proc=proc,syst=syst)
                         key = 'syst_{proc}_{ch}_{flav}_{syst}'.format(proc=proc,ch=charge,flav=channel,syst=syst)
                     if histo_syst:
+                        mydude = copy.deepcopy(histo_syst)
+                        myvar  = copy.deepcopy(histo_central)
                         ratio = copy.deepcopy(histo_syst)
                         ratio.Divide(histo_central)
                         for ib in xrange(1, ratio.GetNbinsX()+1):
                             ratio.SetBinContent(ib, abs(1.-ratio.GetBinContent(ib) if histo_central.GetBinContent(ib)>0 else 0))
                         h2_backrolled_1 = dressed2D(ratio,binning,title2D)
                         hmax = 0.05 if 'muF' in syst else 0.02
-                        h2_backrolled_1.GetZaxis().SetRangeUser(0.,hmax)
+                        h2_backrolled_1.GetZaxis().SetRangeUser(-0.04,0.04)
                         ratios[key] = h2_backrolled_1
+                        if not histo_central.GetEntries() == histo_syst.GetEntries():
+                            print 'WARNING/ERROR: THE CENTRAL HISTO AND PDF HISTO DO NOT HAVE THE SAME NUMBER OF ENTRIES'
+                            print 'this just happened for {ch} and {pol} and systematic {syst}'.format(ch=charge, pol=pol, syst=fullsyst)
+                            print 'nentries of central:', histo_central.GetEntries()
+                            print 'nentries of syst:   ', histo_syst.GetEntries()
+                            errors.append('{ch}_{pol}_{syst}'.format(ch=charge, pol=pol, syst=fullsyst))
 
         print ratios
         canv = ROOT.TCanvas()
