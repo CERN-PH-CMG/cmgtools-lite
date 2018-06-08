@@ -165,6 +165,19 @@ COMBINESTRING
 
 '''
 
+jobstring_tf = '''#!/bin/sh
+ulimit -c 0 -S
+ulimit -c 0 -H
+set -e
+export SCRAM_ARCH=slc6_amd64_gcc630
+cd CMSSWBASE
+eval `scramv1 runtime -sh`
+source /afs/cern.ch/user/b/bendavid/work/cmspublic/pythonvenv/tensorflowfit_10x/bin/activate
+cd OUTDIR
+COMBINESTRING
+
+'''
+
 if __name__ == "__main__":
 
     ROOT.gStyle.SetOptStat(0)
@@ -186,6 +199,7 @@ if __name__ == "__main__":
     parser.add_option(      '--postprocess'    , dest='postprocess', action='store_true'         , help='hadd all files in the output directories')
     parser.add_option(      '--overwrite'      , dest='overwrite'  , action='store_true'         , help='overwrite the hadding')
     parser.add_option(      '--webdir'         , dest='webdir'     , default=''   , type='string', help='web directory to save the likelihood scans')
+    parser.add_option(      '--tf'             , dest='tensorflow' , default=''   , type='string', help='use tensorflow. needs the datacard as argument')
     (options, args) = parser.parse_args()
 
     if not options.outdir[-1] == '/':
@@ -233,7 +247,7 @@ if __name__ == "__main__":
 
     if not options.postprocess:
 
-        for par in parameters:
+        for ipar,par in enumerate(parameters):
             pardir = absopath+'/'+par+'/'
             os.system('mkdir -p '+pardir)
             print 'at parameter {p} running {n} points'.format(p=par, n=options.npoints)
@@ -241,46 +255,80 @@ if __name__ == "__main__":
             tmp_dn = 0.9*tmp_val if tmp_val else -1.15
             tmp_up = 1.1*tmp_val if tmp_val else  1.15
             firstpoint = 0
-            while firstpoint <= options.npoints-1:
-                lastpoint = min(firstpoint+options.ppj-1,options.npoints-1)
-                cmd_base  = 'combine {ws} -M MultiDimFit -t -1 --algo grid --points {np} '.format(ws=absinfile,np=options.npoints)
-                cmd_base += ' --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 '
-                cmd_base += ' --setParameterRanges "{p}={dn:.2f},{up:.2f}" '.format(p=par,dn=tmp_dn,up=tmp_up)
-                cmd_base += ' -P {par} --floatOtherPOIs=1 '.format(par=par)
-                ## cmd_base += ' --keepFailures ' ## don't want this anymore ... ?!
-                cmd_base += ' -n _{name}_point{n}To{nn} '.format(name=par,n=firstpoint,nn=lastpoint)
-                cmd_base += ' --firstPoint {n} --lastPoint {nn} '.format(n=firstpoint,nn=lastpoint)
-                ##  masking_par = '_'.join(['mask']+os.path.basename(options.infile).split('_')[:2]+['xsec'])
-                ##  cmd_base += ' --setParameters {mp}=1 '.format(mp=masking_par)
-                #cmd_base += ' --redefineSignalPOIs '+','.join( [i for i in all_parameters if 'norm_' in i] )
-                cmd_base += ' --expectSignal=1 '
-                if options.verbose:
-                    cmd_base += ' -v 10 '
+            if not options.tensorflow:
+                while firstpoint <= options.npoints-1:
+                    lastpoint = min(firstpoint+options.ppj-1,options.npoints-1)
+                    cmd_base  = 'combine {ws} -M MultiDimFit -t -1 --algo grid --points {np} '.format(ws=absinfile,np=options.npoints)
+                    cmd_base += ' --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 '
+                    cmd_base += ' --setParameterRanges "{p}={dn:.2f},{up:.2f}" '.format(p=par,dn=tmp_dn,up=tmp_up)
+                    cmd_base += ' -P {par} --floatOtherPOIs=1 '.format(par=par)
+                    ## cmd_base += ' --keepFailures ' ## don't want this anymore ... ?!
+                    cmd_base += ' -n _{name}_point{n}To{nn} '.format(name=par,n=firstpoint,nn=lastpoint)
+                    cmd_base += ' --firstPoint {n} --lastPoint {nn} '.format(n=firstpoint,nn=lastpoint)
+                    ##  masking_par = '_'.join(['mask']+os.path.basename(options.infile).split('_')[:2]+['xsec'])
+                    ##  cmd_base += ' --setParameters {mp}=1 '.format(mp=masking_par)
+                    #cmd_base += ' --redefineSignalPOIs '+','.join( [i for i in all_parameters if 'norm_' in i] )
+                    cmd_base += ' --expectSignal=1 '
+                    if options.verbose:
+                        cmd_base += ' -v 10 '
 
+                    ## make new file for evert parameter and point
+                    job_file_name = jobdir+'/job_{p}_point{n:.0f}To{nn:.0f}.sh'.format(p=par,n=firstpoint,nn=lastpoint)
+                    tmp_file = open(job_file_name, 'w')
+
+                    ## fill the whole shebang in there
+                    tmp_filecont = jobstring
+                    tmp_filecont = tmp_filecont.replace('COMBINESTRING', cmd_base)
+                    tmp_filecont = tmp_filecont.replace('CMSSWBASE', os.environ['CMSSW_BASE']+'/src/')
+                    tmp_filecont = tmp_filecont.replace('OUTDIR', pardir)
+                    tmp_file.write(tmp_filecont)
+                    tmp_file.close()
+                    os.system('chmod u+x {f}'.format(f=job_file_name))
+
+                    ## submit the jobs!
+                    cmd_submit  = 'bsub -q {q} '.format(q=options.queue)
+                    cmd_submit += ' -o {of} '.format(of=job_file_name.replace('.sh','.log'))
+                    cmd_submit += ' {jf} '.format(jf=job_file_name)
+
+                    if not options.pretend:
+                        os.system(cmd_submit)
+                    else:
+                        print cmd_submit
+
+                    firstpoint = lastpoint+1
+            else:
                 ## make new file for evert parameter and point
-                job_file_name = jobdir+'/job_{p}_point{n:.0f}To{nn:.0f}.sh'.format(p=par,n=firstpoint,nn=lastpoint)
+                job_file_name = jobdir+'/job_{p}_tensorflow.sh'.format(p=par)
                 tmp_file = open(job_file_name, 'w')
 
+                if 'Wplus' in par or 'Wminus' in par:
+                    pnew = par.replace('r_','')
+                    pnew = pnew.split('_')
+                    pnew.insert(-2, 'mu' if 'Wmu' in options.tensorflow else 'el')
+                    pnew = '_'.join(pnew)
+                else:
+                    pnew = par
+
+                cmd_base = 'text2tf.py {dc} -t -1 --seed {s} --scan {par}'.format(dc=os.path.abspath(options.tensorflow), s=ipar+42,par=pnew)
+                
                 ## fill the whole shebang in there
-                tmp_filecont = jobstring
+                tmp_filecont = jobstring_tf
                 tmp_filecont = tmp_filecont.replace('COMBINESTRING', cmd_base)
                 tmp_filecont = tmp_filecont.replace('CMSSWBASE', os.environ['CMSSW_BASE']+'/src/')
                 tmp_filecont = tmp_filecont.replace('OUTDIR', pardir)
                 tmp_file.write(tmp_filecont)
                 tmp_file.close()
                 os.system('chmod u+x {f}'.format(f=job_file_name))
-
+                
                 ## submit the jobs!
                 cmd_submit  = 'bsub -q {q} '.format(q=options.queue)
                 cmd_submit += ' -o {of} '.format(of=job_file_name.replace('.sh','.log'))
                 cmd_submit += ' {jf} '.format(jf=job_file_name)
-
+                
                 if not options.pretend:
                     os.system(cmd_submit)
                 else:
                     print cmd_submit
-
-                firstpoint = lastpoint+1
 
     ## end the submission, now move to what to do during postprocessing
     else:
