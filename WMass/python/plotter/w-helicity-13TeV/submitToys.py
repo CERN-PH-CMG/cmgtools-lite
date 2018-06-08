@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage='%prog workspace ntoys [prefix] [options] ')
     parser.add_option('-n'  , '--ntoy-per-job'  , dest='nTj'           , type=int           , default=None , help='split jobs with ntoys per batch job')
     parser.add_option(        '--dry-run'       , dest='dryRun'        , action='store_true', default=False, help='Do not run the job, only print the command');
-    parser.add_option('-q'  , '--queue'         , dest="queue"         , type="string"      , default="2nd", help="Select the queue to use");
+    parser.add_option('-q'  , '--queue'         , dest="queue"         , type="string"      , default="1nd", help="Select the queue to use");
     parser.add_option(        '--norm-only'     , dest='normonly'      , action='store_true', default=False, help='Run the fit fixing the PDF uncertainties');
     parser.add_option('--fd', '--fitDiagnostics', dest='fitDiagnostics', action='store_true'               , help='run FitDiagnostics instead of MultiDimFit');
     parser.add_option('--outdir', dest='outdir', type="string", default=None, help='outdirectory');
@@ -59,12 +59,15 @@ if __name__ == "__main__":
     cmdBase = "combine -d {ws} -M {md} -t {nt} -m 999 " # combine method
     cmdBase += " --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 " # minimizer
     cmdBase += " --toysFrequentist --bypassFrequentistFit -s {seed} --trackParameters {track} " # toys options
+    cmdBase += " --expectSignal=1 "
     cmdBase += " %s " % poiOpt # POIs "
     if not options.fitDiagnostics:
         cmdBase+= ' --floatOtherPOIs=1 '
     else:
         cmdBase+= ' --saveNormalizations --skipBOnlyFit --savePredictionsPerToy '
-
+    ## this is constructed from the ws name. it *should* work. but it's not the most elegant way of doing this
+    ##   masking_par = '_'.join(['mask']+os.path.basename(workspace).split('_')[:2]+['xsec'])
+    ##   cmdBase += " --setParameters {mp}=1 ".format(mp=masking_par)
     if options.normonly: cmdBase += " --freezeNuisanceGroups pdfs,scales,alphaS,wpt " # nuisances to freeze
     
     #cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 1nd' %s " % ('--dry-run' if options.dryRun else '') # jobs configuration
