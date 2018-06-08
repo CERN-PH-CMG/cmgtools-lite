@@ -767,7 +767,7 @@ class PlotMaker:
                         postfix = "_"+(pspec.getOption("SlicesY") % (h0.GetYaxis().GetBinLowEdge(iy), h0.GetYaxis().GetBinUpEdge(iy)))
                         bins_slice = pspec.bins.split("*",1) if "[" == pspec.bins[0] else ",".join(pspec.bins.split(",")[:3])
                         pspec_slice = PlotSpec(pspec.name+postfix, pspec.expr, bins_slice, pspec.opts)
-                        pmap_slice = dict( (k,HistoWithNuisances(h.ProjectionX(h.GetName()+postfix,iy,iy))) for (k,h) in pmap.iteritems() )
+                        pmap_slice = dict( (k,h.projectionX(h.GetName()+postfix,iy,iy)) for (k,h) in pmap.iteritems() )
                         allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+["data"]
                         for k,h in pmap_slice.iteritems():
                             if k in allprocs:
