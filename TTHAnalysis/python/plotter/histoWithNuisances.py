@@ -1,12 +1,25 @@
 #!/usr/bin/env python
 from math import sqrt,hypot
 from copy import copy
+from array import array
 import ROOT
 
 def _cloneNoDir(hist,name=''):
     ret = hist.Clone(name)
     ret.SetDirectory(None)
     return ret
+
+def _projectionXNoDir(hist2d,name,y1,y2):
+    nx = hist2d.GetNbinsX()
+    ax = hist2d.GetXaxis()
+    xbins = array('f',[(ax.GetBinLowEdge(b+1) if b < nx else ax.GetBinUpEdge(b+1)) for b in xrange(0,nx+1)])
+    proj = ROOT.TH1D(name,name,nx,xbins); proj.SetDirectory(None)
+    proj.GetXaxis().SetTitle(ax.GetTitle()) # in case
+    ys = range(y1,y2+1)
+    for ix in xrange(1,nx+1):
+        proj.SetBinContent(ix, sum(hist2d.GetBinContent(ix,y) for y in ys))
+        proj.SetBinError(ix, sqrt(sum(hist2d.GetBinError(ix,y)**2 for y in ys)))
+    return proj
 
 def cropNegativeBins(histo):
             if "TH1" in histo.ClassName():
@@ -232,8 +245,7 @@ class HistoWithNuisances:
                 if not _isNullHistogram(h): return False
         return True
     def Clone(self,newname):
-        h = HistoWithNuisances(self.central)
-        h.central.SetName(newname)
+        h = HistoWithNuisances(_cloneNoDir(self.central, newname))
         for v,p in self.variations.iteritems():
             h.variations[v] = map(lambda x: _cloneNoDir(x,x.GetName()), p)
         if self.nominal == self.central:
@@ -579,6 +591,22 @@ class HistoWithNuisances:
             scaledCopy = other.Clone("tmp")
             scaledCopy.Scale(scaleFactor)
             self += scaledCopy
+    def projectionX(self,name,iy1,iy2):
+        h = HistoWithNuisances(_projectionXNoDir(self.central,name,iy1,iy2))
+        h.central.SetDirectory(None)
+        for v,p in self.variations.iteritems():
+            h.variations[v] = (_projectionXNoDir(p[0], "%s_%s_up"   % (name,v), iy1,iy2),
+                               _projectionXNoDir(p[1], "%s_%s_down" % (name,v), iy1,iy2))
+            for hi in h.variations[v]: hi.SetDirectory(None)
+        if self.nominal == self.central:
+            h.nominal = h.central
+        else:
+            h.nominal = _projectionXNoDir(self.nominal, name+"_nominal", iy1,iy2)
+            h.nominal.SetDirectory(None)
+        if self._rooFit: h.setupRooFit(self._rooFit["context"])
+        h._postFit = self._postFit
+        h._usePostFit = self._usePostFit
+        return h
     def writeToFile(self,tfile,writeVariations=True,takeOwnership=True):
         tfile.WriteTObject(self.nominal, self.nominal.GetName())
         for key,vals in self.variations.iteritems():
