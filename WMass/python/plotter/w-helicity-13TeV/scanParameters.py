@@ -346,7 +346,7 @@ if __name__ == "__main__":
             mg.Add(tmp_graph)
             mg.Add(tmp_graph_nooffset)
             mg.Draw('ap')
-            mg.GetYaxis().SetRangeUser(-3., 10.)
+            mg.GetYaxis().SetRangeUser(-1.,  4.)
             mg.GetYaxis().SetTitle(tmp_graph.GetYaxis().GetTitle())
             mg.GetXaxis().SetRangeUser(tmp_graph.GetXaxis().GetXmin(), tmp_graph.GetXaxis().GetXmax())
             ##if 'r_W' in par:
@@ -364,7 +364,7 @@ if __name__ == "__main__":
             lat.DrawLatex(0.35, 0.75, '+1 #sigma {sol2:.3f}'.format(sol2=sol2))
     
             uncertainties     .append( (par, (abs(sol1-tmp_val)+abs(sol2-tmp_val))/2. ) )  ## take the average of the uncertainty left and right
-            uncertainties_josh.append( (par, uncs_josh[par] ) )
+            #uncertainties_josh.append( (par, uncs_josh[par] ) )
 
             tmp_linel = ROOT.TLine(sol1, 1., sol1, 0.)
             tmp_linel.SetLineStyle(3); tmp_line.SetLineWidth(2);

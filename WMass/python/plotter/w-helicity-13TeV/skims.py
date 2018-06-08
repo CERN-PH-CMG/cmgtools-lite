@@ -6,6 +6,7 @@
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
 
 ## MUONS
+##============================================
 # DATA:
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/skims/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt --mo
 # MC:  
@@ -18,6 +19,14 @@
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-signal.txt w-helicity-13TeV/wmass_mu/skimming/signalCuts.txt /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_NoSkim5/ /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_2018-03-21_SIGNAL_1muskim/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
 
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
+
+# DY 2l skim:
+# first data:
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts2mu.txt /eos/cms/store/cmst3/user/mdunser/wMassTrees/2018-02-03-legacySingleMu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_2018-05-15_2muskim/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
+#
+# then MC (including W?)
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts2mu.txt /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/ /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_2018-05-15_MC_2muskim/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt --mo
+# =============================================
 
 ### FRIEND TREES ###
 # then skim the friend trees, using the event lists saved from te previous step
