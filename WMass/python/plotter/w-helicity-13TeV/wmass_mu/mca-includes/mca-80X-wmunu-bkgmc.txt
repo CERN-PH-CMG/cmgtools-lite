@@ -1,4 +1,4 @@
-Z           : DYJetsToLL_M50_part*                : 1921.8*3                                              ; FillColor=ROOT.kAzure+2 , Label="Z", NormSystematic=0.04
+#Z           : DYJetsToLL_M50_*                    : 1921.8*3                                              ; FillColor=ROOT.kAzure+2 , Label="Z", NormSystematic=0.04
 
 Top         : TTJets_SingleLeptonFromT_part*      : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.09
 Top         : TTJets_SingleLeptonFromTbar_part*   : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.09
