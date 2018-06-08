@@ -304,7 +304,7 @@ if __name__ == "__main__":
                 if 'Wplus' in par or 'Wminus' in par:
                     pnew = par.replace('r_','')
                     pnew = pnew.split('_')
-                    pnew.insert(-2, 'mu')
+                    pnew.insert(-2, 'mu' if 'Wmu' in options.tensorflow else 'el')
                     pnew = '_'.join(pnew)
                 else:
                     pnew = par
