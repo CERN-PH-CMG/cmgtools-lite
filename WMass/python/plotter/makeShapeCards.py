@@ -134,8 +134,9 @@ def unroll2Dto1D(h):
             newh.SetBinError(bin,h.GetBinError(i+1,j+1))
     for bin in range(1,nbins+1):
         if newh.GetBinContent(bin)<0:
-            print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
-            newh.SetBinContent(bin,0)
+            print 'Warning: found bin with negative event weight! will set to it though!'
+            #print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
+            #newh.SetBinContent(bin,0)
     newh.SetLineWidth(h.GetLineWidth())
     newh.SetLineStyle(h.GetLineStyle())
     newh.SetLineColor(h.GetLineColor())
