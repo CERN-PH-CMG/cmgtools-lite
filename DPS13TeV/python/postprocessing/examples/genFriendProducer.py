@@ -3,8 +3,8 @@ import os, array
 import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from CMGTools.WMass.postprocessing.framework.datamodel import Collection 
-from CMGTools.WMass.postprocessing.framework.eventloop import Module
+from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection 
+from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
 from math import *
 
@@ -84,7 +84,7 @@ class GenQEDJetProducer(Module):
         self.genwvars = ("charge","pt","eta","phi","mass","mt","y","costcs","cost2d","phics","costcm","decayId")
         if "genQEDJetHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/DPS13TeV/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
         else:
             print "genQEDJetHelper_cc.so found in ROOT libraries"
         self._worker = ROOT.GenQEDJetHelper(deltaR)
@@ -93,8 +93,8 @@ class GenQEDJetProducer(Module):
         self.nHessianWeights = 60 #number of output weights
         if "PDFWeightsHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             ROOT.gROOT.ProcessLine(".include /cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/eigen/3.2.2/include")
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/PDFWeightsHelper.cc+" % os.environ['CMSSW_BASE'])
-        mc2hessianCSV = "%s/src/CMGTools/WMass/python/postprocessing/data/gen/NNPDF30_nlo_as_0118_hessian_60.csv" % os.environ['CMSSW_BASE']
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/DPS13TeV/python/postprocessing/helpers/PDFWeightsHelper.cc+" % os.environ['CMSSW_BASE'])
+        mc2hessianCSV = "%s/src/CMGTools/DPS13TeV/python/postprocessing/data/gen/NNPDF30_nlo_as_0118_hessian_60.csv" % os.environ['CMSSW_BASE']
         self._pdfHelper = ROOT.PDFWeightsHelper()
         self._pdfHelper.Init(self.nMCReplicasWeights,self.nHessianWeights,mc2hessianCSV)
     def beginJob(self):
