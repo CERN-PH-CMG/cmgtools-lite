@@ -1,7 +1,7 @@
 import optparse, subprocess, ROOT, datetime, math, array, copy, os
 import numpy as np
 
-#doPUreweighting = True
+doPUreweighting = True
 doPUandSF = False
 
 def submitFRrecursive(ODIR, name, cmd, dryRun=False):
@@ -38,7 +38,10 @@ def readScaleFactor(path, process, reterr = False):
         if 'Process {proc} scaled by'.format(proc=process) in line:
             scale = float(line.split()[4])
             scaleerr = float(line.split()[-1])
-    if not reterr:
+            #if(scale > 1.0):
+            #   scale = 1.0
+            #   scaleerr = 0.0
+    if  not reterr:
         return scale
     else:
         return scale, scaleerr
@@ -75,7 +78,7 @@ def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts,
         for f in friends:
             cmd += ' -F Friends {friends}/tree_Friend_{{cname}}.root'.format(friends=f)
     # cmd += ' --mcc ttH-multilepton/mcc-eleIdEmu2.txt '
-    cmd += ' -W puw2016_nTrueInt_36fb(nTrueInt) ' 
+    cmd += ' -W new_puwts2016(nTrueInt) ' 
     cmd += ' -p '+','.join(processes)
     cmd += ''.join(' -E ^'+cut for cut in enabledcuts )
     cmd += ''.join(' -X ^'+cut for cut in disabledcuts)
@@ -107,8 +110,10 @@ def runefficiencies(trees, friends, targetdir, fmca, fcut, ftight, fxvar, enable
     ## cmd += ' --obj treeProducerWMassEle ' ## the tree is called 'treeProducerWMassEle' not 'tree'
     cmd += ' --groupBy cut '
     ## if doPUreweighting: cmd += ' -W puw_8TeV_nVert_dataWjets(nVert) ' ## adding pu weight
-    # if doPUreweighting: cmd += ' -W puWeight ' ## adding pu weight
+    if doPUreweighting: cmd += ' -W new_puwts2016(nTrueInt)'#new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#new_puwts2016(nTrueInt)'#puWeight' # ' ## adding pu weight
+
     if doPUandSF and not '-W ' in extraopts: cmd += ' -W puWeight*LepGood_effSF[0] '
+
     cmd += ''.join(' -E ^'+cut for cut in enabledcuts )
     cmd += ''.join(' -X ^'+cut for cut in disabledcuts)
     cmd += ' --compare {procs}'.format(procs=(','.join(compareprocesses)  ))
@@ -142,6 +147,7 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     if invertedcuts:
         cmd += ''.join(' -I ^'+cut for cut in invertedcuts )
     if doPUandSF and not '-W ' in extraopts: cmd += ' -W puWeight*LepGood_effSF[0] ' ##_get_muonSF_trgIsoID(LepGood_pdgId[0],LepGood_pt[0],LepGood_eta[0],0)' ## adding pu weight
+    if doPUreweighting: cmd += ' -W new_puwts2016(nTrueInt)'#new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#puWeight' #new_puwts2016(nTrueInt) ' ## adding pu weight
     cmd += ' -o '+targetdir+'/'+'_AND_'.join(plot for plot in plotlist)+'.root'
     if fitdataprocess:
         cmd+= ' --fitData '
@@ -165,10 +171,10 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
     
     #sfs = calculateScalefactors(False, sfdate)
 
-    targetcarddir = 'cards_{date}{pf}_MuMu_MVA_gt_pt9_NewFakes'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetcarddir = 'cards_{date}{pf}_MuMu_New_MVAWP_Fakes_PU'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends_latest_jets/', trees+'/friends_latest_bdt/']
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_MVA_gt_pt9_NewFakes/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_MVA_gt_pt9_NewFakes_MaxPtCut/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt'#cuts_results.txt
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -209,10 +215,10 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
             mumusf = 0.95
             extraopts = ' -W {sf:.3f} --showIndivSigs'.format(sf=mumusf) # --plotmode=norm
             #makeplots = ['lepMVA1_mumu','lepMVA2_mumu']
-            #            makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] 
-            #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]
+            #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] 
+            #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]#'BDT_wz_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]
             #            makeplots=['pt_eta_elel_OS','pt_eta_elel_OS','mll_elel']
-            makeplots=['pt2_mumu','met_mumu','pt1_mumu','mt1_mumu','mt2_mumu','dphiLep_mumu','pt2_mumu','eta_sum_mumu','dphilll2_mumu','etaprod_mumu','mt1_mumu','met_mumu','mt2ll_mumu','mtll_mumu','dphil2met_mumu','mll_mumu','BDT_wz_mumu_20bins','BDT_fakes_mumu_20bins']
+            makeplots=['pt1_mumu','met_mumu','nVert_mumu','pt2_mumu','mt1_mumu','mt2_mumu','dphiLep_mumu','pt2_mumu','eta_sum_mumu','dphilll2_mumu','etaprod_mumu','mt1_mumu','met_mumu','mt2ll_mumu','mtll_mumu','dphil2met_mumu','mll_mumu','BDT_wz_mumu_20bins','BDT_fakes_mumu_20bins']
 
             runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
@@ -316,12 +322,12 @@ def makeFakeRatesFast(recalculate):
 
     ##  python runDPS.py --fr --recalculate --submitFR
 
-
     ## this here is the usual stuff, but the paths are still wrong. we need to find the 1l skims that have mvaTTH inside
+
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_fr_2016/'
-    #friends   = trees+'/friends/'
-    friends   ='/afs/cern.ch/work/a/anmehta/work/Test/Test2/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/postprocessing/JetCleaning_1lskim_DblMu_friendsMay30_v1/'
-    targetdir = '/eos/user/a/anmehta/www/Muon_fakerates_Abseta_{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    #friends  ='/afs/cern.ch/work/a/anmehta/work/Test/Test2/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/postprocessing/JetCleaning_1lskim_DblEl_friendsJune07_All/'
+    friends   = trees+'/friends/'
+    targetdir = '/eos/user/a/anmehta/www/Muon_fakerates_LooserCuts_EWKcombined_PU{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     ## accordingly we have to change the mca file here. we also need to adapt the cuts file here.
     ## also the tight cut should now be 0.9 if we are moving to what the tHq people use
     fmca   = 'dpsww13TeV/dps2016/New_FRfast/mca_fr.txt' 
@@ -330,12 +336,12 @@ def makeFakeRatesFast(recalculate):
     ftight = 'dpsww13TeV/dps2016/New_FRfast/tightCut.txt'    
 
     ## we need datasets in our mca that are called QCD, WandZ, and the data. WandZ should be a combo of W+jets and Z+jets
-    processes = ['QCD', 'WandZ', 'data']
-    compprocs = ['QCD', 'WandZ', 'data','data_sub']
+    processes = ['QCD', 'WandZ','data']
+    compprocs = ['QCD', 'WandZ','data','data_sub']
     fittodata = ['QCD', 'WandZ']
 
     ## these are the plots that are made. a scale factor is derived from the first plot in this list. in this case MT
-    makeplots = ['mtl1pf','l1mvaTTH']#'ptl1','etal1','nJetAll','nJet40','nJet30','nJet25','lep_jet_dphi']
+    makeplots = ['mtl1pf','pfmet','rho','nVert','l1mvaTTH','ptl1','etal1','pfmet']#'nJetAll','nJet40','nJet30','nJet25','lep_jet_dphi'
     
     ## copy the pT binning here from the xvars.txt file which is in dpsww13TeV/dps2016/FRfast/xvars.txt
     binning = [20,23,26,29,32,35,38,41,45,50,55,65,100]
@@ -351,8 +357,8 @@ def makeFakeRatesFast(recalculate):
     h_fakerate_mc   .Sumw2()
     h_fakerate_data .GetZaxis().SetRangeUser(0.01,0.45)
     h_fakerate_mc   .GetZaxis().SetRangeUser(0.01,0.45)
-    h_fakerate_data .GetXaxis().SetTitle('p_{T} mu'); h_fakerate_data .GetYaxis().SetTitle('#eta mu')
-    h_fakerate_mc   .GetXaxis().SetTitle('p_{T} mu'); h_fakerate_mc   .GetYaxis().SetTitle('#eta mu')
+    h_fakerate_data .GetXaxis().SetTitle('p_{T} #mu'); h_fakerate_data .GetYaxis().SetTitle('#eta #mu')
+    h_fakerate_mc   .GetXaxis().SetTitle('p_{T} #mu'); h_fakerate_mc   .GetYaxis().SetTitle('#eta #mu')
 
     ## here's the prompt rate.
     h_name  = 'promptrate_mu'; h_title = 'promptrates muons'
@@ -362,8 +368,8 @@ def makeFakeRatesFast(recalculate):
     h_promptrate_mc   .Sumw2()
     h_promptrate_data .GetZaxis().SetRangeUser(0.5,1.00)
     h_promptrate_mc   .GetZaxis().SetRangeUser(0.5,1.00)
-    h_promptrate_data .GetXaxis().SetTitle('p_{T} mu'); h_promptrate_data .GetYaxis().SetTitle('#eta mu')
-    h_promptrate_mc   .GetXaxis().SetTitle('p_{T} mu'); h_promptrate_mc   .GetYaxis().SetTitle('#eta mu')
+    h_promptrate_data .GetXaxis().SetTitle('p_{T} #mu'); h_promptrate_data .GetYaxis().SetTitle('#eta #mu')
+    h_promptrate_mc   .GetXaxis().SetTitle('p_{T} #mu'); h_promptrate_mc   .GetYaxis().SetTitle('#eta #mu')
 
     ## add MT cut to the eff plot!
     fakerates = {}; promptrates = {}
@@ -406,8 +412,11 @@ def makeFakeRatesFast(recalculate):
         ## now if recalculate is set to true it will run the plots for the WandZ scale factor
         if recalculate: runplots(trees, friends, tmp_td, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, newplots, True, extraopts)
         printAggressive('DONE MAKING THE PLOTS TO DERIVE THE EWK SCALE FACTORS!')
+
         scales['qcd_{eta}'  .format(eta=etastring)] = readScaleFactor(tmp_td+'/mu_{plot}.txt'.format(plot=makeplots[0]), 'QCD')
         scales['wandz_{eta}'.format(eta=etastring)] = readScaleFactor(tmp_td+'/mu_{plot}.txt'.format(plot=makeplots[0]), 'WandZ')
+        #scales['top_{eta}'.format(eta=etastring)] = readScaleFactor(tmp_td+'/mu_{plot}.txt'.format(plot=makeplots[0]), 'Top')
+        #scales['dy_{eta}'.format(eta=etastring)] = readScaleFactor(tmp_td+'/mu_{plot}.txt'.format(plot=makeplots[0]), 'DY')
 
         ## IMPORTANT
         ## now we enable the MT < 40 GeV cut, and disable again the tight mvaTTH cut
@@ -415,7 +424,10 @@ def makeFakeRatesFast(recalculate):
         disable = ['muonTightMVA']
         ##why do we scale QCD. we need to subtract contributions from EWK processes only ??
         scalethem = {'QCD'  : scales['qcd_{eta}'  .format(eta=etastring)],
-                     'WandZ': scales['wandz_{eta}'.format(eta=etastring)]}
+                     'WandZ': scales['wandz_{eta}'.format(eta=etastring)]
+                     #            'Top': scales['top_{eta}'.format(eta=etastring)],
+                     #'DY': scales['dy_{eta}'.format(eta=etastring)],
+                     }
 
         ## this file has the pT binning that we want for the FR
         fxvar  = 'dpsww13TeV/dps2016/New_FRfast/xvars.txt'
@@ -423,12 +435,12 @@ def makeFakeRatesFast(recalculate):
         ## this now remakes the plots with the MT cut included after scaling the QCD and the WandZ
         printAggressive('SCALING THE PROCESSES BY FACTORS')
         print scalethem
-        if recalculate: runplots(trees, friends, tmp_td+'/mTCutIncluded/', fmca, fcut, fplots, enable, disable, processes, scalethem, [], newplots, True, extraopts) ## don't fit to data anymore  
+        if recalculate: runplots(trees, friends, tmp_td+'/mTCutIncluded/', fmca, fcut, fplots, enable, disable, processes, scalethem, [], newplots, True, extraopts) ## don't fit to data anymore  #here1
         extraopts += ' --ratioRange 0 2 --sp QCD '##we calculate ratios (in the ratio plot) w.r.t QCD sample
 
         ## runefficiencies now produces the actual FR numbers (and PR which is taken from the WandZ)
         ## the numbers are read from the output and filled into the proper dictionary and histograms
-        if recalculate: runefficiencies(trees, friends, tmp_td+'/fr_mu_{eta}'.format(eta=etastring), fmca, fcut, ftight, fxvar, enable, disable, scalethem,compprocs, True, extraopts)
+        if recalculate: runefficiencies(trees, friends, tmp_td+'/fr_mu_{eta}'.format(eta=etastring), fmca, fcut, ftight, fxvar, enable, disable, scalethem,compprocs, True, extraopts) #here2
         fakerates['fr_mu_qcd_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'QCD')
         fakerates['fr_mu_dat_{eta}'.format(eta=etastring)] = readFakerate(tmp_td+'/fr_mu_{eta}.txt'.format(eta=etastring),'Data - EWK') 
         
@@ -494,10 +506,10 @@ def makeFakeRatesFast(recalculate):
         outfile = ROOT.TFile(targetdir+'/promptrateMap_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
         h_promptrate_data.Write()
         h_promptrate_mc  .Write()
-        #h_promptrate_data_frUp.Write()
-        #h_promptrate_mc_frUp  .Write()
-        #h_promptrate_data_frDn.Write()
-        #h_promptrate_mc_frDn  .Write()
+        #        h_promptrate_data_frUp.Write()
+        #       h_promptrate_mc_frUp  .Write()
+        #      h_promptrate_data_frDn.Write()
+        #     h_promptrate_mc_frDn  .Write()
         outfile.Close()
         
         print scales
@@ -527,8 +539,8 @@ def makeFakeRatesFast(recalculate):
             mg = ROOT.TMultiGraph(); pols = []
             for rate in ['pr', 'fr']:
 
-                pol0 = ROOT.TF1("{r}_pol0_{eta}".format(r=rate,eta=etastring), "[0]        ", 20., 50.)
-                pol1 = ROOT.TF1("{r}_pol1_{eta}".format(r=rate,eta=etastring), "[1]*x + [0]", 20., 50.)
+                pol0 = ROOT.TF1("{r}_pol0_{eta}".format(r=rate,eta=etastring), "[0]        ", 20., 45.)
+                pol1 = ROOT.TF1("{r}_pol1_{eta}".format(r=rate,eta=etastring), "[1]*x + [0]", 20., 45.)
                 errf= ROOT.TF1("{r}_errf_{eta}".format(r=rate,eta=etastring), "[0]*TMath::Erf((x-[1])/[2])", 20., 100.)
                 
                 if rate == 'fr':
@@ -546,8 +558,8 @@ def makeFakeRatesFast(recalculate):
                     #pol0.SetLineColor(ROOT.kBlue)   ; pol0.SetLineWidth(2)
                     #pol1.SetLineColor(ROOT.kAzure-3); pol1.SetLineWidth(2)
                     errf.SetLineColor(ROOT.kCyan); errf.SetLineWidth(2)
-                    errf.SetParameter(0, 2.5);
-                    errf.SetParameter(1, 2.5);
+                    errf.SetParameter(0, 2.1);
+                    errf.SetParameter(1, 2.1);
                     errf.SetParameter(2, 1.52);
 
                     #pol0.SetParLimits(1, 0.1, 1.1)
@@ -558,8 +570,8 @@ def makeFakeRatesFast(recalculate):
                 mg.Add(copy.deepcopy(graph))
 
                 if rate == 'fr':
-                    graph.Fit("{r}_pol0_{eta}".format(r=rate,eta=etastring), "M", "", 20., 50.)
-                    graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 20., 50.)
+                    graph.Fit("{r}_pol0_{eta}".format(r=rate,eta=etastring), "M", "", 20., 45.)
+                    graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 20., 45.)
 
                     pol0_chi2 = pol0.GetChisquare(); pol0_ndf = pol0.GetNDF()
                     pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
@@ -596,7 +608,7 @@ def makeFakeRatesFast(recalculate):
 
                     h_fr_smoothed_data.SetBinContent(etabin, 2, bestfunc.GetParameter(1) if bestfunc.GetNpar() > 1 else 0.)
                     h_fr_smoothed_data.SetBinError  (etabin, 2, bestfunc.GetParError (1) if bestfunc.GetNpar() > 1 else 0.)
-                    pols.append(copy.deepcopy(pol0))
+                    #pols.append(copy.deepcopy(pol0))
                     pols.append(copy.deepcopy(pol1))
                 else:
                     h_pr_smoothed_data.SetBinContent(etabin, 1, bestfunc.GetParameter(0))

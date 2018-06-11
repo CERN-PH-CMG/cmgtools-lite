@@ -13,16 +13,32 @@ class lepSFProducer(Module):
             mu_h = ["IsoMu24_OR_IsoTkMu24_PtEtaBins/pt_abseta_ratio",
                     "MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio",
                     "TightISO_TightID_pt_eta/pt_abseta_ratio"]
+        elif muonSelectionTag=="TightMVAWP_2016":
+            mu_f=["lepMVAEffSF_m_2lss.root"]
+            mu_h = ["sf"]
+        else:
+            print "Not foreseen WP: ",electronSelectionTag
+            mu_f  = []
+            mu_h  = []
         if electronSelectionTag=="GPMVA90_2016":
             el_f = ["EGM2D_eleGSF.root","EGM2D_eleMVA90.root"]
+            el_h = ["EGamma_SF2D", "EGamma_SF2D"]
+
         elif electronSelectionTag=="CutBasedTight_2016":
             el_f = ["EGM2D_eleGSF.root","EGM2D_eleCutBasedTightWP.root"]
+            el_h = ["EGamma_SF2D", "EGamma_SF2D"]
+                    
         elif electronSelectionTag=="CutBasedMedium_2016":
             el_f = ["EGM2D_eleGSF.root","EGM2D_eleCutBasedMediumWP.root"]
+            el_h = ["EGamma_SF2D", "EGamma_SF2D"]
+        
+        elif electronSelectionTag=="TightMVAWP_2016":
+            el_f = ["lepMVAEffSF_e_2lss.root"]
+            el_h = ["sf"]
         else:
             print "Not foreseen WP: ",electronSelectionTag
             el_f = []
-        el_h = ["EGamma_SF2D", "EGamma_SF2D"]
+        #        el_h = ["EGamma_SF2D", "EGamma_SF2D"]
         mu_f = ["%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in mu_f]
         el_f = ["%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in el_f]
 
@@ -121,5 +137,5 @@ class lepTrgSFProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-lepSF = lambda : lepSFProducer( "TightWP_2016", "CutBasedTight_2016")
+lepSF = lambda : lepSFProducer( "TightMVAWP_2016", "TightMVAWP_2016")
 trgSF = lambda : lepTrgSFProducer()
