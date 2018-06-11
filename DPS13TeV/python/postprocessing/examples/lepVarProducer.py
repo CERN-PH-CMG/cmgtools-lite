@@ -4,8 +4,8 @@ import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from math import *
 
-from CMGTools.WMass.postprocessing.framework.datamodel import Collection 
-from CMGTools.WMass.postprocessing.framework.eventloop import Module
+from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection 
+from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 class lepIsoEAProducer(Module):
@@ -14,7 +14,7 @@ class lepIsoEAProducer(Module):
         self.EAinputfile = EAfile
         if "/EffectiveAreas_cc.so" not in ROOT.gSystem.GetLibraries():
             ROOT.gSystem.Load("$CMSSW_RELEASE_BASE/lib/$SCRAM_ARCH/libFWCoreParameterSet.so")
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/EffectiveAreas.cc+" % os.environ['CMSSW_BASE'])
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/DPS13TeV/python/postprocessing/helpers/EffectiveAreas.cc+" % os.environ['CMSSW_BASE'])
     def beginJob(self):
         self._worker = ROOT.EffectiveAreas(self.EAinputfile)
     def endJob(self):
@@ -110,7 +110,7 @@ class lepCalibratedEnergyProducer(Module):
         self._worker = ROOT.EnergyScaleCorrection_class(self.corrFile,self.seed)
         self.rng = ROOT.TRandom3()
         self.rng.SetSeed(self.seed)
-        f_resCorr = ROOT.TFile.Open("%s/src/CMGTools/WMass/python/postprocessing/data/leptonScale/el/plot_dm_diff.root" % os.environ['CMSSW_BASE'])
+        f_resCorr = ROOT.TFile.Open("%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonScale/el/plot_dm_diff.root" % os.environ['CMSSW_BASE'])
         self.h_resCorr = f_resCorr.Get("plot_dm_diff").Clone("dm_diff")
         self.h_resCorr.SetDirectory(None)
     def endJob(self):
@@ -165,4 +165,4 @@ class lepCalibratedEnergyProducer(Module):
 eleRelIsoEA = lambda : lepIsoEAProducer("%s/src/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt" % os.environ['CMSSW_BASE'])
 lepQCDAwayJet = lambda : lepAwayJetProducer(jetSel = lambda jet : jet.pt > 30 and abs(jet.eta) < 2.4,
                                             pairSel =lambda lep, jet: deltaR(lep.eta,lep.phi, jet.eta, jet.phi) > 0.7)
-eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco")
+eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/DPS13TeV/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco")

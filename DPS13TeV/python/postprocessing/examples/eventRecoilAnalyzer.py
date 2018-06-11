@@ -4,8 +4,8 @@ import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from math import *
 
-from CMGTools.WMass.postprocessing.framework.datamodel import Collection,Object
-from CMGTools.WMass.postprocessing.framework.eventloop import Module
+from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection,Object
+from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 from PhysicsTools.HeppyCore.utils.deltar import deltaR,deltaPhi
  
 class VisibleVectorBoson():

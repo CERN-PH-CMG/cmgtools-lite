@@ -3,13 +3,13 @@ import os
 import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from CMGTools.WMass.postprocessing.framework.datamodel import Collection 
-from CMGTools.WMass.postprocessing.framework.eventloop import Module
+from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection 
+from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 
 class jecUncertProducer(Module):
     def __init__(self,globalTag,uncerts=["Total"],jetFlavour="AK4PFchs"):
 	self.uncerts=[(x,"Jet_jecUncert%s"%x) for x in uncerts]
-        self.unc_factorized_path = "%s/%s_UncertaintySources_%s.txt" % ("%s/src/CMGTools/WMass/python/postprocessing/data/jec/" % os.environ['CMSSW_BASE'], globalTag, jetFlavour)
+        self.unc_factorized_path = "%s/%s_UncertaintySources_%s.txt" % ("%s/src/CMGTools/DPS13TeV/python/postprocessing/data/jec/" % os.environ['CMSSW_BASE'], globalTag, jetFlavour)
 
 
     def beginJob(self):
