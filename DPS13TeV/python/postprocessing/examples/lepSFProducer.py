@@ -17,7 +17,7 @@ class lepSFProducer(Module):
             mu_f=["lepMVAEffSF_m_2lss.root"]
             mu_h = ["sf"]
         else:
-            print "Not foreseen WP: ",electronSelectionTag
+            print "Not foreseen WP: ",muonSelectionTag
             mu_f  = []
             mu_h  = []
         if electronSelectionTag=="GPMVA90_2016":
