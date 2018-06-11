@@ -7,7 +7,7 @@ from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection
 from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 
 class puWeightProducer(Module):
-    def __init__(self,myfile,targetfile,myhist="pu_mc",targethist="pileup",name="puWeight",norm=True,verbose=False,nvtx_var="nTrueInt"):
+    def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="puWeight",norm=True,verbose=False,nvtx_var="nTrueInt"):
         self.myh = self.loadHisto(myfile,myhist)
         self.targeth = self.loadHisto(targetfile,targethist)
         self.name = name
@@ -45,10 +45,20 @@ class puWeightProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-pufile_mc="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/pileup_profile_Summer16.root" % os.environ['CMSSW_BASE']
-pufile_data="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/PileupData_GoldenJSON_Full2016.root" % os.environ['CMSSW_BASE']
-pufile_data_2016BF="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/PileupData_GoldenJSON_2016BF.root" % os.environ['CMSSW_BASE']
-pufile_data_mc_2016G="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/Pileup_Data2016G_MCSummer16MC.root" % os.environ['CMSSW_BASE']
-puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pu_mc","pileup",name="puw",verbose=True)
-puWeight2016BF = lambda : puWeightProducer(pufile_mc,pufile_data_2016BF,"pu_mc","pileup",name="puwBF",verbose=True)
-puWeight2016G =lambda : puWeightProducer(pufile_data_mc_2016G,pufile_data_mc_2016G,"pu_mc","pileup",name="puwG",verbose=True)
+#pufile_mc="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/pileup_profile_Summer16.root" % os.environ['CMSSW_BASE']
+#pufile_data="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/PileupData_GoldenJSON_Full2016.root" % os.environ['CMSSW_BASE']
+#pufile_data_2016BF="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/PileupData_GoldenJSON_2016BF.root" % os.environ['CMSSW_BASE']
+#pufile_data_mc_2016G="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/Pileup_Data2016G_MCSummer16MC.root" % os.environ['CMSSW_BASE']
+#puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pu_mc","pileup",name="puw",verbose=True)
+#puWeight2016BF = lambda : puWeightProducer(pufile_mc,pufile_data_2016BF,"pu_mc","pileup",name="puwBF",verbose=True)
+#puWeight2016G =lambda : puWeightProducer(pufile_data_mc_2016G,pufile_data_mc_2016G,"pu_mc","pileup",name="puwG",verbose=True)
+
+
+pufile_mc="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/MC_PUhist_2016_Moriond17MC.root" % os.environ['CMSSW_BASE']
+pufile_data="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/DataPileupHistogram_23Sep2016ReReco_Collisions16_JSON_Xsec_69pt2.root" % os.environ['CMSSW_BASE']
+pufile_data_Xsec_up="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/DataPileupHistogram_23Sep2016ReReco_Collisions16_JSON_Xsecup_72383pt2.root" % os.environ['CMSSW_BASE']
+pufile_data_Xsec_down="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/DataPileupHistogram_23Sep2016ReReco_Collisions16_JSON_Xsecdown_66016pt8.root" % os.environ['CMSSW_BASE']
+
+puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pileup","pileup",name="puw",verbose=True)
+puWeightXsecup = lambda : puWeightProducer(pufile_mc,pufile_data_Xsec_up,"pileup","pileup",name="puwUp",verbose=True)
+puWeightXsecdown =lambda : puWeightProducer(pufile_mc,pufile_data_Xsec_down,"pileup","pileup",name="puwDown",verbose=True)

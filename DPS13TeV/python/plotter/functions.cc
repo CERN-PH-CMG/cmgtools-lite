@@ -203,6 +203,16 @@ float puw2016_nTrueInt_BF(int nTrueInt) { if (nTrueInt<60) return _puw2016_nTrue
 float _puw2016_nTrueInt_36fb[100] = {0.3505407355600995, 0.8996968628890968, 1.100322319466069, 0.9562526765089195, 1.0366251229154624, 1.0713954619016586, 0.7593488199769544, 0.47490309461978414, 0.7059895997695581, 0.8447022252423783, 0.9169159386164522, 1.0248924033173097, 1.0848877947714115, 1.1350984224561655, 1.1589888429954602, 1.169048420382294, 1.1650383018054549, 1.1507200023444994, 1.1152571438041776, 1.0739529436969637, 1.0458014000030829, 1.032500407707141, 1.0391236062781293, 1.041283620738903, 1.0412963370894526, 1.0558823002770783, 1.073481674823461, 1.0887053272606795, 1.1041701696801014, 1.123218903738397, 1.1157169321377927, 1.1052520327174429, 1.0697489590429388, 1.0144652740600584, 0.9402657069968621, 0.857142825520793, 0.7527112615290031, 0.6420618248685722, 0.5324755829715156, 0.4306470627563325, 0.33289171600176093, 0.24686361729094983, 0.17781595237914027, 0.12404411884835284, 0.08487088505600057, 0.056447805688061216, 0.03540829360547507, 0.022412461576677457, 0.013970541270658443, 0.008587896629717911, 0.004986410514292661, 0.00305102303701641, 0.001832072556146534, 0.0011570757619737708, 0.0008992999249003301, 0.0008241241729452477, 0.0008825716073180279, 0.001187003960081393, 0.0016454104270429153, 0.0022514113879764414, 0.003683196037880878, 0.005456695951503178, 0.006165248770884191, 0.007552675218762607, 0.008525338219226993, 0.008654690499815343, 0.006289068906974821, 0.00652551838513972, 0.005139581024893171, 0.005115751962934923, 0.004182527768384693, 0.004317593022028565, 0.0035749335962533355, 0.003773660372937113, 0.002618732319396435, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 float puw2016_nTrueInt_36fb(int nTrueInt) { if (nTrueInt<100) return _puw2016_nTrueInt_36fb[nTrueInt]; else return 0; }
 
+float _new_puwts2016[100]={0.366077,0.893925,1.19772,0.9627,1.12098,1.16486,0.795599,0.495824,0.742182,0.878856,0.964232,1.0725,1.12534,1.17603,1.20208,1.20764,1.20018,1.18268,1.144,1.09663,1.0656,1.05117,1.0516,1.05063,1.04986,1.05817,1.07216,1.08303,1.09569,1.10787,1.09462,1.08262,1.04125,0.985752,0.910807,0.820923,0.716787,0.610013,0.503118,0.404841,0.309195,0.22792,0.16369,0.11318,0.0773005,0.0509221,0.0318936,0.0200936,0.0122631,0.00742646,0.00438028,0.00260777,0.00156599,0.000971358,0.000729206,0.000672709,0.000730459,0.000948791,0.00135533,0.00189419,0.00308244,0.00409665,0.00487449,0.00525606,0.00578498,0.00551468,0.00500046,0.00440983,0.00401224,0.00354754,0.00310751,0.00270211,0.00233691,0.00202529,0.00172328,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+
+float new_puwts2016(int nTrueInt) { if (nTrueInt<100) return _new_puwts2016[nTrueInt]; else return 0; }
+
+
+float _new_puwts_HLT_Mu17_prescaled_2016[100]={1.36102,2.33936,2.82024,1.89362,2.36757,2.43088,2.56461,7.67523,14.612,8.00805,4.54726,3.90327,3.19027,2.72778,2.4594,2.24152,2.01599,1.78067,1.5265,1.27223,1.04991,0.871267,0.743476,0.650848,0.584627,0.539026,0.503884,0.470304,0.438861,0.408835,0.372656,0.341062,0.304517,0.268198,0.230692,0.193453,0.156973,0.124039,0.0950057,0.0711117,0.0506811,0.0350182,0.023702,0.0155383,0.010127,0.0064098,0.00388694,0.00239396,0.00144895,0.000892292,0.000561206,0.000388746,0.000310786,0.00029568,0.000360301,0.000497828,0.000693098,0.00101452,0.00152231,0.00216778,0.00355203,0.00473256,0.00563624,0.00607942,0.00669199,0.00637959,0.00578481,0.00510157,0.00464163,0.00410404,0.00359498,0.00312599,0.0027035,0.002343,0.00199361,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+float new_puwts_HLT_Mu17_prescaled_2016(int nTrueInt) { if (nTrueInt<100) return _new_puwts_HLT_Mu17_prescaled_2016[nTrueInt]; else return 0; }
+
 // functions to assess if events pass given ID cuts
 // isEB can be defined as (LepGood1_etaSc)<1.479 
 // note that 2016 cut-based ID defines thesholds for EB and EE using SuperCluster eta
@@ -580,304 +590,295 @@ float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep
 
 int Binnumberset1D(float BDTx,float BDTy){
   /*
-  //v1
-  if(BDTx <= 0.3    && BDTy <= 0.4) return 2;
-  if(BDTx >  0.3    && BDTy <= 0.4) return 4;
-  if(BDTx <= 0.5    && BDTy >  0.4  && BDTy <= 0.8) return 3;
-  if(BDTx >  0.5    && BDTx <= 0.8  && BDTy >  0.4 && BDTy <= 0.8) return 1;
-  if(BDTx >  0.8    && BDTx <= 0.95 && BDTy >  0.4 && BDTy <= 0.8) return 6;
-  if(BDTx >  0.95   && BDTy >  0.4  && BDTy <= 0.75) return 10;
-  if(BDTx >  0.95   && BDTy >  0.75 && BDTy <= 0.95) return 7;
-  if(BDTx >  0.95   && BDTy >  0.95 ) return 8;
-  if(BDTx >  0.8    && BDTx <= 0.95 && BDTy >  0.8 ) return 5;
-  if(BDTx >  0.35   && BDTx <= 0.8  && BDTy >  0.8 ) return 9;
 
   //v2
   float a=0.35; float b=0.4; float c=0.6; float d=0.75; float e=0.8; float f =0.95;
   if(BDTx <= 0.15 && BDTy <=b) return 4;
-  if(BDTx > 0.15 &&  BDTx <= 0.4 && BDTy <=0.4) return 2;
-  if(BDTx > 0.4  && BDTy <=b) return 5;
-  if(BDTx <=0.35 && BDTy > b && BDTy <=e) return 11;
-  if(BDTx >0.35 && BDTx <=0.6 && BDTy > b && BDTy <=0.6) return 12;
-  if(BDTx >0.35 && BDTx <=0.6 && BDTy > 0.6 && BDTy <=e) return 10;
-  if(BDTx > 0.6  && BDTx <=e  && BDTy > b && BDTy <=c) return 6;
-  if(BDTx > 0.6  && BDTx <=e  && BDTy > c && BDTy <=e) return 3;
-  if(BDTx > e && BDTx <=f && BDTy > b && BDTy <=0.85) return 1;
-  if(BDTx > f   && BDTy > b && BDTy <=0.9) return 9;
-  if(BDTx > f   && BDTy > 0.9 && BDTy <=f) return 14;
-  if(BDTx > f   && BDTy > f ) return 7;
-  if(BDTx > e && BDTx <=f  && BDTy > 0.85 && BDTy <=0.9 ) return 8;
-  if(BDTx > e && BDTx <=f  && BDTy >0.9 ) return 15;
-  if(BDTx <=0.8  && BDTy >e ) return 13;
+  else if(BDTx > 0.15 &&  BDTx <= 0.4 && BDTy <=0.4) return 2;
+  else if(BDTx > 0.4  && BDTy <=b) return 5;
+  else if(BDTx <=0.35 && BDTy > b && BDTy <=e) return 11;
+  else if(BDTx >0.35 && BDTx <=0.6 && BDTy > b && BDTy <=0.6) return 12;
+  else if(BDTx >0.35 && BDTx <=0.6 && BDTy > 0.6 && BDTy <=e) return 10;
+  else if(BDTx > 0.6  && BDTx <=e  && BDTy > b && BDTy <=c) return 6;
+  else if(BDTx > 0.6  && BDTx <=e  && BDTy > c && BDTy <=e) return 3;
+  else if(BDTx > e && BDTx <=f && BDTy > b && BDTy <=0.85) return 1;
+  else if(BDTx > f   && BDTy > b && BDTy <=0.9) return 9;
+  else if(BDTx > f   && BDTy > 0.9 && BDTy <=f) return 14;
+  else if(BDTx > f   && BDTy > f ) return 7;
+  else if(BDTx > e && BDTx <=f  && BDTy > 0.85 && BDTy <=0.9 ) return 8;
+  else if(BDTx > e && BDTx <=f  && BDTy >0.9 ) return 15;
+  else if(BDTx <=0.8  && BDTy >e ) return 13;
   
   //v3
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
-  if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
-  if(BDTx > 0.5 && BDTx <= 0.7 && BDTy > 0.25 && BDTy <=0.65) return 3;
-  if(BDTx > 0.7 && BDTy > 0.25 && BDTy <=0.65 ) return 4;
-  if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 5;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 6;
-  if(BDTx <=0.5 && BDTy <= 0.2)return 7;
-  if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 8;
-  if(BDTx > 0.95 && BDTy > 0.95 ) return 9;
-  if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 10;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
-  if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
-  if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 13;
-  if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 14;
-  if(BDTx >0.5 && BDTy <= 0.25)return 15;
+  else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
+  else if(BDTx > 0.5 && BDTx <= 0.7 && BDTy > 0.25 && BDTy <=0.65) return 3;
+  else if(BDTx > 0.7 && BDTy > 0.25 && BDTy <=0.65 ) return 4;
+  else if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 5;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 6;
+  else if(BDTx <=0.5 && BDTy <= 0.2)return 7;
+  else if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 8;
+  else if(BDTx > 0.95 && BDTy > 0.95 ) return 9;
+  else if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 10;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
+  else if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
+  else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 13;
+  else if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 14;
+  else if(BDTx >0.5 && BDTy <= 0.25)return 15;
 
   //v4
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
-  if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
-  if(BDTx > 0.5 && BDTx <= 0.7 && BDTy <=0.65) return 3;
-  if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 4;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
-  if(BDTx <=0.5 && BDTy <= 0.2)return 6;
-  if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 7;
-  if(BDTx > 0.7 && BDTy >0.5  && BDTy <=0.65) return 8;
-  if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 9;
-  if(BDTx > 0.95 && BDTy > 0.95 ) return 10;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
-  if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
-  if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
-  if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
-  if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 15;
+  else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
+  else if(BDTx > 0.5 && BDTx <= 0.7 && BDTy <=0.65) return 3;
+  else if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 4;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
+  else if(BDTx <=0.5 && BDTy <= 0.2)return 6;
+  else if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 7;
+  else if(BDTx > 0.7 && BDTy >0.5  && BDTy <=0.65) return 8;
+  else if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 9;
+  else if(BDTx > 0.95 && BDTy > 0.95 ) return 10;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
+  else if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
+  else if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
+  else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
+  else if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 15;
 
   //v5
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
-  if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
-  if(BDTx > 0.5 && BDTx <= 0.7 && BDTy <=0.65) return 3;
-  if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.9) return 10;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
-  if(BDTx <=0.5 && BDTy <= 0.2)return 6;
-  if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 7;
-  if(BDTx > 0.7 && BDTy >0.5  && BDTy <=0.65) return 8;
-  if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 9;
-  if(BDTx > 0.95 && BDTy > 0.9 ) return 4;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
-  if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
-  if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
-  if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
-  if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 15;
+  else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
+  else if(BDTx > 0.5 && BDTx <= 0.7 && BDTy <=0.65) return 3;
+  else if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.9) return 10;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
+  else if(BDTx <=0.5 && BDTy <= 0.2)return 6;
+  else if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 7;
+  else if(BDTx > 0.7 && BDTy >0.5  && BDTy <=0.65) return 8;
+  else if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 9;
+  else if(BDTx > 0.95 && BDTy > 0.9 ) return 4;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
+  else if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
+  else if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
+  else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
+  else if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 15;
   
   //v6
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
-  if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
-  if(BDTx > 0.5 && BDTx <= 0.7 && BDTy <=0.65) return 3;
-  if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 4;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
-  if(BDTx <=0.5 && BDTy <= 0.2)return 6;
-  if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 7;
-  if(BDTx > 0.7 && BDTy >0.5  && BDTy <=0.65) return 8;
-  if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 9;
-  if(BDTx > 0.95 && BDTx <= 0.975 && BDTy > 0.95 )return 10;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
-  if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65) return 12;
-  if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
-  if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
-  if(BDTx > 0.975 && BDTy > 0.95 ) return 15;
+  else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
+  else if(BDTx > 0.5 && BDTx <= 0.7 && BDTy <=0.65) return 3;
+  else if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 4;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
+  else if(BDTx <=0.5 && BDTy <= 0.2)return 6;
+  else if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 7;
+  else if(BDTx > 0.7 && BDTy >0.5  && BDTy <=0.65) return 8;
+  else if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 9;
+  else if(BDTx > 0.95 && BDTx <= 0.975 && BDTy > 0.95 )return 10;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
+  else if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65) return 12;
+  else if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
+  else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
+  else if(BDTx > 0.975 && BDTy > 0.95 ) return 15;
   
   //v7
   if(BDTx  <= 0.25 && BDTy <= 0.2)return 5;
-  if(BDTx  <= 0.25 && BDTy >  0.2)return 3;
-  if(BDTx  > 0.25  && BDTx <= 0.7  && BDTy <= 0.45)return 2;
-  if(BDTx  > 0.25  && BDTx <= 0.45 && BDTy >  0.45 && BDTy <= 0.65) return 11;
-  if(BDTx  > 0.45  && BDTx <= 0.6  && BDTy >  0.45 && BDTy <= 0.65) return 14;
-  if(BDTx  > 0.6   && BDTx <= 0.7  && BDTy >  0.45 && BDTy <= 0.65) return 9;
-  if(BDTx  > 0.25  && BDTx <= 0.7  && BDTy >  0.65)return 4;
-  if(BDTx  > 0.7   && BDTx <= 0.85 && BDTy <= 0.65)return 10;
-  if(BDTx  > 0.7   && BDTx <= 0.85 && BDTy >  0.65 && BDTy <= 0.8)return 15;
-  if(BDTx  > 0.7   && BDTx <= 0.85 && BDTy >  0.8)return 12;
-  if(BDTx  > 0.85  && BDTx <= 0.9  && BDTy <= 0.65)return 13;
-  if(BDTx  > 0.85  && BDTx <= 0.9  && BDTy >  0.65 && BDTy <= 0.9)return 6;
-  if(BDTx  > 0.85  && BDTy >  0.9)return 1;
-  if(BDTx  > 0.9   && BDTy <= 0.85)return 8;
-  if(BDTx  > 0.9   && BDTy >  0.85 && BDTy <= 0.9)return 7; 
+  else if(BDTx  <= 0.25 && BDTy >  0.2)return 3;
+  else if(BDTx  > 0.25  && BDTx <= 0.7  && BDTy <= 0.45)return 2;
+  else if(BDTx  > 0.25  && BDTx <= 0.45 && BDTy >  0.45 && BDTy <= 0.65) return 11;
+  else if(BDTx  > 0.45  && BDTx <= 0.6  && BDTy >  0.45 && BDTy <= 0.65) return 14;
+  else if(BDTx  > 0.6   && BDTx <= 0.7  && BDTy >  0.45 && BDTy <= 0.65) return 9;
+  else if(BDTx  > 0.25  && BDTx <= 0.7  && BDTy >  0.65)return 4;
+  else if(BDTx  > 0.7   && BDTx <= 0.85 && BDTy <= 0.65)return 10;
+  else if(BDTx  > 0.7   && BDTx <= 0.85 && BDTy >  0.65 && BDTy <= 0.8)return 15;
+  else if(BDTx  > 0.7   && BDTx <= 0.85 && BDTy >  0.8)return 12;
+  else if(BDTx  > 0.85  && BDTx <= 0.9  && BDTy <= 0.65)return 13;
+  else if(BDTx  > 0.85  && BDTx <= 0.9  && BDTy >  0.65 && BDTy <= 0.9)return 6;
+  else if(BDTx  > 0.85  && BDTy >  0.9)return 1;
+  else if(BDTx  > 0.9   && BDTy <= 0.85)return 8;
+  else if(BDTx  > 0.9   && BDTy >  0.85 && BDTy <= 0.9)return 7; 
   
   
   //v8
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
-  if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
-  if(BDTx > 0.5 && BDTx <= 0.65 && BDTy <=0.65) return 3;
-  if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 4;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
-  if(BDTx <=0.5 && BDTy <= 0.2)return 6;
-  if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.75) return 7;
-  if(BDTx > 0.65 && BDTy >0.45  && BDTy <=0.55) return 8;
-  if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.75 && BDTy <=0.95) return 9;
-  if(BDTx > 0.8 && BDTx <= 0.975 && BDTy > 0.95) return 10;
-  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
-  if((BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.95) || (BDTx > 0.65 && BDTy >0.55  && BDTy <=0.65) ) return 12;
-  if(BDTx > 0.65 && BDTy <=0.45 ) return 13;
-  if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
-  if(BDTx > 0.975 && BDTy > 0.975 ) return 15;
+  else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
+  else if(BDTx > 0.5 && BDTx <= 0.65 && BDTy <=0.65) return 3;
+  else if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 4;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 5;
+  else if(BDTx <=0.5 && BDTy <= 0.2)return 6;
+  else if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.75) return 7;
+  else if(BDTx > 0.65 && BDTy >0.45  && BDTy <=0.55) return 8;
+  else if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.75 && BDTy <=0.95) return 9;
+  else if(BDTx > 0.8 && BDTx <= 0.975 && BDTy > 0.95) return 10;
+  else if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
+  else if((BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.95) || (BDTx > 0.65 && BDTy >0.55  && BDTy <=0.65) ) return 12;
+  else if(BDTx > 0.65 && BDTy <=0.45 ) return 13;
+  else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
+  else if(BDTx > 0.975 && BDTy > 0.975 ) return 15;
   
   
   //v9
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
-  if(BDTx  > 0.6 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
-  if(BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65)return 4;
-  if(BDTx  > 0.35 && BDTx <=0.6 && BDTy >0.35 && BDTy <= 0.65)return 5;
-  if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
-  if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 9;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
-  if(BDTx  <= 0.1 )return 12;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
+  else if(BDTx  > 0.6 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
+  else if(BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65)return 4;
+  else if(BDTx  > 0.35 && BDTx <=0.6 && BDTy >0.35 && BDTy <= 0.65)return 5;
+  else if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
+  else if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 9;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
+  else if(BDTx  <= 0.1 )return 12;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
 
   
   //v10
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
-  if(BDTx  > 0.6 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
-  if(BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65)return 4;
-  if(BDTx  > 0.35 && BDTx <=0.6 && BDTy >0.35 && BDTy <= 0.65)return 5;
-  if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.7 && BDTy <=0.75) ) return 7;
-  if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 9;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
-  if((BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy <=0.7))return 11;
-  if(BDTx  <= 0.1 )return 12;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
+  else if(BDTx  > 0.6 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
+  else if(BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65)return 4;
+  else if(BDTx  > 0.35 && BDTx <=0.6 && BDTy >0.35 && BDTy <= 0.65)return 5;
+  else if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.7 && BDTy <=0.75) ) return 7;
+  else if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 9;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
+  else if((BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy <=0.7))return 11;
+  else if(BDTx  <= 0.1 )return 12;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
     
   //v11
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
-  if(BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65)return 4;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.35 && BDTy <= 0.65)return 5;
-  if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
-  if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 9;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
-  if(BDTx  <= 0.1 )return 12;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;  
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
+  else if(BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65)return 4;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.35 && BDTy <= 0.65)return 5;
+  else if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
+  else if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 9;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
+  else if(BDTx  <= 0.1 )return 12;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;  
   
   //v12 
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
-  if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6 ))return 4;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.35 && BDTy <= 0.6)return 5;
-
-  if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
-  if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 9;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
-  if(BDTx  <= 0.1 )return 12;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;  
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
+  else if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6 ))return 4;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.35 && BDTy <= 0.6)return 5;
+  else if((BDTx > 0.25  && BDTx <=0.8 && BDTy <= 0.35) || (BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) )return 6;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
+  else if((BDTx > 0.8  && BDTx <=0.95 && BDTy > 0.95) || (BDTx > 0.85 && BDTy > 0.90 && BDTy <= 0.95) )return 8;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 9;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
+  else if(BDTx  <= 0.1 )return 12;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;  
   
 //v13 (arranged in S/sqrt(B))
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 13;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 3;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 9;
-  if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 7;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 10;
-  if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 11;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 5;
-  if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 4;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 1;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 12;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 8;
-  if(BDTx  <= 0.1 )return 14;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 6;
-  if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 2;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 3;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 9;
+  else if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 7;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 10;
+  else if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 11;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 5;
+  else if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 4;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 1;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 12;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 8;
+  else if(BDTx  <= 0.1 )return 14;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 6;
+  else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 2;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
   
   //v13
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
-  if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 4;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 5;
-
-  if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 6;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
-  if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 8;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 9;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
-  if(BDTx  <= 0.1 )return 12;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
+  else if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 4;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 5;
+  else if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 6;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 7;
+  else if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 8;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 9;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
+  else if(BDTx  <= 0.1 )return 12;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
   
   //v14
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
-  if((BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9)) return 2;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
-  if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 4;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 5;
-  if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 6;
-  if((BDTx  > 0.9 && BDTx  <=0.95 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) || (BDTx  > 0.95 && BDTy <=0.85)) return 7;
-  if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 8;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 9;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
-  if(BDTx  <= 0.1 )return 12;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
+  else if((BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9)) return 2;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 3;
+  else if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 4;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 5;
+  else if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 6;
+  else if((BDTx  > 0.9 && BDTx  <=0.95 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) || (BDTx  > 0.95 && BDTy <=0.85)) return 7;
+  else if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 8;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 9;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 10;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 11;
+  else if(BDTx  <= 0.1 )return 12;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
     
 //v13 (arranged in increasing order of total yields)
 
 
   if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 1;
-  if(BDTx  <= 0.1 )return 4;
-  if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 2;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 3;
-  if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 5;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 6;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 8;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 7;
-  if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 9;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 10;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 13;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 12;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 11;
-  if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 15;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 14;
+  else if(BDTx  <= 0.1 )return 4;
+  else if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 2;
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 3;
+  else if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 5;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 6;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 8;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 7;
+  else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 9;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) ) return 10;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 13;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 12;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 11;
+  else if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 15;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 14;
 
   */
   
   //v13 arranged acc to signal strength(final)
 
   if(BDTx  <= 0.1 )return 1;
-  if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 2;
-  if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 3;
-  if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 4;
-  if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 5;
-  if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 6;
-  if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 7;
-  if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 8;
-  if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 11;
-  if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 12;
-  if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 9;
-  if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) )return 10;
-  if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 13;
-  if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
-  if(BDTx  > 0.95  && BDTy > 0.95)return 15;
-  
+  else if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 2;
+  else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 3;
+  else if(BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.45 && BDTy <= 0.6)return 4;
+  else if((BDTx > 0.1 && BDTx <= 0.25 && BDTy <= 0.1) || (BDTx > 0.25  && BDTx <=0.35 && BDTy <= 0.35) || (BDTx > 0.35 && BDTx <= 0.65 && BDTy <= 0.45) || (BDTx > 0.65 && BDTx <= 0.8 && BDTy <= 0.35) )return 5;
+  else if(BDTx  > 0.65 && BDTx <=0.8 && BDTy >0.35 && BDTy <= 0.65)return 6;
+  else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 7;
+  else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 8;
+  else if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 11;
+  else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 12;
+  else if((BDTx  > 0.3  && BDTx <= 0.65  && BDTy > 0.65) || (BDTx  > 0.35 && BDTx <=0.65 && BDTy >0.6))return 9;
+  else if((BDTx  > 0.9 && BDTy <=0.75) || (BDTx  > 0.85 && BDTx  <=0.9 && BDTy > 0.65 && BDTy <=0.75) )return 10;
+  else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 13;
+  else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
+  else if(BDTx  > 0.95  && BDTy > 0.95)return 15;
+  else{
+    std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
 }
 
 
