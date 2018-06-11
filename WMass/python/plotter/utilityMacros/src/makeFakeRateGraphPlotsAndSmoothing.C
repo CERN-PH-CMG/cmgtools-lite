@@ -184,7 +184,7 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   // TF1 * f1 = new TF1("f1","[0] * (x - 25.) + [1]",25,60);
   // TF1 * f2 = new TF1("f2","[0] * (x - 25.) + [1]",30,46);
 
-  Double_t maxslope = isData ? 0.0005 : 0.01;  
+  Double_t maxslope = isData ? 0.0005 : 0.015;  
 
   if (isEB) {
 
@@ -608,7 +608,7 @@ void doFakeRateGraphPlots(const string& inputFileName = "",
   }
 
   vector<Int_t> colorList = {kBlack, kRed};
-  vector<string> legendEntries = {"data", "datasubtr. EWK MC"};
+  vector<string> legendEntries = {"data", "data subtr. EWK MC"};
   gr.push_back( fr_data );
   gr.push_back( fr_data_subEWKMC );
 
@@ -729,10 +729,10 @@ void doFakeRateGraphPlots(const string& inputFileName = "",
 
 //================================================================
 
-void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_eta_pt_granular_mT40_json32fb_signedEta_pt65_fullWMC/el/comb/",
+void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_eta_pt_granular_mT40_json30p9fb_signedEta_pt65_fullWMC/el/comb/",
 					//const string& outDir_tmp = "SAME", 
-					const string& outDir_tmp = "www/wmass/13TeV/fake-rate/electron/FR_graphs/fakeRate_eta_pt_granular_mT40_json32fb_signedEta_pt65_fullWMC/", 
-					const string& outfileTag = "mT40_json32fb_signedEta_pt65_fullWMC",
+					const string& outDir_tmp = "www/wmass/13TeV/fake-rate/electron/FR_graphs/fakeRate_eta_pt_granular_mT40_json30p9fb_signedEta_pt65_fullWMC/", 
+					const string& outfileTag = "mT40_json30p9fb_signedEta_pt65_fullWMC",
 					const string& histPrefix = "fakeRateNumerator_el_vs_etal1_pt_granular",
 					const Bool_t isMuon = false, 
 					const Bool_t showMergedEWK = true,
@@ -743,7 +743,7 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
 					const vector<Int_t> ptBinIndexQCD = {2},  // should be a number for each eta bin (if only one is given, use it for all)
 					const vector<Int_t> ptBinIndexEWK = {2},  // should be a number for each eta bin (if only one is given, use it for all)
 					const vector<Int_t> ptBinIndexData = {2},  // should be a number for each eta bin (if only one is given, use it for all)
-					const Double_t inputLuminosity = 32.2, // -1 in case luminosity should not be printed
+					const Double_t inputLuminosity = 30.9, // -1 in case luminosity should not be printed
 					const Bool_t scan_vs_eta = true, // see below
 					const Bool_t hasSignedEta = true, // see below
 					const Bool_t noDrawQCD = true

@@ -31,7 +31,7 @@ ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC
 #-------------------------
 istest="y"
 # following option testdit is used only if istest is 'y'
-testdir="SRtrees_new/fakeRate_${mtDefinition}_${ptDefinition}_mT40_json32fb_signedEta_pt65_fullWMC"
+testdir="SRtrees_new/fakeRate_${mtDefinition}_${ptDefinition}_mT40_json30p9fb_signedEta_pt65_fullWMC"
 if [[ "${makeTH3_eta_pt_passID}" == "y" ]]; then
     #if [[ "${useSignedEta}" == "y" ]]; then
 	testdir="${testdir/${mtDefinition}/eta}"

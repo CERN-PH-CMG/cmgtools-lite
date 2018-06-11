@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-# USAGE: python w-helicity-13TeV/templateRolling.py testMergeW_goodSyst/ -o plots/diffXsec/templates/fromEmanuele/  -c el -p _addInclW -b [-2.5,-2.3,-2.1,-1.9,-1.7,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.7,1.9,2.1,2.3,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]
+# USAGE: 
+# helicity (check binning)
+# python w-helicity-13TeV/templateRolling.py shapesFromEmanuele_goodSyst/ -o plots/helicity/templates/fromEmanuele/  -c el -b [-2.5,-2.3,-2.1,-1.9,-1.7,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.7,1.9,2.1,2.3,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] --plot-binned-signal -a helicity [--has-inclusive-signal]
+# differential cross section (check binning)
+# python w-helicity-13TeV/templateRolling.py cards/diffXsec_2018_05_24_diffXsec_GenPtEtaSigBin/ -o plots/diffXsec/templates/diffXsec_2018_05_24_GenPtEtaSigBin/  -c el -b [-2.5,-2.3,-2.1,-1.9,-1.7,-1.566,-1.4442,-1.2,-1.0,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1.0,1.2,1.4442,1.566,1.7,1.9,2.1,2.3,2.5]*[30,33,36,39,42,45] --plot-binned-signal -a diffXsec [--has-inclusive-signal]
 
 # will implement taking 2D template binning from a file
 
@@ -62,9 +66,13 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] shapesdir")
     parser.add_option('-o','--outdir', dest='outdir', default='.', type='string', help='output directory to save things')
     parser.add_option('-c','--channel', dest='channel', default='el', type='string', help='Channel (el, mu)')
+    parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='Charges to consider')
     parser.add_option('-p','--postfix', dest='postfix', default='', type='string', help='Postfix for input file with shapes (e.g: "_addInclW" in "Wel_plus_shapes_addInclW.root"). Default is ""')
     parser.add_option('-b','--etaPtbinning', dest='etaPtbinning', default='[-2.5,-1.566,-1.4442,0,1.4442,1.566,2.5]*[30,35,40,45]', type='string', help='eta-pt binning for templates (will have to implement reading it from file)')
     parser.add_option(     '--noplot', dest="noplot", default=False, action='store_true', help="Do not plot templates (but you can still save them in a root file with option -s)");
+    parser.add_option(     '--has-inclusive-signal', dest="hasInclusiveSignal", default=False, action='store_true', help="Use this option if the file already contains the inclusive signal template and you want to plot it as well");
+    parser.add_option(     '--plot-binned-signal', dest="plotBinnedSignal", default=False, action='store_true', help="Use this option to plot the binned signal templates (should specify with option --analysis if this si a file for rapidity/helicity or differential cross section");
+    parser.add_option('-a','--analysis', dest='analysis', default='diffXsec', type='string', help='Which analysis the shapes file belongs to: helicity or diffXsec (default)')
     parser.add_option('-s','--save', dest='outfile_templates', default='templates_2D', type='string', help='pass name of output file to save 2D histograms (charge is automatically appended before extension). No need to specify extension, .root is automatically added')
     (options, args) = parser.parse_args()
 
@@ -76,7 +84,12 @@ if __name__ == "__main__":
     if channel not in ["el","mu"]:
         print "Error: unknown channel %s (select 'el' or 'mu')" % channel
         quit()
-        
+       
+    analysis = options.analysis
+    if analysis not in ["helicity", "diffXsec"]:
+        print "Warning: analysis not recognized, must be either \"helicity\" or \"diffXsec\""
+        quit()
+
     outname = options.outdir
     addStringToEnd(outname,"/",notAddIfEndswithMatch=True)
     createPlotDirAndCopyPhp(outname)
@@ -87,7 +100,11 @@ if __name__ == "__main__":
     ptbinning  = getArrayParsingString(ptbinning,makeFloat=True)
     binning = [len(etabinning)-1, etabinning, len(ptbinning)-1, ptbinning] 
 
-    for charge in ['plus','minus']:
+    lepton = "electron" if channel == "el" else " muon"
+
+    charges = options.charge.split(',')
+
+    for charge in charges:
         shapesfile = "{indir}/W{flav}_{ch}_shapes{pf}.root".format(indir=args[0],flav=channel,ch=charge,pf=options.postfix)
         infile = ROOT.TFile(shapesfile, 'read')
         print ""
@@ -104,38 +121,87 @@ if __name__ == "__main__":
         print "Will save 2D templates in file --> " + full_outfileName
 
         chs = '+' if charge == 'plus' else '-' 
-
-        # doing signal
-        # for pol in ['right', 'left']:
-        #     print "\tPOLARIZATION ",pol
-        #     for ybin in range(13): 
-
-        #         jobsdir = args[0]+'/jobs/'
-        #         jobfile_name = 'W{ch}_{flav}_Ybin_{b}.sh'.format(ch=charge,flav=channel,b=ybin)
-        #         tmp_jobfile = open(jobsdir+jobfile_name, 'r')
-        #         tmp_line = tmp_jobfile.readlines()[-1].split()
-        #         ymin = list(i for i in tmp_line if '(genw_y)>' in i)[0].replace('\'','').split('>')[-1]
-        #         ymax = list(i for i in tmp_line if '(genw_y)<' in i)[0].replace('\'','').split('<')[-1]
-                
-        #         binning = getbinning(tmp_line)
-
-        #         h1_1 = infile.Get('x_W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}'.format(ch=charge,pol=pol,flav=channel,ybin=ybin))
-        #         name2D = 'W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}'.format(ch=charge,pol=pol,flav=channel,ybin=ybin)
-        #         title2D = 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs)
-        #         h2_backrolled_1 = dressed2D(h1_1,binning,name2D,title2D)
-        #         canv = ROOT.TCanvas()
-        #         h2_backrolled_1.Draw('colz')
-        #         h2_backrolled_1.Write(name2D)
-        #         if not options.noplot:
-        #             for ext in ['pdf', 'png']:
-        #                 canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,flav=channel,pol=pol,ybin=ybin,ext=ext))
-
-        # do backgrounds and inclusive signal
-        signalTitle = "W^{%s}#rightarrow%s#nu" % (chs, "e" if channel == "el" else "#mu")
-        procs=["Flips","Z","Top","DiBosons","TauDecaysW","data_fakes","W{ch}_{flav}".format(ch=charge,flav=channel)]
-        titles=["charge flips","DY","Top","di-bosons","W#rightarrow#tau#nu","QCD", signalTitle]
-        lepton = "electron" if channel == "el" else " muon"
         adjustSettings_CMS_lumi()
+
+        if options.plotBinnedSignal:
+        # doing binned signal
+            print "Signal"
+            if analysis == "helicity":                
+                for pol in ['right', 'left']:
+                    print "\tPOLARIZATION ",pol
+                    # at this level we don't know how many bins we have, but we know that, for nominal templates, Ybin will be the second last token if we split the template name on '_' 
+                    for k in infile.GetListOfKeys():
+                        name=k.GetName()
+                        obj=k.ReadObj()
+                        signalMatch = "{ch}_{pol}_{flav}_Ybin_".format(ch=charge,pol=pol,flav=channel)                        
+                        if obj.InheritsFrom("TH1") and signalMatch in name and name.split('_')[-2] == "Ybin":
+
+                            ## need to implement a way of getting the rapidity binning    
+                            # jobsdir = args[0]+'/jobs/'
+                            # jobfile_name = 'W{ch}_{flav}_Ybin_{b}.sh'.format(ch=charge,flav=channel,b=ybin)
+                            # tmp_jobfile = open(jobsdir+jobfile_name, 'r')
+                            # tmp_line = tmp_jobfile.readlines()[-1].split()
+                            # ymin = list(i for i in tmp_line if '(genw_y)>' in i)[0].replace('\'','').split('>')[-1]
+                            # ymax = list(i for i in tmp_line if '(genw_y)<' in i)[0].replace('\'','').split('<')[-1]                            
+                            ymin = "X" # dummy for the moment
+                            ymax = "Y"
+                            ybin = name.split('_')[-1]
+                            name2D = 'W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_{ybin}'.format(ch=charge,pol=pol,flav=channel,ybin=ybin)
+                            title2D = 'W{chs} {pol} : |Yw| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,chs=chs)
+                            h2_backrolled_1 = dressed2D(obj,binning,name2D,title2D)
+                            h2_backrolled_1.Write(name2D)
+
+                            if not options.noplot:
+                                xaxisTitle = '%s #eta' % lepton
+                                yaxisTitle = '%s p_{T} [GeV]' % lepton
+                                zaxisTitle = "Events::0,%.1f" % h2_backrolled_1.GetMaximum()
+                                drawCorrelationPlot(h2_backrolled_1, 
+                                                    xaxisTitle, yaxisTitle, zaxisTitle, 
+                                                    'W_{ch}_{pol}_{flav}_Ybin_{ybin}'.format(ch=charge,pol=pol,flav=channel,ybin=ybin),
+                                                    "ForceTitle",outname,1,1,False,False,False,1)
+
+            else:  
+                # diff cross section
+                for k in infile.GetListOfKeys():
+                    name=k.GetName()
+                    obj=k.ReadObj()
+                    # example of name in shapes.root: x_Wplus_el_ieta_3_ipt_0_Wplus_el_group_0
+                    signalMatch = "{ch}_{flav}_ieta".format(ch=charge,flav=channel)                        
+                    if obj.InheritsFrom("TH1") and signalMatch in name and name.split('_')[-2] == "group":
+
+                        tokens = name.split('_')
+                        for i,tkn in enumerate(tokens):                            
+                            #print "%d %s" % (i, tkn)
+                            if tkn == "ieta": etabinIndex = int(tokens[i + 1])
+                            if tkn == "ipt": ptbinIndex = int(tokens[i + 1])
+                        name2D = "_".join(name.split('_')[1:])
+                        title2D = 'W{chs}: #eta #in [{etamin},{etamax}]#; p_{{T}} #in [{ptmin:.0f},{ptmax:.0f}]'.format(etamin=etabinning[etabinIndex],
+                                                                                                             etamax=etabinning[etabinIndex+1],
+                                                                                                             ptmin=ptbinning[ptbinIndex],
+                                                                                                             ptmax=ptbinning[ptbinIndex+1],
+                                                                                                             chs=chs)
+                        h2_backrolled_1 = dressed2D(obj,binning,name2D,title2D)
+                        h2_backrolled_1.Write(name2D)
+                        canvasName = "w_" + signalMatch + "_{ieta}_ipt_{ipt}".format(ieta=etabinIndex,ipt=ptbinIndex)
+                        if not options.noplot:
+                            xaxisTitle = '%s #eta' % lepton
+                            yaxisTitle = '%s p_{T} [GeV]' % lepton
+                            zaxisTitle = "Events::0,%.1f" % h2_backrolled_1.GetMaximum()
+                            drawCorrelationPlot(h2_backrolled_1, 
+                                                xaxisTitle, yaxisTitle, zaxisTitle, 
+                                                canvasName,
+                                                "ForceTitle",outname,1,1,False,False,False,1)
+                
+
+
+        # do backgrounds and, if requested, inclusive signal
+        print "Backgrounds" + (" and inclusive signal" if options.hasInclusiveSignal else "")
+        procs=["Flips","Z","Top","DiBosons","TauDecaysW","data_fakes"]
+        titles=["charge flips","DY","Top","di-bosons","W#rightarrow#tau#nu","QCD"]
+        if options.hasInclusiveSignal: 
+            procs.append("W{ch}_{flav}".format(ch=charge,flav=channel))
+            signalTitle = "W^{%s}#rightarrow%s#nu" % (chs, "e" if channel == "el" else "#mu")
+            titles.append(signalTitle)
 
         for i,p in enumerate(procs):
             h1_1 = infile.Get('x_{p}'.format(p=p))
@@ -151,7 +217,7 @@ if __name__ == "__main__":
                 drawCorrelationPlot(h2_backrolled_1, 
                                     xaxisTitle, yaxisTitle, zaxisTitle, 
                                     '{proc}_{ch}_{flav}'.format(proc=p,ch=charge,flav=channel),
-                                    "",outname,1,1,False,False,False,1)
+                                    "ForceTitle",outname,1,1,False,False,False,1)
 
             # canv = ROOT.TCanvas()
             # h2_backrolled_1.Draw('colz')

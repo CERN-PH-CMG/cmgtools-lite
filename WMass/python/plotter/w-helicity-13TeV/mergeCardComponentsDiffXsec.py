@@ -9,28 +9,9 @@
 import ROOT
 import sys,os,re,json
 
-def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
-    alternate.SetName("%sUp" % newname)
-    if alternateShapeOnly:
-        alternate.Scale(nominal.Integral()/alternate.Integral())
-    mirror = nominal.Clone("%sDown" % newname)
-    for b in xrange(1,nominal.GetNbinsX()+1):
-        y0 = nominal.GetBinContent(b)
-        yA = alternate.GetBinContent(b)
-        yM = y0
-        if (y0 > 0 and yA > 0):
-            yM = y0*y0/yA
-        elif yA == 0:
-            yM = 2*y0
-        mirror.SetBinContent(b, yM)
-    if alternateShapeOnly:
-        # keep same normalization
-        mirror.Scale(nominal.Integral()/mirror.Integral())
-    else:
-        # mirror normalization
-        mnorm = (nominal.Integral()**2)/alternate.Integral()
-        mirror.Scale(mnorm/alternate.Integral())
-    return (alternate,mirror)
+from mergeCardComponentsAbsY import mirrorShape
+from mergeCardComponentsAbsY import getXsecs
+
 
 if __name__ == "__main__":
     
@@ -43,12 +24,13 @@ if __name__ == "__main__":
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
     parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='plusR=99;plusL=99;minusR=99;minusL=99', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
     parser.add_option('-p','--POIs', dest='POIsToMinos', type='string', default=None, help='Decide which are the nuiscances for which to run MINOS (a.k.a. POIs). Default is all non fixed YBins. With format poi1,poi2 ')
-    #parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
-    parser.add_option(     '--absolute', dest='absoluteRates', default=False, action='store_true', help='Fit for absolute rates, not scale factors')
+    parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
     parser.add_option(     '--lumiLnN'    , dest='lumiLnN'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
     parser.add_option(     '--wXsecLnN'   , dest='wLnN'       , default=0.038, type='float', help='Log-normal constraint to be added to all the fixed W processes')
     parser.add_option(     '--pdf-shape-only'   , dest='pdfShapeOnly' , default=False, action='store_true', help='Normalize the mirroring of the pdfs to central rate.')
+    parser.add_option('-M','--minimizer'   , dest='minimizer' , type='string', default='GSLMultiMinMod', help='Minimizer to be used for the fit')
+    parser.add_option(     '--comb'   , dest='combineCharges' , default=False, action='store_true', help='Combine W+ and W-, if single cards are done')
     (options, args) = parser.parse_args()
     
     from symmetrizeMatrixAbsY import getScales
@@ -58,11 +40,11 @@ if __name__ == "__main__":
     
     ## to be rewritten to count number of bins or grouos in the datacards
     ##
-    binningFile = open(options.inputdir+'/binningYW.txt')
-    binningYW = eval(binningFile.read())
-    nbins = {}
-    for i,j in binningYW.items():
-        nbins[i] = len(j)-1
+    # binningFile = open(options.inputdir+'/binningYW.txt')
+    # binningYW = eval(binningFile.read())
+    # nbins = {}
+    # for i,j in binningYW.items():
+    #     nbins[i] = len(j)-1
        
     ## we have the last bin constructed in a way that it has ~5k events.
     # fixedYBins = {'plusR' : [nbins['plus_right' ]],
@@ -131,7 +113,7 @@ if __name__ == "__main__":
                         if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
                         processes = l.split()[1:]
  
-           if options.mergeRoot:
+            if options.mergeRoot:
                 print 'processing bin: {bin}'.format(bin=bin)
                 nominals = {}
                 for irf,rf in enumerate([rootfile]+rootfiles_syst):
@@ -145,6 +127,7 @@ if __name__ == "__main__":
                     for e in tf.GetListOfKeys() :
                         name=e.GetName()
                         obj=e.ReadObj()
+                        if name.endswith('data_obs') and 'data' not in basename: continue
                         if (not re.match('Wplus|Wminus',os.path.basename(f))) and 'data_obs' in name: obj.Clone().Write()
                         for p in processes:
                             if p in name:
@@ -290,57 +273,58 @@ if __name__ == "__main__":
         POIs = []; fixedPOIs = []; allPOIs = []
         signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
         signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
+        
+        # hel_to_constrain = [signal_L,signal_R]
+        # tightConstraint = 0.05
+        # for hel in hel_to_constrain:
+        #     for iy,helbin in enumerate(hel):
+        #         pol = helbin.split('_')[1]
+        #         index_procs = procs.index(helbin)
+        #         if options.absoluteRates:
+        #             lns = ' - '.join('' for i in range(index_procs+1))
+        #             lns += ' {effunc:.4f} '.format(effunc=1.+efferrors[pol][iy])
+        #             lns += ' - '.join('' for i in range(len(procs) - index_procs))
+        #             combinedCard.write('eff_unc_{hb}    lnN {lns}\n'.format(hb=helbin,lns=lns))
+        # for hel in hel_to_constrain:
+        #     for iy,helbin in enumerate(hel):
+        #         sfx = str(iy)
+        #         pol = helbin.split('_')[1]
+        #         rateNuis = tightConstraint
+        #         normPOI = 'norm_{n}'.format(n=helbin)
+
+        #         ## if we fit absolute rates, we need to get them from the process and plug them in below
+        #         if options.absoluteRates:
+    
+        #             ## if we want to fit with the efficiency gen-reco, we need to add one efficiency parameter
+        #             if options.scaleFile:
+        #                 tmp_eff = efficiencies[pol][iy]
+        #                 combinedCard.write('eff_{n}    rateParam * {n} \t {eff:.5f} [{dn:.5f},{up:.5f}]\n'.format(n=helbin,eff=tmp_eff,dn=(1-1E-04)*tmp_eff,up=(1+1E-04)*tmp_eff))
+        #                 expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
+        #                 param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
+        #                 # remove the channel to allow ele/mu combination when fitting for GEN
+        #                 helbin_nochan = helbin.replace('_{channel}_Ybin'.format(channel=channel),'_Ybin')
+        #                 combinedCard.write('norm_{nc}  rateParam * {n} \t {pr}\n'.format(nc=helbin_nochan,n=helbin,pr=param_range_0))
+        #                 # combinedCard.write('lumi_13TeV_rp rateParam * {n} \t TMath::Power({lumiLnN},@0) gaussian_param \n'.format(n=helbin,lumiLnN=1.+optionslumiLnN)) #  this is to add manually a "lumi" lnN constraint on each process scaled by a rateParam
+    
+        #             ## if we do not want to fit the gen-level thing, we want to just put the absolute reco rates here
+        #             else:
+        #                 expRate0 = float(ProcsAndRatesDict[helbin])
+        #                 param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
+        #                 combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
+    
+        #         else:
+        #             ## if not fitting full rates, we do the relative rateParams close to 1.
+        #             ## this is now done with a physics model 
+        #             pass
+        #         POIs.append(normPOI)
+
+        combinedCard.close()
 
         quit()
 ########################################
 ## I arrived until here
 ########################################
 
-        
-        hel_to_constrain = [signal_L,signal_R]
-        tightConstraint = 0.05
-        for hel in hel_to_constrain:
-            for iy,helbin in enumerate(hel):
-                pol = helbin.split('_')[1]
-                index_procs = procs.index(helbin)
-                if options.absoluteRates:
-                    lns = ' - '.join('' for i in range(index_procs+1))
-                    lns += ' {effunc:.4f} '.format(effunc=1.+efferrors[pol][iy])
-                    lns += ' - '.join('' for i in range(len(procs) - index_procs))
-                    combinedCard.write('eff_unc_{hb}    lnN {lns}\n'.format(hb=helbin,lns=lns))
-        for hel in hel_to_constrain:
-            for iy,helbin in enumerate(hel):
-                sfx = str(iy)
-                pol = helbin.split('_')[1]
-                rateNuis = tightConstraint
-                normPOI = 'norm_{n}'.format(n=helbin)
-
-                ## if we fit absolute rates, we need to get them from the process and plug them in below
-                if options.absoluteRates:
-    
-                    ## if we want to fit with the efficiency gen-reco, we need to add one efficiency parameter
-                    if options.scaleFile:
-                        tmp_eff = efficiencies[pol][iy]
-                        combinedCard.write('eff_{n}    rateParam * {n} \t {eff:.5f} [{dn:.5f},{up:.5f}]\n'.format(n=helbin,eff=tmp_eff,dn=(1-1E-04)*tmp_eff,up=(1+1E-04)*tmp_eff))
-                        expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
-                        param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
-                        # remove the channel to allow ele/mu combination when fitting for GEN
-                        helbin_nochan = helbin.replace('_{channel}_Ybin'.format(channel=channel),'_Ybin')
-                        combinedCard.write('norm_{nc}  rateParam * {n} \t {pr}\n'.format(nc=helbin_nochan,n=helbin,pr=param_range_0))
-                        # combinedCard.write('lumi_13TeV_rp rateParam * {n} \t TMath::Power({lumiLnN},@0) gaussian_param \n'.format(n=helbin,lumiLnN=1.+optionslumiLnN)) #  this is to add manually a "lumi" lnN constraint on each process scaled by a rateParam
-    
-                    ## if we do not want to fit the gen-level thing, we want to just put the absolute reco rates here
-                    else:
-                        expRate0 = float(ProcsAndRatesDict[helbin])
-                        param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
-                        combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
-    
-                else:
-                    ## if not fitting full rates, we do the relative rateParams close to 1.
-                    ## this is now done with a physics model 
-                    pass
-                POIs.append(normPOI)
-        combinedCard.close()
 
         if options.absoluteRates:
             ProcsAndRatesUnity = []

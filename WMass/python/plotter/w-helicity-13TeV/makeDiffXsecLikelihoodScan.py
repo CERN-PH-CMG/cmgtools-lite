@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# python makeDiffXsecLikelihoodScan.py ../diffXsecFit_testScalLikelihood_freezeShapeNuis/ [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] -o ../plots/diffXsec/likelihoodScan/ -f el -c plus
+# python makeDiffXsecLikelihoodScan.py ../diffXsecFit_testScalLikelihood_freezeShapeNuis/ [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] -o ../plots/diffXsec/likelihoodScan/ -f el -c plus -n 50
 
 
 from shutil import copyfile
@@ -89,6 +89,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] higgsCombineFolder binning")
     parser.add_option('-o','--outdir', dest='outdir', default='./', type='string', help='output directory')
     parser.add_option('-n','--n-points', dest='npoints', default=0, type='int', help='Number of points used for the scan')
+    parser.add_option('-g','--min-good-points', dest='minGoodPoints', default=0, type='int', help='Number of minimum points not to skip scan (useful with --maxDNLL)')
     parser.add_option('-r','--range-scan', dest='rangescan', default="0.9,1.1", type='string', help='Range used for scan of r (two value separated by comma)')
     parser.add_option(     '--min-bin', dest='minbin', default=1, type='int', help='minimum bin number when selecting bin range for the scans')
     parser.add_option(     '--max-bin', dest='maxbin', default=0, type='int', help='max bin number when selecting bin range for the scans (0 for up to the last one)')
@@ -141,10 +142,12 @@ if __name__ == "__main__":
     #files = [inputdir + "higgsCombine_Wplus_bin365.MultiDimFit.mH120.root"]
 
     h2_npoints = ROOT.TH2D("h2_npoints","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))
+    h2_nPointsBelowMaxDNLL = ROOT.TH2D("h2_nPointsBelowMaxDNLL","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))
     h2_rMinFit = ROOT.TH2D("h2_rMinFit","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))
     h2_r1sigmaDn = ROOT.TH2D("h2_r1sigmaDn","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))
     h2_r1sigmaUp = ROOT.TH2D("h2_r1sigmaUp","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))
     h2_r1sigmaUpDnMean = ROOT.TH2D("h2_r1sigmaUpDnMean","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))  #(Up+Dn)/2 - 1 (0 if symmetric)
+    h2_r1sigmaUpDnDiff = ROOT.TH2D("h2_r1sigmaUpDnDiff","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))  #(Up-Dn)  (0 if symmetric)
 
     filteredfiles = []    
     if options.minbin > 1 or options.maxbin > 0:
@@ -202,8 +205,14 @@ if __name__ == "__main__":
 
         keys = dnll_r.keys()
         firstPointFound = False
-        xminfit = float(options.rangescan.split(',')[0])
-        xmaxfit = float(options.rangescan.split(',')[1])
+        tmpPoints = [x for x in sorted(keys)]
+        nPointsBelowMaxDNLL = len(tmpPoints)
+        gr_xmin = tmpPoints[0]
+        gr_xmax = tmpPoints[-1]
+        # xminfit = float(options.rangescan.split(',')[0])
+        # xmaxfit = float(options.rangescan.split(',')[1])
+        xminfit = gr_xmin
+        xmaxfit = gr_xmax
 
         c = ROOT.TCanvas("c","",700,600)
         c.cd()
@@ -220,8 +229,8 @@ if __name__ == "__main__":
             gr.SetPoint(i, r, dnll_r[r])
             # save x of first value with ordinate < options.maxDNLL, also used for fit below
             if (not firstPointFound and dnll_r[r] <= options.maxDNLL and dnll_r[r] >= options.minDNLL): 
-                xminfit = 0.99 * r
-                xmaxfit = 2.0 - xminfit
+                xminfit = 0.99 * gr_xmin
+                xmaxfit = 1.01 * gr_xmax
                 firstPointFound = True
 
         gr.SetMarkerStyle(20)
@@ -252,9 +261,6 @@ if __name__ == "__main__":
         # fit.SetFillColor(ROOT.kOrange+2)
         # fit.SetMarkerColor(ROOT.kOrange+2)
 
-        tmpPoints = [x for x in sorted(keys)]
-        gr_xmin = tmpPoints[0]
-        gr_xmax = tmpPoints[-1]
         spl = ROOT.TSpline3("spline3",gr,"b1e1",fit.Derivative(gr_xmin),fit.Derivative(gr_xmax))   # "b1e1" gives first derivative at beginning and end point
         spl.SetLineWidth(3)
         spl.SetLineColor(ROOT.kOrange+2)
@@ -376,11 +382,16 @@ if __name__ == "__main__":
                 c.SaveAs('{od}/deltaNll_bin{bin}_{ch}.{ext}'.format(od=outdir, bin=globalbin, ch=charge, ext=ext))
 
         
-        h2_npoints.SetBinContent(etabin,ptbin,nVarPoints)
-        h2_rMinFit.SetBinContent(etabin,ptbin,rMinFit)
-        h2_r1sigmaDn.SetBinContent(etabin,ptbin,1.-r1sigmaDn)
-        h2_r1sigmaUp.SetBinContent(etabin,ptbin,r1sigmaUp-1.)
-        h2_r1sigmaUpDnMean.SetBinContent(etabin,ptbin,((r1sigmaUp+r1sigmaDn)/2. -1))
+        sigmaUp = r1sigmaUp - rMinFit
+        sigmaDn = rMinFit - r1sigmaDn
+        if options.minGoodPoints and nPointsBelowMaxDNLL >= options.minGoodPoints:
+            h2_npoints.SetBinContent(etabin,ptbin,nVarPoints)
+            h2_nPointsBelowMaxDNLL.SetBinContent(etabin,ptbin,nPointsBelowMaxDNLL)
+            h2_rMinFit.SetBinContent(etabin,ptbin,rMinFit)
+            h2_r1sigmaDn.SetBinContent(etabin,ptbin,sigmaDn)
+            h2_r1sigmaUp.SetBinContent(etabin,ptbin,sigmaUp)
+            h2_r1sigmaUpDnMean.SetBinContent(etabin,ptbin,((r1sigmaUp+r1sigmaDn)/2. -rMinFit))
+            h2_r1sigmaUpDnDiff.SetBinContent(etabin,ptbin,sigmaUp - sigmaDn) 
 
         ### end of loop on bins
         #newdnll_r.clear()
@@ -398,16 +409,20 @@ if __name__ == "__main__":
     h2list = []
     
     h2list.append(h2_npoints)
+    h2list.append(h2_nPointsBelowMaxDNLL)
     h2list.append(h2_rMinFit)
     h2list.append(h2_r1sigmaDn)
     h2list.append(h2_r1sigmaUp)
     h2list.append(h2_r1sigmaUpDnMean)
+    h2list.append(h2_r1sigmaUpDnDiff)
 
     h2_npoints.GetZaxis().SetTitle("Successful scans::0.5,%f" % (0.5+float(options.npoints)))
+    h2_nPointsBelowMaxDNLL.GetZaxis().SetTitle("scans with 2*#DeltaNLL < %.1f::0.5,%f" % (options.maxDNLL,0.5+float(options.npoints)))
     h2_rMinFit.GetZaxis().SetTitle("r minimum from fit::0.98,1.02")
-    h2_r1sigmaDn.GetZaxis().SetTitle("r(-1#sigma)::0.0,0.1")
-    h2_r1sigmaUp.GetZaxis().SetTitle("r(+1#sigma)::0.0,0.1")
-    h2_r1sigmaUpDnMean.GetZaxis().SetTitle("(r(+1#sigma)+r(-1#sigma))/2 - 1")
+    h2_r1sigmaDn.GetZaxis().SetTitle("r(-1#sigma)::0.0,0.15")
+    h2_r1sigmaUp.GetZaxis().SetTitle("r(+1#sigma)::0.0,0.15")
+    h2_r1sigmaUpDnMean.GetZaxis().SetTitle("[r(+1#sigma) + r(-1#sigma)] / 2 - r(min)::-0.15,0.15")
+    h2_r1sigmaUpDnDiff.GetZaxis().SetTitle("#sigma(Up) - #sigma(Down)::-0.1,0.1")
     adjustSettings_CMS_lumi()
 
     lepton = "electron" if flavour == "el" else "muon"
