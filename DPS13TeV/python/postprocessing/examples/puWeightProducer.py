@@ -7,7 +7,7 @@ from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection
 from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 
 class puWeightProducer(Module):
-    def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="puWeight",norm=True,verbose=False,nvtx_var="nTrueInt"):
+    def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="puWeight",norm=True,verbose=True,nvtx_var="nTrueInt"):
         self.myh = self.loadHisto(myfile,myhist)
         self.targeth = self.loadHisto(targetfile,targethist)
         self.name = name
@@ -39,6 +39,7 @@ class puWeightProducer(Module):
         if hasattr(event,self.nvtxVar):
             nvtx = int(getattr(event,self.nvtxVar))
             weight = self._worker.getWeight(nvtx) if nvtx < self.myh.GetNbinsX() else 1
+            print('here is the PU {wt} for {NINT}'.format(wt=weight,NINT=nvtx))
         else: weight = 1
         self.out.fillBranch(self.name,weight)
         return True
@@ -59,6 +60,6 @@ pufile_data="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/DataPile
 pufile_data_Xsec_up="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/DataPileupHistogram_23Sep2016ReReco_Collisions16_JSON_Xsecup_72383pt2.root" % os.environ['CMSSW_BASE']
 pufile_data_Xsec_down="%s/src/CMGTools/DPS13TeV/python/postprocessing/data/pileup/DataPileupHistogram_23Sep2016ReReco_Collisions16_JSON_Xsecdown_66016pt8.root" % os.environ['CMSSW_BASE']
 
-puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pileup","pileup",name="puw",verbose=True)
-puWeightXsecup = lambda : puWeightProducer(pufile_mc,pufile_data_Xsec_up,"pileup","pileup",name="puwUp",verbose=True)
-puWeightXsecdown =lambda : puWeightProducer(pufile_mc,pufile_data_Xsec_down,"pileup","pileup",name="puwDown",verbose=True)
+puWeight = lambda : puWeightProducer(pufile_data,pufile_mc,"pileup","pileup",name="puw",verbose=True)
+puWeightXsecup = lambda : puWeightProducer(pufile_data_Xsec_up,pufile_mc,"pileup","pileup",name="puwUp",verbose=True)
+puWeightXsecdown =lambda : puWeightProducer(pufile_data_Xsec_down,pufile_mc,"pileup","pileup",name="puwDown",verbose=True)

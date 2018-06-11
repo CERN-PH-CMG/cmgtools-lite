@@ -7,8 +7,8 @@ from glob import glob
 import re, pickle, math
 from CMGTools.DPS13TeV.postprocessing.framework.postprocessor import PostProcessor
 
-DEFAULT_MODULES = [##("CMGTools.DPS13TeV.postprocessing.examples.puWeightProducer", "puWeight,puWeightXsecup,puWeightXsecdown"),
-                   ("CMGTools.DPS13TeV.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
+DEFAULT_MODULES = [("CMGTools.DPS13TeV.postprocessing.examples.puWeightProducer", "puWeight,puWeightXsecup,puWeightXsecdown"),
+                   ##("CMGTools.DPS13TeV.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.jetReCleaner","jetReCleaner"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.genFriendProducer","genQEDJets"),

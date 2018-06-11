@@ -72,6 +72,7 @@ class lepSFProducer(Module):
             else:
                 worker = self._worker_el if abs(l.pdgId)==11 else self._worker_mu
                 sf.append(worker.getSF(l.pdgId,l.pt,l.eta))
+                print('check the leptons for {lep} with {PT}: {ETA}: is {SF}:'.format(lep=l.pdgId,PT=l.pt,ETA=l.eta,SF=sf))
         self.out.fillBranch("LepGood_effSF", sf)
         return True
 
@@ -137,5 +138,5 @@ class lepTrgSFProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-lepSF = lambda : lepSFProducer( "TightMVAWP_2016", "TightMVAWP_2016")
+lepSF = lambda : lepSFProducer("TightMVAWP_2016","TightMVAWP_2016")
 trgSF = lambda : lepTrgSFProducer()
