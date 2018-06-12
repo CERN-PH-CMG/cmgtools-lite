@@ -179,6 +179,13 @@ if options.queue and not os.path.exists(outdir+"/jobs"):
 os.system("cp %s %s" % (CUTFILE, outdir))
 os.system("cp %s %s" % (MCA, outdir))
 
+## save template binning (eta on X, pt on y axis)                                                                                                                       
+ptEta_binfile = open(outdir+'/binningPtEta.txt','w')
+ptEta_binfile.write("#Template binning: eta-pt on x-y axis\n")
+ptEta_binfile.write(binning)
+ptEta_binfile.write('\n')
+ptEta_binfile.close()
+
 if options.addPdfSyst:
     # write the additional systematic samples in the MCA file
     writePdfSystsToMCA(MCA,outdir+"/mca") # on W + jets 

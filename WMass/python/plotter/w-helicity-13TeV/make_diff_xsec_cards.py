@@ -226,6 +226,13 @@ if __name__ == "__main__":
     os.system("cp %s %s" % (CUTFILE, outdir))
     os.system("cp %s %s" % (MCA, outdir))
 
+    ## save template binning (eta on X, pt on y axis)
+    ptEta_binfile = open(outdir+'/binningPtEta.txt','w')
+    ptEta_binfile.write("#Template binning: eta-pt on x-y axis\n")
+    ptEta_binfile.write(binning)
+    ptEta_binfile.write('\n')
+    ptEta_binfile.close()
+    
     if options.addPdfSyst:
         # write the additional systematic samples in the MCA file
         writePdfSystsToMCA(MCA,outdir+"/mca") # on W + jets 
@@ -290,12 +297,6 @@ if __name__ == "__main__":
     if options.signalCards:
 
         print "MAKING SIGNAL PART: "
-
-        ptEta_binfile = open(outdir+'/binningPtEta.txt','w')
-        ptEta_binfile.write("Template binning: eta-pt on x-y axis\n")
-        ptEta_binfile.write(binning)
-        ptEta_binfile.write('\n')
-        ptEta_binfile.close()
 
         for ibin in xrange(loopBins):
 
