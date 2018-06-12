@@ -3,20 +3,22 @@
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
 era: hashBasedRunPeriod2017(isData,run,lumi,evt) : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle = "2017 data taking era", Legend='TR', MoreY=2.0,  xBinLabels="B\,C\,D\,E\,F"
 
-debug_triggerFired_1e : HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
-debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
-debug_triggerFired_3e : HLT_TripleEl : 2,-0.5,1.5; XTitle = "Fired 3e trigger"
-debug_triggerFired_em : HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired em trigger"
-debug_triggerFired_1m : HLT_BIT_HLT_IsoMu24_v || HLT_BIT_HLT_IsoTkMu24_v || HLT_BIT_HLT_IsoMu22_eta2p1_v || HLT_BIT_HLT_IsoTkMu22_eta2p1_v : 2,-0.5,1.5; XTitle = "Fired 1m trigger"
-debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
-debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
-debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
-debug_scaleFactor_lepton_2l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2) : 120,0.6,1.4; XTitle="lepSF 2l"
-debug_scaleFactor_lepton_3l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3) : 120,0.6,1.4; XTitle="lepSF 3l"
-debug_scaleFactor_trigger_2l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],2) : 120,0.88,1.12; XTitle="triggerSF 2l"
-debug_scaleFactor_trigger_3l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3) : 120,0.88,1.12; XTitle="triggerSF 3l"
-debug_scaleFactor_btag : (nTrueInt>-1)*eventBTagSF : 120,0.6,1.4; XTitle="btagSF"
-debug_scaleFactor_PU : puw2016_nTrueInt_36fb(nTrueInt) : 120,0.6,1.4; XTitle="PU weight"
+debug_nL1PrefiringCandidate : Sum$(abs(genLep_pdgId)==11 && genLep_pt>25 && abs(genLep_eta)>2.4 && abs(genLep_eta)<3.0) + Sum$(abs(genLepFromTau_pdgId)==11 && genLepFromTau_pt>25 && abs(genLepFromTau_eta)>2.4 && abs(genLepFromTau_eta)<3.0) : [-0.5,0.5,1.5,2.5]; XTitle = "nL1PrefiringCandidate", Legend='TR', Logy
+
+#debug_triggerFired_1e : HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
+#debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
+#debug_triggerFired_3e : HLT_TripleEl : 2,-0.5,1.5; XTitle = "Fired 3e trigger"
+#debug_triggerFired_em : HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired em trigger"
+#debug_triggerFired_1m : HLT_BIT_HLT_IsoMu24_v || HLT_BIT_HLT_IsoTkMu24_v || HLT_BIT_HLT_IsoMu22_eta2p1_v || HLT_BIT_HLT_IsoTkMu22_eta2p1_v : 2,-0.5,1.5; XTitle = "Fired 1m trigger"
+#debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
+#debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
+#debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
+#debug_scaleFactor_lepton_2l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2) : 120,0.6,1.4; XTitle="lepSF 2l"
+#debug_scaleFactor_lepton_3l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3) : 120,0.6,1.4; XTitle="lepSF 3l"
+#debug_scaleFactor_trigger_2l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],2) : 120,0.88,1.12; XTitle="triggerSF 2l"
+#debug_scaleFactor_trigger_3l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3) : 120,0.88,1.12; XTitle="triggerSF 3l"
+#debug_scaleFactor_btag : (nTrueInt>-1)*eventBTagSF : 120,0.6,1.4; XTitle="btagSF"
+#debug_scaleFactor_PU : puw2016_nTrueInt_36fb(nTrueInt) : 120,0.6,1.4; XTitle="PU weight"
 
 debug_badMuonFilter : Flag_badMuonMoriond2017 || Flag_badCloneMuonMoriond2017 : 2,-0.5,1.5; XTitle = "Bad muon event", Logy
 
@@ -93,7 +95,7 @@ minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 mZ1:		mZ1					: 80,50,130; XTitle="Best Z candidate mass (GeV)"
-mH1mm:		mH1mm					: 60,110,140; XTitle="Best H #rightarrow #mu #mu candidate mass (GeV)"
+mH1mm:		mH1mm					: 60,110,140; XTitle="Best H #rightarrow #mu #mu candidate mass (GeV)", IncludeOverflows=False, MoreY=2.0
 nVert:		nVert					: 240,0.5,60.5; XTitle="N_{vtx}"
 
 
@@ -151,10 +153,10 @@ kinMVA_input_BDTv8_eventReco_HadTop_mass : BDTv8_eventReco_HadTop_mass : 80,0,30
 #kinMVA_input_BDTv8_eventReco_X_mass : BDTv8_eventReco_X_mass : 160,0,1600; XTitle="Reconstructed M_{a}^{vis} (GeV)", Legend="TR"
 #kinMVA_input_BDTv8_eventReco_MT_HadLepTop_MET: mt_2(pt_2(BDTv8_eventReco_HadTop_pT,BDTv8_eventReco_HadTop_phi,BDTv8_eventReco_LepTop_pT,BDTv8_eventReco_LepTop_phi),phi_2(BDTv8_eventReco_HadTop_pT,BDTv8_eventReco_HadTop_phi,BDTv8_eventReco_LepTop_pT,BDTv8_eventReco_LepTop_phi),met_pt,met_phi) : 160,0,1600; XTitle="Reconstructed M_{T}(a^{vis}\,E_{T}^{miss}) (GeV)", Legend="TR"
 kinMVA_3l_input_MEM_LR : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2)) : 60,0,40; XTitle="MEM ln(LR)", Legend="TR"
-#kinMVA_3l_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-100,0; XTitle="MEM_TTHfl weight", Legend="TL"
-#kinMVA_3l_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-100,0; XTitle="MEM_TTHsl weight", Legend="TR"
-#kinMVA_3l_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-100,0; XTitle="MEM_TTW weight", Legend="TL"
-#kinMVA_3l_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-100,0; XTitle="MEM_TTLL weight", Legend="TR"
+kinMVA_3l_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-100,0; XTitle="MEM_TTHfl weight", Legend="TL"
+kinMVA_3l_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-100,0; XTitle="MEM_TTHsl weight", Legend="TR"
+kinMVA_3l_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-100,0; XTitle="MEM_TTW weight", Legend="TL"
+kinMVA_3l_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-100,0; XTitle="MEM_TTLL weight", Legend="TR"
 
 kinMVA_input_BDTrTT_eventReco_mvaValue : BDTrTT_eventReco_mvaValue : 80,-1,1; XTitle="BDT_rTT mvaValue"
 kinMVA_input_BDTrTT_eventReco_HadTop_pt : BDTrTT_eventReco_HadTop_pt : 80,0,400; XTitle="BDT_rTT HadTop_pt"

@@ -13,9 +13,11 @@ dowhat = "plots"
 P0="/afs/cern.ch/work/p/peruzzi/tthtrees"
 if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data/peruzzi"
 if 'cmsphys10' in os.environ['HOSTNAME']: P0="/data1/g/gpetrucc"
-TREES = "--Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2"
-TREESONLYSKIM = "-P "+P0+"/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
-TREESONLYFULL = "-P "+P0+"/TREES_TTH_190418_Fall17"
+TREES = "--Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2"
+TREESONLYSKIM = "-P "+P0+"/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
+TREESONLYFULL = "-P "+P0+"/TREES_TTH_190418_Fall17 --Fs {P}/1_recleaner_230418_v2"
+TREESONLYMEMZVETO = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zveto_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1 --Fs {P}/4_MEM_v1"
+TREESONLYMEMZPEAK = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zpeak_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1 --Fs {P}/4_MEM_v1"
 
 def base(selection):
 
@@ -52,7 +54,7 @@ def base(selection):
         raise RuntimeError, 'Unknown selection'
 
     if '_prescale' in torun:
-        GO = doprescale3l(GO)
+        GO = doprescale3l(GO,torun)
 
     return GO
 
@@ -78,11 +80,8 @@ def setwide(x):
     return x2
 def fulltrees(x):
     return x.replace(TREESONLYSKIM,TREESONLYFULL)
-def doprescale3l(x):
-    x2 = x.replace("TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6","TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skim3l2j2b1B_v6")
-    x2 = x2.replace("3_kinMVA_BDTv8_230217_v6","3_kinMVA_BDTv8_withMEM_230217_v6")
-    x2 = add(x2,"--Fs {P}/8_MEM_v6")
-    return x2
+def doprescale3l(x,torun):
+    return x.replace(TREESONLYSKIM,TREESONLYMEMZPEAK if any([(_y in torun) for _y in ['cr_wz','cr_ttz','cr_fourlep_onZ','_Zpeak']]) else TREESONLYMEMZVETO)
 
 allow_unblinding = False
 
@@ -90,7 +89,7 @@ if __name__ == '__main__':
 
     torun = sys.argv[2]
 
-    if (not allow_unblinding) and '_data' in torun and (not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*']])): raise RuntimeError, 'You are trying to unblind!'
+    if (not allow_unblinding) and '_data' in torun and (not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*','3l.*_Zpeak.*']])): raise RuntimeError, 'You are trying to unblind!'
 
     if '2lss_' in torun:
         x = base('2lss')
@@ -246,6 +245,8 @@ if __name__ == '__main__':
                 x = add(x,"--fitRatio 1")
         if '_x2j' in torun:
             x = add(x,"-E ^x2j ")
+        if '_Zpeak' in torun:
+            x = add(x,'-I ^Zveto')
         runIt(x,'%s'%torun)
         if '_cats' in torun:
             for cat in ['b3l_bl_neg','b3l_bl_pos','b3l_bt_neg','b3l_bt_pos']:
@@ -263,6 +264,8 @@ if __name__ == '__main__':
         if '_frdata' in torun:
             x = promptsub(x)
             raise RuntimeError, 'Fakes estimation not implemented for 4l'
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         runIt(x,'%s'%torun)
 
     if 'cr_3j' in torun:
@@ -295,6 +298,8 @@ if __name__ == '__main__':
         x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
         if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
         else: x = add(x,"-E ^1B ")
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40','era']
         runIt(x,'%s'%torun)#,plots)
 
@@ -309,6 +314,8 @@ if __name__ == '__main__':
             x = add(x,"-X ^metLDee")
         if '_data' not in torun: x = add(x,'--xp data')
         x = add(x,"-X ^2b1B -X ^Zee_veto -A alwaystrue mllonZ 'mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass)>60 && mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<120'")
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         for flav in ['mm','ee']:
             plots = ['2lep_.*','tot_weight','era']
             runIt(add(x,'-E ^%s -X ^4j'%flav),'%s/%s'%(torun,flav),plots)
@@ -320,6 +327,8 @@ if __name__ == '__main__':
             x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto ")
         plots = ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW','kinMVA.*','htJet25j','nJet25','era']
         plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM']
@@ -335,9 +344,13 @@ if __name__ == '__main__':
         plots = ['lep2_pt','met','nJet25','mZ1']
         plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM','era']
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^gt2b -E ^1B ")
-        runIt(x,'%s'%torun,plots)
-        x = add(x,"-E ^4j ")
-        runIt(x,'%s/4j'%torun,plots)
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
+        if '_4j' in torun:
+            x = add(x,"-E ^4j ")
+            runIt(x,'%s/4j'%torun,plots)
+        else:
+            runIt(x,'%s'%torun,plots)
 
     if 'cr_fourlep_onZ' in torun:
         x = base('4l')
@@ -345,6 +358,8 @@ if __name__ == '__main__':
         if '_frdata' in torun:
             x = promptsub(x)
             raise RuntimeError, 'Fakes estimation not implemented for 4l'
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         x = add(x,"-I ^Zveto")
         runIt(x,'%s'%torun)
         
