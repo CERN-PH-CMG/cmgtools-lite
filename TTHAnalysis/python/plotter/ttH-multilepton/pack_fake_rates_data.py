@@ -19,12 +19,21 @@ def fillSliceY(th2,plot1d,yvalue,xslice):
         if xslice[0] <= xval and xval <= xslice[1]:
             msg = "trying to fill %s bin %2d x %5.1f from %s: " % (th2.GetName(), xbin, xval, plot1d.GetName())
             found = "Not found!!"
-            for i in xrange(plot1d.GetN()):
-                x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
-                if x-xm <= xval and xval <= x+xp:
-                    th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
-                    th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
-                    found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, x-xm,x+xp, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
+            if "TGraph" in plot1d.ClassName():
+                for i in xrange(plot1d.GetN()):
+                    x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
+                    if x-xm <= xval and xval <= x+xp:
+                        th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
+                        th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
+                        found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, x-xm,x+xp, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
+            elif "TH1" in plot1d.ClassName():
+                for i in xrange(1,plot1d.GetNbinsX()+1):
+                    x,xh,xl = plot1d.GetXaxis().GetBinCenter(i), plot1d.GetXaxis().GetBinUpEdge(i), plot1d.GetXaxis().GetBinLowEdge(i)
+                    if xl <= xval and xval <= xh:
+                        th2.SetBinContent(xbin,ybin,plot1d.GetBinContent(i))
+                        th2.SetBinError(xbin,ybin,plot1d.GetBinError(i))
+                        found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, xl, xh, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
+            else: raise RuntimeError()
             if "Not" in found:
                 print msg, found
 def readSliceY(th2,filename,plotname,yvalue,xslice):
@@ -47,7 +56,7 @@ def make2D(out,name,xedges,yedges):
     th2 = makeH2D(name,xedges,yedges)
     return th2
 
-def makeVariants(h,altsrc=None):
+def makeVariants(h,altsrc=None,norm=None):
     lptmin = log(h.GetXaxis().GetBinCenter(1))
     lptmax = log(h.GetXaxis().GetBinCenter(h.GetNbinsX()))
     lptc     = 0.5*(lptmax+lptmin)
@@ -73,10 +82,24 @@ def makeVariants(h,altsrc=None):
                 else:
                     err = fr0 * altsrc.GetBinError(bx,by)/altsrc.GetBinContent(bx,by)
                 fr = func(x,y,fr0,err)
-                print "Variation %-15s: pt %4.1f, eta %3.1f: nominal %.3f +- %.3f --> shifted %.3f "  % (hsyst.GetName(), x, y, fr0, err, fr)
+                #print "Variation %-15s: pt %4.1f, eta %3.1f: nominal %.3f +- %.3f --> shifted %.3f "  % (hsyst.GetName(), x, y, fr0, err, fr)
                 hsyst.SetBinContent(bx, by, fr)
                 hsyst.SetBinError(bx, by, 0)
+        if norm and s not in ("up","down"):
+            sum0, sums = 0, 0
+            for bx in xrange(1,h.GetNbinsX()+1):
+                x = h.GetXaxis().GetBinCenter(bx) 
+                binw = h.GetXaxis().GetBinWidth(bx)
+                #if x <= 15: continue
+                for by in xrange(1,h.GetNbinsY()+1):
+                    f0, f = h.GetBinContent(bx,by), hsyst.GetBinContent(bx,by)
+                    sum0 += norm.GetBinContent(bx,by) * binw * f0/(1-f0)
+                    sums += norm.GetBinContent(bx,by) * binw * f /(1-f) 
+                    #print "     at bx %2d by %2d pt %5.1f abseta %5.2f    N = %9.2f  fr0 = %.3f   fr = %.3f" % (bx,by,x,h.GetYaxis().GetBinCenter(by), norm.GetBinContent(bx,by), f0, f)
+            print "   pre-normalization for %s: sum0 %9.2f   sum %9.2f    ratio %.3f " % (hsyst.GetName(), sums, sum0, sums/sum0)
+            hsyst.Scale(sum0/sums)
         ret.append(hsyst)
+     
     return ret
 
 def fixLastBin(ibin, hdata, hmc=None, blowup=2.0):
@@ -121,6 +144,7 @@ if __name__ == "__main__":
     parser.add_option("--ytitle", dest="ytitle", default="Fake rate", type='string', help="Y axis title");
     parser.add_option("--fontsize", dest="fontsize", default=0.05, type='float', help="Legend font size");
     parser.add_option("--legendWidth", dest="legendWidth", type="float", default=0.35, help="Width of the legend")
+    parser.add_option("--norm", dest="norm", action="store_true", default=False, help="Normalize variations")
     parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
     parser.add_option("--legend",  dest="legend",  default="TL",  type="string", help="Legend position (BR, TR)")
     parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
@@ -161,6 +185,8 @@ if __name__ == "__main__":
            h2d_mu = [ make2D(outfile,"FR_mva"+mva+"_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
            h2d_el_tt = [ make2D(outfile,"FR_mva"+mva+"_el_TT", ptbins_el, etabins_el) ]
            h2d_mu_tt = [ make2D(outfile,"FR_mva"+mva+"_mu_TT", ptbins_mu, etabins_mu) ]
+           h2d_el_tt_norm = [ make2D(outfile,"norm_el_TT", ptbins_el, etabins_el) ]
+           h2d_mu_tt_norm = [ make2D(outfile,"norm_mu_TT", ptbins_mu, etabins_mu) ]
 
            Plots="plots/94X/ttH/lepMVA/v2.0-dev/fr-meas"
            Z3l="z3l"
@@ -175,9 +201,12 @@ if __name__ == "__main__":
 
            #### TT MC-truth
            MCPlots="plots/94X/ttH/lepMVA/v2.0-dev/fr-mc"; ID="wp"+mva+"iv01f60E3";
-           XVar="mvaPt_"+mva+"i_ptJI90_mvaPt"+mva
+           XX="ptJI90_mvaPt"+mva
+           XVar="mvaPt_"+mva+"i_"+XX
            readMany2D(["TT_SS_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarsecomb_%s",   etaslices_mu, (15,999) )
            readMany2D(["TT_SS_redNC"], h2d_el_tt, "/".join([MCPlots, "el_bnbNC_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,999) )
+           readMany2D(["TT_SS_red"], h2d_mu_tt_norm, "/".join([MCPlots, "mu_ttnorm_"+ID+"_recJet30_eta_%s.root"]), XX+"_coarsecomb_%s",   etaslices_mu, (15,999) ) #NOTA BENE: we skip the 10-15 bin when normalizing
+           readMany2D(["TT_SS_red"], h2d_el_tt_norm, "/".join([MCPlots, "el_ttnorm_"+ID+"_recJet30_eta_%s.root"]), XX+"_coarseelcomb_%s",   etaslices_el, (15,999) )
 
            h2d_el_mc4cc = [ make2D(outfile,"FR_mva"+mva+"_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
            readMany2D(["QCDEl_red_El8", "QCDEl_redNC_El8"],  h2d_el_mc4cc, "/".join([MCPlots, "el_hltid8_" +ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,32) )
@@ -239,17 +268,20 @@ if __name__ == "__main__":
        # Serialize
        for h in h2d_el    + h2d_mu:    outfile.WriteTObject(h)
        for h in h2d_el_tt + h2d_mu_tt: outfile.WriteTObject(h)
+       for h in h2d_el_tt_norm + h2d_mu_tt_norm: outfile.WriteTObject(h)
 
        # Plot
        if options.outdir:
-           for lep,h2d,h2dtt,xcuts in (("el",h2d_el,h2d_el_tt,[30]),("mu",h2d_mu,h2d_mu_tt,[20,45])):
+           for lep,h2d,h2dtt,h2tt_norm,xcuts in (("el",h2d_el,h2d_el_tt,h2d_el_tt_norm,[30]),("mu",h2d_mu,h2d_mu_tt,h2d_mu_tt_norm,[20,45])):
               for ieta,eta in enumerate(["barrel","endcap"]):
                   effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(["MC ttbar"],h2dtt) ]
                   effs += [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
                   styles(effs)
                   options.xlines = xcuts
+                  savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
                   stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
-              variants = makeVariants(h2d[-1])
+                  ROOT.gErrorIgnoreLevel = savErrorLevel;
+              variants = makeVariants(h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
               for v in variants: outfile.WriteTObject(v, v.GetName())
               for ieta,eta in enumerate(["barrel","endcap"]):
                   effs = [ ('nominal', graphFromXSlice(h2d[-1],ieta+1)) ]
@@ -258,9 +290,11 @@ if __name__ == "__main__":
                     effs.append( (label, graphFromXSlice(v,ieta+1) ) )
                   styles(effs)
                   options.xlines = xcuts
+                  savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
                   stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
-              mcttvariants = makeVariants(h2dtt[0],h2d[-1])
+                  ROOT.gErrorIgnoreLevel = savErrorLevel;
+              mcttvariants = makeVariants(h2dtt[0],h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
               for v in mcttvariants: outfile.WriteTObject(v, v.GetName())
-              mcvariants = makeVariants(h2d[-2],h2d[-1])
+              mcvariants = makeVariants(h2d[-2],h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
               for v in mcvariants: outfile.WriteTObject(v, v.GetName())
-    outfile.ls()
+    #outfile.ls()

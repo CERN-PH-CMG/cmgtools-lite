@@ -230,7 +230,16 @@ for WP in $WPs; do
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC,QCDEl_bjets -o $PBASE/$what/el_bnbNC_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
-        
+     
+        PlotX="${B1/--plotmode=norm/}"; 
+        PlotX="${PlotX/make_fake_rates_plots.txt/make_fake_rates_xvars.txt}"
+        MuNormPlot="$PlotX $MuDen ${BDen} --sP '${ptJI}_${XVar}_coarsecomb'" 
+        ElNormPlot="$PlotX $ElDen ${BDen} --sP '${ptJI}_${XVar}_coarseelcomb'" 
+        echo "( $MuNormPlot -p TT_SS_red --pdir $PBASE/$what   -o {O}/mu_ttnorm_${Me}_eta_00_12.root  -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
+        echo "( $MuNormPlot -p TT_SS_red --pdir $PBASE/$what   -o {O}/mu_ttnorm_${Me}_eta_12_24.root  -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
+        echo "( $ElNormPlot -p TT_SS_red --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_00_15.root   -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $ElNormPlot -p TT_SS_red --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_15_25.root   -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+
         CElFakeVsPt="$ElDen ${BDen} --sP '${ptJI}_${XVar}_coarse' --sp TT_conv --xcut 10 999"; BC="${B0/--yrange 0 0.??/--yrange 0 1.0}"
         echo "( $BC $CElFakeVsPt -p TT_conv,QCDEl_conv_El12 -o $PBASE/$what/el_conv_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $BC $CElFakeVsPt -p TT_conv,QCDEl_conv_El12 -o $PBASE/$what/el_conv_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
