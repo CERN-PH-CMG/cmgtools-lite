@@ -1,5 +1,7 @@
 #!/bin/env python
 
+# python w-helicity-13TeV/mergeCardComponentsDiffXsec.py -i cards/diffXsec_2018_05_24_diffXsec_GenPtEtaSigBin/ -b Wel -C plus -p CMS_We_flips -m
+
 ####################
 ###################
 # TO BE UPDATED
@@ -234,7 +236,18 @@ if __name__ == "__main__":
                             realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wminus' in pseudobins[i] or 'Wplus' in pseudobins[i]) else pseudoprocesses[i])
                         combinedCard.write('bin            %s \n' % ' '.join([kpatt % options.bin for p in pseudoprocesses]))
                         combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
-                        combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
+                        procBin = {}
+                        ibkg = 1
+                        isig = 0
+                        for p in realprocesses:
+                            if any(wcharge in p for wcharge in ['Wminus','Wplus']):
+                                procBin[p] = isig
+                                isig += -1 
+                            else:
+                                procBin[p] = ibkg
+                                ibkg += 1
+                        #combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
+                        combinedCard.write('process        %s \n' % ' '.join([kpatt % procBin[p] for p in realprocesses]))
                     nmatchprocess += 1
                 if nmatchprocess==2: 
                     nmatchprocess +=1
