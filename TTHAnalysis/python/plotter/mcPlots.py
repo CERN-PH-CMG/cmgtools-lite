@@ -1197,8 +1197,11 @@ if __name__ == "__main__":
     cuts = CutsFile(args[1],options)
     plots = PlotFile(args[2],options)
     outname  = options.out if options.out else (args[2].replace(".txt","")+".root")
-    if (not options.out) and options.printDir:
-        outname = options.printDir + "/"+os.path.basename(args[2].replace(".txt","")+".root")
+    if options.printDir:
+        if not options.out:
+            outname = options.printDir + "/"+os.path.basename(args[2].replace(".txt","")+".root")
+        else:
+            outname = outname.replace("{O}",options.printDir)
     if os.path.dirname(outname) and not os.path.exists(os.path.dirname(outname)):
         os.system("mkdir -p "+os.path.dirname(outname))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
