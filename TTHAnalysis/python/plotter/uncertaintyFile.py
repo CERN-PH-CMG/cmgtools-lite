@@ -66,11 +66,11 @@ class Uncertainty:
         elif self.unc_type=='none':
             pass
         else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
-        if 'RemoveFakeRate' in self.extra:
+        if 'RemoveFakeRate' in self.extra and self.extra['RemoveFakeRate']:
             self._nontrivialSelectionChange = True
             self.removeFR = self.extra['RemoveFakeRate']
-        if 'Normalize' in self.extra:
-            self._postProcess = "Normalize"
+        if 'Normalize' in self.extra and self.extra['Normalize']:
+                self._postProcess = "Normalize"
         if 'DoesNotChangeEventSelection' in self.extra and self.extra['DoesNotChangeEventSelection']:
             self._nontrivialSelectionChange = False
     def isDummy(self):
