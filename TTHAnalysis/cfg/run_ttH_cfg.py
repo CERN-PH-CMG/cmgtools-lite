@@ -609,9 +609,9 @@ elif test == '94X-Data':
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
 elif test == 'mem-sync':
     ttHLepSkim.minLeptons=3
-    selectedComponents = [TTWToLNu_ext]
+    selectedComponents = [TTHnobb_fxfx]
     comp = selectedComponents[0]
-    comp.files = ['root://eoscms//store/mc/RunIISummer16MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/110000/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root']
+    comp.files = ['/eos/cms/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/D28A1AFD-8C00-E811-A678-0242AC130002.root' ]
     #if not getHeppyOption("single"): comp.fineSplitFactor = 8
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
