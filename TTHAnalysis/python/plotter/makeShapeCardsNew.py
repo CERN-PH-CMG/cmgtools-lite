@@ -8,10 +8,10 @@ parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins")
 addMCAnalysisOptions(parser)
 parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output directory name") 
 parser.add_option("--asimov", dest="asimov", type="string", default=None, help="Use an Asimov dataset of the specified kind: including signal ('signal','s','sig','s+b') or background-only ('background','bkg','b','b-only')")
-parser.add_option("--bbb", dest="bbb", type="string", default='standard', help="Options for bin-by-bin statistical uncertainties with the specified nuisance name")
+parser.add_option("--bbb", dest="bbb", type="string", default=None, help="Options for bin-by-bin statistical uncertainties with the specified nuisance name")
 parser.add_option("--infile", dest="infile", action="store_true", default=False, help="Read histograms to file")
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
-
+parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
@@ -22,9 +22,8 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
 
-truebinname = os.path.basename(args[1]).replace(".txt","") if options.binname == None else options.binname
-binname = truebinname if truebinname[0] not in "234" else "ttH_"+truebinname
-print binname
+binname = os.path.basename(args[1]).replace(".txt","") if options.binname == 'default' else options.binname
+if binname[0] in "1234567890": raise RuntimeError("Bins should start with a letter.")
 outdir  = options.outdir+"/" if options.outdir else ""
 if not os.path.exists(outdir): os.mkdir(outdir)
 
@@ -36,20 +35,18 @@ if options.infile:
         h = readHistoWithNuisances(infile, "x_"+p, variations, mayBeMissing=True)
         if h: report[p] = h
 else:
-    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov) 
+    if options.categ:
+       cexpr, cbins, _ = options.categ
+       report = mca.getPlotsRaw("x", cexpr+":"+args[2], makeBinningProductString(args[3],cbins), cuts.allCuts(), nodata=options.asimov) 
+    else:
+       report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov) 
     for p,h in report.iteritems(): h.cropNegativeBins()
-
-if options.bbb:
-    for p,h in report.iteritems(): 
-        h.addBinByBin(namePattern="%s_%s_%s_bin{bin}" % (options.bbb, truebinname, p), conservativePruning = True)
 
 if options.savefile:
     savefile = ROOT.TFile(outdir+binname+".bare.root","recreate")
     for k,h in report.iteritems(): 
         h.writeToFile(savefile, takeOwnership=False)
     savefile.Close()
-
-nuisances = sorted(listAllNuisances(report))
 
 if options.asimov:
     if options.asimov in ("s","sig","signal","s+b"):
@@ -60,27 +57,44 @@ if options.asimov:
     tomerge = None
     for p in asimovprocesses:
         if p in report: 
-            if tomerge is None: tomerge = report[p].raw().Clone("x_data_obs")
+            if tomerge is None: 
+                tomerge = report[p].raw().Clone("x_data_obs"); tomerge.SetDirectory(None)
             else: tomerge.Add(report[p].raw())
-    report['data_obs'] = tomerge 
+    report['data_obs'] = HistoWithNuisances(tomerge)
 else:
-    report['data_obs'] = report['data'].raw().Clone("x_data_obs") 
+    report['data_obs'] = report['data'].Clone("x_data_obs") 
+
+if options.categ:
+    allreports = dict()
+    catlabels = options.categ[2].split(",")
+    if len(catlabels) != report["data_obs"].GetNbinsY(): raise RuntimeError("Mismatch between category labels and bins")
+    for ic,lab in enumerate(catlabels):
+        allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
+else:
+    allreports = {binname:report}
 
 
-allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
-procs = []; iproc = {}
-for i,s in enumerate(mca.listSignals()):
+for binname, report in allreports.iteritems():
+  if options.bbb:
+    for p,h in report.iteritems(): 
+      if p not in ("data", "data_obs"):
+        h.addBinByBin(namePattern="%s_%s_%s_bin{bin}" % (options.bbb, binname, p), conservativePruning = True)
+  nuisances = sorted(listAllNuisances(report))
+
+  allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
+  procs = []; iproc = {}
+  for i,s in enumerate(mca.listSignals()):
     if s not in allyields: continue
     if allyields[s] == 0: continue
     procs.append(s); iproc[s] = i-len(mca.listSignals())+1
-for i,b in enumerate(mca.listBackgrounds()):
+  for i,b in enumerate(mca.listBackgrounds()):
     if b not in allyields: continue
     if allyields[b] == 0: continue
     procs.append(b); iproc[b] = i+1
-for p in procs: print "%-10s %10.4f" % (p, allyields[p])
+  #for p in procs: print "%-10s %10.4f" % (p, allyields[p])
 
-systs = {}
-for name in nuisances:
+  systs = {}
+  for name in nuisances:
     effshape = {}
     isShape = False
     for p in procs:
@@ -88,6 +102,8 @@ for name in nuisances:
         if h.hasVariation(name):
             if isShape or h.isShapeVariation(name):
                 #print "Nuisance %s has a shape effect on process %s" % (name, p)
+                #if "templstat" not in name and not isShape:
+                #    h.isShapeVariation(name,debug=True)
                 isShape = True
             effshape[p] = h.getVariation(name)
     if isShape:
@@ -107,39 +123,38 @@ for name in nuisances:
                 isNorm = True
         if isNorm:
             systs[name] = ("lnN", effyield, {})
-# make a new list with only the ones that have an effect
-nuisances = sorted(systs.keys())
+  # make a new list with only the ones that have an effect
+  nuisances = sorted(systs.keys())
 
-
-datacard = open(outdir+binname+".card.txt", "w"); 
-datacard.write("## Datacard for cut file %s\n"%args[1])
-datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
-datacard.write('##----------------------------------\n')
-datacard.write('bin         %s\n' % binname)
-datacard.write('observation %s\n' % allyields['data_obs'])
-datacard.write('##----------------------------------\n')
-klen = max([7, len(binname)]+[len(p) for p in procs])
-kpatt = " %%%ds "  % klen
-fpatt = " %%%d.%df " % (klen,3)
-npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
-datacard.write('##----------------------------------\n')
-datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
-datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p        for p in procs]))+"\n")
-datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % allyields[p] for p in procs]))+"\n")
-datacard.write('##----------------------------------\n')
-towrite = [ report[p].raw() for p in procs ] + [ report["data_obs"] ]
-for name in nuisances:
+  datacard = open(outdir+binname+".card.txt", "w"); 
+  datacard.write("## Datacard for cut file %s\n"%args[1])
+  datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+  datacard.write('##----------------------------------\n')
+  datacard.write('bin         %s\n' % binname)
+  datacard.write('observation %s\n' % allyields['data_obs'])
+  datacard.write('##----------------------------------\n')
+  klen = max([7, len(binname)]+[len(p) for p in procs])
+  kpatt = " %%%ds "  % klen
+  fpatt = " %%%d.%df " % (klen,3)
+  npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
+  datacard.write('##----------------------------------\n')
+  datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
+  datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p        for p in procs]))+"\n")
+  datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+  datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % allyields[p] for p in procs]))+"\n")
+  datacard.write('##----------------------------------\n')
+  towrite = [ report[p].raw() for p in procs ] + [ report["data_obs"].raw() ]
+  for name in nuisances:
     (kind,effmap,effshape) = systs[name]
     datacard.write(('%s %5s' % (npatt % name,kind)) + " ".join([kpatt % effmap[p]  for p in procs]) +"\n")
     for p,(hup,hdn) in effshape.iteritems():
         towrite.append(hup.Clone("x_%s_%sUp"   % (p,name)))
         towrite.append(hdn.Clone("x_%s_%sDown" % (p,name)))
 
-workspace = ROOT.TFile.Open(outdir+binname+".input.root", "RECREATE")
-for h in towrite:
-    workspace.WriteTObject(h,h.GetName())
-workspace.Close()
+  workspace = ROOT.TFile.Open(outdir+binname+".input.root", "RECREATE")
+  for h in towrite:
+      workspace.WriteTObject(h,h.GetName())
+  workspace.Close()
 
-print "Wrote to ",outdir+binname+".input.root"
+  print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname)
 
