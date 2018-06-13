@@ -261,9 +261,9 @@ class BDT_EventReco {
   float var_httTT_pT_b_o_kinFit_pT_b;
 
   HadTopKinFit *httTT_kinfitWorker = nullptr;
-  TLorentzVector httTT_kinfit_recBJet;
-  TLorentzVector httTT_kinfit_recWJet1;
-  TLorentzVector httTT_kinfit_recWJet2;
+  ptvec httTT_kinfit_recBJet;
+  ptvec httTT_kinfit_recWJet1;
+  ptvec httTT_kinfit_recWJet2;
 
   int nBMedium;
 
@@ -773,8 +773,8 @@ float BDT_EventReco::EvalScore_httTT(eTopP top){
   var_httTT_nllKinFit = std::get<0>(kf);
   if (std::get<1>(kf)!=0) var_httTT_pT_b_o_kinFit_pT_b = top->b->pt()/std::get<1>(kf);
   else {
-    std::cout << "ERROR: kinematic fit returned fitted b pt == 0. Will set var_httTT_pT_b_o_kinFit_pT_b to 1." << std::endl;
-    var_httTT_pT_b_o_kinFit_pT_b = 1;
+    if (debug) std::cout << "ERROR: kinematic fit returned fitted b pt == 0. Will set var_httTT_pT_b_o_kinFit_pT_b to infinity." << std::endl;
+    var_httTT_pT_b_o_kinFit_pT_b = TMath::Infinity();
   }
 
   float score = TMVAReader_httTT_->EvaluateMVA("BDT");
@@ -800,9 +800,9 @@ float BDT_EventReco::EvalScore_httTT(eTopP top){
 };
 
 std::tuple<float,float> BDT_EventReco::EvalKinFit(eTopP top){
-  httTT_kinfit_recBJet.SetPtEtaPhiM(top->b->pt(),top->b->eta(),top->b->phi(),top->b->mass());
-  httTT_kinfit_recWJet1.SetPtEtaPhiM(top->j2->pt(),top->j2->eta(),top->j2->phi(),top->j2->mass());
-  httTT_kinfit_recWJet2.SetPtEtaPhiM(top->j3->pt(),top->j3->eta(),top->j3->phi(),top->j3->mass());
+  httTT_kinfit_recBJet = *(top->b);
+  httTT_kinfit_recWJet1 = *(top->j2);
+  httTT_kinfit_recWJet2 = *(top->j3);
   httTT_kinfitWorker->fit(httTT_kinfit_recBJet,httTT_kinfit_recWJet1,httTT_kinfit_recWJet2);
   return std::make_tuple(float(httTT_kinfitWorker->nll()),float(httTT_kinfitWorker->fittedBJet().Pt()));
 };
