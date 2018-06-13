@@ -57,6 +57,7 @@ parser = OptionParser(usage="%prog [options] <TREE_DIR> <OUT>")
 parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run these modules");
 parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
 parser.add_option("-D", "--dm", "--dataset-match", dest="datasetMatches",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times): REGEXP");
+parser.add_option("--xD", "--de", "--dataset-exclude", dest="datasetExcludes",  type="string", default=[], action="append", help="Exclude these dataset (or dataset if specified multiple times): REGEXP");
 parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
 parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=None, help="Process sub-chunk of this chunk");
 parser.add_option("--fineSplit", dest="fineSplit",    type="int",    default=None, nargs=1, help="Split each chunk in N subchunks");
@@ -64,6 +65,7 @@ parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=50
 parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
 parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
 parser.add_option("--justcount", dest="justcount",   action="store_true", default=False, help="Don't run anything");
+parser.add_option("--justtrivial", dest="justtrivial",   action="store_true", default=False, help="Don't run anything");
 parser.add_option("--checkchunks", dest="checkchunks",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("--checkrunning", dest="checkrunning",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("--quiet", dest="quiet",   action="store_true", default=False, help="Check chunks that have been produced");
@@ -123,11 +125,11 @@ if len(options.chunks) != 0 and len(options.datasets) != 1:
 
 done_chunks = defaultdict(set)
 done_subchunks = defaultdict(set)
-#chunks_with_subs = defaultdict(dict)
+chunks_with_subs = defaultdict(set)
 if options.checkchunks:
     npass, nfail = 0,0
     lsls = subprocess.check_output(["ls", "-l", args[1]])
-    for line in lsls.split("\n"):
+    for line in sorted(lsls.split("\n")):
         if "evVarFriend" not in line: continue
         fields = line.split()
         size = int(fields[4])
@@ -136,12 +138,12 @@ if options.checkchunks:
         m2 = re.match(r"evVarFriend_(\w+).chunk(\d+).root", fname);
         good = (size > 2048)
         if m1:
-            raise RuntimeError("Subchunks not yet commissioned")
             sample = m1.group(1)
             chunk = int(m1.group(2))
             sub = int(m1.group(3))
             if good: done_subchunks[(sample,chunk)].add(sub)
-            done_chunks[sample].discard(chunk)
+            #done_chunks[sample].discard(chunk)
+            chunks_with_subs[sample].add(chunk)
         elif m2:
             sample = m2.group(1)
             chunk = int(m2.group(2))
@@ -152,6 +154,23 @@ if options.checkchunks:
         if good: npass += 1
         else: nfail += 1
     print "Found %d good chunks, %d bad chunks" % (npass, nfail)
+    if options.fineSplit:
+        allsubs = set(range(options.fineSplit))
+        if not os.path.isdir(args[1]+"/subchunks"):
+            os.system("mkdir -p "+args[1]+"/subchunks")
+        for sample, chunks in chunks_with_subs.iteritems():
+            for chunk in chunks:
+                if done_subchunks[(sample,chunk)] == allsubs:
+                    print "%s chunk %s has all the fine splits -> doing the hadd " % (sample, chunk),
+                    target = "evVarFriend_%s.chunk%d.root" % (sample, chunk)
+                    inputs = [ "evVarFriend_%s.chunk%d.sub%d.root" % (sample, chunk, sub) for sub in range(options.fineSplit) ]
+                    #print "hadd -f %s %s" % (target, " ".join(inputs))
+                    try:
+                        haddout = subprocess.check_output(["hadd", "-f", target]+inputs, cwd=args[1])
+                        subprocess.check_output(["mv", "-v" ]+inputs+["subchunks/"], cwd=args[1])
+                        print " OK"
+                    except subprocess.CalledProcessError:
+                        print "ERROR"; print haddout
 if options.checkrunning:
     nrunning = 0
     if options.queue == "condor":
@@ -159,13 +178,20 @@ if options.checkrunning:
     else:
         running = subprocess.check_output(["bjobs", "-ww"])
     tomatch = re.compile(r"\s{self}\s.(?:.*\s)?{input}\s.*\s*{output}\s(?:.*\s)?-d\s+(\w+)\s+-c\s+(\d+)\b".format(self=sys.argv[0], input=args[0], output=args[1]))
+    finespl = re.compile(r"--fineSplit\s+\d+\s+--subChunk\s+(\d+)")
     for line in running.split("\n"):
         if os.path.basename(sys.argv[0]) not in line: continue
         if args[1]+" " not in line: continue
         m = re.search(tomatch, line)
         if not m: continue
         nrunning += 1
-        done_chunks[m.group(1)].add(int(m.group(2)))
+        mfs = re.search(finespl, line)
+        if options.fineSplit and mfs:
+            name, chunk, sub = m.group(1), int(m.group(2)), int(mfs.group(1))
+            done_subchunks[(name,chunk)].add(sub)
+            chunks_with_subs[name].add(chunk)
+        else:
+            done_chunks[m.group(1)].add(int(m.group(2)))
     print "Found %d chunks running" % (nrunning)
 jobs = []
 for D in glob(args[0]+"/*"):
@@ -189,6 +215,11 @@ for D in glob(args[0]+"/*"):
             for dm in  options.datasetMatches:
                 if re.match(dm,short): found = True
             if not found: continue
+        if options.datasetExcludes != []:
+            found = False
+            for dm in  options.datasetExcludes:
+                if re.match(dm,short): found = True
+            if found: continue
         data =  any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl".split()) # FIXME
         f = ROOT.TFile.Open(fname)
         t = f.Get(treename)
@@ -196,6 +227,7 @@ for D in glob(args[0]+"/*"):
             print "Corrupted ",fname
             continue
         entries = t.GetEntries()
+        if options.justtrivial and entries > 0: continue
         f.Close()
         if options.newOnly:
             fout = "%s/evVarFriend_%s.root" % (args[1],short)
@@ -220,10 +252,17 @@ for D in glob(args[0]+"/*"):
             nchunk = int(ceil(entries/float(chunk)))
             if not options.quiet: print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks (%d events)" % (nchunk, entries)
             if options.queue == "condor":
-                if options.fineSplit: raise RuntimeError
                 if options.checkchunks:
                     for i in xrange(nchunk):
-                        if i not in done_chunks[short]: 
+                        if i in done_chunks[short]: continue
+                        if options.fineSplit:
+                            if i in chunks_with_subs[short]:
+                                for ifs in xrange(options.fineSplit):
+                                    if ifs in done_subchunks[(short,i)]: continue
+                                    jobs.append((short,data,i,ifs))
+                            else:
+                                jobs.append((short,data,i,-1))
+                        else:
                             jobs.append((short,data,i))
                 else:
                     jobs.append((short,data,nchunk))
@@ -238,19 +277,26 @@ for D in glob(args[0]+"/*"):
                 else:
                     ev_per_fs = int(ceil(chunk/float(options.fineSplit)))
                     for ifs in xrange(options.fineSplit):
+                        if i in chunks_with_subs[short] and ifs in done_subchunks[(short,i)]: continue
                         if options.subChunk != None and ifs != options.subChunk: continue
                         r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
                         jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
 njobs = len(jobs)
 if options.queue == "condor": 
-    if not options.checkchunks: njobs = sum((r[-1] for r in jobs),0)
+    if options.checkchunks and options.fineSplit: njobs = sum(((options.fineSplit if r[-1] == -1 else 1) for r in jobs),0)
+    elif not options.checkchunks: njobs = sum((r[-1] for r in jobs),0)
 print "I have %d task(s) to process" % njobs
 if options.justcount: sys.exit()
 if options.queue == "condor":
     subfile = open(options.subfile, "w")
     logdir = (options.logdir if options.logdir else args[1]+"/logs").replace("{P}", args[0]).replace("{O}", args[1])
     os.system("mkdir -p "+logdir)
+    chunk = "Step"
+    if options.checkchunks:
+        chunk = "Chunk"
+        if options.fineSplit:
+            chunk = "Chunk).$(Step"
     subfile.write("""##### BEGIN condor submit file
 Executable = {runner}
 Universe   = vanilla
@@ -263,7 +309,7 @@ getenv = True
 request_memory = 2000
 +MaxRuntime = {maxruntime}
 
-""".format(runner = options.runner, logdir = logdir, maxruntime = options.maxruntime * 60, chunk = ("Chunk" if options.checkchunks else "Step")))
+""".format(runner = options.runner, logdir = logdir, maxruntime = options.maxruntime * 60, chunk = chunk))
 if options.queue:
     runner = ""
     super = ""
@@ -302,11 +348,25 @@ if options.queue:
       baseargs = basecmd[len(os.getcwd())+len(runner)+2:] + friendPost
       baseargs = baseargs.replace("'","")
       if options.checkchunks:
-          subfile.write("\nArguments = {base} -d $(Dataset) -c $(Chunk)\n\n".format(base = baseargs))
-          subfile.write("Queue Dataset, Chunk from (\n")
-          for (name, data, chunk) in jobs:
-            subfile.write("    {name}, {chunk}\n".format(name=name, chunk=chunk))
-          subfile.write(")\n")
+          if options.fineSplit:
+              if any(j for j in jobs if j[-1] == -1): # entire pieces to split
+                  subfile.write("\nArguments = {base} -d $(Dataset) -c $(Chunk) --fineSplit {FS} --subChunk $(Step) \n\n".format(base = baseargs, FS=options.fineSplit))
+                  subfile.write("Queue {FS} Dataset, Chunk from (\n".format(FS=options.fineSplit))
+                  for (name, data, chunk, fs) in jobs:
+                      if fs == -1: subfile.write("    {name}, {chunk}\n".format(name=name, chunk=chunk))
+                  subfile.write(")\n")
+              if any(j for j in jobs if j[-1] != -1): # individual subchunks to re-run
+                  subfile.write("\nArguments = {base} -d $(Dataset) -c $(Chunk) --fineSplit {FS} --subChunk $(Step) \n\n".format(base = baseargs, FS=options.fineSplit))
+                  subfile.write("Queue Dataset, Chunk, Step from (\n".format(FS=options.fineSplit))
+                  for (name, data, chunk, fs) in jobs:
+                      if fs != -1: subfile.write("    {name}, {chunk}, {fs}\n".format(name=name, chunk=chunk, fs=fs))
+                  subfile.write(")\n")
+          else:
+              subfile.write("\nArguments = {base} -d $(Dataset) -c $(Chunk)\n\n".format(base = baseargs))
+              subfile.write("Queue Dataset, Chunk from (\n")
+              for (name, data, chunk) in jobs:
+                subfile.write("    {name}, {chunk}\n".format(name=name, chunk=chunk))
+              subfile.write(")\n")
       else:
           subfile.write("\nArguments = {base} -d $(Dataset) -c $(Step)\n\n".format(base = baseargs))
           for (name, data, nchunks) in jobs:
