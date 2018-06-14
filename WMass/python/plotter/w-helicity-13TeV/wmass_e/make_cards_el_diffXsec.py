@@ -4,6 +4,7 @@ from datetime import datetime
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 parser.add_option("-d", "--dry-run", dest="dryRun",   action="store_true", default=False, help="Do not run the job, only print the command");
+parser.add_option("-f", "--force", dest="force",   action="store_true", default=False, help="Force running without question below (useful only when using PDF systematics)");
 parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, help="Append a suffix to the default outputdir (helicity_<date>)");
 parser.add_option("-q", "--queue", dest="queue", type="string", default="cmscaf1nd", help="Select the queue to use");
 parser.add_option("--syst", dest="addSyst", action="store_true", default=False, help="Add PDF and QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
@@ -14,7 +15,7 @@ parser.add_option("--groupSignalBy", dest="groupSignalBy", type="int", default='
 not using this option. This option will reduce the number of chunk datacard for signal,but jobs will last for longer");
 (options, args) = parser.parse_args()
 
-if options.xsec_sigcard_binned and options.addSyst:
+if options.xsec_sigcard_binned and options.addSyst and not options.force:
     print ""
     print "You are trying to run the differential cross-section measurement making a signal template/card for each bin of the 2D templates."
     print "In addition, you are trying to add PDF and QCD scale systematics (60 variations for PDF)"
