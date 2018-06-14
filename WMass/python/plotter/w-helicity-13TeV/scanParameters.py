@@ -1,10 +1,29 @@
 import ROOT, os, datetime, re, operator, math, copy
 import utilities
 import array
-#from joshuncs import uncs_josh
-uncs_josh = eval(open('joshsuncs.py','r').read())
+uncs_hess = eval(open('hessuncs.py','r').read())
 
 utilities = utilities.util()
+
+toyfile_name = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_06_05_helicity_all_pdfFix/toys/2018-06-11-tensorflow_fix/toys_10k.root'
+
+def getFromToys(pnew):
+    toyfile = ROOT.TFile(toyfile_name, 'read')
+    _tree = toyfile.Get('fitresults')
+    tmp_hname = 'hist_tmp_'+pnew
+    tmp_hist = ROOT.TH1D(tmp_hname, tmp_hname, 1000, -3., 3.)
+    _tree.Draw(pnew+'>>'+tmp_hname)
+    tmp_hist.Fit('gaus')
+    ff = tmp_hist.GetFunction('gaus')
+    #mean = ff.GetParameter(1)
+    mean = tmp_hist.GetMean()
+    sig = ff.GetParameter(2)
+    rms = tmp_hist.GetRMS()
+    #return (mean, mean-sig, mean+sig)
+    return (mean, mean-rms, mean+rms)
+    
+    
+    
 
 def getCleanedError(self, graph):
     fname = graph.GetName()+'_fit'
@@ -28,6 +47,29 @@ def noOffsetGraph(graph, func):
 
     return newgraph
         
+def getSolutionFromGraph(infile, par, treename='limit'):
+    f = ROOT.TFile(infile,'read')
+    tree = f.Get(treename)
+    vals = []
+    for ev in tree:
+        if treename=='limit':
+            vals.append( [getattr(ev, par), 2.*ev.deltaNLL] )
+        elif treename == 'fitresults':
+            vals.append( [getattr(ev, par), 2.*ev.nllval  ] )
+    vals = sorted(vals)
+    lvals = vals[:len(vals)/2]
+    rvals = vals[len(vals)/2:]
+
+    graph = ROOT.TGraph(len(vals), array.array('d', [x[1] for x in vals]), array.array('d', [y[0] for y in vals]) )
+
+    best = graph.Eval(0.)
+    lgraph = ROOT.TGraph(len(lvals), array.array('d', [x[1] for x in lvals]), array.array('d', [y[0] for y in lvals]) )
+    rgraph = ROOT.TGraph(len(rvals), array.array('d', [x[1] for x in rvals]), array.array('d', [y[0] for y in rvals]) )
+    sol1  = lgraph.Eval(1.)
+    sol2  = rgraph.Eval(1.)
+
+
+    return (best, sol1, sol2)
 
 def getCleanedGraph(infile, par, norm, n_iter, treename='limit'):
     f = ROOT.TFile(infile,'read')
@@ -36,13 +78,18 @@ def getCleanedGraph(infile, par, norm, n_iter, treename='limit'):
     normval = norm if norm else 1.
     for ev in tree:
         ##if 2.*ev.deltaNLL > 15: continue
-        if norm == 1. and abs(getattr(ev, par) - norm) > 0.07: continue
-        if abs(2.*ev.deltaNLL) < 0.0001: continue
-        vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
+        ##if norm == 1. and abs(getattr(ev, par) - norm) > 0.07: continue
+        if treename=='limit':
+            if abs(2.*ev.deltaNLL) < 0.0001: continue
+            vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
+        elif treename == 'fitresults':
+            vals.append( [getattr(ev, par)/normval, 2.*ev.nllval  ] )
     vals = sorted(vals)
 
-    n_iter = int(n_iter)
     
+    graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
+
+    n_iter = int(n_iter)
     for i in range(n_iter):
     #while(n_iter):
         if len(vals) < 10: break
@@ -68,8 +115,8 @@ def getCleanedGraph(infile, par, norm, n_iter, treename='limit'):
         #graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
         #n_iter -= 1
 
-    graph.SetName(par+'_graph_it{i:.0f}'.format(i=i))
-    utilities.graphStyle(graph, rangeY=[-3., 15.] )
+    graph.SetName(par+'_graph_it{i:.0f}'.format(i=i if n_iter else 0))
+    utilities.graphStyle(graph, rangeY=[-0.5, 3.] )
 
     return graph
 
@@ -193,7 +240,7 @@ if __name__ == "__main__":
     parser.add_option(      '--points-per-job' , dest='ppj'        , default=5    , type='int'   , help='points of the scan to run per job')
     parser.add_option(      '--scan-parameters', dest='pois'       , default=''   , type='string', help='comma separated list of regexp parameters to run. default is all parameters!')
     parser.add_option(      '--suffix'         , dest='suffix'     , default=''   , type='string', help='suffix')
-    parser.add_option('-q', '--queue'          , dest='queue'      , default='8nh', type='string', help='use this queue. default 8nh')
+    parser.add_option('-q', '--queue'          , dest='queue'      , default='1nd', type='string', help='use this queue. default 8nh')
     parser.add_option('-p', '--pretend'        , dest='pretend'    , action='store_true'         , help='only pretend. print commands, don\'t submit')
     parser.add_option('-v', '--verbose'        , dest='verbose'    , action='store_true'         , help='verbosity level 10. this leads to large outputs.')
     parser.add_option(      '--postprocess'    , dest='postprocess', action='store_true'         , help='hadd all files in the output directories')
@@ -340,14 +387,29 @@ if __name__ == "__main__":
             os.system('mkdir -p {wd} '.format(wd=options.webdir))
             os.system('cp /afs/cern.ch/user/g/gpetrucc/php/index.php '+options.webdir)
         uncertainties      = []
-        uncertainties_josh = []
+        uncertainties_toys = []
+        uncertainties_hess = []
+
+        parameters = sorted(parameters, key = lambda x: int(x.replace('pdf','')) if 'pdf' in x else int(x.split('_')[-1]) if 'r_' in x and not 'long' in x else -1)
         
         for ip,par in enumerate(parameters):
             ## first hadd all the point files into one scan file named scan_<par>.root
+
+            ## in the tensorflow scans the parameters are called Wplus... not r_Wplus... and there is a _mu in there as well
+            if 'Wplus' in par or 'Wminus' in par:
+                pnew = par.replace('r_','')
+                pnew = pnew.split('_')
+                pnew.insert(-2, 'mu' if 'Wmu' in options.tensorflow else 'el')
+                pnew = '_'.join(pnew)
+            else:
+                pnew = par
+            ## done with changing parname
+
             pardir = absopath+'/'+par+'/'
             print 'at parameter {p} doing some postprocessing'.format(p=par)
-            fs = list([f for f in os.listdir(pardir) if 'higgs' in f])
-            fs = sorted(fs, key= lambda x: int(x.split('.')[0].split('_')[-1].replace('point','').split('To')[0]))
+            ## for combine fs = list([f for f in os.listdir(pardir) if 'higgs' in f])
+            ## for combine fs = sorted(fs, key= lambda x: int(x.split('.')[0].split('_')[-1].replace('point','').split('To')[0]))
+            fs = list([f for f in os.listdir(pardir) if 'fitresults' in f])
             fs = list([pardir+f for f in fs])
             
             ofn = '{pd}/scan_{p}.root'.format(pd=pardir,p=par)
@@ -362,58 +424,57 @@ if __name__ == "__main__":
 
             ## make some plots of the likelihood scans
             ##tmp_graph = utilities.getGraph(ofn, par, norm=tmp_val)
-            tmp_graph = getCleanedGraph(ofn, par, norm=tmp_val, n_iter=5)
+            tmp_graph = getCleanedGraph(ofn, pnew, norm=tmp_val, n_iter=0, treename='fitresults')#5)
+            tmp_graph.SetMarkerSize(1.3)
+            tmp_graph.SetLineColor(38)
+            tmp_graph.SetLineWidth(2)
             tmp_graph.Draw('ap')
 
 
-            ## draw a line at 2.*deltaNLL = 1.
-            tmp_line = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 1., tmp_graph.GetXaxis().GetXmax(), 1.)
-            tmp_line.SetLineStyle(7); tmp_line.SetLineWidth(2);
-            tmp_line.Draw('same')
-            tmp_line0 = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 0., tmp_graph.GetXaxis().GetXmax(), 0.)
-            tmp_line0.SetLineStyle(1); tmp_line0.SetLineWidth(2);
-            tmp_line0.Draw('same')
-
             ## graph with offest
-            tmp_graph.Fit('pol2', 'rob')
-            tmp_fit = tmp_graph.GetFunction('pol2')
-            tmp_fit.SetLineColor(ROOT.kAzure-4)
-            (best, sol1, sol2) = utilities.solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
+            #tmp_graph.Fit('pol2', 'rob')
+            #tmp_fit = tmp_graph.GetFunction('pol2')
+            #tmp_fit.SetLineColor(ROOT.kAzure-4)
+            #(best, sol1, sol2) = utilities.solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
 
-            ## correct for the offset of the graph
-            tmp_graph_nooffset = noOffsetGraph(copy.deepcopy(tmp_graph), tmp_fit)
+            ## ## correct for the offset of the graph
+            ## tmp_graph_nooffset = noOffsetGraph(copy.deepcopy(tmp_graph), tmp_fit)
 
-            ## look for the minimum point in x and offset by that number
-            minpoint = -1.*tmp_fit.GetParameter(1) / (2.*tmp_fit.GetParameter(2))
-            tmp_fit_nooffset = tmp_fit.Clone(tmp_fit.GetName()+'_nooffset')
-            tmp_fit_nooffset.SetParameter(0, tmp_fit_nooffset.GetParameter(0)-tmp_fit.Eval(minpoint))
-            tmp_fit_nooffset.SetLineColor(ROOT.kYellow+1)
-            tmp_fit_nooffset.SetLineWidth(2)
+            ## ## look for the minimum point in x and offset by that number
+            ## minpoint = -1.*tmp_fit.GetParameter(1) / (2.*tmp_fit.GetParameter(2))
+            ## tmp_fit_nooffset = tmp_fit.Clone(tmp_fit.GetName()+'_nooffset')
+            ## tmp_fit_nooffset.SetParameter(0, tmp_fit_nooffset.GetParameter(0)-tmp_fit.Eval(minpoint))
+            ## tmp_fit_nooffset.SetLineColor(ROOT.kYellow+1)
+            ## tmp_fit_nooffset.SetLineWidth(2)
 
             mg = ROOT.TMultiGraph()
             mg.Add(tmp_graph)
-            mg.Add(tmp_graph_nooffset)
-            mg.Draw('ap')
-            mg.GetYaxis().SetRangeUser(-1.,  4.)
+            #mg.Add(tmp_graph_nooffset)
+            mg.Draw('apl')
+            mg.GetYaxis().SetRangeUser(-0.5,  3.)
             mg.GetYaxis().SetTitle(tmp_graph.GetYaxis().GetTitle())
+            mg.GetYaxis().SetTitleOffset(1.20)
             mg.GetXaxis().SetRangeUser(tmp_graph.GetXaxis().GetXmin(), tmp_graph.GetXaxis().GetXmax())
-            ##if 'r_W' in par:
-            ##    mg.GetXaxis().Set
+
+            ## draw a line at 2.*deltaNLL = 1.
+            tmp_line = ROOT.TLine(mg.GetXaxis().GetXmin(), 1., mg.GetXaxis().GetXmax(), 1.)
+            tmp_line.SetLineStyle(7); tmp_line.SetLineWidth(2);
             tmp_line.Draw('same')
+            tmp_line0 = ROOT.TLine(mg.GetXaxis().GetXmin(), 0., mg.GetXaxis().GetXmax(), 0.)
+            tmp_line0.SetLineStyle(1); tmp_line0.SetLineWidth(2);
             tmp_line0.Draw('same')
-            tmp_fit_nooffset.Draw('same')
-            (best, sol1, sol2) = utilities.solvePol2(tmp_fit_nooffset.GetParameter(2), tmp_fit_nooffset.GetParameter(1), tmp_fit_nooffset.GetParameter(0)-1)
+
+            #tmp_fit_nooffset.Draw('same')
+            ##(best, sol1, sol2) = utilities.solvePol2(tmp_fit_nooffset.GetParameter(2), tmp_fit_nooffset.GetParameter(1), tmp_fit_nooffset.GetParameter(0)-1)
+            (best, sol1, sol2) = getSolutionFromGraph(ofn, pnew, treename='fitresults')
+            #uncertainties     .append( (par, getSolutionFromGraph(ofn, pnew, treename='fitresults') ) )
             
             print 'solutions for nooffest graph', sol1, sol2
             
 
-            lat.DrawLatex(0.35, 0.85, '#hat{{#mu}}_{{0}}: {best:.3f}'.format(best=best))
-            lat.DrawLatex(0.35, 0.80, '-1 #sigma {sol1:.3f}'.format(sol1=sol1))
-            lat.DrawLatex(0.35, 0.75, '+1 #sigma {sol2:.3f}'.format(sol2=sol2))
+            lat.SetTextAlign(20)
+            lat.DrawLatex(0.50, 0.80, '#hat{{#mu}}_{{0}}: {best:.3f}^{{+{sol1:.3f}}}_{{-{sol2:.3f}}}'.format(best=best,sol1=-1.*sol1,sol2=sol2))
     
-            uncertainties     .append( (par, (abs(sol1-tmp_val)+abs(sol2-tmp_val))/2. ) )  ## take the average of the uncertainty left and right
-            #uncertainties_josh.append( (par, uncs_josh[par] ) )
-
             tmp_linel = ROOT.TLine(sol1, 1., sol1, 0.)
             tmp_linel.SetLineStyle(3); tmp_line.SetLineWidth(2);
             tmp_linel.Draw('same')
@@ -429,31 +490,68 @@ if __name__ == "__main__":
             c1.SaveAs(options.webdir+'/'+os.path.basename(ofn).replace('.root','.pdf'))
             c1.SaveAs(options.webdir+'/'+os.path.basename(ofn).replace('.root','.png'))
 
+            
+            uncertainties     .append( (par, getSolutionFromGraph(ofn, pnew, treename='fitresults') ) )
+            ##uncertainties     .append( (par, (best, sol1, sol2) ) )
+            uncertainties_hess.append( (par, (uncs_hess[pnew][0], uncs_hess[pnew][0]-uncs_hess[pnew][1], uncs_hess[pnew][0]+uncs_hess[pnew][1] ) ) )
+            uncertainties_toys.append( (par, getFromToys(pnew) ) )
+    
 
+
+        #sys.exit()
         ROOT.gROOT.SetBatch(0)
         c12 = ROOT.TCanvas()
+        ROOT.gStyle.SetPadBottomMargin(0.150)
         
-        
-        pdfunc_scans = ROOT.TGraph(len(uncertainties), array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1] for j in uncertainties     ]))
-        pdfunc_josh  = ROOT.TGraph(len(uncertainties), array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1] for j in uncertainties_josh]))
+        unc_scans = ROOT.TGraphAsymmErrors(len(uncertainties)) #, array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1][0] for j in uncertainties     ]))
+        unc_hess  = ROOT.TGraphAsymmErrors(len(uncertainties)) #, array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1][0] for j in uncertainties_hess]))
+        unc_toys  = ROOT.TGraphAsymmErrors(len(uncertainties)) #, array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1][0] for j in uncertainties_toys]))
 
-        hist_uncs = ROOT.TH1F('hist_uncs', 'postfit', len(uncertainties), 0., len(uncertainties))
-        hist_uncs_josh= ROOT.TH1F('hist_uncs_josh', 'hist_uncs_josh', len(uncertainties), 0., len(uncertainties))
+        hist_uncs_scans = ROOT.TH1F('hist_uncs_scans', '', len(uncertainties)*4+1, 0., len(uncertainties)*4+1)
+        hist_uncs_hess  = ROOT.TH1F('hist_uncs_hess' , '', len(uncertainties)*4+1, 0., len(uncertainties)*4+1)
+        hist_uncs_toys  = ROOT.TH1F('hist_uncs_josh' , '', len(uncertainties)*4+1, 0., len(uncertainties)*4+1)
+
         for i,j in enumerate(uncertainties):
-            hist_uncs      .SetBinContent(i+1,j[1])
-            hist_uncs_josh .SetBinContent(i+1,uncertainties_josh[i][1])
-            hist_uncs      .SetBinError(i+1,0.)
-            hist_uncs_josh .SetBinError(i+1,0.)
-            hist_uncs      .GetXaxis().SetBinLabel(i+1,j[0] if not 'r_' in j[0] else 'r_'+'_'.join(j[0].split('_')[3:]))
-            hist_uncs_josh .GetXaxis().SetBinLabel(i+1,j[0] if not 'r_' in j[0] else 'r_'+'_'.join(j[0].split('_')[3:]))
+            hist_uncs_scans.SetBinContent(4*i+2, j[1][0])
+            hist_uncs_hess .SetBinContent(4*i+3, uncertainties_hess[i][1][0])
+            hist_uncs_toys .SetBinContent(4*i+4, uncertainties_toys[i][1][0])
+
+            hist_uncs_scans.SetBinError  (4*i+2, j[1][0]-j[1][1])
+            hist_uncs_hess .SetBinError  (4*i+3, uncertainties_hess[i][1][0]-uncertainties_hess[i][1][1])
+            hist_uncs_toys .SetBinError  (4*i+4, uncertainties_toys[i][1][0]-uncertainties_toys[i][1][1])
+
+            if 'r_' in j[0]:
+                tmp_label = j[0].replace('plus','^{+}').replace('minus','^{-}').replace('right','R:').replace('left','L:').replace('_Ybin','').split('_')
+                tmp_label = ' '.join(tmp_label[-3:])
+            elif 'CMS' in j[0]:
+                tmp_label = ' '.join(j[0].split('_')[1:])
+            else:
+                tmp_label = j[0]
+            hist_uncs_scans .GetXaxis().SetBinLabel(4*i+3, tmp_label)
+
+        hist_uncs_scans.GetXaxis().SetTickSize(0.)
+        hist_uncs_scans.GetXaxis().SetLabelSize(0.04)
         
-        hist_uncs.SetMarkerColor(38); hist_uncs.SetMarkerSize(1.0); hist_uncs.SetMarkerStyle(20)
-        hist_uncs_josh.SetMarkerColor(46); hist_uncs_josh.SetMarkerSize(1.0); hist_uncs_josh.SetMarkerStyle(21)
+        hist_uncs_scans.SetMarkerColor(38); hist_uncs_scans.SetLineColor(37); hist_uncs_scans.SetLineWidth(2); hist_uncs_scans.SetMarkerSize(1.0); hist_uncs_scans.SetMarkerStyle(20)
+        hist_uncs_hess .SetMarkerColor(46); hist_uncs_hess .SetLineColor(45); hist_uncs_hess .SetLineWidth(2); hist_uncs_hess .SetMarkerSize(1.0); hist_uncs_hess .SetMarkerStyle(21)
+        hist_uncs_toys .SetMarkerColor(21); hist_uncs_toys .SetLineColor(24); hist_uncs_toys .SetLineWidth(2); hist_uncs_toys .SetMarkerSize(1.0); hist_uncs_toys .SetMarkerStyle(22)
 
-        hist_uncs.Draw('p')
-        hist_uncs_josh.Draw('p same')
+        hist_uncs_scans.Draw('p')
+        hist_uncs_hess .Draw('p same')
+        hist_uncs_toys .Draw('p same')
 
-        hist_uncs.GetYaxis().SetRangeUser(0., 1.0)
+
+        line0 = ROOT.TLine(hist_uncs_scans.GetXaxis().GetXmin(), 0., hist_uncs_scans.GetXaxis().GetXmax(), 0.); line0.SetLineStyle(7)
+        line1 = ROOT.TLine(hist_uncs_scans.GetXaxis().GetXmin(), 1., hist_uncs_scans.GetXaxis().GetXmax(), 1.); line1.SetLineStyle(3)
+        line2 = ROOT.TLine(hist_uncs_scans.GetXaxis().GetXmin(),-1., hist_uncs_scans.GetXaxis().GetXmax(),-1.); line2.SetLineStyle(3)
+        if any('pdf' in i for i in parameters) or any('alpha' in i for i in parameters) or any('CMS' in i for i in parameters):
+            line0.Draw('same')
+            line2.Draw('same')
+            hist_uncs_scans.GetYaxis().SetRangeUser(-2., 2.)
+        else:
+            hist_uncs_scans.GetYaxis().SetRangeUser(0.8, 1.2)
+
+        line1.Draw('same')
         
         #utilities.graphStyle(pdfunc_scans, style=20, color=38, size=1.0, titleY='pdf postfit unc.', rangeY=0)
         #utilities.graphStyle(pdfunc_josh , style=21, color=46, size=1.0, titleY='pdf postfit unc.', rangeY=0)
@@ -475,13 +573,15 @@ if __name__ == "__main__":
         #mg2.GetYaxis().SetTitle('postfit uncertainty')
         #mg2.GetYaxis().SetRangeUser(0., 1.3)
         #
-        leg = ROOT.TLegend(0.8, 0.9, 0.9, 1.)
+        leg = ROOT.TLegend(0.1, 0.9, 0.9, 0.95)
         leg.SetFillStyle(0)
-        leg.AddEntry(hist_uncs, 'from scans'     , 'p')
-        leg.AddEntry(hist_uncs_josh, 'from tensorflow', 'p')
+        leg.SetNColumns(3)
+        leg.AddEntry(hist_uncs_scans, 'scans'          , 'pl')
+        leg.AddEntry(hist_uncs_hess , 'hessian'        , 'pl')
+        leg.AddEntry(hist_uncs_toys , 'toys'           , 'pl')
         leg.Draw('same')
-        c12.SaveAs(options.webdir+'/postfit_uncertainty_comparison_{foob}.pdf'.format(foob=options.pois.replace(',','_').replace('.','').replace('*','')))
-        c12.SaveAs(options.webdir+'/postfit_uncertainty_comparison_{foob}.png'.format(foob=options.pois.replace(',','_').replace('.','').replace('*','')))
+        c12.SaveAs(options.webdir+'/postfit_uncertainty_comparison_{foob}.pdf'.format(foob=options.pois.replace(',','_').replace('.','').replace('*','').replace('$','').replace('[','').replace(']','')))
+        c12.SaveAs(options.webdir+'/postfit_uncertainty_comparison_{foob}.png'.format(foob=options.pois.replace(',','_').replace('.','').replace('*','').replace('$','').replace('[','').replace(']','')))
 
     
         
