@@ -11,7 +11,9 @@ incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-l
 incl_data : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt"
 
 ## SYSTEMATICS 
-# electron scale systematics 
+# electron scale systematics
+#incl_sig_elescale: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sigInclCharge_elescale_binned_eta_pt.txt"
+ 
 #Wplus_elescale_Up   : WJetsToLNu_NLO* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 && LepGood1_mcMatchId*LepGood1_charge!=-24 ; FillColor=ROOT.kRed+2 , Label="W+ lep scale Up", SkipMe=True 
 #Wminus_elescale_Up   : WJetsToLNu_NLO* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 && LepGood1_mcMatchId*LepGood1_charge!=-24 ; FillColor=ROOT.kRed+2 , Label="W- lep scale Up", SkipMe=True 
 
