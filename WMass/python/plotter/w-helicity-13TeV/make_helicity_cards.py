@@ -138,6 +138,7 @@ def submitBatch(dcname,outdir,mkShCardsCmd,options):
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
 parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
+parser.add_option("-l", "--lumi",    dest="integratedLuminosity",     type="float", default=35.9, help="Integrated luminosity");
 parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("--long-bkg", dest="longBkg",    action="store_true", default=False, help="Treat the longitudinal polarization as one background template.");
 parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
@@ -165,6 +166,8 @@ CUTFILE = args[1]
 fitvar = args[2]
 binning = args[3]
 SYSTFILE = args[4]
+
+luminosity = options.integratedLuminosity
 
 if not os.path.exists("cards/"):
     os.makedirs("cards/")
