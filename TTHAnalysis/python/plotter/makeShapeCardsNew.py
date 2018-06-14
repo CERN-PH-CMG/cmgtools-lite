@@ -9,6 +9,8 @@ addMCAnalysisOptions(parser)
 parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output directory name") 
 parser.add_option("--asimov", dest="asimov", type="string", default=None, help="Use an Asimov dataset of the specified kind: including signal ('signal','s','sig','s+b') or background-only ('background','bkg','b','b-only')")
 parser.add_option("--bbb", dest="bbb", type="string", default=None, help="Options for bin-by-bin statistical uncertainties with the specified nuisance name")
+parser.add_option("--amc", "--autoMCStats", dest="autoMCStats", type="string", default=None, help="use autoMCStats")
+parser.add_option("--autoMCStatsThreshold", dest="autoMCStatsValue", type="int", default=10, help="threshold to put on autoMCStats")
 parser.add_option("--infile", dest="infile", action="store_true", default=False, help="Read histograms to file")
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
@@ -76,6 +78,7 @@ else:
 
 for binname, report in allreports.iteritems():
   if options.bbb:
+    if options.autoMCStats: raise RuntimeError("Can't use --bbb together with --amc/--autoMCStats")
     for p,h in report.iteritems(): 
       if p not in ("data", "data_obs"):
         h.addBinByBin(namePattern="%s_%s_%s_bin{bin}" % (options.bbb, binname, p), conservativePruning = True)
@@ -150,6 +153,8 @@ for binname, report in allreports.iteritems():
     for p,(hup,hdn) in effshape.iteritems():
         towrite.append(hup.Clone("x_%s_%sUp"   % (p,name)))
         towrite.append(hdn.Clone("x_%s_%sDown" % (p,name)))
+  if options.autoMCStats: 
+    datacard.write('* autoMCStats %d\n' % options.autoMCStatsValue)
 
   workspace = ROOT.TFile.Open(outdir+binname+".input.root", "RECREATE")
   for h in towrite:
