@@ -86,18 +86,14 @@ if __name__ == "__main__":
 
     cov = {}; corr = {}
 
-    ## first have to fill the covariance matrix
+    ## construct the covariances and the correlations in one go.
     for p1 in params:
         for p2 in params:
             var = '({x}-{x0})*({y}-{y0})'.format(x=p1,x0=fitvals[p1],y=p2,y0=fitvals[p2])
             _tree.Draw('{var}>>h_{x}_{y}'.format(var=var,x=p1,y=p2))
             h = ROOT.gROOT.FindObject('h_{x}_{y}'.format(x=p1,y=p2)).Clone()
             cov [(p1,p2)] = h.GetMean()
-
-    ## only then can we make the correlation matrix
-    for p1 in params:
-        for p2 in params:
-            corr[(p1,p2)] = cov[(p1,p2)]/math.sqrt(cov[(p1,p1)])/math.sqrt(cov[(p2,p2)])
+            corr[(p1,p2)] = cov[(p1,p2)]/(fiterrs[p1]*fiterrs[p2])
 
     ## sort the floatParams. alphabetically, except for pdfs, which are sorted by number
     params = sorted(params, key= lambda x: int(x.split('_')[-1]) if '_Ybin_' in x else 0)
