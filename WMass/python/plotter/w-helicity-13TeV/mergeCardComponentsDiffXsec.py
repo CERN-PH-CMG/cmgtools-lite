@@ -256,8 +256,9 @@ if __name__ == "__main__":
             # now luminosity uncertainty and CMS_W, which are not in systfile   
             lumipar = "{0:.3f}".format(1.0 + options.lumiLnN) #"1.026"  # 2.6% 
             Wxsec   = "{0:.3f}".format(1.0 + options.wLnN)    #"1.038"  # 3.8%
-            combinedCard.write(('%-23s lnN' % "CMS_lumi_13TeV") + ' '.join([kpatt % ("-"   if any(x in key for x in Wcharge) else lumipar) for key in realprocesses]) + "\n")
-            combinedCard.write(('%-23s lnN' % "CMS_W"         ) + ' '.join([kpatt % (Wxsec if any(x in key for x in Wcharge) else "-"    ) for key in realprocesses]) + "\n")
+            combinedCard.write(('%-23s lnN' % "CMS_lumi_13TeV") + ' '.join([kpatt % ("-" if "data" in key else lumipar) for key in realprocesses]) + "\n")
+            # not needed because it will be measured
+            #combinedCard.write(('%-23s lnN' % "CMS_W") + ' '.join([kpatt % (Wxsec if any(x in key for x in Wcharge) else "-"    ) for key in realprocesses]) + "\n")
 
 
         os.system('rm {tmpcard}'.format(tmpcard=tmpcard))
