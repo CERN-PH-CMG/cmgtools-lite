@@ -182,6 +182,7 @@ if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
     parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
+    parser.add_option("-l", "--lumi",    dest="integratedLuminosity",     type="float", default=35.9, help="Integrated luminosity");
     parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
     parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
     parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
@@ -211,6 +212,9 @@ if __name__ == "__main__":
     fitvar = args[2]
     binning = args[3]
     SYSTFILE = args[4]
+
+    #print "MCA: ",MCA
+    luminosity = options.integratedLuminosity
 
     if not os.path.exists("cards/"):
         os.makedirs("cards/")
@@ -314,40 +318,53 @@ if __name__ == "__main__":
                     if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
                     syst = '' if ivar==0 else var
 
-                    xpsel=' --xp "W{antich}.*,Flips,Z,Top,DiBosons,TauDecaysW,data.*" --asimov '.format(antich=antich)      
+                    if options.channel == "el":
+                        scaleXP = "" if ivar == 0 else ",.*_elescale_.*"  # note comma in the beginning
+                    else:
+                        print "### WARNING: muon scale systematic is not implemented yet."
+                        scaleXP = ""
+                    xpsel=' --xp "W{antich}.*,Flips,Z,Top,DiBosons,TauDecaysW,data.*{xpScale}" --asimov '.format(antich=antich,xpScale=scaleXP)      
                     ycut = POSCUT if charge=='plus' else NEGCUT
 
-                    if options.groupSignalBy != "":
+                    if options.groupSignalBy:
                         # if we are here, loopBins is not the number of bins in 2D template
                         # rather, it is the number of groups with ngroup bins each (+1 because xrange will exclude the last number)
                         # to get the ieta,ipt we must obtain again the real globalbin number
+                        # the cut for this bin is directly in the MCA file (in the process definition)
                         selectedSigProcess = ' -p '
                         for n in xrange(ngroup):
                             tmpGlobalBin = n + ibin * ngroup
                             ieta,ipt = getXYBinsFromGlobalBin(tmpGlobalBin,netabins)
                             selectedSigProcess += 'W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}.*,'.format(charge=charge, channel=options.channel,
-                                                                                                              ieta=ieta,ipt=ipt,syst=syst)
+                                                                                                              ieta=ieta,ipt=ipt)
                         if selectedSigProcess.endswith(','):
                             selectedSigProcess = selectedSigProcess[:-1]
                         selectedSigProcess += " "
-                        xpsel = selectedSigProcess + xpsel
                         dcname = "W{charge}_{channel}_group_{gr}{syst}".format(charge=charge, channel=options.channel,gr=ibin,syst=syst)
 
                     elif options.xsec_sigcard_binned:
+                        # would be equivalent to options.groupSignalBy == 1
+                        # might be removed at some point
                         ieta,ipt = getXYBinsFromGlobalBin(ibin,netabins)
                         print "Making card for %s<=pt<%s, %s<=eta<%s and signal process with charge %s " % (ptbinning[ipt],ptbinning[ipt+1],
                                                                                                             etabinning[ieta],etabinning[ieta+1],
                                                                                                             charge)
-                        ptcut=" -A alwaystrue pt%d '%s>=%s && %s<%s' " % (ipt,ptVarCut,ptbinning[ipt],ptVarCut,ptbinning[ipt+1])
-                        etacut=" -A alwaystrue eta%d '%s>=%s && %s<%s' " % (ieta,etaVarCut,etabinning[ieta],etaVarCut,etabinning[ieta+1])
-                        ycut += (ptcut + etacut)
+                        ##########################
+                        # I don't need anymore to change the cut, because I am already runnion with an mca file having one process for each bin
+                        # (the cut is in the process definition inside the mca)
+                        # ptcut=" -A alwaystrue pt%d '%s>=%s && %s<%s' " % (ipt,ptVarCut,ptbinning[ipt],ptVarCut,ptbinning[ipt+1])
+                        # etacut=" -A alwaystrue eta%d '%s>=%s && %s<%s' " % (ieta,etaVarCut,etabinning[ieta],etaVarCut,etabinning[ieta+1])
+                        # ycut += (ptcut + etacut)
+
+                        selectedSigProcess = ' -p W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}.*  '.format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt)  
+
                         ##dcname = "W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}{syst}".format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt,syst=syst)
                         ## keep same logic as before for the datacard name
                         dcname = "W{charge}_{channel}_group_{gr}{syst}".format(charge=charge,channel=options.channel,gr=ibin,syst=syst)
                     else:
                         dcname = "W{charge}_{channel}_group_{gr}{syst}".format(charge=charge, channel=options.channel,gr=ibin,syst=syst)
 
-                    BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
+                    BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + selectedSigProcess + ycut
                     if options.queue:
                         mkShCardsCmd = "python {dir}/makeShapeCards.py {args} \n".format(dir = os.getcwd(), args = IARGS+" "+BIN_OPTS)
                         submitBatch(dcname,outdir,mkShCardsCmd,options)
