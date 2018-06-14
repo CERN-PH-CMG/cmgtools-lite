@@ -327,7 +327,7 @@ if options.queue:
         runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
 
-    basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
+    basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -j 0 -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
                 self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
                 tree=options.tree, data=args[0], output=theoutput)
