@@ -19,14 +19,14 @@ if __name__ == "__main__":
     
 
     from optparse import OptionParser
-    parser = OptionParser(usage='%prog [options] cards/card*.txt')
+    parser = OptionParser(usage='%prog [options]')
     parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
     parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
     parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
+    # fixYBins not used here
     parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='plusR=99;plusL=99;minusR=99;minusL=99', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
     parser.add_option('-p','--POIs', dest='POIsToMinos', type='string', default=None, help='Decide which are the nuiscances for which to run MINOS (a.k.a. POIs). Default is all non fixed YBins. With format poi1,poi2 ')
-    parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
     parser.add_option(     '--lumiLnN'    , dest='lumiLnN'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
     parser.add_option(     '--wXsecLnN'   , dest='wLnN'       , default=0.038, type='float', help='Log-normal constraint to be added to all the fixed W processes')
@@ -39,6 +39,7 @@ if __name__ == "__main__":
     
     charges = options.charge.split(',')
     channel = 'mu' if 'mu' in options.bin else 'el'
+    Wcharge = ["Wplus","Wminus"]
     
     ## to be rewritten to count number of bins or grouos in the datacards
     ##
@@ -233,14 +234,14 @@ if __name__ == "__main__":
                         klen = 7
                         kpatt = " %%%ds "  % klen
                         for i in xrange(len(pseudobins)):
-                            realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wminus' in pseudobins[i] or 'Wplus' in pseudobins[i]) else pseudoprocesses[i])
+                            realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if any(x in pseudobins[i] for x in Wcharge) else pseudoprocesses[i])
                         combinedCard.write('bin            %s \n' % ' '.join([kpatt % options.bin for p in pseudoprocesses]))
                         combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
                         procBin = {}
                         ibkg = 1
                         isig = 0
                         for p in realprocesses:
-                            if any(wcharge in p for wcharge in ['Wminus','Wplus']):
+                            if any(wcharge in p for wcharge in Wcharge):
                                 procBin[p] = isig
                                 isig += -1 
                             else:
@@ -252,7 +253,13 @@ if __name__ == "__main__":
                 if nmatchprocess==2: 
                     nmatchprocess +=1
                 elif nmatchprocess>2: combinedCard.write(l)
-        
+            # now luminosity uncertainty and CMS_W, which are not in systfile   
+            lumipar = "{0:.3f}".format(1.0 + options.lumiLnN) #"1.026"  # 2.6% 
+            Wxsec   = "{0:.3f}".format(1.0 + options.wLnN)    #"1.038"  # 3.8%
+            combinedCard.write(('%-23s lnN' % "CMS_lumi_13TeV") + ' '.join([kpatt % ("-"   if any(x in key for x in Wcharge) else lumipar) for key in realprocesses]) + "\n")
+            combinedCard.write(('%-23s lnN' % "CMS_W"         ) + ' '.join([kpatt % (Wxsec if any(x in key for x in Wcharge) else "-"    ) for key in realprocesses]) + "\n")
+
+
         os.system('rm {tmpcard}'.format(tmpcard=tmpcard))
         
         if options.scaleFile: options.absoluteRates = True
