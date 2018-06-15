@@ -16,8 +16,8 @@ if 'cmsphys10' in os.environ['HOSTNAME']: P0="/data1/g/gpetrucc"
 TREES = "--Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2"
 TREESONLYSKIM = "-P "+P0+"/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1"
 TREESONLYFULL = "-P "+P0+"/TREES_TTH_190418_Fall17 --Fs {P}/1_recleaner_230418_v2"
-TREESONLYMEMZVETO = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zveto_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1 --Fs {P}/4_MEM_v1"
-TREESONLYMEMZPEAK = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zpeak_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1 --Fs {P}/4_MEM_v1"
+TREESONLYMEMZVETO = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zveto_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1 --Fs {P}/4_MEM_v4"
+TREESONLYMEMZPEAK = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zpeak_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_290518_v2 --Fs {P}/4_BDTv8_Hj_290518_v1 --Fs {P}/4_BDTrTT_Hj_290518_v1 --Fs {P}/4_BDThttTT_Hj_290518_v1 --Fs {P}/4_MEM_v4"
 
 def base(selection):
 

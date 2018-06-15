@@ -152,11 +152,16 @@ kinMVA_input_BDTv8_eventReco_HadTop_mass : BDTv8_eventReco_HadTop_mass : 80,0,30
 #kinMVA_input_BDTv8_eventReco_dR_lep_fromHig_bJet_fromLepTop : BDTv8_eventReco_dR_lep_fromHig_bJet_fromLepTop : 40,0,4; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_X_mass : BDTv8_eventReco_X_mass : 160,0,1600; XTitle="Reconstructed M_{a}^{vis} (GeV)", Legend="TR"
 #kinMVA_input_BDTv8_eventReco_MT_HadLepTop_MET: mt_2(pt_2(BDTv8_eventReco_HadTop_pT,BDTv8_eventReco_HadTop_phi,BDTv8_eventReco_LepTop_pT,BDTv8_eventReco_LepTop_phi),phi_2(BDTv8_eventReco_HadTop_pT,BDTv8_eventReco_HadTop_phi,BDTv8_eventReco_LepTop_pT,BDTv8_eventReco_LepTop_phi),met_pt,met_phi) : 160,0,1600; XTitle="Reconstructed M_{T}(a^{vis}\,E_{T}^{miss}) (GeV)", Legend="TR"
-kinMVA_3l_input_MEM_LR : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2)) : 60,0,40; XTitle="MEM ln(LR)", Legend="TR"
-kinMVA_3l_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-100,0; XTitle="MEM_TTHfl weight", Legend="TL"
-kinMVA_3l_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-100,0; XTitle="MEM_TTHsl weight", Legend="TR"
-kinMVA_3l_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-100,0; XTitle="MEM_TTW weight", Legend="TL"
-kinMVA_3l_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-100,0; XTitle="MEM_TTLL weight", Legend="TR"
+kinMVA_3l_input_MEM_LR_old : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2)) : 60,0,40; XTitle="MEM ln(LR)\, old", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_LR : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTH_mean*(MEM_TTH_mean<1)))) : 60,0,40; XTitle="MEM ln(LR)", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTbarLR : -log((MEM_TTbarfl*(MEM_TTbarfl<1)+MEM_TTbarsl*(MEM_TTbarsl<1)) / (MEM_TTH_mean*(MEM_TTH_mean<1))) : 60,-30,10; XTitle="MEM ln(LR) vs ttbar", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-90,0; XTitle="MEM_TTHfl weight", Legend="TL", MoreY=1.7
+kinMVA_3l_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-90,0; XTitle="MEM_TTHsl weight", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTH : min(0,log(max(3.72e-44,MEM_TTH_mean*(MEM_TTH_mean<1)))) : 60,-90,0; XTitle="MEM_TTH weight", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-90,0; XTitle="MEM_TTW weight", Legend="TL", MoreY=1.7
+kinMVA_3l_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-90,0; XTitle="MEM_TTLL weight", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTbarfl : min(0,log(max(3.72e-44,MEM_TTbarfl*(MEM_TTbarfl<1)))) : 60,-90,0; XTitle="MEM_TTbarfl weight", Legend="TL", MoreY=1.7
+kinMVA_3l_input_MEM_TTbarsl : min(0,log(max(3.72e-44,MEM_TTbarsl*(MEM_TTbarsl<1)))) : 60,-90,0; XTitle="MEM_TTbarsl weight", Legend="TR", MoreY=1.7
 
 kinMVA_input_BDTrTT_eventReco_mvaValue : BDTrTT_eventReco_mvaValue : 80,-1,1; XTitle="BDT_rTT mvaValue"
 kinMVA_input_BDTrTT_eventReco_HadTop_pt : BDTrTT_eventReco_HadTop_pt : 80,0,400; XTitle="BDT_rTT HadTop_pt"
