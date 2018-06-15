@@ -26,7 +26,12 @@ OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --WA pres
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
-SYSTS="--unc ttH-multilepton/systsUnc.txt --bbb CMS_ttHl17_templstat"
+SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
+case $1 in
+--bbb)
+    shift;
+    SYSTS="--unc ttH-multilepton/systsUnc.txt --bbb CMS_ttHl17_templstat";;
+esac;
 BLoose=" -E ^BLoose "
 BTight=" -E ^BTight "
 
@@ -49,51 +54,66 @@ if [[ "$2" == "read" ]]; then
 DOFILE="--infile"
 fi
 
-if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then
+if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" || "$1" == "2lss-c" || "$1" == "2lss_3j-c" ]]; then
     OPT_2L="${T2L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
     POS=" -A alwaystrue positive LepGood1_charge>0 "
     NEG=" -A alwaystrue negative LepGood1_charge<0 "
     CATPOSTFIX=""
 
-    if [[ "$1" == "2lss_3j" ]]; then
+    if [[ "$1" == "2lss_3j" ]] || [[ "$1" == "2lss_3j-c" ]]; then
 	OPT_2L="${OPT_2L} -X ^4j -E ^x3j"
 	CATPOSTFIX="_3j"
     fi
 
-    for X in mm ee em; do 
+    CATFUNC="ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)"
+    CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"
+    CATNAMES="$(echo ee_{neg,pos}${CATPOSTFIX} {em,mm}_{bl,bt}_{neg,pos}${CATPOSTFIX} | sed 's/ /,/g')"
+ 
+    if [[ "$1" == "2lss-c" ]] || [[ "$1" == "2lss_3j-c" ]]; then
+      python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss --categorize $CATFUNC $CATBINS $CATNAMES;
+    else
+      for X in mm ee em; do 
         echo "2lss_${X}";
 	FLAV=" -E ^${X} "
 	if [[ "${X}" == "ee" ]]; then
-	    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname 2lss_${X}_pos${CATPOSTFIX} $POS $FLAV;
-            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname 2lss_${X}_neg${CATPOSTFIX} $NEG $FLAV;
+	    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss_${X}_pos${CATPOSTFIX} $POS $FLAV;
+            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss_${X}_neg${CATPOSTFIX} $NEG $FLAV;
 	else
-	    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname 2lss_${X}_bl_pos${CATPOSTFIX} $POS $BLoose $FLAV;
-            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname 2lss_${X}_bl_neg${CATPOSTFIX} $NEG $BLoose $FLAV;
-            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname 2lss_${X}_bt_pos${CATPOSTFIX} $POS $BTight $FLAV;
-            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname 2lss_${X}_bt_neg${CATPOSTFIX} $NEG $BTight $FLAV;
+	    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss_${X}_bl_pos${CATPOSTFIX} $POS $BLoose $FLAV;
+            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss_${X}_bl_neg${CATPOSTFIX} $NEG $BLoose $FLAV;
+            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss_${X}_bt_pos${CATPOSTFIX} $POS $BTight $FLAV;
+            python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss_${X}_bt_neg${CATPOSTFIX} $NEG $BTight $FLAV;
 	fi
-    done
+      done;
+    fi
 
     echo "Done at $(date)"
 
 fi
 
-if [[ "$1" == "all" || "$1" == "3l" ]]; then
+if [[ "$1" == "all" || "$1" == "3l"  || "$1" == "3l-c"  ]]; then
     OPT_3L="${T3L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
     POS=" -A alwaystrue positive (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 "
     NEG=" -A alwaystrue negative (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 "
     CATPOSTFIX=""
 
     echo "3l";
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bl_pos${CATPOSTFIX} $POS $BLoose;
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bl_neg${CATPOSTFIX} $NEG $BLoose;
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bt_pos${CATPOSTFIX} $POS $BTight;
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bt_neg${CATPOSTFIX} $NEG $BTight;
+    if [[ "$1" == "3l-c"  ]]; then
+        CATFUNC="ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)"
+        CATBINS="[10.5,11.5,12.5,13.5,14.5]"
+        CATNAMES="$(echo {bl,bt}_{neg,pos}${CATPOSTFIX} | sed 's/ /,/g')"
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l --categorize $CATFUNC $CATBINS $CATNAMES;
+    else
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bl_pos${CATPOSTFIX} $POS $BLoose;
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bl_neg${CATPOSTFIX} $NEG $BLoose;
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bt_pos${CATPOSTFIX} $POS $BTight;
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bt_neg${CATPOSTFIX} $NEG $BTight;
+    fi
 
    echo "Done at $(date)"
 fi
 
-if [[ "$1" == "3l_zpeak" || "$1" == "3l_zpeak_btight" ]]; then
+if [[ "$1" == "3l_zpeak" || "$1" == "3l_zpeak_btight" || "$1" == "3l_zpeak-c"  ]]; then
 
     POS=" -A alwaystrue positive (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 "
     NEG=" -A alwaystrue negative (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 "
@@ -108,10 +128,17 @@ if [[ "$1" == "3l_zpeak" || "$1" == "3l_zpeak_btight" ]]; then
 	echo "asking tighter b requirements"
     fi
 
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bl_pos${CATPOSTFIX} $POS $BLoose;
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bl_neg${CATPOSTFIX} $NEG $BLoose;
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bt_pos${CATPOSTFIX} $POS $BTight;
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname 3l_bt_neg${CATPOSTFIX} $NEG $BTight;
+    if [[ "$1" == "3l_zpeak-c"  ]]; then
+        CATFUNC="ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)"
+        CATBINS="[10.5,11.5,12.5,13.5,14.5]"
+        CATNAMES="$(echo {bl,bt}_{neg,pos}${CATPOSTFIX} | sed 's/ /,/g')"
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l --categorize $CATFUNC $CATBINS $CATNAMES;
+    else
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bl_pos${CATPOSTFIX} $POS $BLoose;
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bl_neg${CATPOSTFIX} $NEG $BLoose;
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bt_pos${CATPOSTFIX} $POS $BTight;
+        python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname ttH_3l_bt_neg${CATPOSTFIX} $NEG $BTight;
+    fi
 
    echo "Done at $(date)"
 fi
@@ -122,7 +149,7 @@ if [[ "$1" == "all" || "$1" == "4l" ]]; then
     ONEBIN_4L="1 1,0.5,1.5"
 
     echo "4l";
-    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt ${ONEBIN_4L} $SYSTS $OPT_4L --binname 4l${CATPOSTFIX};
+    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt ${ONEBIN_4L} $SYSTS $OPT_4L --binname ttH_4l${CATPOSTFIX};
 
    echo "Done at $(date)"
 fi
