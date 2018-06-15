@@ -26,7 +26,7 @@ def getXsecs(processes, systs, ybins, lumi, infile):
 
         ncen = cen_hist .Integral(istart, iend-1)
 
-        tmp_hist = ROOT.TH1F('x_'+process+'_xsec','x_'+process+'_xsec', 1, 0., 1.)
+        tmp_hist = ROOT.TH1F('x_'+process,'x_'+process, 1, 0., 1.)
         ## normalize back to cross section
         tmp_hist.SetBinContent(1, ncen/lumi)
 
@@ -49,9 +49,9 @@ def getXsecs(processes, systs, ybins, lumi, infile):
             if 'pdf' in sys:
                 ndn = 2.*ncen-nup ## or ncen/nup?
 
-            tmp_hist_up = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
+            tmp_hist_up = ROOT.TH1F('x_'+process+'_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
             tmp_hist_up.SetBinContent(1, nup/lumi)
-            tmp_hist_dn = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
+            tmp_hist_dn = ROOT.TH1F('x_'+process+'_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
             tmp_hist_dn.SetBinContent(1, ndn/lumi)
             hists.append(copy.deepcopy(tmp_hist_up))
             hists.append(copy.deepcopy(tmp_hist_dn))
@@ -515,7 +515,7 @@ if __name__ == "__main__":
         tmp_xsec_dc.write('bin {b}\n'.format(b=options.bin))
         tmp_xsec_dc.write('observation -1\n') ## don't know if that will work...
         tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}'.format(b=options.bin) for p in tmp_sigprocs])))
-        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p+'_xsec' for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p for p in tmp_sigprocs])))
         ###tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(procids[procnames.index(pname)]  for pname in tmp_sigprocs)))
         tmp_xsec_dc.write('rate     {s}\n'.format(s=' '.join('-1' for i in range(len(tmp_sigprocs)))))
@@ -558,6 +558,7 @@ if __name__ == "__main__":
 
             txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-background --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
             txt2wsCmd_noXsec = 'text2workspace.py {cf} -o {ws} --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} '.format(cf=cardfile, ws=ws, pos=multisig)
+            txt2tfCmd = 'text2tf.py --maskedChan {maskch} --X-allow-no-background {cf}'.format(maskch=chname_xsec,cf=cardfile_xsec)
 
             #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
             combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
@@ -566,10 +567,12 @@ if __name__ == "__main__":
         os.system(ccCmd)
         ## then running the t2w command afterwards
         print txt2wsCmd
-        print '-- will run text2workspace -----------------------'
-        os.system(txt2wsCmd)
-        print "redoing also the noXsec workspace..."
-        os.system(txt2wsCmd_noXsec)
+        print '-- will NOT run text2workspace -----------------------'
+        #os.system(txt2wsCmd)
+        print "NOT doing the noXsec workspace..."
+        #os.system(txt2wsCmd_noXsec)
+        print '-- will run text2tf ---------------------'
+        os.system(txt2tfCmd)
         ## print out the command to run in combine
         print combineCmd
     # end of loop over charges
