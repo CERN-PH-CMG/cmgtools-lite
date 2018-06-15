@@ -530,6 +530,7 @@ class HistoWithNuisances:
             print "WARNING, discarding already existing RooFit context"
         self._rooFit = { "context":roofitContext, "workspace":roofitContext.workspace }
     def _makePdfAndNorm(self):
+        self.cropNegativeBins() # can't do with this
         roofitContext = self._rooFit["context"]
         templates = ROOT.TList()
         nuisances = ROOT.RooArgList()
@@ -544,7 +545,9 @@ class HistoWithNuisances:
                 templates.Add(roofitContext.hist2roofit(hup))
                 templates.Add(roofitContext.hist2roofit(hdown))
             if abs(hup.Integral()/norm0-1)>1e-5 or abs(hdown.Integral()/norm0-1)>1e-5:
-                normfactor.addAsymmLogNormal(hdown.Integral()/norm0, hup.Integral()/norm0, nuis) 
+                kup   = min(max(0.1, hup.Integral()/norm0),   10) # sanitze
+                kdown = min(max(0.1, hdown.Integral()/norm0), 10) # sanitze
+                normfactor.addAsymmLogNormal(kdown, kup, nuis) 
         pdf = ROOT.FastVerticalInterpHistPdf2("%s_pdf" % self.nominal.GetName(),     "", roofitContext.xvar, templates, nuisances, 1., 1)
         self._rooFit["norm"] = normfactor
         self._rooFit["pdf"] = pdf
