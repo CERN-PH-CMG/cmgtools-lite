@@ -7,7 +7,7 @@ $alias : tHq : tHq|tHq_h[a-z]+
 $alias : tHW : tHW|tHW_h[a-z]+
 $alias : ttHX : $ttH|$tHq|$tHW
 $alias : ttV  : TT[WZ]|TTWW
-$alias : PromptFromMC : $ttHX|$ttV|Rares|Convs  # note that EWK is excluded as it's normalized to data
+$alias : PromptFromMC : $ttHX|$ttV|Rares|Convs|WZ|ZZ|EWK  
 $alias : FRData : data_fakes|.*_promptsub
 $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 
@@ -62,13 +62,25 @@ CMS_ttHl16_btag_cErr1   : $PromptFromMC : .* : templateAsymm; AddWeights=['event
 CMS_ttHl16_btag_cErr2   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
 
 # Diboson background
+# 2lss: 
+CMS_ttHl_EWK_4j : EWK$ : .*2lss.* : normSymm : 2.0 
+# these below for 3l final state are when not using the WZ and ZZ CR
 CMS_ttHl_EWK_stat : EWK : .*3l.* : normSymm : 1.1
 CMS_ttHl_EWK_bkgs : EWK : .*3l.* : normSymm : 1.2
 CMS_ttHl_EWK_btag : EWK : .*3l* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.1\, 1.4)'
 CMS_ttHl_EWK_btag : EWK : .*3l_bl.* : normSymm : 1.1
 CMS_ttHl_EWK_btag : EWK : .*3l_bt.* : normSymm : 1.4
 CMS_ttHl_EWK_theo : EWK : .*3l.* : normSymm : 1.07
-CMS_ttHl_EWK_4j : EWK : .*2lss.* : normSymm : 2.0 
+# these are when using the CRs, and split WZ/ZZ
+CMS_ttHl_WZ_lnU  : WZ : .*          : normSymm : 1.3 ; lnU=True
+CMS_ttHl_WZ_theo : WZ : .*3l.*      : normSymm : 1.07
+CMS_ttHl_WZ_theo : WZ : .*3l_crwz.* : none
+CMS_ttHl_WZ_bkg  : .* : .*3l_crwz.* : normSymm : 2.0 
+CMS_ttHl_WZ_bkg  : WZ : .*3l_crwz.* : none
+CMS_ttHl_ZZ_lnU  : ZZ : .*          : normSymm : 2.0 ; lnU=True
+CMS_ttHl_ZZ_bkg  : .* : .*4l_crzz.* : normSymm : 2.0 
+CMS_ttHl_ZZ_bkg  : ZZ : .*4l_crzz.* : none
+
 
 # Other normalizations
 CMS_ttHl_Rares		: Rares : .* : normSymm : 1.5
