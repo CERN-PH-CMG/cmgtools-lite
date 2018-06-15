@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import _cloneNoDir
 import re, sys, os, os.path
 systs = {}
 
@@ -102,6 +103,7 @@ for binname, report in allreports.iteritems():
     isShape = False
     for p in procs:
         h = report[p]
+        n0 = h.Integral()
         if h.hasVariation(name):
             if isShape or h.isShapeVariation(name):
                 if name.endswith("_lnU"): 
@@ -110,7 +112,38 @@ for binname, report in allreports.iteritems():
                 #if "templstat" not in name and not isShape:
                 #    h.isShapeVariation(name,debug=True)
                 isShape = True
-            effshape[p] = h.getVariation(name)
+            variants = list(h.getVariation(name))
+            for hv,d in zip(variants, ('up','down')):
+                k = hv.Integral()/n0
+                if k == 0: 
+                    print "Warning: underflow template for %s %s %s %s. Will take the nominal scaled down by a factor 2" % (binname, p, name, d)
+                    hv.Add(h.raw()); hv.Scale(0.5)
+                elif k < 0.2 or k > 5:
+                    print "Warning: big shift in template for %s %s %s %s: kappa = %g " % (binname, p, name, d, k)
+            kup,kdown = [hv.Integral()/n0 for hv in variants]
+            #print "info:  %s %s %s %s: kappa = %g / %g " % (binname, p, name, d, kup, kdown)
+            if max(kup,1/kup) > 1.5 and max(kdown,1/kdown) < 1.15:
+                    print "Warning: very asymmetric up template for %s %s %s %s: kappa = %g / %g " % (binname, p, name, d, kup, kdown)
+                    variants[0] = _cloneNoDir(h.raw())
+                    variants[0].Multiply(h.raw())
+                    variants[0].Divide(variants[1])
+                    kup = variants[0].Integral()/n0
+                    print "after mirroring, kup = %g" % kup
+                    if max(kup,1/kup if kup else 999) > 1.5: # this didn't fix it
+                        variants[0] = _cloneNoDir(h.raw())
+                        variants[0].Scale(1/kdown)
+            elif max(kup,1/kup) < 1.15 and max(kdown,1/kdown) > 1.5:
+                    print "Warning: very asymmetric down template for %s %s %s %s: kappa = %g / %g " % (binname, p, name, d, kup, kdown)
+                    variants[1] = _cloneNoDir(h.raw())
+                    variants[1].Multiply(h.raw())
+                    variants[1].Divide(variants[0])
+                    kdown = variants[1].Integral()/n0
+                    print "after mirroring, kdown = %g" % kdown
+                    if max(kdown,1/kdown if kdown else 999) > 1.5: # this didn't fix it
+                        variants[1] = _cloneNoDir(h.raw())
+                        variants[1].Scale(1/kup)
+            #if log(kup)*log(kdown) > 0 and min(max(kup,1/kup),max(kdown,1/kdown)) > 1.1:
+            effshape[p] = variants 
     if isShape:
         systs[name] = ("shape", dict((p,"1" if p in effshape else "-") for p in procs), effshape)
     else:
