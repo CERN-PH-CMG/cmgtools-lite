@@ -322,16 +322,29 @@ if __name__ == '__main__':
 
     if 'cr_wz' in torun:
         x = base('3l')
+        x = x.replace("--binname 3l","--binname 3l_crwz")
+        x = add(x,"-I 'Zveto' -I ^2b1B ")
+        x = add(x, " --Fs {P}/7_bestMTW3l_v1 ")
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
             x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
-            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata-splitdecays.txt')
+        else: 
+            print "ERROR: cr_wz with MC backgrounds does not work."
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt")
-        x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto ")
-        plots = ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW','kinMVA.*','htJet25j','nJet25','era']
-        plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM']
+        if '_fit' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = add(x,"--sP tot_weight --preFitData tot_weight --sp WZ ")
+            x = add(x,"--xu CMS_ttHl_ZZ_lnU ") # otherwise here we fit as ZZ
+            if '_unc' not in torun:
+                print "Will just float WZ freely"
+                x = add(x,"--flp WZ")
+        plots = ['3lep_mtW','3lep_nJet25','tot_weight','met','metLD','htJet25j','nBJetLoose25']
+        if '_more' in torun:
+            plots += ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW','kinMVA.*','htJet25j','nJet25','era']
+            plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM']
         runIt(x,'%s'%torun,plots)
 
     if 'cr_ttz' in torun:
@@ -353,13 +366,35 @@ if __name__ == '__main__':
             runIt(x,'%s'%torun,plots)
 
     if 'cr_fourlep_onZ' in torun:
-        x = base('4l')
-        if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
+        x = base('4l').replace('mca-4l-mc.txt','mca-4l-mcdata-splitdecays.txt')
+        if '_data' not in torun: x = add(x, "--xp data ")
         if '_frdata' in torun:
             x = promptsub(x)
             raise RuntimeError, 'Fakes estimation not implemented for 4l'
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         x = add(x,"-I ^Zveto")
-        runIt(x,'%s'%torun)
+        plots = ['lep4_pt','met','mZ1','4lep_m4l_noRecl','4lep_mZ2_noRecl','minMllAFAS','tot_weight','4lep_nJet25','nBJetMedium25']
+        runIt(x,'%s'%torun,plots)
+    if 'cr_zz' in torun:
+        x = base('4l')
+        x = x.replace('mca-4l-mc.txt','mca-4l-mcdata-splitdecays.txt')
+        x = x.replace("--binname 4l","--binname 4l_crzz")
+        x = add(x,"-I ^Zveto -I ^2b1B")
+        if '_data' not in torun: x = add(x, "--xp data ")
+        if '_frdata' in torun:
+            x = promptsub(x)
+            raise RuntimeError, 'Fakes estimation not implemented for 4l'
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
+        if '_fit' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = add(x,"--sP tot_weight --preFitData tot_weight --sp ZZ ")
+            x = add(x,"--xu CMS_ttHl_WZ_lnU ") # otherwise here we fit as WZ
+            if '_unc' not in torun:
+                print "Will just float WZ freely"
+                x = add(x,"--flp WZ")
+        plots = ['lep4_pt','met','mZ1','4lep_m4l_noRecl','4lep_mZ2_noRecl','minMllAFAS','tot_weight','4lep_nJet25']
+        runIt(x,'%s'%torun,plots)
+
         
