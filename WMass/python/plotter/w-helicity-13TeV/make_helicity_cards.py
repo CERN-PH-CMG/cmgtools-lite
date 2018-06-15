@@ -27,7 +27,7 @@ def makeYWBinning(infile, cutoff=5000):
     yw_binning = {}
     
     for ch in ['plus', 'minus']:
-        for pol in ['left', 'right']:
+        for pol in ['left', 'right', 'long']:
             cp = '{ch}_{pol}'.format(ch=ch,pol=pol)
             yw_binning[cp] = [i*0.15 for i in range(11)]
             hname = 'w{ch}_abswy_reco_W{ch}_{pol}'.format(ch=ch,pol=pol)
@@ -154,6 +154,11 @@ if len(sys.argv) < 6:
     parser.print_usage()
     quit()
 
+signal_helicities = ['left', 'right']
+if not options.longBkg:
+    signal_helicities += ['long']
+
+print 'these are signal helicities', signal_helicities
 
 FASTTEST=''
 #FASTTEST='--max-entries 1000 '
@@ -217,8 +222,9 @@ if options.signalCards:
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
     wsyst = ['']+[x for x in pdfsysts+qcdsysts if 'sig' in x]
     for ivar,var in enumerate(wsyst):
-        for helicity in ['right', 'left']:
-            antihel = 'right' if helicity == 'left' else 'left'
+        for helicity in signal_helicities:
+            ## marc antihel = 'right' if helicity == 'left' else 'left'
+            antihel = ['right','long'] if helicity == 'left' else ['left','long'] if helicity == 'right' else ['right','left']
             for charge in ['plus','minus']:
                 antich = 'plus' if charge == 'minus' else 'minus'
                 YWbinning = WYBinsEdges['{ch}_{hel}'.format(ch=charge,hel=helicity)]
@@ -232,8 +238,10 @@ if options.signalCards:
                     print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (YWbinning[iy],YWbinning[iy+1],charge)
                     ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,YWbinning[iy],YWbinning[iy+1])
                     ycut += POSCUT if charge=='plus' else NEGCUT
-                    excl_long_signal  = '' if not options.longBkg else ',W{ch}_long.*'.format(ch=charge)
-                    xpsel=' --xp "W{antich}.*,W{ch}_{antihel}.*,Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich=antich,ch=charge,antihel=antihel,longbkg = excl_long_signal)
+                    ## marc excl_long_signal  = '' if not options.longBkg else ',W{ch}_long.*'.format(ch=charge)
+                    ## marc xpsel=' --xp "W{antich}.*,W{ch}_{antihel}.*,Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich=antich,ch=charge,antihel=antihel,longbkg = excl_long_signal)
+                    excl_antihel = ','.join('W'+charge+'_'+ah+'.*' for ah in antihel)
+                    xpsel=' --xp "W{antich}.*,{ahel},Flips,Z,Top,DiBosons,TauDecaysW,data.*" --asimov '.format(antich=antich,ch=charge,ahel=excl_antihel)
                     if not os.path.exists(outdir): os.mkdir(outdir)
                     if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
                     syst = '' if ivar==0 else var
