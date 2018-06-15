@@ -25,6 +25,9 @@ class Uncertainty:
         self.normUnc=[None,None]
         self._postProcess = None
         self._nontrivialSelectionChange = False
+        lnU_byname = name.endswith("_lnU")
+        lnU_byextra = extra != None and ('lnU' in extra) and bool(extra['lnU'])
+        if lnU_byname != lnU_byextra: raise RuntimeError("Inconsistent declaration of %s: is it a lnU or not? by name %r, by options %r" % (name,lnU_byname,lnU_byextra))
         self.prepFR()
 
     def prepFR(self):

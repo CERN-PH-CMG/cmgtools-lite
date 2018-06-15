@@ -304,10 +304,13 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     nuisanceList = ROOT.RooArgList()
     constraints = ROOT.RooArgList()
     for nuisance in nuisances:
-        x = w.factory("Gaussian::%sPdf(%s[0,-7,7],0,1)" % (nuisance, nuisance));
+        if nuisance.endswith("_lnU"):
+            x = w.factory("%s[0,-1,1]" % nuisance);
+        else:
+            x = w.factory("Gaussian::%sPdf(%s[0,-7,7],0,1)" % (nuisance, nuisance));
+            constraints.add(x)
         w.nodelete.append(x)
         nuisanceList.add(w.var(nuisance))
-        constraints.add(x)
     # roofitize templates 
     roofit = roofitizeReport(pmap, w, xvarName=pspec.name, density=pspec.getOption('Density',False))
     # create the data

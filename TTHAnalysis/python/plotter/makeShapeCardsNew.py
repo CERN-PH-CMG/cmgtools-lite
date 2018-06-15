@@ -104,6 +104,8 @@ for binname, report in allreports.iteritems():
         h = report[p]
         if h.hasVariation(name):
             if isShape or h.isShapeVariation(name):
+                if name.endswith("_lnU"): 
+                    raise RuntimeError("Nuisance %s should be lnU but has shape effect on %s" % (name,p))
                 #print "Nuisance %s has a shape effect on process %s" % (name, p)
                 #if "templstat" not in name and not isShape:
                 #    h.isShapeVariation(name,debug=True)
@@ -125,7 +127,10 @@ for binname, report in allreports.iteritems():
                 effyield[p] = "%.3f/%.3f" % (kdn,kup)
                 isNorm = True
         if isNorm:
-            systs[name] = ("lnN", effyield, {})
+            if name.endswith("_lnU"):
+                systs[name] = ("lnU", effyield, {})
+            else:
+                systs[name] = ("lnN", effyield, {})
   # make a new list with only the ones that have an effect
   nuisances = sorted(systs.keys())
 
