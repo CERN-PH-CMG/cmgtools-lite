@@ -1,5 +1,5 @@
-// #ifndef FUNCTIONS_WMASS_H
-// #define FUNCTIONS_WMASS_H
+#ifndef FUNCTIONS_WMASS_H
+#define FUNCTIONS_WMASS_H
 
 #include "TFile.h"
 #include "TH2.h"
@@ -13,6 +13,10 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
+#include <cstdlib> //as stdlib.h      
+#include <cstdio>
+#include <string>
 
 TF1 * helicityFractionSimple_0 = new TF1("helicityFraction_0", "3./4*(TMath::Sqrt(1-x*x))^2", -1., 1.);
 TF1 * helicityFractionSimple_L = new TF1("helicityFraction_L", "3./8.*(1-x)^2"              , -1., 1.);
@@ -22,6 +26,21 @@ TFile *_file_helicityFractionsSimple = NULL;
 TH2 * helicityFractionsSimple_0 = NULL;
 TH2 * helicityFractionsSimple_L = NULL;
 TH2 * helicityFractionsSimple_R = NULL;
+
+static string _cmssw_base_ = string(getenv("CMSSW_BASE"));
+
+string getEnvironmentVariable(const string& env_var_name = "CMSSW_BASE") {
+
+  char* _env_var_ptr = getenv(env_var_name.c_str());
+  if (_env_var_ptr == nullptr) {
+    cout << "Error: environment variable " << env_var_name << " not found. Exit" << endl;
+    exit(EXIT_FAILURE);
+  } else {
+    string str = string(_env_var_ptr);
+    return str;
+  }
+
+}
 
 float helicityWeightSimple(float yw, float ptw, float costheta, int pol)
 {
@@ -82,20 +101,25 @@ TH2F *_histo_elereco_leptonSF_gsf = NULL;
 
 float _get_electronSF_recoToCustomTight(int pdgid, float pt, float eta, float var) {
 
+  if (_cmssw_base_ == "") {
+    cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
+    _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
+  }
+    
   if (!_histo_elereco_leptonSF_gsf) {
-    _file_elereco_leptonSF_gsf = new TFile("../postprocessing/data/leptonSF/EGM2D_eleGSF.root","read");
+    _file_elereco_leptonSF_gsf = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/EGM2D_eleGSF.root",_cmssw_base_.c_str()),"read");
     _histo_elereco_leptonSF_gsf = (TH2F*)(_file_elereco_leptonSF_gsf->Get("EGamma_SF2D"));
     _histo_elereco_leptonSF_gsf->Smooth(1,"k3a");
   }
 
   if (!_histo_recoToMedium_leptonSF_el) {
-    _file_recoToMedium_leptonSF_el = new TFile("../postprocessing/data/leptonSF/EGM2D_eleCutBasedMediumWP.root","read");
+    _file_recoToMedium_leptonSF_el = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/EGM2D_eleCutBasedMediumWP.root",_cmssw_base_.c_str()),"read");
     _histo_recoToMedium_leptonSF_el = (TH2F*)(_file_recoToMedium_leptonSF_el->Get("EGamma_SF2D"));
     _histo_recoToMedium_leptonSF_el->Smooth(1,"k3a");
   }
 
-  if (!_histo_recoToLoose_leptonSF_el) {
-    _file_recoToLoose_leptonSF_el = new TFile("../postprocessing/data/leptonSF/EGM2D_eleCutBasedLooseWP.root","read");
+  if (!_histo_recoToLoose_leptonSF_el) { 
+    _file_recoToLoose_leptonSF_el = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/EGM2D_eleCutBasedLooseWP.root",_cmssw_base_.c_str()),"read");
     _histo_recoToLoose_leptonSF_el = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("EGamma_SF2D"));
     _histo_recoToLoose_leptonSF_el->Smooth(1,"k3a");
   }
@@ -130,8 +154,13 @@ bool _cache_splines = false;
 
 float _get_electronSF_trg_top(int pdgid, float pt, float eta, int ndim, float var) {
 
+  if (_cmssw_base_ == "") {
+    cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
+    _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
+  }
+    
   if (!_histo_eltrg_leptonSF_2D) {
-    _file_eltrg_leptonSF_2D = new TFile("../postprocessing/data/leptonSF/el_trg/HLT_Ele32_eta2p1_WPTight_Gsf_FullRunRange.root","read");
+    _file_eltrg_leptonSF_2D = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/el_trg/HLT_Ele32_eta2p1_WPTight_Gsf_FullRunRange.root",_cmssw_base_.c_str()),"read");
     _histo_eltrg_leptonSF_2D = (TH2F*)(_file_eltrg_leptonSF_2D->Get("SF"));
   }
 
@@ -174,13 +203,18 @@ void _smoothTrgSF(TH2F* hist) {
 
 float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, bool smooth=true) {
 
+  if (_cmssw_base_ == "") {
+    cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
+    _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
+  }
+
   if (!_histo_eltrg_leptonSF_2D) {
-    _file_eltrg_leptonSF_2D = new TFile("../postprocessing/data/leptonSF/el_trg/v5/sf/passHLT/eff2D.root","read");
+    _file_eltrg_leptonSF_2D = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/el_trg/v5/sf/passHLT/eff2D.root",_cmssw_base_.c_str()),"read");
     _histo_eltrg_leptonSF_2D = (TH2F*)(_file_eltrg_leptonSF_2D->Get("s2c_eff"));
   }
 
   if (!_histo_eltrg_leptonSF_1D) {
-    _file_eltrg_leptonSF_1D = new TFile("../postprocessing/data/leptonSF/el_trg/v5/eta/passHLT/eff1D.root","read");
+    _file_eltrg_leptonSF_1D = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/el_trg/v5/eta/passHLT/eff1D.root",_cmssw_base_.c_str()),"read");
     _histo_eltrg_leptonSF_1D = (TH1F*)(_file_eltrg_leptonSF_1D->Get("s1c_eff"));
   }
 
@@ -228,11 +262,21 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, b
 	//   cout << "pt,eta,out = " << pt << "," << eta << "," << out << endl;
 	// }
       }
-      if (fabs(eta)>1.479) out = std::min(double(out),1.1); // crazy values in EE- 
-      // correct way would do a weighted average of the run-dep SFs. Here something rough from slide 5 of HLT eff talk
-      if (fabs(eta)>1.479) out *= 0.96;
-      if (pt<40 && fabs(eta)<1.479) out *= (0.00887*pt + 0.637); // measured turn on on Z->ee after v6 SFs
-      if (pt<35 && fabs(eta)>1.479) out *= (0.032*pt - 0.117); // measured turn on on Z->ee after v6 SFs
+      // if (fabs(eta)>1.479) out = std::min(double(out),1.1); // crazy values in EE- 
+      // // correct way would do a weighted average of the run-dep SFs. Here something rough from slide 5 of HLT eff talk
+      // if (fabs(eta)>1.479) out *= 0.96;
+      // if (pt<40 && fabs(eta)<1.479) out *= (0.00887*pt + 0.637); // measured turn on on Z->ee after v6 SFs
+      // if (pt<35 && fabs(eta)>1.479) out *= (0.032*pt - 0.117); // measured turn on on Z->ee after v6 SFs
+      
+      ///////////////////////////////
+      // correct way would do a weighted average of the run-dep SFs. Here something rough from slide 5 of HLT eff talk                                                      
+      if (fabs(eta)>1.479) {
+	out = 0.96 * std::min(double(out),1.1); // crazy values in EE- 
+	if (pt<35) out *= (0.032*pt - 0.117);   // measured turn on on Z->ee after v6 SFs   
+      } else {
+	if (pt<40) out *= (0.00887*pt + 0.637); // measured turn on on Z->ee after v6 SFs
+      }
+      ////////////////////////////////
       // if (out < 0) {
       // 	cout << "WARNING in _get_electronSF_trg() function: out < 0, pt was " << pt << "" << endl;
       // }
@@ -253,8 +297,13 @@ TH2F *_histo_elofflineWP_1D = NULL;
 
 float _get_electronSF_offlineWP_residual(float eta) {
 
+  if (_cmssw_base_ == "") {
+    cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
+    _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
+  }
+
   if (!_histo_elofflineWP_1D) {
-    _file_elofflineWP_1D = new TFile("../postprocessing/data/leptonSF/el_eta_offlineWP_SF.root");
+    _file_elofflineWP_1D = new TFile(Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/el_eta_offlineWP_SF.root",_cmssw_base_.c_str()));
     _histo_elofflineWP_1D = (TH2F*)(_file_elofflineWP_1D->Get("hsf_offlineWP"));
   }
   TH2F *hist = _histo_elofflineWP_1D;
@@ -344,7 +393,11 @@ float ptElFull(float pt, float eta, int nSigma=0) {
   // the following uses private residual corrections of AN-17-340
   if (nSigma==0) return pt;
   else {
-    float syst = 1-residualScale(pt,eta,1,"../postprocessing/data/leptonScale/el/plot_dm_diff_closure.root");
+    if (_cmssw_base_ == "") {
+      cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
+      _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
+    }
+    float syst = 1-residualScale(pt,eta,1,Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonScale/el/plot_dm_diff_closure.root",_cmssw_base_.c_str()));
     return (1. + nSigma*syst) * pt;
   }
 }
@@ -373,4 +426,4 @@ float getSmearedVar(float var, float smear, ULong64_t eventNumber, int isData, b
 
 
 
-//#endif
+#endif
