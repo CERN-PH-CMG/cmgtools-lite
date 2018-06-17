@@ -1,8 +1,8 @@
 import optparse, subprocess, ROOT, datetime, math, array, copy, os
 import numpy as np
 
-doPUreweighting = True
-doPUandSF = False
+doPUreweighting = False
+doPUandSF = True
 
 def submitFRrecursive(ODIR, name, cmd, dryRun=False):
     outdir=ODIR+"/jobs/"
@@ -112,7 +112,7 @@ def runefficiencies(trees, friends, targetdir, fmca, fcut, ftight, fxvar, enable
     ## if doPUreweighting: cmd += ' -W puw_8TeV_nVert_dataWjets(nVert) ' ## adding pu weight
     if doPUreweighting: cmd += ' -W new_puwts2016(nTrueInt)'#new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#new_puwts2016(nTrueInt)'#puWeight' # ' ## adding pu weight
 
-    if doPUandSF and not '-W ' in extraopts: cmd += ' -W puWeight*LepGood_effSF[0] '
+    if doPUandSF and not '-W ' in extraopts: cmd += ' -W puw*LepGood_effSF[0]*LepGood_effSF[1]'
 
     cmd += ''.join(' -E ^'+cut for cut in enabledcuts )
     cmd += ''.join(' -X ^'+cut for cut in disabledcuts)
@@ -146,7 +146,7 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     cmd += ' -p '+','.join(processes)
     if invertedcuts:
         cmd += ''.join(' -I ^'+cut for cut in invertedcuts )
-    if doPUandSF and not '-W ' in extraopts: cmd += ' -W puWeight*LepGood_effSF[0] ' ##_get_muonSF_trgIsoID(LepGood_pdgId[0],LepGood_pt[0],LepGood_eta[0],0)' ## adding pu weight
+    if doPUandSF and not '-W ' in extraopts: cmd += ' -W puw*LepGood_effSF[0]*LepGood_effSF[1]' ##_get_muonSF_trgIsoID(LepGood_pdgId[0],LepGood_pt[0],LepGood_eta[0],0)' ## adding pu weight
     if doPUreweighting: cmd += ' -W new_puwts2016(nTrueInt)'#new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#puWeight' #new_puwts2016(nTrueInt) ' ## adding pu weight
     cmd += ' -o '+targetdir+'/'+'_AND_'.join(plot for plot in plotlist)+'.root'
     if fitdataprocess:
@@ -165,7 +165,7 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     print 'running: python', cmd
     subprocess.call(['python']+cmd.split())#+['/dev/null'],stderr=subprocess.PIPE)
 
-def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, splitCharge = True):
+def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, splitCharge = True):
 #def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts, disabledcuts, processes, scaleprocesses, extraopts = ''):
 #python makeShapeCardsSusy.py --s2v -P /afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/ --Fs /afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/ -l 12.9 dps-ww/final_mca.txt dps-ww/cutfinal.txt finalMVA_DPS 10,0.,1.0  --od dps-ww/cards -p DPSWW,WZ,ZZ,WWW,WpWpJJ,Wjets  -W 0.8874 --asimov dps-ww/syst.txt
     
@@ -173,8 +173,8 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
 
     targetcarddir = 'cards_{date}{pf}_MuMu_New_MVAWP_Fakes_PU'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
-    friends = [trees+'/friends_latest_jets/', trees+'/friends_latest_bdt/']
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_MVA_gt_pt9_NewFakes_MaxPtCut/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    friends = [trees+'/friends_jet_pu_lepSF/', trees+'/friends_latest_bdt/']
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_For_ppt/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt'#cuts_results.txt
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -187,8 +187,7 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
     print '=========================================='
 
     if splitCharge: 
-        loop = [ ['plusplus'], ['minusminus']]
-        
+        loop = [ ['minusminus'], ['plusplus']]
     else:
         loop = [ [] ]
 
@@ -196,7 +195,7 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
 
 
 
-    processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
+    processes      = ['data','DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
     processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo', 'DPSWW_alt']
 
     binningBDT   = ' Binnumberset1D(BDT_DPS_fakes,BDT_DPS_WZ) 15,1.0,16.0'
@@ -208,17 +207,19 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
             #if not ich: continue
             enable    = ['trigmumu','mumu'] + ch
             disable   = []
-            fittodata = []
-            scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
-                         'ZZ': '{sf:.3f}'.format(sf=1.21)}
+            fittodata = []#'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
+            scalethem = []#{'WZ': '{sf:.3f}'.format(sf=1.04),
+                         #'ZZ': '{sf:.3f}'.format(sf=1.21)}
                          
             mumusf = 0.95
-            extraopts = ' -W {sf:.3f} --showIndivSigs'.format(sf=mumusf) # --plotmode=norm
+            extraopts = '--showIndivSigs'.format(sf=mumusf) # --plotmode=norm -W {sf:.3f}
             #makeplots = ['lepMVA1_mumu','lepMVA2_mumu']
             #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] 
-            #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]#'BDT_wz_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]
+            makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_wz_mumu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_fakes_mumu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDTfakes_BDTWZ_mumum{ch}_20bins'.format(ch=(ch[0] if ch else ''))]
             #            makeplots=['pt_eta_elel_OS','pt_eta_elel_OS','mll_elel']
-            makeplots=['pt1_mumu','met_mumu','nVert_mumu','pt2_mumu','mt1_mumu','mt2_mumu','dphiLep_mumu','pt2_mumu','eta_sum_mumu','dphilll2_mumu','etaprod_mumu','mt1_mumu','met_mumu','mt2ll_mumu','mtll_mumu','dphil2met_mumu','mll_mumu','BDT_wz_mumu_20bins','BDT_fakes_mumu_20bins']
+            #makeplots=['BDT_wz_mumu_20bins']
+            #makeplots=['pt1_mumu']#'lepMVA1_mumu','lepMVA2_mumu']#met_mumu','pt1_mumu']#'nVert_mumu','mt1_mumu','mt2_mumu','dphiLep_mumu','pt2_mumu','eta_sum_mumu','dphilll2_mumu','etaprod_mumu','mt1_mumu','met_mumu','mt2ll_mumu','mtll_mumu','dphil2met_mumu','mll_mumu','BDT_wz_mumu_20bins','BDT_fakes_mumu_20bins']
+            #makeplots=['pt1_mumu{ch}'.format(ch=(ch[0] if ch else '')),'met_mumu{ch}'.format(ch=(ch[0] if ch else ''))]#'nVert_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt1_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt2_mumu{ch}'.format(ch=(ch[0] if ch else '')),'dphiLep_mumu{ch}'.format(ch=(ch[0] if ch else '')),'pt2_mumu{ch}'.format(ch=(ch[0] if ch else '')),'eta_sum_mumu{ch}'.format(ch=(ch[0] if ch else '')),'dphilll2_mumu{ch}'.format(ch=(ch[0] if ch else '')),'etaprod_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt1_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt2ll_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mtll_mumu{ch}'.format(ch=(ch[0] if ch else '')),'dphil2met_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mll_mumu{ch}'.format(ch=(ch[0] if ch else ''))]#,'BDT_wz_mumu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_fakes_mumu_{ch}20bins'.format(ch=(ch[0] if ch else ''))]
 
             runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
@@ -327,7 +328,7 @@ def makeFakeRatesFast(recalculate):
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_fr_2016/'
     #friends  ='/afs/cern.ch/work/a/anmehta/work/Test/Test2/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/postprocessing/JetCleaning_1lskim_DblEl_friendsJune07_All/'
     friends   = trees+'/friends/'
-    targetdir = '/eos/user/a/anmehta/www/Muon_fakerates_LooserCuts_EWKcombined_PU{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/Muon_fakerates_LooserCuts_EWKcombined_PU2018-06-11/'#Muon_fakerates_LooserCuts_EWKcombined_PU{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     ## accordingly we have to change the mca file here. we also need to adapt the cuts file here.
     ## also the tight cut should now be 0.9 if we are moving to what the tHq people use
     fmca   = 'dpsww13TeV/dps2016/New_FRfast/mca_fr.txt' 
@@ -537,6 +538,15 @@ def makeFakeRatesFast(recalculate):
             graph_file= ROOT.TFile(tmp_td+'/fr_mu_{eta}'.format(eta=etastring), 'read')
 
             mg = ROOT.TMultiGraph(); pols = []
+            legfr= ROOT.TLegend(0.62,0.55,0.78, 0.82)
+            legfr.SetHeader('#eta (#mu) -- {eta}'.format(eta=etastring))
+            legfr.SetFillColor(0)
+            legfr.SetShadowColor(0)
+            legfr.SetLineColor(0)
+            legfr.SetTextFont(42)
+            legfr.SetTextSize(0.035)
+
+
             for rate in ['pr', 'fr']:
 
                 pol0 = ROOT.TF1("{r}_pol0_{eta}".format(r=rate,eta=etastring), "[0]        ", 20., 45.)
@@ -547,6 +557,10 @@ def makeFakeRatesFast(recalculate):
                     graph = graph_file.Get('muonTightId_pt_fine_binned_data_sub')
                     pol0.SetLineColor(ROOT.kGreen); pol0.SetLineWidth(2)
                     pol1.SetLineColor(ROOT.kRed-3); pol1.SetLineWidth(2)
+                    #legfr.AddEntry(graph,"Fake Ratio","P")
+                    #legfr.AddEntry(pol1,"Pol1","l")
+                    #graph.SetTitle(";p_{T}#mu;Ratios");
+                    #graph.GetXaxis().SetTitle("p_{T}#mu");
                     #pol0.SetParLimits(1, 0.1, 0.4)
                     #pol1.SetParLimits(1, -0.1  , 0.1)
                     #pol1.SetParLimits(0,  0.1  , 1.1)
@@ -555,13 +569,14 @@ def makeFakeRatesFast(recalculate):
                     graph = graph_file.Get('muonTightId_pt_fine_binned_WandZ')
                     graph.SetLineColor(ROOT.kRed); 
                     graph.SetMarkerColor(ROOT.kRed);
+                    graphPR = graph.Clone()
                     #pol0.SetLineColor(ROOT.kBlue)   ; pol0.SetLineWidth(2)
                     #pol1.SetLineColor(ROOT.kAzure-3); pol1.SetLineWidth(2)
                     errf.SetLineColor(ROOT.kCyan); errf.SetLineWidth(2)
                     errf.SetParameter(0, 2.1);
                     errf.SetParameter(1, 2.1);
                     errf.SetParameter(2, 1.52);
-
+                    ERRF=errf.Clone()
                     #pol0.SetParLimits(1, 0.1, 1.1)
                     #pol1.SetParLimits(1, -0.1  , 0.1)
                     #pol1.SetParLimits(0,  0.1  , 1.1)
@@ -572,7 +587,7 @@ def makeFakeRatesFast(recalculate):
                 if rate == 'fr':
                     graph.Fit("{r}_pol0_{eta}".format(r=rate,eta=etastring), "M", "", 20., 45.)
                     graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 20., 45.)
-
+                    
                     pol0_chi2 = pol0.GetChisquare(); pol0_ndf = pol0.GetNDF()
                     pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
                     rchi2_0 = pol0_chi2/pol0_ndf
@@ -628,6 +643,14 @@ def makeFakeRatesFast(recalculate):
             #graph.Draw('ape')
             mg.Draw('ape')
             mg.GetYaxis().SetRangeUser(0., 1.0)
+            mg.GetXaxis().SetTitle("p_{T}#mu")
+            mg.GetYaxis().SetTitle("Ratios")
+            legfr.AddEntry(graph,"Fake Ratio","P")
+            legfr.AddEntry(pol1,"Pol1","l")
+            legfr.AddEntry(graphPR,"Prompt Ratio","P")
+            legfr.AddEntry(ERRF,"Errf","l")
+            legfr.Draw("same")
+            #            canv.BuildLegend();
             for p in pols:
                 p.Draw('same')
             ##pol1.Draw('same')
@@ -691,7 +714,7 @@ if __name__ == '__main__':
 
     global date, postfix, lumi, date
     postfix = opts.postfix
-    lumi = 36.0 if not opts.lumi else opts.lumi##here
+    lumi = 36.0 if not opts.lumi else opts.lumi##here 16.614
     date = datetime.date.today().isoformat()
     if opts.date:
         date = opts.date

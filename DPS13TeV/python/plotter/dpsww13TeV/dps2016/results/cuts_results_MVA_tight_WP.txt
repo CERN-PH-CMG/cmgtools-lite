@@ -1,6 +1,7 @@
 event-filters : $DATA{Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonMoriond2017>=1 && Flag_badCloneMuonMoriond2017>=1} $MC{1}
 SameSign     : LepGood_charge[0] * LepGood_charge[1] > 0
 25/20        : LepGood1_pt > 25 && LepGood2_pt > 20
+#bump         :  LepGood1_pt > 80 && LepGood1_pt < 90
 metpt        : met_pt > 15
 met20        : met_pt > 20 ; Disable=True
 2l           : nLepGood == 2
@@ -16,9 +17,11 @@ lostHits     : (LepGood1_lostHits ==  0 || abs(LepGood1_pdgId)==13) &&  (LepGood
 convVeto     : (LepGood1_convVeto >   0 || abs(LepGood1_pdgId)==13) &&  (LepGood2_convVeto >   0 || abs(LepGood2_pdgId)==13)
 #tightel1     :LepGood1_idEmuTTH && abs(LepGood1_pdgId) ==11
 #tightel2     :LepGood2_idEmuTTH && abs(LepGood2_pdgId) ==11
-
+etamumu      : (abs(LepGood1_eta) < 2.4 && abs(LepGood2_eta) < 2.4)
 ## marc Emu2 : (LepGood1_idEmu2 || abs(LepGood1_pdgId) == 13) && (LepGood2_idEmu2 || abs(LepGood2_pdgId) == 13)
 marc Emu2    : (LepGood1_idEmuTTH || abs(LepGood1_pdgId) == 13) && (LepGood2_idEmuTTH || abs(LepGood2_pdgId) == 13)
+#zveto :      abs(m2l - 92) > 15 
+
 ###
 plusplus     : LepGood1_charge > 0                                                                         ; Disable=True
 minusminus   : LepGood1_charge < 0                                                                         ; Disable=True
@@ -29,17 +32,17 @@ trigmumu     : (HLT_DoubleMu || HLT_SingleMu)                                   
 elmu         : abs(LepGood1_pdgId*LepGood2_pdgId) == 143                                                   ; Disable=True
 trigelmu     : (HLT_MuEG || HLT_SingleMu || HLT_SingleEl)                                                  ; Disable=True
 #
-mumuelmu     : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143      ; Disable=True
-trigmumuelmu : (HLT_MuEG || HLT_SingleEl || HLT_DoubleMu || HLT_SingleMu)                                  ; Disable=True
+#mumuelmu     : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143      ; Disable=True
+#trigmumuelmu : (HLT_MuEG || HLT_SingleEl || HLT_DoubleMu || HLT_SingleMu)                                  ; Disable=True
 #
 elel         : abs(LepGood1_pdgId*LepGood2_pdgId) == 121   						   ; Disable=True
 trigelel     : (HLT_SingleEl || HLT_DoubleEl)                   			      	           ; Disable=True
 
 ### dilepton
 
-mumuelmuelel : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143 || abs(LepGood1_pdgId*LepGood2_pdgId) == 121     ; Disable=True
-trigmumuelmuelel : (HLT_SingleEl || HLT_MuEG ||  HLT_DoubleMu || HLT_SingleMu || HLT_DoubleEl) ; Disable=True
+#mumuelmuelel : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143 || abs(LepGood1_pdgId*LepGood2_pdgId) == 121                                                                                                        ; Disable=True
+#trigmumuelmuelel : (HLT_SingleEl || HLT_MuEG ||  HLT_DoubleMu || HLT_SingleMu || HLT_DoubleEl) 	      	   ; Disable=True
 
-##DataBDTblind : $DATA{finalMVA_DPS<0.7} $MC{1}                                                              ; Disable=True
+##DataBDTblind : $DATA{finalMVA_DPS<0.7} $MC{1}                                                            ; Disable=True
 matched      : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0                                          ; Disable=True
 
