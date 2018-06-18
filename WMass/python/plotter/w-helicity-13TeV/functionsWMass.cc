@@ -273,6 +273,7 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, b
       // by the way, for EE out cannot be bigger than ~1.06: is it really what we want?
       // correct way would do a weighted average of the run-dep SFs. Here something rough from slide 5 of HLT eff talk                                                      
       if (fabs(eta)>1.479) {
+	//if (out > 1.1) cout << "_get_electronSF_trg(): eta = " << eta << ",   out = "  << out << ". Setting it to 1.1!" << endl;
 	out = 0.96 * std::min(double(out),1.1); // crazy values in EE- 
 	if (pt<35) out *= (0.032*pt - 0.117);   // measured turn on on Z->ee after v6 SFs   
       } else {
@@ -384,24 +385,23 @@ float ptElFull(float pt, float eta, int nSigma=0) {
 
   if (nSigma == 0) return pt;
 
-  float relSyst=0.;
   // THE FOLLOWING USES STD EGAMMA SYSTEMATICS (W/O RESIDUAL CORRECTIONS, INTEGRATED IN ETA/PT)
   /*
+  float relSyst=0.;
   if(fabs(eta)<1.0) relSyst = 0.0015;  
   else if(fabs(eta)<1.479) relSyst = 0.005;  
   else relSyst = 0.01; 
   return (1.+nSigma*relSyst) * pt;
   */
   // the following uses private residual corrections of AN-17-340
-  if (nSigma==0) return pt;
-  else {
-    if (_cmssw_base_ == "") {
-      cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
-      _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
-    }
-    float syst = 1-residualScale(pt,eta,1,Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonScale/el/plot_dm_diff_closure.root",_cmssw_base_.c_str()));
-    return (1. + nSigma*syst) * pt;
+
+  if (_cmssw_base_ == "") {
+    cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
+    _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
   }
+  float syst = 1-residualScale(pt,eta,1,Form("%s/src/CMGTools/WMass/python/postprocessing/data/leptonScale/el/plot_dm_diff_closure.root",_cmssw_base_.c_str()));
+  return (1. + nSigma*syst) * pt;
+
 }
 
 float ptElFullUp(float pt, float eta) {
