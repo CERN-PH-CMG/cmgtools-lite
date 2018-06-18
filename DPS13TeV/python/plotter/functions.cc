@@ -589,8 +589,8 @@ float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep
 //==================================================
 
 int Binnumberset1D(float BDTx,float BDTy){
+  
   /*
-
   //v2
   float a=0.35; float b=0.4; float c=0.6; float d=0.75; float e=0.8; float f =0.95;
   if(BDTx <= 0.15 && BDTy <=b) return 4;
@@ -608,7 +608,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx > e && BDTx <=f  && BDTy > 0.85 && BDTy <=0.9 ) return 8;
   else if(BDTx > e && BDTx <=f  && BDTy >0.9 ) return 15;
   else if(BDTx <=0.8  && BDTy >e ) return 13;
-  
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);  }
   //v3
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
   else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
@@ -625,7 +627,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 13;
   else if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 14;
   else if(BDTx >0.5 && BDTy <= 0.25)return 15;
-
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);  }
   //v4
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
   else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
@@ -642,7 +646,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
   else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
   else if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 15;
-
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);  }
   //v5
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
   else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
@@ -659,7 +665,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
   else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
   else if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 15;
-  
+    else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);  }
   //v6
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
   else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
@@ -676,7 +684,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx > 0.7 && BDTy <=0.5 ) return 13;
   else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
   else if(BDTx > 0.975 && BDTy > 0.95 ) return 15;
-  
+    else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);  }
   //v7
   if(BDTx  <= 0.25 && BDTy <= 0.2)return 5;
   else if(BDTx  <= 0.25 && BDTy >  0.2)return 3;
@@ -693,9 +703,12 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx  > 0.85  && BDTy >  0.9)return 1;
   else if(BDTx  > 0.9   && BDTy <= 0.85)return 8;
   else if(BDTx  > 0.9   && BDTy >  0.85 && BDTy <= 0.9)return 7; 
+    else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);  }
   
-  
-  //v8
+
+  //v8 
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
   else if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
   else if(BDTx > 0.5 && BDTx <= 0.65 && BDTy <=0.65) return 3;
@@ -710,8 +723,11 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.95) || (BDTx > 0.65 && BDTy >0.55  && BDTy <=0.65) ) return 12;
   else if(BDTx > 0.65 && BDTy <=0.45 ) return 13;
   else if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
-  else if(BDTx > 0.975 && BDTy > 0.975 ) return 15;
-  
+  else if(BDTx > 0.975 && BDTy > 0.95 ) return 15;
+  else{
+    std::cout << "values of BDT variables are out of bounds, please check \t"<<BDTx<<"\t"<<BDTy<< std::endl;
+    exit(EXIT_FAILURE);}
+
   
   //v9
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
@@ -729,7 +745,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
-
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);}
   
   //v10
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
@@ -747,7 +765,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
-    
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);}
   //v11
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
   else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
@@ -764,8 +784,10 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;  
-  
-  //v12 
+  else{
+    std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+    exit(EXIT_FAILURE);}
+  //v12 good for emu
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
   else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
@@ -782,8 +804,10 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   else if(BDTx  > 0.95  && BDTy > 0.8 && BDTy <=0.9)return 14;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;  
-  
-//v13 (arranged in S/sqrt(B))
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+    exit(EXIT_FAILURE);}
+    //v13 (arranged in S/sqrt(B))
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 13;
   else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 3;
@@ -800,7 +824,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 6;
   else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 2;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
-  
+  else{
+    std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+    exit(EXIT_FAILURE);}
   //v13
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
@@ -818,7 +844,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
-  
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);}
   //v14
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
   else if((BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9)) return 2;
@@ -835,7 +863,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   else if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
   else if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
-    
+  else{
+  std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+  exit(EXIT_FAILURE);}
 //v13 (arranged in increasing order of total yields)
 
 
@@ -854,7 +884,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 11;
   else if((BDTx > 0.8  && BDTx <=0.85 && BDTy > 0.95) || (BDTx > 0.85 && BDTx <= 0.95 && BDTy > 0.9) )return 15;
   else if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 14;
-
+  else{
+    std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
+    exit(EXIT_FAILURE);}
   */
   
   //v13 arranged acc to signal strength(final)
@@ -876,8 +908,23 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx  > 0.95  && BDTy > 0.95)return 15;
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
-    exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);}
   }
+
+float conept_TTH(float lpt, int lpdgId, bool lmediumMuonId, float lmva, float ljetPtRatiov2){
+  if (abs(lpdgId)!=11 && abs(lpdgId)!=13) return lpt;
+  else if ((abs(lpdgId)!=13 || lmediumMuonId>0) && lmva > 0.90) return lpt;
+  else return (0.90 * lpt / ljetPtRatiov2);
+  
+}
+
+bool clean_n_FO_selection_TTH(float Lpt, float Leta,int LpdgId, bool LmediumMuonId, float LmvaTTH, float LjetPtRatiov2,float LjetBTagCSV, float LidEmuTTH, float LsegmentCompatibility){//, float LmvaIdSpring16HZZ ){
+  bool final=(conept_TTH(Lpt,LpdgId,LmediumMuonId,LmvaTTH,LjetPtRatiov2) > 10.0 && LjetBTagCSV<0.8484 && (abs(LpdgId)!=11 || LidEmuTTH > 0) &&
+    (LmvaTTH>0.90 || (LjetPtRatiov2 > 0.5 && LjetBTagCSV<0.3 && 
+		      (abs(LpdgId)!=13 || LsegmentCompatibility>0.3))));// && (abs(LpdgId)!=11 ||  (LmvaIdSpring16HZZ > if3(abs(Leta) < 1.479,0.0,0.7))))));
+  std::cout<<"conept"<<conept_TTH(Lpt,LpdgId,LmediumMuonId,LmvaTTH,LjetPtRatiov2)<<"\t the long one "<<final<<std::endl;
+
+  return (final);
 
 }
 
