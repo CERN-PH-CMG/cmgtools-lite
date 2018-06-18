@@ -146,14 +146,14 @@ class ttHLepMEMFriend:
                     print "DEBUG: multilepton->FillParticle(\"jetHighestPt\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (getattr(ljets[0],self.blabel), ljets[0].p4().X(), ljets[0].p4().Y(), ljets[0].p4().Z(), ljets[0].p4().T())
                     #return dict([("MEM_"+p,0) for p in self._procs ]) # FIXME
                 elif len(ljets)==0:
-                    if (nb == "1b"): return null_output # MEM not implemented for 3l_1b_0j
+                    if (nb == "1b"): continue # MEM not implemented for 3l_1b_0j
                     print "CATEGORY: ","3l_"+nb+"_0j"
                     ok = self.mem.setCategory("3l_"+nb+"_0j")
                     if not ok: raise RuntimeError, "Hypothesis not found"
                 else:
                     raise RuntimeError, "Error, unsupported hypothesis"
             else:
-                return null_output
+                continue
             met = getattr(event,"met"+jecPostfix+"_pt")
             metphi = getattr(event,"met"+jecPostfix+"_phi")
             mht = event.met_sumEt
