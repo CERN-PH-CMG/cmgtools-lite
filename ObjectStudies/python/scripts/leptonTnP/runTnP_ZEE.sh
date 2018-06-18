@@ -16,7 +16,7 @@ if [ "${year}" == 2016 ]; then
 else
     PDIR="plots/94X/TnP_ICHEP18/"
 fi
-JOB="zee_sos_v4.0"
+JOB="zee_sos_v5.0"
 XBINS="[5,12.5,16,20,25,30,40,60]" #25,40,70,120]"
 EBINS="[-2.5,-2.0,-1.52,-1.44,-1,0,1,1.44,1.52,2.0,2.5]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
@@ -35,7 +35,7 @@ OPTS="$OPTS -t tree  --mc-cut TnP_tag_mcMatchId&&TnP_probe_mcMatchId --mc-mass T
 OPTS="$OPTS -L $CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-sos/functionsSOS.cc "
 case $HOSTNAME in
     cmsphys10|cmsco01.cern.ch) OPTS="$OPTS -j 16 ";;
-    lxplus*.cern.ch) OPTS="$OPTS -j 4" ;;
+    lxplus*.cern.ch) OPTS="$OPTS -j 0" ;;
 esac;
 
 LAUNCHER="bash"
@@ -70,8 +70,8 @@ else
     SOS_FO_ID="TnP_probe_SUSYVLooseFOFall17"
     SOS_SEL_ID="TnP_probe_SOSTightID2017"
 
-    SOS_FO_IDCV="${SOS_FO_ID}   && TnP_probe_convVeto && TnP_probe_lostHits == 0"
-    SOS_SEL_IDCV="${SOS_SEL_ID} && TnP_probe_convVeto && TnP_probe_lostHits == 0"
+    SOS_FO_IDCV="${SOS_FO_ID}   && TnP_probe_convVeto && TnP_probe_lostHits <= 1"
+    SOS_SEL_IDCV="${SOS_SEL_ID} && TnP_probe_convVeto && TnP_probe_lostHits <= 1"
     SOS_FO_ISO="TnP_probe_relIso03*TnP_probe_pt < 20 + 300/TnP_probe_pt"
     SOS_SEL_ISO="TnP_probe_relIso03 < 0.5 && TnP_probe_relIso03*TnP_probe_pt < 5"
     SOS_PRESEL_IP="abs(TnP_probe_dz) < 1.0 && abs(TnP_probe_dxy) < 0.50"
