@@ -1,5 +1,5 @@
-// #ifndef FUNCTIONS_H
-// #define FUNCTIONS_H
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
 // #include <stdio.h>
 // #include <stdlib.h>
@@ -590,4 +590,4 @@ float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep
 
 void functions() {}
 
-//#endif
+#endif

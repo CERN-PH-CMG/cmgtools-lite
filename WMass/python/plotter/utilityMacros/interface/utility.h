@@ -60,6 +60,7 @@
 #include <TTreeReaderValue.h>
 #include <TStyle.h>
 #include <TString.h>
+#include "TSystem.h"
 #include <TVector3.h>
 #include <TVirtualFitter.h>
 
@@ -271,6 +272,46 @@ private:
   int    logy_;
 
 };
+
+
+//======================================================================                          
+
+string getEnvVariable(const string& envVarName = "CMSSW_BASE") {
+
+  char*  var = nullptr;
+  var = getenv(envVarName.c_str());
+  if (var == nullptr) {
+    cout << "Error in getEnvVariable(): environment variable " << envVarName << " not found. Exit" << endl;
+    exit(EXIT_FAILURE);
+  } else {
+    string str = string(var);
+    return str;
+  }
+
+
+}
+
+//======================================================================                          
+
+void compileMacro(const string& macroName = "") {
+
+  string cmssw_base = getEnvVariable("CMSSW_BASE");
+  Int_t success = gSystem->CompileMacro(Form("%s/%s",cmssw_base.c_str(),macroName.c_str()),"k");
+  cout << "Compiling " << cmssw_base << "/" << macroName << endl;
+  if (not success) {
+    cout << "Loading and compiling " << macroName << " FAILED! Exit" << endl;
+    exit(EXIT_FAILURE);
+  } else {
+    cout << "SUCCESS :-) " << endl;
+  }
+
+  // use this function like;
+  // string rootLibraries = string(gSystem->GetLibraries()); 
+  //if (rootLibraries.find("/fakeRate_cc.so") == string::npos) 
+  //    compileMacro("src/CMGTools/WMass/python/plotter/fakeRate.cc");
+
+}
+
 
 //======================================================================                          
 
@@ -3526,119 +3567,96 @@ Double_t getXsec13TeV(const string& sample) {
 
 //=========================================================
 
-Double_t getSumGenWeightFromSampleName(const string& sample) {
+Double_t getSumGenWeightFromSampleName(const string& sample, const string& treeDir = "TREES_1LEP_80X_V3_WENUSKIM_V5_TINY") {
   
+  if (sample.find("data") != string::npos || sample.find("fake") != string::npos) 
+    return 1.0;
+
   // xsec in pb
   map<string, Double_t> map_sampleName_sumGenWgt;
 
   // map created with script getSumWeightPerSample.py
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part1"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part10"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part11"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part2"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part3"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part4"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part5"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part6"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part7"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part8"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part9"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part1"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part2"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part3"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part4"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part5"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part6"] = 142209392.0;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_part1"] = 4.4113015039e+11;
-  map_sampleName_sumGenWgt["DYJetsToLL_M50_part2"] = 4.4113015039e+11;
-  map_sampleName_sumGenWgt["QCD_Mu15_part1"] = 12260254.0;
-  map_sampleName_sumGenWgt["QCD_Mu15_part2"] = 12260254.0;
-  map_sampleName_sumGenWgt["QCD_Pt1000toInf_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt120to170_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt15to20_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt170to300_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt170to300_Mu5_ext"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt20to30_EMEnriched"] = 38966443.5421;
-  map_sampleName_sumGenWgt["QCD_Pt20to30_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt300to470_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt300to470_Mu5_ext"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt300to470_Mu5_ext2"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt30to50_EMEnriched"] = 38966443.5421;
-  map_sampleName_sumGenWgt["QCD_Pt30to50_EMEnriched_ext"] = 38966443.5421;
-  map_sampleName_sumGenWgt["QCD_Pt30to50_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt470to600_Mu5_ext"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt50to80_EMEnriched_ext"] = 38966443.5421;
-  map_sampleName_sumGenWgt["QCD_Pt50to80_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt600to800_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt800to1000_Mu5_ext2"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt80to120_EMEnriched_ext"] = 38966443.5421;
-  map_sampleName_sumGenWgt["QCD_Pt80to120_Mu5"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt80to120_Mu5_ext"] = 126748460.747;
-  map_sampleName_sumGenWgt["QCD_Pt_170to250_bcToE"] = 57429713.852;
-  map_sampleName_sumGenWgt["QCD_Pt_20to30_bcToE"] = 57429713.852;
-  map_sampleName_sumGenWgt["QCD_Pt_250toInf_bcToE"] = 57429713.852;
-  map_sampleName_sumGenWgt["QCD_Pt_30to80_bcToE"] = 57429713.852;
-  map_sampleName_sumGenWgt["QCD_Pt_80to170_bcToE"] = 57429713.852;
-  map_sampleName_sumGenWgt["TBar_tWch_ext"] = 6481480.0;
-  map_sampleName_sumGenWgt["TBar_tch_powheg_part1"] = 37659712.0;
-  map_sampleName_sumGenWgt["TBar_tch_powheg_part2"] = 37659712.0;
-  map_sampleName_sumGenWgt["TBar_tch_powheg_part3"] = 37659712.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part1"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part2"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part3"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part4"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part5"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part6"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part7"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part8"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part9"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part1"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part2"] = 54512878.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part1"] = 52405916.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part2"] = 52405916.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part3"] = 52405916.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part4"] = 52405916.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part5"] = 52405916.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part1"] = 52405916.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part2"] = 52405916.0;
-  map_sampleName_sumGenWgt["TToLeptons_sch_amcatnlo"] = 3370668.5184;
-  map_sampleName_sumGenWgt["T_tWch_ext"] = 6332490.0;
-  map_sampleName_sumGenWgt["T_tch_powheg_part1"] = 61947468.0;
-  map_sampleName_sumGenWgt["T_tch_powheg_part2"] = 61947468.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part1"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part10"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part2"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part3"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part4"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part5"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part6"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part7"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part8"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part9"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_part1"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_part2"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_part3"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_part4"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_part5"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_LO_part6"] = 86099951.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_part1"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WJetsToLNu_part2"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WJetsToLNu_part3"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WJetsToLNu_part4"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WJetsToLNu_part5"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WJetsToLNu_part6"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WJetsToLNu_part7"] = 3.50627475345e+12;
-  map_sampleName_sumGenWgt["WW"] = 6248191.83067;
-  map_sampleName_sumGenWgt["WW_ext"] = 6248191.83067;
-  map_sampleName_sumGenWgt["WZ"] = 3995828.0;
-  map_sampleName_sumGenWgt["WZ_ext"] = 3995828.0;
-  map_sampleName_sumGenWgt["ZZ"] = 1988098.0;
-  map_sampleName_sumGenWgt["ZZ_ext"] = 1988098.0;
+  if (treeDir.find("TREES_1LEP_80X_V3_WENUSKIM_V5_TINY") != string::npos) {
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part1"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part10"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part2"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part3"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part4"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part5"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part6"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part7"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part8"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_ext2_part9"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_part1"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_part2"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["DYJetsToLL_M50_part3"] = 2.31659316919e+12;
+    map_sampleName_sumGenWgt["NoSkim_WJetsToLNu_NLO_part1"] = 3.60930317499e+12;
+    map_sampleName_sumGenWgt["NoSkim_WJetsToLNu_NLO_part2"] = 3.60930317499e+12;
+    map_sampleName_sumGenWgt["NoSkim_WJetsToLNu_NLO_part3"] = 3.60930317499e+12;
+    map_sampleName_sumGenWgt["QCD_Pt20to30_EMEnriched"] = 38966443.5421;
+    map_sampleName_sumGenWgt["QCD_Pt30to50_EMEnriched"] = 38966443.5421;
+    map_sampleName_sumGenWgt["QCD_Pt30to50_EMEnriched_ext"] = 38966443.5421;
+    map_sampleName_sumGenWgt["QCD_Pt50to80_EMEnriched_ext"] = 38966443.5421;
+    map_sampleName_sumGenWgt["QCD_Pt80to120_EMEnriched_ext"] = 38966443.5421;
+    map_sampleName_sumGenWgt["QCD_Pt_170to250_bcToE"] = 57429713.852;
+    map_sampleName_sumGenWgt["QCD_Pt_20to30_bcToE"] = 57429713.852;
+    map_sampleName_sumGenWgt["QCD_Pt_250toInf_bcToE"] = 57429713.852;
+    map_sampleName_sumGenWgt["QCD_Pt_30to80_bcToE"] = 57429713.852;
+    map_sampleName_sumGenWgt["QCD_Pt_80to170_bcToE"] = 57429713.852;
+    map_sampleName_sumGenWgt["TBar_tWch_ext"] = 6481480.0;
+    map_sampleName_sumGenWgt["TBar_tch_powheg_part1"] = 37659712.0;
+    map_sampleName_sumGenWgt["TBar_tch_powheg_part2"] = 37659712.0;
+    map_sampleName_sumGenWgt["TBar_tch_powheg_part3"] = 37659712.0;
+    map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part1"] = 9949110.0;
+    map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part2"] = 9949110.0;
+    map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part1"] = 8929457.0;
+    map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part2"] = 8929457.0;
+    map_sampleName_sumGenWgt["TToLeptons_sch_amcatnlo"] = 3370668.5184;
+    map_sampleName_sumGenWgt["T_tWch_ext"] = 6332490.0;
+    map_sampleName_sumGenWgt["T_tch_powheg_part1"] = 61947468.0;
+    map_sampleName_sumGenWgt["T_tch_powheg_part2"] = 61947468.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part1"] = 79524802.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part2"] = 79524802.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part3"] = 79524802.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part4"] = 79524802.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_LO_part1"] = 79524802.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_LO_part2"] = 79524802.0;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part1"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part10"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part11"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part12"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part13"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part14"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part15"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part16"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part17"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part18"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part19"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part2"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part20"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part21"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part3"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part4"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part5"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part6"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part7"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part8"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_ext_part9"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_part1"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_part2"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WJetsToLNu_NLO_part3"] = 3.54324749853e+13;
+    map_sampleName_sumGenWgt["WW"] = 6248191.83067;
+    map_sampleName_sumGenWgt["WW_ext"] = 6248191.83067;
+    map_sampleName_sumGenWgt["WZ"] = 3995828.0;
+    map_sampleName_sumGenWgt["WZ_ext"] = 3995828.0;
+    map_sampleName_sumGenWgt["ZZ"] = 1988098.0;
+    map_sampleName_sumGenWgt["ZZ_ext"] = 1988098.0;
+  } else {
+    cout << "WARNING: unknown treeDir ('" << treeDir << "'). Maybe it is just not yet implemented. Abort " << endl;
+    exit(EXIT_FAILURE);
+  }
 
-  if (sample.find("data") != string::npos || sample.find("fake") != string::npos) 
-    return 1.0;
-  else
-    return map_sampleName_sumGenWgt[sample];
+  return map_sampleName_sumGenWgt[sample];
 
 }
 
@@ -3697,26 +3715,35 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     }
   } else {
 
-    /* vector<string> sampleRoots = {"DYJetsToLL_M50_part", */
-    /* 				  # "DYJetsToLL_M50_LO",                           */
-    /* 				  "WW", */
-    /* 				  "WZ", */
-    /* 				  "ZZ", */
-    /* 				  "TBar_tWch_ext", */
-    /* 				  "T_tWch_ext", */
-    /* 				  "TTJets_SingleLeptonFromT_", */
-    /* 				  "TTJets_SingleLeptonFromTbar_", */
-    /* 				  "T_tch_powheg", */
-    /* 				  "TBar_tch_powheg_", */
-    /* 				  "TToLeptons_sch_amcatnl", */
-    /* 				  "WJetsToLNu_NoSkim", */
-    /* 				  "_bcTo", */
-    /* 				  "_EMEnriched", */
-    /* 				  # "_Mu5",     */
-    /* 				  # "_Mu15"} */
-
-    if (sample == Sample::wjets || sample == Sample::wenujets || sample == Sample::wmunujets || sample == Sample::wtaunujets) {
-      subSampleNameVector.push_back("WJetsToLNu_NoSkim");
+    if (sample == Sample::wjets || sample == Sample::wenujets || sample == Sample::wmunujets) {
+      subSampleNameVector.push_back("WJetsToLNu_NLO_part1");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_part2");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_part3");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part1");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part2");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part3");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part4");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part5");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part6");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part7");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part8");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part9");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part10");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part11");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part12");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part13");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part14");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part15");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part16");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part17");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part18");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part19");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part20");
+      subSampleNameVector.push_back("WJetsToLNu_NLO_ext_part21");
+    } else if (sample == Sample::wtaunujets) {
+      subSampleNameVector.push_back("NoSkim_WJetsToLNu_NLO_part1");
+      subSampleNameVector.push_back("NoSkim_WJetsToLNu_NLO_part2");
+      subSampleNameVector.push_back("NoSkim_WJetsToLNu_NLO_part3");
     /* } else if (sample == Sample::wjets_LO || sample == Sample::wenujets_LO || sample == Sample::wmunujets_LO || sample == Sample::wtaunujets_LO) {  */
     /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part1"); */
     /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part10"); */
@@ -3737,6 +3764,17 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     } else if (sample == Sample::zjets) {
       subSampleNameVector.push_back("DYJetsToLL_M50_part1");
       subSampleNameVector.push_back("DYJetsToLL_M50_part2");
+      subSampleNameVector.push_back("DYJetsToLL_M50_part3");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part1");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part2");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part3");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part4");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part5");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part6");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part7");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part8");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part9");
+      subSampleNameVector.push_back("DYJetsToLL_M50_ext2_part10");
     /* } else if (sample == Sample::zjets_LO) { */
     /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part1"); */
     /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part10"); */
@@ -3981,12 +4019,13 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
 
     } else {
 
-      if (treePath.find("/eos/cms/") != string::npos) {
-	treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerWMass/tree.root";
-      } else {
-	cout << "13 TeV trees not available outside eos, or function to read them not implemented yet. Please check. Exit." << endl;
-	exit(EXIT_FAILURE);
-      }
+      /* if (treePath.find("/eos/cms/") != string::npos) { */
+      /* 	treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerWMass/tree.root"; */
+      /* } else { */
+      /* 	cout << "13 TeV trees not available outside eos, or function to read them not implemented yet. Please check. Exit." << endl; */
+      /* 	exit(EXIT_FAILURE); */
+      /* } */
+      treeRootFile = treePath + subSampleNameVector[i] + "/treeProducerWMass/tree.root";
 
     }
 
@@ -4026,7 +4065,7 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
 
       string sampleDir = getStringFromEnumSample(sample).c_str();
       if (sampleDir.find("data") == string::npos && sampleDir.find("fake") == string::npos) {
-	genwgtVec.push_back(1./getSumGenWeightFromSampleName(subSampleNameVector[i]));    
+	genwgtVec.push_back(1./getSumGenWeightFromSampleName(subSampleNameVector[i],treePath));    
       }
 
     }
@@ -4038,7 +4077,8 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     exit(EXIT_FAILURE);
   }
 
-  cout << "entries in chain    = " << chain->   GetEntries() << endl;
+  cout << "Number of trees in chain = " << chain->GetNtrees() << endl;
+  cout << "Entries (unweighted)     = " << chain->GetEntries() << endl;
 
   // friend
   if (chFriend != NULL) {
