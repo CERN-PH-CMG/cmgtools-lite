@@ -269,6 +269,8 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, b
       // if (pt<35 && fabs(eta)>1.479) out *= (0.032*pt - 0.117); // measured turn on on Z->ee after v6 SFs
       
       ///////////////////////////////
+      // slight optimization of the lines above: no need to assess the same condition several times
+      // by the way, for EE out cannot be bigger than ~1.06: is it really what we want?
       // correct way would do a weighted average of the run-dep SFs. Here something rough from slide 5 of HLT eff talk                                                      
       if (fabs(eta)>1.479) {
 	out = 0.96 * std::min(double(out),1.1); // crazy values in EE- 
