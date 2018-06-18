@@ -27,6 +27,7 @@ run2017 = getHeppyOption("run2017", True)
 
 
 #Assume by default to run on TTbar, only run on other background samples if specifically asked for
+runTTJets = getHeppyOption("runTTJets", False)
 runWJets = getHeppyOption("runWJets", False)
 runZInv = getHeppyOption("runZInv", False)
 runOtherMC1 = getHeppyOption("runOtherMC1", False)
