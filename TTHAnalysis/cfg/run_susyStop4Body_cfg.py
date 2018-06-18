@@ -672,7 +672,9 @@ else:
             TTLep_pow,
             TTSemi_pow,
         ]
-        comp.splitFactor = 4
+        for comp in selectedComponents:
+            comp.splitFactor = 2
+        
     if runWJets:
         selectedComponents = [
             #WJetsToLNu_LO,     #status=PRODUCTION
