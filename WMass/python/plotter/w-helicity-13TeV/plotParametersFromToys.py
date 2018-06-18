@@ -69,10 +69,8 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString='', maxP
     params = list(pars.at(i).GetName() for i in range(len(pars)))
     params = filter(lambda x: not x.endswith('_In'),params)
 
-    channel=''
-    if any(re.match('.*_el_.*',x) for x in params): channel += 'el'
-    if any(re.match('.*_mu_.*',x) for x in params): channel += 'mu'
-    if len(channel): print "UNDERSTOOD FROM PARAMETERS THAT YOU ARE RUNNING ON CHANNEL: ", channel
+    channel='el' if re.match('.*el.*',workspace) else 'mu'
+    if len(channel): print "UNDERSTOOD FROM WORKSPACE NAME THAT YOU ARE RUNNING ON CHANNEL: ", channel
 
     if pois:
         poi_patts = pois.split(",")
@@ -106,18 +104,16 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString='', maxP
         if not sigma_p > 0: sigma_p = (nuis_p.getMax()-nuis_p.getMin())/2
         nuisIsSymm = abs(abs(nuis_p.getErrorLo())-abs(nuis_p.getErrorHi()))<0.01 or nuis_p.getErrorLo() == 0
 
+        prefix = 'trackedParam_' if 'r_' not in name else ''
         if doPull:
-            error = ROOT.TH1F("error","",100,0,1e+7)
-            tree.Draw( "trackedParamErr_{par}>>error".format(par=name))
-            mean_err = error.GetMean()
-            histo = ROOT.TH1F("pull","",100,-5,5)
+            histo = ROOT.TH1F("pull","",100,-1,1)
             ### with GSL minimizer errors don't make sense. Quote relative to prefit sigma. Add cut emulating the goodness of fit...
-            tree.Draw( "(trackedParam_{par}-{prefit})>>pull".format(par=name,prefit=mean_p),"abs(trackedParam_{par}-{prefit})>2E-02".format(par=name,prefit=mean_p)) 
+            tree.Draw( "({prefix}{par}-{prefit})>>pull".format(prefix=prefix,par=name,prefit=mean_p) )
             ### this would be if MINUIT worked
             #tree.Draw( "(trackedParam_{par}-{prefit})/{meanerr}>>pull".format(par=name,prefit=mean_p,meanerr=mean_err) )
         else:
             residual = ROOT.TH1F("residual","",100,-1.,1.)
-            varname = "(trackedParam_{par}-{prefit})/{prefit}".format(par=name,prefit=mean_p)
+            varname = "({prefix}{par}-{prefit})/{prefit}".format(prefix=prefix,par=name,prefit=mean_p)
             tree.Draw( "{var}>>residual".format(var=varname),"abs({var})>1E-3".format(var=varname))
             rms = residual.GetRMS()
             histo = ROOT.TH1F("pull","",100,-5*rms,5*rms)
@@ -142,7 +138,7 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString='', maxP
             fit.SetLineColor(4)
             lat.DrawLatex(0.12, 0.8, 'mean:     {me:.2f}'.format(me=fit.GetParameter(1)))
             lat.DrawLatex(0.12, 0.7, 'err :     {er:.2f}'.format(er=fit.GetParameter(2)))
-            lat.DrawLatex(0.12, 0.6, 'chi2/ndf: {cn:.2f}'.format(cn=fit.GetChisquare()/fit.GetNDF()))
+            lat.DrawLatex(0.12, 0.6, 'chi2/ndf: {cn:.2f}'.format(cn=fit.GetChisquare()/fit.GetNDF() if fit.GetNDF()>0 else 999))
         
         for ext in ['png', 'pdf']:
             c.SaveAs("%s_%s_%s.%s" % (name,'pull' if doPull else 'val',channel,ext))
@@ -250,5 +246,5 @@ if __name__ == "__main__":
     mdfitfile = args[1]
 
     plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*',maxPullsPerPlot=30)
-    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wplus.*',maxPullsPerPlot=100)
-    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wminus.*',maxPullsPerPlot=100)
+    plotPars(limitsFile,mdfitfile,doPull=True,pois='r_Wplus.*',maxPullsPerPlot=100)
+    plotPars(limitsFile,mdfitfile,doPull=True,pois='r_Wminus.*',maxPullsPerPlot=100)
