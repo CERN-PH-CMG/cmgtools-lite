@@ -663,13 +663,15 @@ if not run2017:
 else:
     from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
     from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
-    selectedComponents = [
-        TTJets,
-        #TTJets_SingleLeptonFromT, #Missing XS
-        TTLep_pow,
-        TTHad_pow,
-        TTSemi_pow,
-    ]
+    if runTTJets:
+        selectedComponents = [
+            TTJets,
+            #TTJets_SingleLeptonFromT, #Missing XS
+            TTHad_pow,
+            TTLep_pow,
+            TTSemi_pow,
+        ]
+        comp.splitFactor = 4
     if runWJets:
         selectedComponents = [
             #WJetsToLNu_LO,     #status=PRODUCTION
