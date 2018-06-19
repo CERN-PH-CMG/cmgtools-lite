@@ -394,7 +394,6 @@ float ptElFull(float pt, float eta, int nSigma=0) {
   return (1.+nSigma*relSyst) * pt;
   */
   // the following uses private residual corrections of AN-17-340
-
   if (_cmssw_base_ == "") {
     cout << "Setting _cmssw_base_ to environment variable CMSSW_BASE" << endl;
     _cmssw_base_ = getEnvironmentVariable("CMSSW_BASE");
