@@ -165,16 +165,16 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     print 'running: python', cmd
     subprocess.call(['python']+cmd.split())#+['/dev/null'],stderr=subprocess.PIPE)
 
-def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, splitCharge = True):
+def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, splitCharge = True):
 #def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts, disabledcuts, processes, scaleprocesses, extraopts = ''):
 #python makeShapeCardsSusy.py --s2v -P /afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/ --Fs /afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/ -l 12.9 dps-ww/final_mca.txt dps-ww/cutfinal.txt finalMVA_DPS 10,0.,1.0  --od dps-ww/cards -p DPSWW,WZ,ZZ,WWW,WpWpJJ,Wjets  -W 0.8874 --asimov dps-ww/syst.txt
     
     #sfs = calculateScalefactors(False, sfdate)
 
-    targetcarddir = 'cards_{date}{pf}_MuMu_NEWMVAWP_Fakes_PU_SF'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetcarddir = 'cards_{date}{pf}_MuMu_Signalscaled'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends_jet_pu_lepSF/', trees+'/friends_latest_bdt/']
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_newcheck/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}ElMu_NEWMVAWP_Fakes_PU_SF/'.format(date=date, pf=('-'+postfix if postfix else '') ) #ElMu_NEWMVAWP_Fakes_PU_SF
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt' #cuts_results.txt'#
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -200,15 +200,15 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
 
     binningBDT   = ' Binnumberset1D(BDT_DPS_fakes,BDT_DPS_WZ) 15,1.0,16.0'
     nbinspostifx = '_15bins'
-    fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca_v1.txt'
+    fmca   = 'dpsww13TeV/dps2016/results/elmu_mca_v1.txt'#mumuelmu_mca_v1.txt'
     
     for bdt in ['wz']:
         for ich,ch in enumerate(loop):
             #if not ich: continue
-            enable    = ['trigmumu','mumu'] + ch
+            enable    = ['trigelmu','elmu'] + ch
             disable   = []
             fittodata = []#'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
-            scalethem = {}#'WZ': '{sf:.3f}'.format(sf=1.04),
+            scalethem = {}#'DPSWW':'{sf:.3f}'.format(sf=0.50)}#'WZ': '{sf:.3f}'.format(sf=1.04),
                          #'ZZ': '{sf:.3f}'.format(sf=1.21)}
                          
             mumusf = 0.95
@@ -219,16 +219,19 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
             #'BDT_wz_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_fakes_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),
             #            makeplots=['pt_eta_elel_OS','pt_eta_elel_OS','mll_elel']
             #makeplots=['BDT_wz_mumu_20bins']
-            makeplots=['pt1_mumu']#'lepMVA1_mumu','lepMVA2_mumu']#met_mumu','pt1_mumu']#'nVert_mumu','mt1_mumu','mt2_mumu','dphiLep_mumu','pt2_mumu','eta_sum_mumu','dphilll2_mumu','etaprod_mumu','mt1_mumu','met_mumu','mt2ll_mumu','mtll_mumu','dphil2met_mumu','mll_mumu','BDT_wz_mumu_20bins','BDT_fakes_mumu_20bins']
+            makeplots=['pt_mu_elmu','nVert_elmu']#'pt_el_elmu',]#'pt2_mumu','eta1_mumu','eta2_mumu','phi1_mumu','phi2_mumu']#'lepMVA1_mumu','lepMVA2_mumu']
+            #makeplots=['pt1_mumu']
+            #makeplots=['met_elmu','pt1_elmu','nVert_elmu','mt1_elmu','mt2_elmu','dphiLep_elmu','pt2_elmu','eta_sum_elmu','dphilll2_elmu']
+            #makeplots=['pt1_el_elmu','pt1_mu_elmu','pt2_el_elmu','pt2_mu_elmu']#etaprod_elmu','mt1_elmu','met_elmu','mt2ll_elmu','mtll_elmu','dphil2met_elmu','mll_elmu','BDT_wz_elmu_20bins','BDT_fakes_elmu_20bins']
             #makeplots=['pt1_mumu{ch}'.format(ch=(ch[0] if ch else '')),'met_mumu{ch}'.format(ch=(ch[0] if ch else ''))]#'nVert_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt1_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt2_mumu{ch}'.format(ch=(ch[0] if ch else '')),'dphiLep_mumu{ch}'.format(ch=(ch[0] if ch else '')),'pt2_mumu{ch}'.format(ch=(ch[0] if ch else '')),'eta_sum_mumu{ch}'.format(ch=(ch[0] if ch else '')),'dphilll2_mumu{ch}'.format(ch=(ch[0] if ch else '')),'etaprod_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt1_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mt2ll_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mtll_mumu{ch}'.format(ch=(ch[0] if ch else '')),'dphil2met_mumu{ch}'.format(ch=(ch[0] if ch else '')),'mll_mumu{ch}'.format(ch=(ch[0] if ch else ''))]#,'BDT_wz_mumu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_fakes_mumu_{ch}20bins'.format(ch=(ch[0] if ch else ''))]
 
-            #runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
+            runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
             ## running datacards
             ## ==================================
             #extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-            extraoptscards = ' -o mumu{ch} -b mumu{ch} '.format(ch=(ch[0] if ch else ''))
-            runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
+            extraoptscards = ' -o elmu{ch} -b elmu{ch} '.format(ch=(ch[0] if ch else ''))
+            #runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
             
 
 def simplePlot():

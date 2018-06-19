@@ -787,6 +787,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
     exit(EXIT_FAILURE);}
+  */
   //v12 good for emu
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
@@ -807,7 +808,8 @@ int Binnumberset1D(float BDTx,float BDTy){
   else{
   std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
     exit(EXIT_FAILURE);}
-    //v13 (arranged in S/sqrt(B))
+  /*  
+  //v13 (arranged in S/sqrt(B))
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 13;
   else if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 3;
@@ -887,7 +889,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
     exit(EXIT_FAILURE);}
-  */
+  
   
   //v13 arranged acc to signal strength(final)
 
@@ -908,8 +910,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx  > 0.95  && BDTy > 0.95)return 15;
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
-    exit(EXIT_FAILURE);}
-  }
+    exit(EXIT_FAILURE);}*/
+
+}
 
 float conept_TTH(float lpt, int lpdgId, bool lmediumMuonId, float lmva, float ljetPtRatiov2){
   if (abs(lpdgId)!=11 && abs(lpdgId)!=13) return lpt;
