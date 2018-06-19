@@ -12,7 +12,7 @@ def _cloneNoDir(hist,name=''):
 def _projectionXNoDir(hist2d,name,y1,y2):
     nx = hist2d.GetNbinsX()
     ax = hist2d.GetXaxis()
-    xbins = array('f',[(ax.GetBinLowEdge(b+1) if b < nx else ax.GetBinUpEdge(b+1)) for b in xrange(0,nx+1)])
+    xbins = array('f',[(ax.GetBinLowEdge(b+1) if b < nx else ax.GetBinUpEdge(b)) for b in xrange(0,nx+1)])
     proj = ROOT.TH1D(name,name,nx,xbins); proj.SetDirectory(None)
     proj.GetXaxis().SetTitle(ax.GetTitle()) # in case
     ys = range(y1,y2+1)
