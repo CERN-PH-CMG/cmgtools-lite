@@ -10,6 +10,7 @@
 #include "CommonTools/Utils/interface/TMVAZipReader.h"
 #include <iostream>
 #include "TStopwatch.h"
+#include "TMath.h"
 #include <algorithm>
 
 #include "HadTopKinFit.cc" // providing the HadTopKinFit class
@@ -156,7 +157,7 @@ class BDT_EventReco_EventP4Cache {
 
 class BDT_EventReco {
  public: 
-  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
+  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
   ~BDT_EventReco(){
     clear();
   };
@@ -284,14 +285,15 @@ class BDT_EventReco {
 
   float csv_loose_working_point = -1;
   float csv_medium_working_point = -1;
-
+  bool hj2017training = false;
 };
 
-BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
+BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
 
   algo = _algo;
   csv_loose_working_point = csv_looseWP;
   csv_medium_working_point = csv_mediumWP;
+  hj2017training = hj2017;
 
   if (algo==k_BDTv8_Hj) {
 
@@ -314,11 +316,19 @@ BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string we
   }
 
   TMVAReader_Hj_ = std::make_shared<TMVA::Reader>( "!Color:!Silent" );
-  TMVAReader_Hj_->AddVariable( "Jet_lepdrmin", &iv1_1);
-  TMVAReader_Hj_->AddVariable( "max(Jet_pfCombinedInclusiveSecondaryVertexV2BJetTags,0.)", &iv1_2);
-  TMVAReader_Hj_->AddVariable( "max(Jet_qg,0.)", &iv1_3);
-  TMVAReader_Hj_->AddVariable( "Jet_lepdrmax", &iv1_4);
-  TMVAReader_Hj_->AddVariable( "Jet_pt", &iv1_5);
+  if (hj2017training) {
+      TMVAReader_Hj_->AddVariable( "Jet25_lepdrmin", &iv1_1);
+      TMVAReader_Hj_->AddVariable( "max(Jet25_bDiscriminator,0.)", &iv1_2);
+      TMVAReader_Hj_->AddVariable( "max(Jet25_qg,0.)", &iv1_3);
+      TMVAReader_Hj_->AddVariable( "Jet25_lepdrmax", &iv1_4);
+      TMVAReader_Hj_->AddVariable( "Jet25_pt", &iv1_5);
+  } else {
+      TMVAReader_Hj_->AddVariable( "Jet_lepdrmin", &iv1_1);
+      TMVAReader_Hj_->AddVariable( "max(Jet_pfCombinedInclusiveSecondaryVertexV2BJetTags,0.)", &iv1_2);
+      TMVAReader_Hj_->AddVariable( "max(Jet_qg,0.)", &iv1_3);
+      TMVAReader_Hj_->AddVariable( "Jet_lepdrmax", &iv1_4);
+      TMVAReader_Hj_->AddVariable( "Jet_pt", &iv1_5);
+  }
   TMVAReader_Hj_->BookMVA("BDTG method", weight_file_name_Hj);
 
   TMVAReader_Hjj_ = std::make_shared<TMVA::Reader>( "!Color:!Silent" );
@@ -938,7 +948,7 @@ std::vector<float> BDT_EventReco::CalcHjTagger(char* _permlep, char* _x, std::ve
       float dr_lep1 = dR(lep_fromHig.get(),jet_fromHiggs->p4());
 	
       iv1_1 = std::min(dr_lep0,dr_lep1);
-      iv1_2 = std::max(jet_fromHiggs->csv(),float(0));
+      iv1_2 = std::max(hj2017training ? jet_fromHiggs->deepcsv() : jet_fromHiggs->csv(),float(0));
       iv1_3 = std::max(jet_fromHiggs->qgl(),float(0));
       iv1_4 = std::max(dr_lep0,dr_lep1);
       iv1_5 = jet_fromHiggs->Pt();
