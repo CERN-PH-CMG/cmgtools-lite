@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from math import sqrt,hypot
+from math import sqrt,hypot,log,exp
 from copy import copy
 from array import array
 import ROOT
@@ -484,6 +484,69 @@ class HistoWithNuisances:
                         if abs(y/y0 - ratio) > tolerance: 
                             return True
         return False
+    def regularizeVariation(self, var, minUnweightedEvents=12, minRatio=0.2, quiet=False, debug=False, binname="<unknown bin>"):
+        if "TH1" not in self.central.ClassName(): raise RuntimeError("Unsupported for non-TH1")
+        if var not in self.variations: return
+        h = self.central
+        (hup,hdown) = self.variations[var]
+        s0,su,sd = 0,0,0
+        s02,su2,sd2 = 0,0,0
+        reg_xy, reg_nx = [], 0
+        xscale = 1.0/float(h.GetNbinsX())
+        for ib in xrange(h.GetNbinsX()):
+            y0,yu,yd = h.GetBinContent(ib+1),hup.GetBinContent(ib+1),hdown.GetBinContent(ib+1) 
+            if y0 == 0 and yu == 0 and yd == 0: continue
+            e0,eu,ed = h.GetBinError(ib+1),hup.GetBinError(ib+1),hdown.GetBinError(ib+1) 
+            if y0: 
+                if yu > minRatio*y0: reg_xy.append((ib*xscale, log(yu/y0), max(e0,eu)/y0))
+                if yd > minRatio*y0: reg_xy.append((ib*xscale, log(y0/yd), max(e0,ed)/y0))
+                if yu > minRatio*y0 or yd > minRatio*y0: reg_nx += 1
+            s0 += y0; su += yu; sd += yd
+            s02 += e0**2; su2 += eu**2; sd2 += ed**2
+        if debug: print "Template for %s %s %s effective unweighted events: %9.2f" % (binname, h.GetName(), var, s0**2/s02)
+        if (s0**2/s02) < minUnweightedEvents and len(reg_xy) > 0:
+            #print "     data points for regularization: %d (%d independent x values) " % (len(reg_xy), reg_nx)
+            s1, sx, sy, sxx, sxy = 0,0,0,0,0
+            for rx, ry, dry in reg_xy:
+                #print "          %8.4f    %8.4f +- %8.4f" % (rx, ry, dry)
+                w = 1.0/dry**2
+                s1  += w
+                sx  += w * rx
+                sy  += w * ry
+                sxy += w * rx*ry
+                sxx += w * rx*rx
+            det = sxx*s1 - sx**2
+            if reg_nx > 1 and det != 0:
+                alpha = (sxx * sy - sx * sxy)/det 
+                beta  = (-sx * sy + s1 * sxy)/det 
+            else:
+                alpha = sy/s1
+                beta  = 0
+            #print "     -> alpha %+8.4f   beta %+8.4f    kappa = exp(alpha) = %6.3f " % (alpha, beta, exp(alpha))
+            spu, spd = 0,0
+            for ib in xrange(h.GetNbinsX()):
+                y0,yu,yd = h.GetBinContent(ib+1),hup.GetBinContent(ib+1),hdown.GetBinContent(ib+1) 
+                e0,eu,ed = h.GetBinError(ib+1),hup.GetBinError(ib+1),hdown.GetBinError(ib+1) 
+                pu = y0 * exp(alpha + beta*ib*xscale)
+                pd = y0 / exp(alpha + beta*ib*xscale)
+                hup.SetBinContent(ib+1, pu); hdown.SetBinContent(ib+1, pd)
+                if y0 == 0 and yu == 0 and yd == 0: continue
+                if debug: print "     bin %2d    nominal  %7.3f +- %7.3f     up:  %7.3f +- %6.3f -> %7.3f (%+5.2fs)   down: %7.3f +- %6.3f -> %7.3f (%+5.2fs)      dup: %6.3f (%6.3f) -> %6.3f (%6.3f)    ddown: %6.3f (%6.3f) -> %6.3f (%6.3f) " % (
+                                ib+1, y0,e0,  
+                                yu,eu, pu, min(max( (pu-yu)/(max(e0,eu) if e0 else 1e-5),  -9.99),+9.99),
+                                yd,ed, pd, min(max( (pd-yd)/(max(e0,ed) if e0 else 1e-5),  -9.99),+9.99),
+                                (yu-y0),  min(abs(yu/y0 if y0 else 99.999),99.999),  (pu-y0),  min(abs(pu/y0 if y0 else 99.999),99.999),  
+                                (yd-y0),  min(abs(yd/y0 if y0 else 99.999),99.999),  (pd-y0),  min(abs(pd/y0 if y0 else 99.999),99.999))
+                spu += pu; spd += pd
+            if debug: print "         total nominal  %7.3f +- %7.3f     up:  %7.3f +- %6.3f -> %7.3f (%+5.2fs)   down: %7.3f +- %6.3f -> %7.3f (%+5.2fs)      dup: %6.3f (%6.3f) -> %6.3f (%6.3f)    ddown: %6.3f (%6.3f) -> %6.3f (%6.3f) " % (
+                                s0,sqrt(s02),  
+                                su,sqrt(su2), spu, min(max( (su-spu)/(sqrt(max(s02,su2)) if s02 else 1e-5),  -9.99),+9.99),
+                                sd,sqrt(sd2), spd, min(max( (sd-spd)/(sqrt(max(s02,sd2)) if s02 else 1e-5),  -9.99),+9.99),
+                                (su-s0),  min(abs(su/s0 if s0 else 99.999),99.999),  (spu-s0),  min(abs(spu/s0 if s0 else 99.999),99.999),  
+                                (sd-s0),  min(abs(sd/s0 if s0 else 99.999),99.999),  (spd-s0),  min(abs(spd/s0 if s0 else 99.999),99.999))
+            elif not quiet: print "Info: template %s %s %s effective unweighted events %.2f was regularized. kup = %.2f, kdown = %.2f" % (binname, h.GetName(), var, s0**2/s02, spu/s0 if s0 else 999, spd/s0 if s0 else 999)
+
+
     def rooFitPdfAndNorm(self,roofitContext=None):
         if self._rooFit:
             if roofitContext != None and self._rooFit['context'] != roofitContext:
