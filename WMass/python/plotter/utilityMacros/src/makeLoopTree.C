@@ -10,7 +10,9 @@
 
 using namespace std;
 
-void makeLoopTree() {
+// root -l -b -q makeLoopTree.C++
+
+void makeLoopTree(const string& outfileName = "wmass_varhists.root") {
 
   // load source codes with ++, so that they are always compiled (you never know ...)
 
@@ -24,7 +26,7 @@ void makeLoopTree() {
   cout << "Loading loopNtuplesSkeleton.cc" << endl;
   gROOT->ProcessLine(".L loopNtuplesSkeleton.C++");
 
-  string command = "loopNtuplesSkeleton(\"/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY/\",\"./\",\"wmass_varhists.root\")";
+  string command = "loopNtuplesSkeleton(\"/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY/\",\"./\",\"" + outfileName + "\")";
   cout << "Executing " << command << endl;
   gROOT->ProcessLine(command.c_str());
   cout << endl;                                          

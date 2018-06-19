@@ -200,6 +200,8 @@ void fillHistograms(const string& treedir = "./",
   vector<string> charges = {"plus","minus"}; // 0 for positive, 1 for negative
   vector<string> chargeSigns = {"+","-"}; // 0 for positive, 1 for negative
 
+  vector<TH1F*> h1_charge_eta;
+  vector<TH1F*> h1_charge_pt;
   vector<TH2F*> h2_charge_eta_pt_inclusive;
 
   vector<TH3F*> h3_charge_eta_pt_globalBin;
@@ -223,6 +225,9 @@ void fillHistograms(const string& treedir = "./",
     vector<Double_t> globalBin_binning; // temporary vector to be used in TH3 constructor
     for (Int_t bin = 0; bin  <= nBinsTemplate; ++bin) 
       globalBin_binning.push_back(0.5+(Double_t)bin); // note that loop goes from 0 to 600 included
+
+    h1_charge_pt.push_back(new TH1F(Form("h1_%s_pt",charges[ch].c_str()),"",35,30,65));
+    h1_charge_eta.push_back(new TH1F(Form("h1_%s_eta",charges[ch].c_str()),"",50,-2.5,2.5));
 
     h2_charge_eta_pt_inclusive.push_back(new TH2F(Form("h2_%s_eta_pt_inclusive",charges[ch].c_str()),"",
 						  netaBins,etaBinEdgesTemplate.data(),
@@ -318,7 +323,7 @@ void fillHistograms(const string& treedir = "./",
 
   Double_t intLumiPb = 1000.0 * intLumi;
   Double_t intLumiPbXsecZ = intLumiPb * 1921.8 * 3.; // for Z the xsec in the ntuples is no more valid, it changed
-  Double_t wjets_NLO_wgt_partial = intLumiPb * (3. *20508.9) / 3.54324749853e+13;  // WJetsToLNu_NLO, just to speed up
+  Double_t wjets_NLO_wgt_partial = intLumiPb * (3. * 20508.9) / 3.54324749853e+13;  // WJetsToLNu_NLO, just to speed up
 
   while (reader.Next()) {
   
@@ -351,6 +356,8 @@ void fillHistograms(const string& treedir = "./",
     if (*HLT_SingleElectron != 1) continue;
     if (*nlep != 1) continue;
     if (fabs(lep_pdgId[0]) != 11) continue;
+    if (not isFloatEqual(*genw_decayId, 12.0)) continue;
+    if (lep_mcMatchId[0]*lep_charge[0] == -24) continue;
     if (absLep1eta > 2.5) continue;
     if (absLep1eta > 1.4442 and absLep1eta < 1.566) continue;
     if (lep1calPt < 30 or lep1calPt > 45) continue;
@@ -404,6 +411,8 @@ void fillHistograms(const string& treedir = "./",
     }
 
     // Now start filling histograms
+    h1_charge_pt[chargeIndex]->Fill(lep1calPt, wgt);
+    h1_charge_eta[chargeIndex]->Fill(lep_eta[0], wgt);
     h2_charge_eta_pt_inclusive[chargeIndex]->Fill(lep_eta[0],lep1calPt, wgt);
     Int_t globalBinEtaPt = h2_etaPt->FindFixBin(GenLepDressed_eta[0], GenLepDressed_pt[0]);
     // fill with reco quantities the bin corresponding to the gen level quantities (it is equivalent to cutting on gen level variables)

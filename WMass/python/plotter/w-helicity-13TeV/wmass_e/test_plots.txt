@@ -22,6 +22,7 @@ etal1_binFR: LepGood1_eta: [-2.5,-2.4,-2.3,-2.2,-2.1,-2.0,-1.9,-1.8,-1.7,-1.6,-1
 
 ptl1_range: ptElFull(LepGood1_calPt,LepGood1_eta): 100,40,50 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
 ptl1_granBin: ptElFull(LepGood1_calPt,LepGood1_eta): 140,30,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+ptl1noCorr_granBin: LepGood1_pt: 140,30,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
 
 pfmet: met_pt : 40,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
 tkmet: met_trkPt : 30,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
