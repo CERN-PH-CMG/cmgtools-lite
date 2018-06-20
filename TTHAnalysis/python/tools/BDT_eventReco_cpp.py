@@ -146,7 +146,7 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf = BDT_eventReco(weightfile_bloose = '../../data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
                                     weightfile_btight = '../../data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-                                    weightfile_hj = '../../data/kinMVA/tth/Hj_2017_configB_dcsv_BDTG.weights.xml',
+                                    weightfile_hj = '../../data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
                                     weightfile_hjj = '../../data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
                                     weightfile_rTT = '../../data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
                                     weightfile_httTT = '../../data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
