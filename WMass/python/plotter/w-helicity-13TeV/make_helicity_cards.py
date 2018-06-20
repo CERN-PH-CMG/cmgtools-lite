@@ -148,6 +148,7 @@ parser.add_option("-C", "--channel", dest="channel", type="string", default='el'
 parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
 parser.add_option("--pdf-syst", dest="addPdfSyst", action="store_true", default=False, help="Add PDF systematics to the signal (need incl_sig directive in the MCA file)");
 parser.add_option("--qcd-syst", dest="addQCDSyst", action="store_true", default=False, help="Add QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
+parser.add_option('-g', "--group-jobs", dest="groupJobs", type=int, default=5, help="group signal jobs so that one job runs multiple makeShapeCards commands");
 (options, args) = parser.parse_args()
 
 if len(sys.argv) < 6:
@@ -224,8 +225,8 @@ if options.signalCards:
     for ivar,var in enumerate(wsyst):
         for helicity in signal_helicities:
             ## marc antihel = 'right' if helicity == 'left' else 'left'
-            antihel = ['right','long'] if helicity == 'left' else ['left','long'] if helicity == 'right' else ['right','left']
-            for charge in ['plus','minus']:
+            antihel = ['right', 'long'] if helicity == 'left' else ['left','long'] if helicity == 'right' else ['right','left']
+            for charge in ['plus', 'minus']:
                 antich = 'plus' if charge == 'minus' else 'minus'
                 YWbinning = WYBinsEdges['{ch}_{hel}'.format(ch=charge,hel=helicity)]
                 if ivar==0: 
@@ -234,6 +235,7 @@ if options.signalCards:
                     IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=var))
                     IARGS = IARGS.replace(SYSTFILE,"{outdir}/mca/systEnv-dummy.txt".format(outdir=outdir))
                     print "Running the systematic: ",var
+                job_group =  [] ## group
                 for iy in xrange(len(YWbinning)-1):
                     print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (YWbinning[iy],YWbinning[iy+1],charge)
                     ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,YWbinning[iy],YWbinning[iy+1])
@@ -249,7 +251,15 @@ if options.signalCards:
                     BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
                     if options.queue:
                         mkShCardsCmd = "python {dir}/makeShapeCards.py {args} \n".format(dir = os.getcwd(), args = IARGS+" "+BIN_OPTS)
-                        submitBatch(dcname,outdir,mkShCardsCmd,options)
+                        ## here accumulate signal jobs if running with long. make long+right+left one job
+                        ## marcmarc if not options.longBkg and WYBinsEdges['{ch}_{hel}'.format(ch=charge,hel=antihel[0])]
+                        if not options.longBkg:
+                            job_group.append(mkShCardsCmd)
+                            if len(job_group) == options.groupJobs or iy == len(YWbinning)-2:
+                                submitBatch(dcname,outdir,'\n'.join(job_group),options)
+                                job_group = []
+                        else:
+                            submitBatch(dcname,outdir,mkShCardsCmd,options)
                     else:
                         cmd = "python makeShapeCards.py "+IARGS+" "+BIN_OPTS
                         if options.dryRun: print cmd
