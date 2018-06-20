@@ -194,7 +194,7 @@ if options.checkrunning:
             done_chunks[m.group(1)].add(int(m.group(2)))
     print "Found %d chunks running" % (nrunning)
 jobs = []
-for D in glob(args[0]+"/*"):
+for D in sorted(glob(args[0]+"/*")):
     treename = options.tree
     fname    = "%s/%s/%s_tree.root" % (D,options.tree,options.tree)
     if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root" % (D,options.tree)) ):
