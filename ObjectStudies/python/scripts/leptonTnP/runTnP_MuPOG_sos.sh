@@ -26,8 +26,8 @@ else
     PDIR=plots/94X/TnP_ICHEP18/
 fi
 
-JOB="mupog_sos_v1.0"
-XBINS="[3.5,7.5,10,15,20,30]" #,45,70,120]"
+JOB="mupog_sos_v3.0"
+XBINS="[3.5,7.5,10,15,20,30,40,60]" #,45,70,120]"
 EBINS="[-2.4,-2.1,-1.6,-1.2,-0.9,-0.6,-0.3,-0.2,0.2,0.3,0.6,0.9,1.2,1.6,2.1,2.4]"
 VBINS="[0.5,7.5,11.5,14.5,17.5,20.5,23.5,26.5,30.5,35.5]"
 PDS="$DATA --refmc $MC"
@@ -36,7 +36,7 @@ OPTS=" --doRatio  --pdir $PDIR/$JOB  "
 OPTS="$OPTS -t tpTree/fitter_tree  --mc-cut mcTrue --mc-mass mass   "
 case $HOSTNAME in
     cmsphys10) OPTS="$OPTS -j 8 ";;
-    lxplus*.cern.ch) OPTS="$OPTS -j 4" ;;
+    lxplus*.cern.ch) OPTS="$OPTS -j 0" ;;
 esac;
 
 LAUNCHER="bash"
@@ -96,7 +96,7 @@ else
     function getcut() { case $1 in
     barrel) CUT="abseta < 1.2";;
     endcap) CUT="abseta > 1.2";;
-    pt320) CUT="pt > 3.5 && pt < 20";;
+    pt520) CUT="pt > 3.5 && pt < 20";;
     pt20)  CUT="pt > 20";;
     *) echo "Unknown ptCut $1"; exit 3;
 esac; }

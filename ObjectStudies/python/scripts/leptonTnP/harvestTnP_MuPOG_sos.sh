@@ -1,6 +1,6 @@
 #!/bin/bash
 P=plots/94X/TnP_ICHEP18/
-IN="mupog_sos_v1.0"; OUT="$IN/00_harvest"
+IN="mupog_sos_v3.0"; OUT="$IN/00_harvest"
 
 MEAS="$(echo SOS SOS_PR SOS_{ID,ISO,IP} SOS_comb)"
 if [[ "$1" != "" ]]; then MEAS="$*"; fi
