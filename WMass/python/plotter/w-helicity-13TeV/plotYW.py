@@ -6,44 +6,75 @@ ROOT.gROOT.SetBatch(True)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
 
-from mergeCardComponentsAbsY import mirrorShape
-
 import utilities
 utilities = utilities.util()
 
 NPDFs = 60
 
-def getCleanedGraph(infile, par, norm, n_iter, treename='limit'):
-    f = ROOT.TFile(infile,'read')
-    tree = f.Get(treename)
-    vals = []
-    normval = norm if norm else 1.
-    for ev in tree:
-        if 2.*ev.deltaNLL > 10: continue
-        vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
-    vals = sorted(vals)
+def translateWStoTF(pname):
+    if not 'r_' in pname:
+        return pname
 
+    if 'Wplus' in pname or 'Wminus' in pname:
+        pnew = pname.replace('r_','')
+        pnew = pnew.split('_')
+        pnew.insert(-2, 'mu' )#if 'Wmu' in options.tensorflow else 'el')
+        pnew = '_'.join(pnew)
+        return pnew
+
+    return -1
+
+def getFromToys(infile):
+    _dict = {}
     
-    for i in range(n_iter):
-        print 'at iteration', i
-        graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
-        graph.Fit('pol2')
-        ff = graph.GetFunction('pol2')
-        distances = []
-        for v1,v2 in vals:
-            distances.append(abs(ff.Eval(v1) - v2))
-        im = distances.index(max(distances))
-        distances.pop(im)
-        vals.pop(im)
-
-        graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
-        if len(vals) < 10: break
-
-    graph.SetName(par+'_graph_it{i:.0f}'.format(i=i))
-    utilities.graphStyle(graph)
-
-    return graph
+    f = ROOT.TFile(infile, 'read')
+    tree = f.Get('fitresults')
+    lok  = tree.GetListOfLeaves()
     
+    for p in lok:
+        if '_err'   in p.GetName(): continue
+        if '_minos' in p.GetName(): continue
+        if '_gen'   in p.GetName(): continue
+        if '_In'    in p.GetName(): continue
+        
+        tmp_hist = ROOT.TH1F(p.GetName(),p.GetName(), 1000, -3., 3.)
+        tree.Draw(p.GetName()+'>>'+p.GetName())
+        mean = tmp_hist.GetMean()
+        err  = tmp_hist.GetRMS()
+        _dict[p.GetName()] = (mean, mean+err, mean-err)
+
+    return _dict
+
+def getFromScans(indir):
+    _dict = {}
+    
+    for sd in os.listdir(indir):
+
+        if 'jobs' in sd: continue
+
+        par = translateWStoTF(sd) ## parameter name different than in TF
+        f = ROOT.TFile(indir+'/'+sd+'/scan_'+sd+'.root', 'read')
+        tree = f.Get('fitresults')
+
+        vals = []
+        for ev in tree:
+            vals.append( [getattr(ev, par), 2.*ev.nllval  ] )
+        vals = sorted(vals)
+        lvals = vals[:len(vals)/2]
+        rvals = vals[len(vals)/2:]
+
+        graph = ROOT.TGraph(len(vals), array.array('d', [x[1] for x in vals]), array.array('d', [y[0] for y in vals]) )
+
+        best = graph.Eval(0.)
+        lgraph = ROOT.TGraph(len(lvals), array.array('d', [x[1] for x in lvals]), array.array('d', [y[0] for y in lvals]) )
+        rgraph = ROOT.TGraph(len(rvals), array.array('d', [x[1] for x in rvals]), array.array('d', [y[0] for y in rvals]) )
+        sol1  = lgraph.Eval(1.)
+        sol2  = rgraph.Eval(1.)
+
+        _dict[par] = (best, sol1, sol2)
+
+    return _dict
+
 
 if __name__ == "__main__":
 
@@ -51,12 +82,14 @@ if __name__ == "__main__":
     parser = OptionParser(usage='%prog ybinfile workspace.root toys.root [options] ')
     parser.add_option('-i', '--infile'      , dest='infile'   , default=''            , type='string', help='workspace converted from datacard')
     parser.add_option('-y', '--ybinfile'    , dest='ybinfile' , default=''            , type='string', help='file with the yw binning')
-    parser.add_option('-t', '--toyfile'     , dest='toyfile'  , default=''            , type='string', help='file that has the toys')
-    parser.add_option('-s', '--scandir'     , dest='scandir'  , default=''            , type='string', help='directory with all the scans')
+
+    parser.add_option('-t', '--type'        , dest='type'     , default='toys'        , type='string', help='run the plot from which postfit? toys/scans/hessian')
+    parser.add_option(      '--toyfile'     , dest='toyfile'  , default=''            , type='string', help='file that has the toys')
+    parser.add_option(      '--scandir'     , dest='scandir'  , default=''            , type='string', help='directory with all the scans')
+    parser.add_option(      '--hessfile'    , dest='hessfile' , default=''            , type='string', help='file that contains the hessian errors in a dictionary')
+
     parser.add_option('-C', '--charge'      , dest='charge'   , default='plus,minus'  , type='string', help='process given charge. default is both')
-    parser.add_option('-o', '--outdir'      , dest='outdir'   , default='.'           , type='string', help='outdput directory to save the matrix')
-    parser.add_option('-S', '--fromScans'   , dest='fromScans', action='store_true'   ,                help='get the errors from scans instead of toys')
-    parser.add_option(      '--parameters'  , dest='pois'     , default='norm.*Ybin.*', type='string', help='comma separated list of regexp parameters to run. default is all parameters!')
+    parser.add_option('-o', '--outdir'      , dest='outdir'   , default='.'           , type='string', help='outdput directory to save the plots')
     parser.add_option(      '--suffix'      , dest='suffix'   , default=''            , type='string', help='suffix for the correlation matrix')
     (options, args) = parser.parse_args()
 
@@ -70,16 +103,25 @@ if __name__ == "__main__":
     else:
         ybinfile = os.path.dirname(os.path.abspath(options.infile))+'/binningYW.txt'
 
-    wsfile = ROOT.TFile(options.infile, 'read')
-    ws = wsfile.Get('w')
 
-    ## this function gets a list of all the proper parameter names from the ws.
-    parameters = utilities.getParametersFromWS(ws, options.pois)
+    ## get the central values and uncertainties depending on the type given:
 
-    pars_central = {}
-    for par in parameters:
-        tmp_val = ws.var(par).getVal()
-        pars_central[par] = tmp_val
+    ## if --type=toys   , we expect a toyfile
+    ## if --type=scans  , we expect a scan directory
+    ## if --type=hessian, we expect a hessian file
+
+    if   options.type == 'toys':
+        valuesAndErrors = getFromToys(options.infile)
+    elif options.type == 'scans':
+        valuesAndErrors = getFromScans(options.infile)
+    elif options.type == 'hessian':
+        tmp = eval(open(options.infile,'r').read())
+        valuesAndErrors = {}
+        for i,j in tmp.items():
+            valuesAndErrors[i] = (j[0], j[0]-j[1], j[0]+j[1])
+    else:
+        print 'ERROR: none of your types is supported. specify either "toys", "scans", or "hessian"'
+        sys.exit()
 
 
     ybinfile = open(ybinfile, 'r')
@@ -91,6 +133,7 @@ if __name__ == "__main__":
     for k,v in ybins.items():
         tmplist = list(abs(i - v[v.index(i)+1]) for i in v[:-1])
         ybinwidths[k] = [float('{n:.2f}'.format(n=i)) for i in tmplist]
+
 
     charges = options.charge.split(',')
     for charge in charges:
@@ -131,84 +174,8 @@ if __name__ == "__main__":
                 systs.append(totUp)
             systematics[pol]=systs
 
-        ### GET LIST OF PARAMETERS AND INITIAL VALUES FROM THE WORKSPACE
-        pars = ROOT.RooArgList(ws.allVars())
-        params = list(pars.at(i).GetName() for i in range(len(pars)))
-        hel_pars = list(p for p in params if 'norm_W' in p)
-        pars_r   = list(p for p in hel_pars if 'right' in p)
-        pars_r = sorted(pars_r, key = lambda x: int(x.split('_')[-1]), reverse=True)
-        pars_l   = list(p for p in hel_pars if 'left' in p)
-        pars_l = sorted(pars_l, key = lambda x: int(x.split('_')[-1]), reverse=False)
 
-        totalrate = 0.;
-        for pol in ['left','right']:
-            cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
-            for iy,y in enumerate(ybinwidths[cp]):
-                parname = 'norm_W{charge}_{pol}_W{charge}_{pol}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
-                tmp_par = pars.find(parname)
-                if tmp_par: totalrate += tmp_par.getVal()
-                else: print "WARNING! ",parname," not in workspace. Not adding its rate."
-
-                
-        ## define the total rate and the central values for the fitted parameters
-        totalrate_fit = 0.
-        fitval = {}; fiterr = {}
-
-        ## if we get the uncertainties from the toys, get them from the toyfile
-        errorsFromToys = not options.fromScans
-        if errorsFromToys:
-            ### open the toys file and get the limit tree
-            tf_toys = ROOT.TFile.Open(options.toyfile, 'read')
-            tree = tf_toys.Get('limit')
-
-            for par in parameters:
-                tree.Draw('trackedParam_{par}>>h_{par}'.format(par=par),'abs(trackedParam_{par}-{central})/{central}>1E-3'.format(par=par,central=pars_central[par]))
-                h = ROOT.gROOT.FindObject('h_{par}'.format(par=par)).Clone()
-                fitval[par] = h.GetMean()
-                fiterr[par] = h.GetRMS()
-                totalrate_fit += fitval[par]
-            tf_toys.Close()
-
-        ## else take the errors from the likelihood scans
-        else:
-            gcanv = ROOT.TCanvas()
-            if not os.path.isdir(options.outdir+'/scans/'):
-                os.system('mkdir {od}/scans/'.format(od=options.outdir))
-                os.system('cp /afs/cern.ch/user/m/mdunser/index.php {od}/scans/'.format(od=options.outdir))
-            for par in parameters:
-                ## first hadd all the point files into one scan file named scan_<par>.root
-                absopath = os.path.abspath(options.scandir)
-                pardir = absopath+'/'+par+'/'
-                ofn = '{pd}/scan_{p}.root'.format(pd=pardir,p=par)
-
-                ## get the parameter value now
-                tmp_val = ws.var(par).getVal()
-                ## get the graph of the scan, and then fit a pol2 and solve the equation for errors
-                ## marc marc tmp_graph = utilities.getGraph(ofn, par, norm=tmp_val)
-                ## marc marc (cen, dn, up) = utilities.getErrorFromGraph(tmp_graph)
-                tmp_graph = getCleanedGraph(ofn, par, norm=tmp_val, n_iter = 15)
-                tmp_graph.Fit('pol2')
-                tmp_graph.Draw('ap')
-
-## =================
-                ## make some plots of the likelihood scans
-                ## draw a line at 2.*deltaNLL = 1.
-                tmp_line = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 1., tmp_graph.GetXaxis().GetXmax(), 1.)
-                tmp_line.SetLineStyle(7); tmp_line.SetLineWidth(2);
-                tmp_line.Draw('same')
-                gcanv.SaveAs('{od}/scans/scan_{p}.pdf'.format(od=options.outdir,p=par))
-                gcanv.SaveAs('{od}/scans/scan_{p}.png'.format(od=options.outdir,p=par))
-                
-## =================
-
-                (cen, dn, up) = utilities.getErrorFromGraph(tmp_graph)
-                ## put that into the same container as before. have to multiply the things back in
-                fitval[par] = tmp_val*cen
-                fiterr[par] = tmp_val*(cen-dn)/cen ## take just one for now
-                totalrate_fit += fitval[par]
-
-        ## done getting the uncertainties
-
+        ## this is where the ugly stuff starts
         arr_val   = array.array('f', [])
         arr_ehi   = array.array('f', [])
         arr_elo   = array.array('f', [])
@@ -236,30 +203,36 @@ if __name__ == "__main__":
             arr_rap       = array.array('f', []); arr_rlo       = array.array('f', []); arr_rhi       = array.array('f', []);
 
             for iy,y in enumerate(ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)]):
-                arr_val.append(nominal[pol][iy]/totalrate/ybinwidths[cp][iy])
-                arr_ehi.append(systematics[pol][iy]/totalrate/ybinwidths[cp][iy])
-                arr_elo.append(systematics[pol][iy]/totalrate/ybinwidths[cp][iy]) # symmetric for the expected
+                parname = 'W{charge}_{pol}_W{charge}_{pol}_mu_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
+                print 'at parameter name', parname
+
+                ## old arr_val.append(nominal[pol][iy]/ybinwidths[cp][iy])
+                ## old arr_ehi.append(systematics[pol][iy]/ybinwidths[cp][iy])
+                ## old arr_elo.append(systematics[pol][iy]/ybinwidths[cp][iy]) # symmetric for the expected
 
                 arr_relv. append(1.);
                 arr_rello.append(systematics[pol][iy]/nominal[pol][iy])
                 arr_relhi.append(systematics[pol][iy]/nominal[pol][iy]) # symmetric for the expected
                 
-                parname = 'norm_W{charge}_{pol}_W{charge}_{pol}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
+                ## old arr_val_fit.append(fitval[parname]/ybinwidths[cp][iy])
+                ## old arr_ehi_fit.append(fiterr[parname]/ybinwidths[cp][iy])
+                ## old arr_elo_fit.append(fiterr[parname]/ybinwidths[cp][iy]) ## forced to be symmetric for now
 
-                arr_val_fit.append(fitval[parname]/totalrate_fit/ybinwidths[cp][iy])
-                arr_ehi_fit.append(fiterr[parname]/totalrate_fit/ybinwidths[cp][iy])
-                arr_elo_fit.append(fiterr[parname]/totalrate_fit/ybinwidths[cp][iy]) ## forced to be symmetric for now
+                ## old print "par = ",parname," expected = ",nominal[pol][iy]," fitted = ",fitval[parname]
 
-                print "par = ",parname," expected = ",nominal[pol][iy]," fitted = ",fitval[parname]
+                ## old # renormalize the theo to the fitted ones (should match when running on the expected)
+                ## old arr_ehi[-1] = arr_ehi[-1]/arr_val[-1]*arr_val_fit[-1]
+                ## old arr_elo[-1] = arr_elo[-1]/arr_val[-1]*arr_val_fit[-1]
+                ## old arr_val[-1] = arr_val_fit[-1]
 
-                # renormalize the theo to the fitted ones (should match when running on the expected)
-                arr_ehi[-1] = arr_ehi[-1]/arr_val[-1]*arr_val_fit[-1]
-                arr_elo[-1] = arr_elo[-1]/arr_val[-1]*arr_val_fit[-1]
-                arr_val[-1] = arr_val_fit[-1]
+                ## old arr_relv_fit .append(fitval[parname]/nominal[pol][iy])
+                ## old arr_rello_fit.append(fiterr[parname]/nominal[pol][iy])
+                ## old arr_relhi_fit.append(fiterr[parname]/nominal[pol][iy]) ## forced to be symmetric for now
 
-                arr_relv_fit .append(fitval[parname]/nominal[pol][iy])
-                arr_rello_fit.append(fiterr[parname]/nominal[pol][iy])
-                arr_relhi_fit.append(fiterr[parname]/nominal[pol][iy]) ## forced to be symmetric for now
+                fitmean = valuesAndErrors[parname][0]
+                arr_relv_fit .append(valuesAndErrors[parname][0])
+                arr_rello_fit.append(abs(fitmean-valuesAndErrors[parname][1]))
+                arr_relhi_fit.append(abs(fitmean-valuesAndErrors[parname][2]))
 
                 arr_rap.append((ybins[cp][iy]+ybins[cp][iy+1])/2.)
                 arr_rlo.append(abs(ybins[cp][iy]-arr_rap[-1]))
@@ -267,23 +240,23 @@ if __name__ == "__main__":
 
             if 'left' in pol:
                 print 'left {ch}: {i}'.format(ch=charge, i=sum(arr_val))
-                graphLeft      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
+                #graphLeft      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
                 graphLeft_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
-                graphLeft     .SetName('graphLeft')
+                #graphLeft     .SetName('graphLeft')
                 graphLeft_rel .SetName('graphLeft_rel')
-                graphLeft_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
+                #graphLeft_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
                 graphLeft_fit_rel  = ROOT.TGraphAsymmErrors(len(arr_relv_fit), arr_rap, arr_relv_fit, arr_rlo, arr_rhi, arr_rello_fit, arr_relhi_fit)
-                graphLeft_fit     .SetName('graphLeft_fit')
+                #graphLeft_fit     .SetName('graphLeft_fit')
                 graphLeft_fit_rel .SetName('graphLeft_fit_rel')
             else:
                 print 'right {ch}: {i}'.format(ch=charge, i=sum(arr_val))
-                graphRight      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
+                #graphRight      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
                 graphRight_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
-                graphRight     .SetName('graphRight')
+                #graphRight     .SetName('graphRight')
                 graphRight_rel .SetName('graphRight_rel')
-                graphRight_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
+                #graphRight_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
                 graphRight_fit_rel  = ROOT.TGraphAsymmErrors(len(arr_relv_fit), arr_rap, arr_relv_fit, arr_rlo, arr_rhi, arr_rello_fit, arr_relhi_fit)
-                graphRight_fit     .SetName('graphRight_fit')
+                #graphRight_fit     .SetName('graphRight_fit')
                 graphRight_fit_rel .SetName('graphRight_fit_rel')
 
         c2 = ROOT.TCanvas('foo','', 800, 800)
@@ -302,44 +275,44 @@ if __name__ == "__main__":
         leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
         leg.SetFillStyle(0)
         leg.SetBorderSize(0)
-        leg.AddEntry(graphLeft , 'W^{{{ch}}} left (PDF systs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
-        leg.AddEntry(graphLeft_fit , 'W^{{{ch}}} left (fit)' .format(ch='+' if charge == 'plus' else '-'), 'pl')
-        leg.AddEntry(graphRight, 'W^{{{ch}}} right (PDF systs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
-        leg.AddEntry(graphRight_fit, 'W^{{{ch}}} right (fit)'.format(ch='+' if charge == 'plus' else '-'), 'pl')
+#        leg.AddEntry(graphLeft , 'W^{{{ch}}} left (PDF systs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
+#        leg.AddEntry(graphLeft_fit , 'W^{{{ch}}} left (fit)' .format(ch='+' if charge == 'plus' else '-'), 'pl')
+#        leg.AddEntry(graphRight, 'W^{{{ch}}} right (PDF systs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
+#        leg.AddEntry(graphRight_fit, 'W^{{{ch}}} right (fit)'.format(ch='+' if charge == 'plus' else '-'), 'pl')
 
-        graphLeft.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
-        graphLeft.SetLineColor(colorL)
-        graphLeft.SetFillColor(colorL)
-        graphLeft.SetFillStyle(3002)
-        graphLeft_fit.SetLineWidth(2)
-        graphLeft_fit.SetLineColor(colorLf)
-        graphRight.SetLineColor(colorR)
-        graphRight.SetFillColor(colorR)
-        graphRight.SetFillStyle(3002)
-        graphRight_fit.SetLineWidth(2)
-        graphRight_fit.SetLineColor(colorRf)
-            
-        mg = ROOT.TMultiGraph()
-        mg.Add(graphLeft,'P2')
-        mg.Add(graphRight,'P2')
-        mg.Add(graphLeft_fit)
-        mg.Add(graphRight_fit)
-
-        mg.Draw('Pa')
-        mg.GetXaxis().SetRangeUser(0.,6.)
-        mg.GetXaxis().SetTitle('|Y_{W}|')
-        mg.GetYaxis().SetTitle('dN/dy')
-        mg.GetXaxis().SetTitleSize(0.06)
-        mg.GetXaxis().SetLabelSize(0.04)
-        mg.GetYaxis().SetTitleSize(0.06)
-        mg.GetYaxis().SetLabelSize(0.04)
-        mg.GetYaxis().SetTitleOffset(1.2)
-
-        leg.Draw('same')
+###          graphLeft.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
+###          graphLeft.SetLineColor(colorL)
+###          graphLeft.SetFillColor(colorL)
+###          graphLeft.SetFillStyle(3002)
+###          graphLeft_fit.SetLineWidth(2)
+###          graphLeft_fit.SetLineColor(colorLf)
+###          graphRight.SetLineColor(colorR)
+###          graphRight.SetFillColor(colorR)
+###          graphRight.SetFillStyle(3002)
+###          graphRight_fit.SetLineWidth(2)
+###          graphRight_fit.SetLineColor(colorRf)
+###              
+###          mg = ROOT.TMultiGraph()
+###          mg.Add(graphLeft,'P2')
+###          mg.Add(graphRight,'P2')
+###          mg.Add(graphLeft_fit)
+###          mg.Add(graphRight_fit)
+###  
+###          mg.Draw('Pa')
+###          mg.GetXaxis().SetRangeUser(0.,6.)
+###          mg.GetXaxis().SetTitle('|Y_{W}|')
+###          mg.GetYaxis().SetTitle('dN/dy')
+###          mg.GetXaxis().SetTitleSize(0.06)
+###          mg.GetXaxis().SetLabelSize(0.04)
+###          mg.GetYaxis().SetTitleSize(0.06)
+###          mg.GetYaxis().SetLabelSize(0.04)
+###          mg.GetYaxis().SetTitleOffset(1.2)
+###  
+###          leg.Draw('same')
 
         date = datetime.date.today().isoformat()
-        for ext in ['png', 'pdf']:
-            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_{t}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext,t='fromScans' if options.fromScans else 'fromToys'))
+#        for ext in ['png', 'pdf']:
+#            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_{t}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext,t='fromScans' if options.fromScans else 'fromToys'))
 
         ## now make the relative error plot:
         ## ======================================
@@ -355,7 +328,7 @@ if __name__ == "__main__":
         padUp.SetTickx(1)
         padUp.SetTicky(1)
         padUp.SetGridy(1)
-        padUp.SetBottomMargin(0.15)
+        padUp.SetBottomMargin(0.10)
 
         graphLeft_rel.SetLineWidth(5)
         graphLeft_rel.SetLineColor(colorL)
@@ -408,4 +381,4 @@ if __name__ == "__main__":
         padDown.RedrawAxis("sameaxis");
 
         for ext in ['png', 'pdf']:
-            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_relative_{t}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext,t='fromScans' if options.fromScans else 'fromToys'))
+            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_relative_{t}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext,t=options.type))
