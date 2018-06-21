@@ -55,12 +55,13 @@ mtCutApplSignalRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_ph
 mtCutApplSignalRegion=""
 metCutApplSignalRegion="-A eleKin met30 'met_pt > 30'"
 #WselFull="-A eleKin WregionSel 'ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 40' -A eleKin fiducial 'abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566' "
-fiducial=" -A eleKin fiducial 'abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566' "
+fiducial=" -A eleKin fiducial 'abs(LepGood1_eta)<=1.4442 || abs(LepGood1_eta)>=1.566' "
 json_L1_HLT27=" -A eleKin json 'isGoodRunLS(isData,run,lumi)' "
-ptMax=" -A eleKin ptMax 'ptElFull(LepGood1_calPt,LepGood1_eta) < XX' "
-mtMin=" -A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > XX' "
-mtMax=" -A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < XX' "
-WselFull=" ${mtMin/XX/40} ${ptMax/XX/45} ${fiducial} "   #${json_L1_HLT27} "
+ptMin=" -A eleKin ptMin 'ptElFull(LepGood1_calPt,LepGood1_eta) >= XX' "
+ptMax=" -A eleKin ptMax 'ptElFull(LepGood1_calPt,LepGood1_eta) <= XX' "
+mtMin=" -A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) >= XX' "
+mtMax=" -A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) <= XX' "
+WselFull=" ${mtMin/XX/40} ${ptMax/XX/45} ${fiducial} ${json_L1_HLT27} "
 WselAllpt=" ${mtMin/XX/40} ${fiducial} ${json_L1_HLT27} "
 ##############################################################
 ##############################################################
@@ -73,16 +74,17 @@ WselAllpt=" ${mtMin/XX/40} ${fiducial} ${json_L1_HLT27} "
 ##################################
 useDataGH="y"
 #useHLTpt27="y" # already in selection txt file
-runBatch="y"
+runBatch="n"
 queueForBatch="cmscaf1nd"
-nameTag="_fullSelNoScaleMC_dataNojson" 
+nameTag="_cutEqualLessMore" 
 #nameTag="_varStudy"
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
 # eta bin boundaries to divide regions in eta
-etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
+#etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
 #etaBinBoundaries=("0.0" "1.479" "2.5")
-#etaBinBoundaries=("0.0" "2.5")
+etaBinBoundaries=("0.0" "2.5")
+#etaBinBoundaries=("1.479" "2.1" "2.5")
 today=`date +"%d_%m_%Y"`
 batchDirName="plots_${today}${nameTag}"  # name of directory to create inside jobsLog
 ##################################
@@ -105,15 +107,17 @@ mcafileFRclosureMC="mca-80X-qcdClosureTest.txt"  # for FR closure test based on 
 # they are excluded depending on whether the fake rate is used or not
 #excludeprocesses="data,Z_LO,W_LO,Top,DiBosons,TauDecaysW,WFlips"
 excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
+selectprocesses="W"
 #selectplots=""  # if empty it uses all plots in cfg file
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
 #selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
 #selectplots="trkmt_trkmetEleCorr_dy,trkmetEleCorr_dy"
 #selectplots="etal1_binFR"
-selectplots="ptl1,etal1_binFR,pfmt,pfmet"
+#selectplots="ptl1,etal1_binFR,pfmt,pfmet"
 #selectplots="ptl1_granBin"
 #selectplots="trkmt_trkmetEleCorr_dy"
-#selectplots="ptl1,etal1,pfmt,pfmet"
+selectplots="ptl1,etal1"
+#selectplots="ptl1noCorr_granBin"
 #selectplots="dphiLepPFMET,diffPt_lepPFMET,diffPt_lepPFMET_v2"
 #maxentries="150000" # max int number is > 2*10^9
 maxentries=""  # all events if ""
@@ -127,7 +131,8 @@ maxentries=""  # all events if ""
 #scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons " # does not seem to work as expected
 plottingMode="" # stack (default), nostack, norm (can leave "" for stack, otherwise " --plotmode <arg> ")
 
-ratioPlotDataOptions="--showRatio --maxRatioRange 0.5 1.5 --fixRatioRange " #--ratioDen background --ratioNums data,data_noJson --ratioYLabel 'data/MC' --sp data_noJson --noStackSig --showIndivSigs"
+ratioPlotDataOptions=""
+#ratioPlotDataOptions="--showRatio --maxRatioRange 0.5 1.5 --fixRatioRange " #--ratioDen background --ratioNums data,data_noJson --ratioYLabel 'data/MC' --sp data_noJson --noStackSig --showIndivSigs"
 ratioPlotDataOptions_MCclosureTest="--showRatio --maxRatioRange 0.0 2.0 --fixRatioRange --ratioDen QCD --ratioNums QCDandEWK_fullFR,QCD_fakes --ratioYLabel 'FR/QCD' "
 
 #############################
@@ -338,8 +343,8 @@ dataOption=""
 MCweightOption=""
 if [[ "${useDataGH}" == "y" ]]; then
     #dataOption=" --pg 'data := data_B,data_C,data_D,data_E,data_F,data_G,data_H' "
-    luminosity="35.9"
-    #luminosity="30.9" # if using filter to have L1 threshold always below HLT, see electronDataset.txt
+    #luminosity="35.9"
+    luminosity="30.9" # if using filter to have L1 threshold always below HLT, see electronDataset.txt
     MCweigthOption=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,${ptForScaleFactors},LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,${ptForScaleFactors},LepGood1_eta)' "
 else 
     #dataOption=" --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp data_G,data_H "
@@ -383,6 +388,10 @@ fi
 
 if [[ "X${selectplots}" != "X" ]]; then
     commonCommand="${commonCommand} --sP ${selectplots}"
+fi
+
+if [[ "X${selectprocesses}" != "X" ]]; then
+    commonCommand="${commonCommand} -p ${selectprocesses}"
 fi
 
 if [[ "${useHLTpt27}" == "y" ]]; then
@@ -450,7 +459,7 @@ do
 	elif [[ "${regionKey[${region}]}" == "TestPlots" ]]; then       
 	    
 	    regionCommand="${regionCommand/${mcafile}/${mcafileTest}}"
-	    regionCommand="${regionCommand/${ratioPlotDataOptions}/''}"  # remove ratio plot options
+	    regionCommand="${regionCommand/${ratioPlotDataOptions}/}"  # remove ratio plot options
 	    regionCommand="${regionCommand} ${optionsTest} "
 
 	else
@@ -493,7 +502,7 @@ do
 	    #echo "${thisBatchFileName}"
 	    cp ${baseBatchScript} ${srcBatchFileName}
 
-	    etaRangeCut=" -A eleKin ${etabin} 'abs(LepGood1_eta) > ${etaBinBoundaries[$i]} && abs(LepGood1_eta) < ${etaBinBoundaries[($i+1)]}' "
+	    etaRangeCut=" -A eleKin ${etabin} 'abs(LepGood1_eta) >= ${etaBinBoundaries[$i]} && abs(LepGood1_eta) <= ${etaBinBoundaries[($i+1)]}' "
 	    regionCommand_eta="${regionCommand} --pdir ${plotterPath}/plots/distribution/${treedir}/${thisRegionName}/${outputdirThisRegion}/${etabin}/ ${etaRangeCut}" 
 	    echo "${regionCommand_eta}" >> ${srcBatchFileName}
 	    echo "" >> ${srcBatchFileName}

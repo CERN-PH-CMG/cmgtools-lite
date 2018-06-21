@@ -21,8 +21,13 @@ def getXsecs(processes, systs, ybins, lumi, infile):
         yfirst = ybins[pol][ybinnumber]
         ylast  = ybins[pol][ybinnumber+1]
 
-        istart = cen_hist.FindBin(yfirst)
-        iend   = cen_hist.FindBin(ylast)
+        # before searching the bin, sum epsilon to the y value being inspected
+        # Root assigns the lower bin edge to the bin, while the upper bin edge is assigned to the adjacent bin. However, depending on the number y being used,
+        # there can be a precision issue which might induce the selection of the wrong bin (since yfirst and yvalue are actually bin boundaries)
+        # It seems odd, but I noticed that with the fake rate graphs (I was getting events migrating between adjacent eta bins)
+        epsilon = 0.00001
+        istart = cen_hist.FindBin(yfirst + epsilon)
+        iend   = cen_hist.FindBin(ylast + epsilon)
 
         ncen = cen_hist .Integral(istart, iend-1)
 

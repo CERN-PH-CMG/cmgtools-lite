@@ -276,6 +276,26 @@ private:
 
 //======================================================================                          
 
+Bool_t isFloatEqual(const Float_t num1 = 0.0, const Float_t num2 = 0.0, const Double_t tolerance = 0.000001) {
+  
+  Double_t diff = fabs(num1-num2); 
+  if (diff < tolerance) return true;
+  else return false;
+
+}
+
+//======================================================================                          
+
+Bool_t isDoubleEqual(const Double_t num1 = 0.0, const Double_t num2 = 0.0, const Double_t tolerance = 0.000001) {
+  
+  Double_t diff = fabs(num1-num2); 
+  if (diff < tolerance) return true;
+  else return false;
+
+}
+
+//======================================================================                          
+
 string getEnvVariable(const string& envVarName = "CMSSW_BASE") {
 
   char*  var = nullptr;
