@@ -49,6 +49,18 @@ def makeYWBinning(infile, cutoff=5000):
     
     return yw_binning
 
+def makeFixedYWBinning():
+    yw_binning = {}
+    
+    for ch in ['plus', 'minus']:
+        for pol in ['left', 'right', 'long']:
+            cp = '{ch}_{pol}'.format(ch=ch,pol=pol)
+            yw_binning[cp]  = [float('{n:.2f}'.format(n=    i*0.10)) for i in range(16) ] 
+            yw_binning[cp] += [float('{n:.2f}'.format(n=1.5+i*0.20)) for i in range(1,8)] + [6.0]
+            
+    return yw_binning
+            
+
 
 NPDFSYSTS=60 # Hessian variations of NNPDF 3.0
 pdfsysts=[] # array containing the PDFs signal variations
@@ -215,7 +227,7 @@ if options.queue:
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    WYBinsEdges = makeYWBinning(os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/efficiency/eff_el_PFMT40.root')#, 5000)
+    WYBinsEdges = makeFixedYWBinning()
     ybinfile = open(outdir+'/binningYW.txt','w')
     ybinfile.write(json.dumps(WYBinsEdges))
     #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
