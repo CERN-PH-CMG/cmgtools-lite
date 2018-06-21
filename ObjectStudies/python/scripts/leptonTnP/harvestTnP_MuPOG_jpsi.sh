@@ -1,5 +1,5 @@
 #!/bin/bash
-P=plots/80X/TnP_Moriond17/
+P=plots/94X/TnP_ICHEP18/
 IN="mupog_jpsi_v1"; OUT="$IN/00_harvest"
 
 MEAS="mu_Loose mu_Reco mu_LooseIdOnly"

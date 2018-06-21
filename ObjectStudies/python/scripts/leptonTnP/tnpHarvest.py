@@ -350,7 +350,7 @@ if __name__ == "__main__":
     addTnPHarvestOptions(parser)
     (options, args) = parser.parse_args()
     ROOT.gROOT.SetBatch(True)
-    ROOT.gROOT.ProcessLine(".x ~/cpp/tdrstyle.cc")
+    ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
     ROOT.gStyle.SetOptStat(0)
     if not os.path.exists(options.printDir):
         os.system("mkdir -p %s" % options.printDir)

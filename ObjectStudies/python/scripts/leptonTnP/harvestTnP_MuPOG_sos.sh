@@ -1,6 +1,6 @@
 #!/bin/bash
-P=plots/80X/TnP_Moriond17
-IN="mupog_sos_v1.0"; OUT="$IN/00_harvest"
+P=plots/94X/TnP_ICHEP18/
+IN="mupog_sos_v3.0"; OUT="$IN/00_harvest"
 
 MEAS="$(echo SOS SOS_PR SOS_{ID,ISO,IP} SOS_comb)"
 if [[ "$1" != "" ]]; then MEAS="$*"; fi
@@ -26,7 +26,6 @@ for M in $MEAS; do
     esac;
     OPTS=" --doRatio --pdir ${P}/$OUT --idir ${P}/$IN "; XTIT="p_{T} (GeV)"
     python $MAIN -N mu_${M}_vtx_pt520 $OPTS $MODS --ytitle "$TIT" --xtit "N(vertices)"  $RANGES_OTHER;
-    continue;
     python $MAIN -N mu_${M}_eta_pt520 $OPTS $MODS --ytitle "$TIT" --xtit "#eta"   $RANGES_OTHER
     for BE in barrel endcap; do
         python $MAIN -N mu_${M}_${BE} $OPTS $MODS --ytitle "$TIT" --xtit "$XTIT"  $RANGES_PT 
