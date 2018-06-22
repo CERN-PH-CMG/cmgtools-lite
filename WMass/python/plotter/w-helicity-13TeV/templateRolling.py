@@ -6,6 +6,8 @@
 # differential cross section (check binning)
 # python w-helicity-13TeV/templateRolling.py cards/diffXsec_2018_05_24_diffXsec_GenPtEtaSigBin/ -o plots/diffXsec/templates/diffXsec_2018_05_24_GenPtEtaSigBin/  -c el -b [-2.5,-2.3,-2.1,-1.9,-1.7,-1.566,-1.4442,-1.2,-1.0,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1.0,1.2,1.4442,1.566,1.7,1.9,2.1,2.3,2.5]*[30,33,36,39,42,45] --plot-binned-signal -a diffXsec [--has-inclusive-signal]
 
+# can pass eta/pt binning as -b file=cards/diffXsec_2018_05_24_diffXsec_GenPtEtaSigBin/binningPtEta.txt
+
 # will implement taking 2D template binning from a file
 
 
@@ -68,10 +70,10 @@ if __name__ == "__main__":
     parser.add_option('-c','--channel', dest='channel', default='el', type='string', help='Channel (el, mu)')
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='Charges to consider')
     parser.add_option('-p','--postfix', dest='postfix', default='', type='string', help='Postfix for input file with shapes (e.g: "_addInclW" in "Wel_plus_shapes_addInclW.root"). Default is ""')
-    parser.add_option('-b','--etaPtbinning', dest='etaPtbinning', default='[-2.5,-1.566,-1.4442,0,1.4442,1.566,2.5]*[30,35,40,45]', type='string', help='eta-pt binning for templates (will have to implement reading it from file)')
+    parser.add_option('-b','--etaPtbinning', dest='etaPtbinning', default='[-2.5,-1.566,-1.4442,0,1.4442,1.566,2.5]*[30,35,40,45]', type='string', help='eta-pt binning for templates (will have to implement reading it from file). Use -b file=<name> to read binning from file <name>')
     parser.add_option(     '--noplot', dest="noplot", default=False, action='store_true', help="Do not plot templates (but you can still save them in a root file with option -s)");
     parser.add_option(     '--has-inclusive-signal', dest="hasInclusiveSignal", default=False, action='store_true', help="Use this option if the file already contains the inclusive signal template and you want to plot it as well");
-    parser.add_option(     '--plot-binned-signal', dest="plotBinnedSignal", default=False, action='store_true', help="Use this option to plot the binned signal templates (should specify with option --analysis if this si a file for rapidity/helicity or differential cross section");
+    parser.add_option(     '--plot-binned-signal', dest="plotBinnedSignal", default=False, action='store_true', help="Use this option to plot the binned signal templates (should specify with option --analysis if this is a file for rapidity/helicity or differential cross section");
     parser.add_option('-a','--analysis', dest='analysis', default='diffXsec', type='string', help='Which analysis the shapes file belongs to: helicity or diffXsec (default)')
     parser.add_option('-s','--save', dest='outfile_templates', default='templates_2D', type='string', help='pass name of output file to save 2D histograms (charge is automatically appended before extension). No need to specify extension, .root is automatically added')
     (options, args) = parser.parse_args()
@@ -94,11 +96,21 @@ if __name__ == "__main__":
     addStringToEnd(outname,"/",notAddIfEndswithMatch=True)
     createPlotDirAndCopyPhp(outname)
 
-    etabinning = options.etaPtbinning.split('*')[0]    # this is like [a,b,c,...], and is of type string. We nedd to get an array  
-    ptbinning  = options.etaPtbinning.split('*')[1]
+    if options.etaPtbinning.startswith("file="):
+        etaPtbinningFile = options.etaPtbinning.replace("file=","")
+        with open(etaPtbinningFile) as f:
+            content = f.readlines()
+        for x in content:
+            tmpbinning = str(x).strip() #if not str(x).startswith("#")
+        etabinning = tmpbinning.split('*')[0]    # this is like [a,b,c,...], and is of type string. We nedd to get an array  
+        ptbinning  = tmpbinning.split('*')[1]
+    else:
+        etabinning = options.etaPtbinning.split('*')[0]    # this is like [a,b,c,...], and is of type string. We nedd to get an array  
+        ptbinning  = options.etaPtbinning.split('*')[1]
     etabinning = getArrayParsingString(etabinning,makeFloat=True)
     ptbinning  = getArrayParsingString(ptbinning,makeFloat=True)
     binning = [len(etabinning)-1, etabinning, len(ptbinning)-1, ptbinning] 
+    #print binning
 
     lepton = "electron" if channel == "el" else " muon"
 
