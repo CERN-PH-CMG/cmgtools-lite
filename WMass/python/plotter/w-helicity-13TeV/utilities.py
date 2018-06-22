@@ -1,4 +1,4 @@
-import ROOT, os, sys, re, array, math
+import ROOT, os, sys, re, array, math, json
 
 class util:
 
@@ -70,7 +70,35 @@ class util:
                 val = histo.IntegralAndError(istart, iend-1, err) ## do not include next bin
                 conts.append(float(int(val)))
             histos[pol] = conts
+        histo_file.Close()
         return histos
+
+    def getXSecFromShapes(self, ybins, charge, infile, channel, ip):
+        values = {}
+        if not infile:
+            for pol in ['left','right']: #,'long']: 
+                cp = '{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')
+                xsecs = []
+                for iv in xrange(len(ybins[cp][:-1])):
+                    xsecs.append(0.)
+                values[pol] = xsecs
+            return values
+
+        histo_file = ROOT.TFile(infile, 'READ')
+    
+        pstr = '' if not ip else '_pdf{ip}Up'.format(ip=ip)
+    
+        for pol in ['left','right']: #,'long']
+            cp = '{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')
+            xsecs = []
+            for iv, val in enumerate(ybins[cp][:-1]):
+                name = 'x_W{ch}_{pol}_W{ch}_{pol}_{channel}_Ybin_{iy}{suffix}'.format(ch=charge,pol=pol,channel=channel,iy=iv,ip=ip,suffix=pstr)
+                histo = histo_file.Get(name)
+                val = histo.Integral()
+                xsecs.append(float(val))
+            values[pol] = xsecs
+        histo_file.Close()
+        return values
 
     def getParametersFromWS(self, ws, regexp):
 
@@ -96,5 +124,91 @@ class util:
 
         return parameters
 
+    def translateWStoTF(self, pname):
+        if not 'r_' in pname:
+            return pname
+     
+        if 'Wplus' in pname or 'Wminus' in pname:
+            pnew = pname.replace('r_','')
+            pnew = pnew.split('_')
+            pnew.insert(-2, 'mu' )#if 'Wmu' in options.tensorflow else 'el')
+            pnew = '_'.join(pnew)
+            return pnew
+     
+        return -1
+
+
+    def getFromToys(self, infile):
+        _dict = {}
+        
+        f = ROOT.TFile(infile, 'read')
+        tree = f.Get('fitresults')
+        lok  = tree.GetListOfLeaves()
+        
+        for p in lok:
+            if '_err'   in p.GetName(): continue
+            if '_minos' in p.GetName(): continue
+            if '_gen'   in p.GetName(): continue
+            if '_In'    in p.GetName(): continue
+            
+            tmp_hist = ROOT.TH1F(p.GetName(),p.GetName(), 100000, -5000., 5000.)
+            tree.Draw(p.GetName()+'>>'+p.GetName())
+            mean = tmp_hist.GetMean()
+            err  = tmp_hist.GetRMS()
+            _dict[p.GetName()] = (mean, mean+err, mean-err)
+     
+        return _dict
+
+
+    def getExprFromToys(self, name, expression, infile):
+        f = ROOT.TFile(infile, 'read')
+        tree = f.Get('fitresults')        
+        tmp_hist = ROOT.TH1F(name,name, 100000, -100., 5000.)
+        tree.Draw(expression+'>>'+name)
+        mean = tmp_hist.GetMean()
+        err  = tmp_hist.GetRMS()
+        return (mean, mean+err, mean-err)
+
+
+    def getNormalizedXsecFromToys(self, ybins, charge, pol, channel, iy, infile, absYmax=6.0):
+        cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
+        ybins_expr = []
+        for iv, val in enumerate(ybins[cp][:-1]):
+            if abs(val)<absYmax:
+                ybins_expr.append('W{charge}_{pol}_W{charge}_{pol}_{ch}_Ybin_{iy}_pmaskedexp'.format(charge=charge,pol=pol,ch=channel,iy=iv))
+        num = 'W{charge}_{pol}_W{charge}_{pol}_{ch}_Ybin_{iy}_pmaskedexp'.format(charge=charge,pol=pol,ch=channel,iy=iy)
+        den = '('+'+'.join(ybins_expr)+')'        
+        ret = self.getExprFromToys(charge+pol+channel+str(iy),'{num}/{den}'.format(num=num,den=den),infile)
+        return ret
+
+    def getFromScans(self, indir):
+        _dict = {}
+        
+        for sd in os.listdir(indir):
+     
+            if 'jobs' in sd: continue
+     
+            par = self.translateWStoTF(sd) ## parameter name different than in TF
+            f = ROOT.TFile(indir+'/'+sd+'/scan_'+sd+'.root', 'read')
+            tree = f.Get('fitresults')
+     
+            vals = []
+            for ev in tree:
+                vals.append( [getattr(ev, par), 2.*ev.nllval  ] )
+            vals = sorted(vals)
+            lvals = vals[:len(vals)/2]
+            rvals = vals[len(vals)/2:]
+     
+            graph = ROOT.TGraph(len(vals), array.array('d', [x[1] for x in vals]), array.array('d', [y[0] for y in vals]) )
+     
+            best = graph.Eval(0.)
+            lgraph = ROOT.TGraph(len(lvals), array.array('d', [x[1] for x in lvals]), array.array('d', [y[0] for y in lvals]) )
+            rgraph = ROOT.TGraph(len(rvals), array.array('d', [x[1] for x in rvals]), array.array('d', [y[0] for y in rvals]) )
+            sol1  = lgraph.Eval(1.)
+            sol2  = rgraph.Eval(1.)
+     
+            _dict[par] = (best, sol1, sol2)
+     
+        return _dict
 
 
