@@ -146,8 +146,8 @@ if __name__ == "__main__":
         arr_rhi   = array.array('f', [])
 
         for pol in ['left','right']:
-            MAXYFORNORM = 3.0 if pol=='left' else 2.9 # to match the different binnin in L,R. Should be simplified with then new commin binning
             cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
+            MAXYFORNORM = ybins[cp][-2] # exclude the outermost bin which has huge error due to acceptance
             normsigma = sum([xsec_nominal[pol][iy] for iy,y in enumerate(ybins[cp][:-1]) if abs(y)<MAXYFORNORM])
             print "total xsec up to |Y|<{maxy} = {sigma:.3f} (pb)".format(maxy=MAXYFORNORM,sigma=normsigma)
 
