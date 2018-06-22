@@ -1,12 +1,15 @@
 import os
 from datetime import datetime
 
+# python w-helicity-13TeV/wmass_e/make_cards_el_diffXsec.py -q cmscaf1nd --groupSignalBy 10 --syst -d
+
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 parser.add_option("-d", "--dry-run", dest="dryRun",   action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("-f", "--force", dest="force",   action="store_true", default=False, help="Force running without question below (useful only when using PDF systematics)");
 parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, help="Append a suffix to the default outputdir (helicity_<date>)");
 parser.add_option("-q", "--queue", dest="queue", type="string", default="cmscaf1nd", help="Select the queue to use");
+parser.add_option("-r", "--run", dest="run", type="string", default="sb", help="Which components to run: s for signal, b for backgrounds or sb for both");
 parser.add_option("--syst", dest="addSyst", action="store_true", default=False, help="Add PDF and QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
 #### options for differential xsec
 #parser.add_option("-x", "--x-sec", dest="xsec",   action="store_true", default=False, help="Do differential cross-section");
@@ -41,9 +44,14 @@ WEIGHTSTRING=" \'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood
 LUMI=30.9
 
 OUTDIR="%s_%s" % (outdirbase,datetime.now().strftime("%Y_%m_%d"))
+if options.groupSignalBy: OUTDIR += ("_group%s" % str(options.groupSignalBy))
 if options.suffix: OUTDIR += ("_%s" % options.suffix)
 
-components=[" -s "," -b "]
+components=[] 
+if "s" in options.run:
+    components.append(" -s ")
+if "b" in options.run:
+    components.append(" -b ")
 
 ### 
 # create the mca for signal bins: it is needed only if you want to group signal bins, because you have to use option -p of mcAnalysis to select them as different processes
