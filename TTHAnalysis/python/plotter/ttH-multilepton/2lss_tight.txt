@@ -31,6 +31,7 @@ BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 2j: nJet25>=2 ; Disable=True
 x3j: nJet25==3 ; Disable=True
+6j: nJet25>=6 ; Disable=True
 
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
