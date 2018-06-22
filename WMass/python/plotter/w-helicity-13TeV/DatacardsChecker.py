@@ -47,7 +47,7 @@ class CardsChecker:
             if not os.path.exists(self.card_dir+'/'+dc): 
                 if self.options.verbose>1: print '# datacard ',dc,' is not present in ',self.card_dir
                 resubfile = self.makeResubFile(key)
-                print 'THIS IS THE RESUBFILE', resubfile
+                os.system('chmod u+x '+os.path.abspath(resubfile))
                 resubcmds[key] = 'bsub -q {queue} -o {log} {srcfile}'.format(
                     queue=self.options.queue, log=os.path.abspath(resubfile.replace('.sh','.log')), srcfile=os.path.abspath(resubfile))
 
@@ -71,7 +71,7 @@ class CardsChecker:
 
             if not f_ok: 
                 resubfile = self.makeResubFile(key)
-                print 'THIS IS THE RESUBFILE', resubfile
+                os.system('chmod u+x '+os.path.abspath(resubfile))
                 resubcmds[key] = 'bsub -q {queue} -o {log} {srcfile}'.format(
                     queue=self.options.queue, log=os.path.abspath(resubfile.replace('.sh','.log')), srcfile=os.path.abspath(resubfile))
         return resubcmds
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     parser = OptionParser(usage='%prog dir channel (el,mu) [nRapBins] [nPdfBins]')
     parser.add_option('-c', '--check-cards', dest='checkCards', default=False, action='store_true', help='Check if there are all the datacards and ROOT files');
     parser.add_option('-z', '--check-zombies', dest='checkZombies', default=False, action='store_true', help='Check if all the ROOT files are sane');
-    parser.add_option('-q', '--queue', dest='queue', type='string', default='2nd', help='choose the queue to submit batch jobs (default is 8nh)');
+    parser.add_option('-q', '--queue', dest='queue', type='string', default='1nd', help='choose the queue to submit batch jobs (default is 8nh)');
     parser.add_option('-v', '--verbose', dest='verbose', default=0, type=int, help='Degree of verbosity (0=default prints only the resubmit commands)');
     (options, args) = parser.parse_args()
 
