@@ -190,12 +190,39 @@ class KinMVA_2D_2lss_3l:
             MVAVar("LepGood_conePt[iLepFO_Recl[0]]:=LepGood_conePt[iLepFO_Recl[0]]", func = lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[0])]),
             ]
 
-        memvars = [
-            MVAVar("MEM_LR := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2))", func = lambda ev : -log((0.00389464*ev.MEM_TTLL + 3.12221e-14*ev.MEM_TTW) / (0.00389464*ev.MEM_TTLL + 3.12221e-14*ev.MEM_TTW+9.99571e-05*(ev.MEM_TTHfl+ev.MEM_TTHsl)/2)) if (ev.MEM_TTLL>=0 and ev.MEM_TTLL<1 and ev.MEM_TTW>=0 and ev.MEM_TTW<1 and ev.MEM_TTHfl>=0 and ev.MEM_TTHfl<1 and ev.MEM_TTHsl>=0 and ev.MEM_TTHsl<1 and not (ev.MEM_TTLL==0 and ev.MEM_TTW==0)) else 0)
+        memvars_ttV = [
+            MVAVar("MEM_LR_ttHttV := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1)+3.12221e-14*MEM_TTW*(MEM_TTW<1))/(0.00389464*MEM_TTLL*(MEM_TTLL<1)+3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTH_mean*(MEM_TTH_mean<1))))",
+                   func = lambda ev : -log((0.00389464*ev.MEM_TTLL + 3.12221e-14*ev.MEM_TTW) / (0.00389464*ev.MEM_TTLL + 3.12221e-14*ev.MEM_TTW+9.99571e-05*ev.MEM_TTH_mean)) if (ev.MEM_TTLL>=0 and ev.MEM_TTLL<1 and ev.MEM_TTW>=0 and ev.MEM_TTW<1 and ev.MEM_TTH_mean>=0 and ev.MEM_TTH_mean<1 and not (ev.MEM_TTLL==0 and ev.MEM_TTW==0)) else 0)
             ]
-        self._vars_ttV_3l_withMEM = self._vars_ttV_3l + memvars
-        self._vars_ttV_3l_withMEM_jecUp = self._vars_ttV_3l_jecUp + memvars
-        self._vars_ttV_3l_withMEM_jecDown = self._vars_ttV_3l_jecDown + memvars
+        memvars_ttV_jecUp = [
+            MVAVar("MEM_LR_ttHttV := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1)+3.12221e-14*MEM_TTW*(MEM_TTW<1))/(0.00389464*MEM_TTLL*(MEM_TTLL<1)+3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTH_mean*(MEM_TTH_mean<1))))",
+                   func = lambda ev : -log((0.00389464*ev.MEM_TTLL_jecUp + 3.12221e-14*ev.MEM_TTW_jecUp) / (0.00389464*ev.MEM_TTLL_jecUp + 3.12221e-14*ev.MEM_TTW_jecUp+9.99571e-05*ev.MEM_TTH_mean_jecUp)) if (ev.MEM_TTLL_jecUp>=0 and ev.MEM_TTLL_jecUp<1 and ev.MEM_TTW_jecUp>=0 and ev.MEM_TTW_jecUp<1 and ev.MEM_TTH_mean_jecUp>=0 and ev.MEM_TTH_mean_jecUp<1 and not (ev.MEM_TTLL_jecUp==0 and ev.MEM_TTW_jecUp==0)) else 0)
+            ]
+        memvars_ttV_jecDown = [
+            MVAVar("MEM_LR_ttHttV := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1)+3.12221e-14*MEM_TTW*(MEM_TTW<1))/(0.00389464*MEM_TTLL*(MEM_TTLL<1)+3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTH_mean*(MEM_TTH_mean<1))))",
+                   func = lambda ev : -log((0.00389464*ev.MEM_TTLL_jecDown + 3.12221e-14*ev.MEM_TTW_jecDown) / (0.00389464*ev.MEM_TTLL_jecDown + 3.12221e-14*ev.MEM_TTW_jecDown+9.99571e-05*ev.MEM_TTH_mean_jecDown)) if (ev.MEM_TTLL_jecDown>=0 and ev.MEM_TTLL_jecDown<1 and ev.MEM_TTW_jecDown>=0 and ev.MEM_TTW_jecDown<1 and ev.MEM_TTH_mean_jecDown>=0 and ev.MEM_TTH_mean_jecDown<1 and not (ev.MEM_TTLL_jecDown==0 and ev.MEM_TTW_jecDown==0)) else 0)
+            ]
+
+        memvars_ttbar = [
+            MVAVar("MEM_LR_ttHttbar := -log((MEM_TTbarfl*(MEM_TTbarfl<1)+MEM_TTbarsl*(MEM_TTbarsl<1))/(MEM_TTH_mean*(MEM_TTH_mean<1)))",
+                   func = lambda ev : -log((ev.MEM_TTbarfl+ev.MEM_TTbarsl)/ev.MEM_TTH_mean) if (ev.MEM_TTbarfl>=0 and ev.MEM_TTbarfl<1 and ev.MEM_TTbarsl>=0 and ev.MEM_TTbarsl<1 and ev.MEM_TTH_mean>0 and ev.MEM_TTH_mean<1 and not (ev.MEM_TTbarfl==0 and ev.MEM_TTbarsl==0)) else 0)
+            ]
+        memvars_ttbar_jecUp = [
+            MVAVar("MEM_LR_ttHttbar := -log((MEM_TTbarfl*(MEM_TTbarfl<1)+MEM_TTbarsl*(MEM_TTbarsl<1))/(MEM_TTH_mean*(MEM_TTH_mean<1)))",
+                   func = lambda ev : -log((ev.MEM_TTbarfl_jecUp+ev.MEM_TTbarsl_jecUp)/ev.MEM_TTH_mean_jecUp) if (ev.MEM_TTbarfl_jecUp>=0 and ev.MEM_TTbarfl_jecUp<1 and ev.MEM_TTbarsl_jecUp>=0 and ev.MEM_TTbarsl_jecUp<1 and ev.MEM_TTH_mean_jecUp>0 and ev.MEM_TTH_mean_jecUp<1 and not (ev.MEM_TTbarfl_jecUp==0 and ev.MEM_TTbarsl_jecUp==0)) else 0)
+            ]
+        memvars_ttbar_jecDown = [
+            MVAVar("MEM_LR_ttHttbar := -log((MEM_TTbarfl*(MEM_TTbarfl<1)+MEM_TTbarsl*(MEM_TTbarsl<1))/(MEM_TTH_mean*(MEM_TTH_mean<1)))",
+                   func = lambda ev : -log((ev.MEM_TTbarfl_jecDown+ev.MEM_TTbarsl_jecDown)/ev.MEM_TTH_mean_jecDown) if (ev.MEM_TTbarfl_jecDown>=0 and ev.MEM_TTbarfl_jecDown<1 and ev.MEM_TTbarsl_jecDown>=0 and ev.MEM_TTbarsl_jecDown<1 and ev.MEM_TTH_mean_jecDown>0 and ev.MEM_TTH_mean_jecDown<1 and not (ev.MEM_TTbarfl_jecDown==0 and ev.MEM_TTbarsl_jecDown==0)) else 0)
+            ]
+
+        self._vars_ttV_3l_withMEM = self._vars_ttV_3l + memvars_ttV
+        self._vars_ttV_3l_withMEM_jecUp = self._vars_ttV_3l_jecUp + memvars_ttV_jecUp
+        self._vars_ttV_3l_withMEM_jecDown = self._vars_ttV_3l_jecDown + memvars_ttV_jecDown
+
+        self._vars_ttbar_3l_withMEM = self._vars_ttbar_3l + memvars_ttbar
+        self._vars_ttbar_3l_withMEM_jecUp = self._vars_ttbar_3l_jecUp + memvars_ttbar_jecUp
+        self._vars_ttbar_3l_withMEM_jecDown = self._vars_ttbar_3l_jecDown + memvars_ttbar_jecDown
 
         for var in self.systsJEC:
 
@@ -208,13 +235,14 @@ class KinMVA_2D_2lss_3l:
             self._MVAs["kinMVA_2lss_ttV_withHj_rTT"+self.systsJEC[var]] = MVATool("2lss_ttV_withHj_rTT"+self.systsJEC[var], weights%"2lss_ttV_withHj_rTT", getattr(self,"_vars_ttV_2lss_withHj_rTT"+self.systsJEC[var]), specs = self._specs) if ('rTT' in self._useTT_2lss) else self.put_minus_99
             self._MVAs["kinMVA_2lss_ttV_withHj_httTT"+self.systsJEC[var]] = MVATool("2lss_ttV_withHj_httTT"+self.systsJEC[var], weights%"2lss_ttV_withHj_httTT", getattr(self,"_vars_ttV_2lss_withHj_httTT"+self.systsJEC[var]), specs = self._specs) if ('httTT' in self._useTT_2lss) else self.put_minus_99
             self._MVAs["kinMVA_3l_ttbar"+self.systsJEC[var]] = MVATool("3l_ttbar"+self.systsJEC[var], weights%"3l_ttbar", getattr(self,"_vars_ttbar_3l"+self.systsJEC[var]), specs = self._specs)
+            self._MVAs["kinMVA_3l_ttbar_withMEM"+self.systsJEC[var]] = MVATool("3l_ttbar_withMEM"+self.systsJEC[var], weights%"3l_ttbar_withMEM", getattr(self,"_vars_ttbar_3l_withMEM"+self.systsJEC[var]), specs = self._specs) if self._useMEM_3l else self.put_minus_99
             self._MVAs["kinMVA_3l_ttV"+self.systsJEC[var]] = MVATool("3l_ttV"+self.systsJEC[var], weights%"3l_ttV", getattr(self,"_vars_ttV_3l"+self.systsJEC[var]), specs = self._specs)
             self._MVAs["kinMVA_3l_ttV_withMEM"+self.systsJEC[var]] = MVATool("3l_ttV_withMEM"+self.systsJEC[var], weights%"3l_ttV_withMEM", getattr(self,"_vars_ttV_3l_withMEM"+self.systsJEC[var]), specs = self._specs) if self._useMEM_3l else self.put_minus_99
 
         if not ('v8' in self._useTT_2lss): print 'WARNING: will set kinMVA_2lss_ttbar_withBDTv8 and kinMVA_2lss_ttV_withHj_v8 to dummy value (-99) as requested'
         if not ('rTT' in self._useTT_2lss): print 'WARNING: will set kinMVA_2lss_ttbar_withBDTrTT and kinMVA_2lss_ttV_withHj_rTT to dummy value (-99) as requested'
         if not ('httTT' in self._useTT_2lss): print 'WARNING: will set kinMVA_2lss_ttbar_withBDThttTT and kinMVA_2lss_ttV_withHj_httTT to dummy value (-99) as requested'
-        if not self._useMEM_3l: print 'WARNING: will set kinMVA_3l_ttV_withMEM to dummy value (-99) as requested'
+        if not self._useMEM_3l: print 'WARNING: will set kinMVA_3l_ttbar_withMEM and kinMVA_3l_ttV_withMEM to dummy value (-99) as requested'
 
     def put_minus_99(self,event):
         return -99
@@ -226,7 +254,7 @@ class KinMVA_2D_2lss_3l:
         for name, mva in self._MVAs.iteritems():
             _mva = mva
             for i,j in self.systsJEC.iteritems():
-                if j in name and not hasattr(event,"nJet25"+j+'_Recl'): _mva = self._MVAs[name.replace(j,"")]
+                if j in name and (event.isData or not hasattr(event,"nJet25"+j+'_Recl')): _mva = self._MVAs[name.replace(j,"")] # do not calculate jecUp/jecDown on data, put them to nominal
             if '2lss' in name: out[name] = _mva(event) if event.nLepFO_Recl>=2 else -99
             elif '3l' in name: out[name] = _mva(event) if event.nLepFO_Recl>=3 else -99
         return out
