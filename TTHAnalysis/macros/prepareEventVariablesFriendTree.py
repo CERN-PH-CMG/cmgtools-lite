@@ -43,6 +43,9 @@ class VariableProducer(Module):
                         self.t.branch(B[0],B[1],n=B[2],lenVar=None)
                 else:
                     self.t.branch(B ,"F")
+    def endJob(self):
+        for n,m in self._modules:
+            if hasattr(m, 'endJob'): m.endJob()
     def analyze(self,event):
         for name,mod in self._modules:
             keyvals = mod(event)
@@ -105,6 +108,18 @@ if options.listModules:
         if type(x) == types.FunctionType: x = x()
         print "   '%s': %s" % (n,x)
     exit()
+
+if options.modules != []:
+    found = False
+    for m,v in MODULES:
+        for pat in options.modules:
+            if re.match(pat,m):
+                found = True
+                break
+    if not found: 
+        print "ERROR: no modules selected\n - selection was %s\n - list of modules is %s\n" % (
+                    sorted(options.modules), sorted(_[0] for _ in MODULES))
+        exit()
 
 if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
 if len(args) != 2:
@@ -194,7 +209,7 @@ if options.checkrunning:
             done_chunks[m.group(1)].add(int(m.group(2)))
     print "Found %d chunks running" % (nrunning)
 jobs = []
-for D in glob(args[0]+"/*"):
+for D in sorted(glob(args[0]+"/*")):
     treename = options.tree
     fname    = "%s/%s/%s_tree.root" % (D,options.tree,options.tree)
     if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root" % (D,options.tree)) ):

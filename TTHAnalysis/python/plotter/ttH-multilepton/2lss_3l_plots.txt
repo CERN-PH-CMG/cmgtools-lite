@@ -4,6 +4,7 @@ tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
 era: hashBasedRunPeriod2017(isData,run,lumi,evt) : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle = "2017 data taking era", Legend='TR', MoreY=2.0,  xBinLabels="B\,C\,D\,E\,F"
 
 debug_nL1PrefiringCandidate : Sum$(abs(genLep_pdgId)==11 && genLep_pt>25 && abs(genLep_eta)>2.4 && abs(genLep_eta)<3.0) + Sum$(abs(genLepFromTau_pdgId)==11 && genLepFromTau_pt>25 && abs(genLepFromTau_eta)>2.4 && abs(genLepFromTau_eta)<3.0) : [-0.5,0.5,1.5,2.5]; XTitle = "nL1PrefiringCandidate", Legend='TR', Logy
+debug_higgsDecayMode : GenHiggsDecayMode : 30,-0.5,29.5 ; XTitle="Decay mode", Logy, MoreY=20
 
 #debug_triggerFired_1e : HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
 #debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
@@ -90,7 +91,7 @@ nTauFO:	    	nTauFO					: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau FO\, p_{T} > 20 Ge
 htJet25j:   	htJet25j 				: 40,0,1000 ; XTitle="H_{T}(jet p_{T} > 25) (GeV)"
 mhtJet25:   	mhtJet25 				: 40,0,400 ; XTitle="H_{T}^{miss}(p_{T} > 25) (GeV)"
 met: 		met_pt					: 40,0,400 ; XTitle="E_{T}^{miss} (GeV)"
-metLD:		met_pt*0.00397 + mhtJet25*0.00265  	: 40,0,2; XTitle="MET LD"
+metLD:		met_pt*0.6 + mhtJet25*0.4  	        : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
 minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
