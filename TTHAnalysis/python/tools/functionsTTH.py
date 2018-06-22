@@ -365,7 +365,7 @@ MODULES.append( ('oldcode_BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_
 from CMGTools.TTHAnalysis.tools.BDT_eventReco_cpp import BDT_eventReco
 MODULES.append( ('BDTv8_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
@@ -380,7 +380,7 @@ MODULES.append( ('BDTv8_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/s
                                                             )) )
 MODULES.append( ('BDTrTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
@@ -393,25 +393,9 @@ MODULES.append( ('BDTrTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/
                 lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
                 ]
                                                      )) )
-MODULES.append( ('BDTrTT_Hj2017', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configB_dcsv_BDTG.weights.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
-                                                     algostring = 'k_rTT_Hj',
-                                                     csv_looseWP = 0.5426,
-                                                     csv_mediumWP = 0.8484,
-                                                      selection = [
-                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
-                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-                ]
-                                                     )) )
-
 MODULES.append( ('BDThttTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
@@ -469,9 +453,6 @@ MODULES.append( ('TauTightFlag', lambda : ObjTagger("isTauTight","TauSel_Recl",
 from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
 MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V2_B_F.csv",
                                                                    discrname="btagDeepCSV")))
-
-from CMGTools.TTHAnalysis.tools.BDT_resolvedTopTagger_cpp import BDT_resolvedTopTagger
-MODULES.append( ('BDT_rTT', lambda : BDT_resolvedTopTagger(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xGBoost_v0.weights.xml")) )
 
 from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
 MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
