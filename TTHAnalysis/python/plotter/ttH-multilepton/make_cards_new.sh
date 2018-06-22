@@ -54,6 +54,9 @@ fi
 if [[ "$2" == "read" ]]; then
 DOFILE="--infile"
 fi
+if [[ "$2" == "regularize" ]]; then
+DOFILE="--regularize"
+fi
 
 if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then
     test -d $ORIGIN/TREES_TTH_190418_Fall17_skim2lss_3j_2b1B && T2L="${T2L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim2lss_3j_2b1B}"; 

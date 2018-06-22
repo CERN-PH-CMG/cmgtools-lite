@@ -91,7 +91,7 @@ nTauFO:	    	nTauFO					: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau FO\, p_{T} > 20 Ge
 htJet25j:   	htJet25j 				: 40,0,1000 ; XTitle="H_{T}(jet p_{T} > 25) (GeV)"
 mhtJet25:   	mhtJet25 				: 40,0,400 ; XTitle="H_{T}^{miss}(p_{T} > 25) (GeV)"
 met: 		met_pt					: 40,0,400 ; XTitle="E_{T}^{miss} (GeV)"
-metLD:		met_pt*0.00397 + mhtJet25*0.00265  	: 40,0,2; XTitle="MET LD"
+metLD:		met_pt*0.6 + mhtJet25*0.4  	        : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
 minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
