@@ -176,6 +176,18 @@ def getXYBinsFromGlobalBin(globalbin, nbinsX, binFrom0=True):
         iy = iy + 1
     return ix,iy
 
+def getArrayBinNumberFromValue(binEdgesArray,val):
+    # assumes values in binEdgesArray are ordered in increasing order
+    # we follow ROOT convention: when evaluating bin=ibin, upper edge belongs to ibin+1, lower edge belongs to ibin
+    # return -2 for overflow, -1 for underflow, a number in [0,len(binEdgesArray)-1] otherwise
+    ret = -2
+    if val < binEdgesArray[0]: return -1
+    for bin in range(len(binEdgesArray)-1):
+        if val < binEdgesArray[bin+1]:
+            ret = bin
+            break
+    return ret
+
 
 if __name__ == "__main__":
 
