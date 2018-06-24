@@ -258,6 +258,7 @@ if __name__ == "__main__":
         with open(tmpcard) as file_tmpcard:    
             nmatchbin=0
             nmatchprocess=0
+            rateWritten=False
             for l in file_tmpcard.readlines():
                 if re.match("shapes.*other",l):
                     variables = l.split()[4:]
@@ -303,9 +304,10 @@ if __name__ == "__main__":
                     klen = 7
                     kpatt = " %%%ds "  % klen
                     combinedCard.write('rate        %s \n' % ' '.join([kpatt % "-1" for p in realprocesses]))
-                if nmatchprocess==2: 
-                    nmatchprocess +=1                
-                elif nmatchprocess>2: combinedCard.write(l)
+                    rateWritten=True
+                if nmatchprocess>=2 and rateWritten and not re.match("rate",l):  # when evaluating rate line above, here l is still that one!
+                    # copy all the rest after rate from the temporary card
+                    combinedCard.write(l)
             # now luminosity uncertainty and CMS_W, in case  they are not in systfile 
             # lumipar = "{0:.3f}".format(1.0 + options.lumiLnN) #"1.026"  # 2.6% 
             # Wxsec   = "{0:.3f}".format(1.0 + options.wLnN)    #"1.038"  # 3.8%
@@ -347,10 +349,11 @@ if __name__ == "__main__":
             # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE                      
             procs = theosyst[sys]
             combinedCard.write('%-15s   shape %s\n' % (sys,(" ".join(['1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
-        combinedCard.write('\npdfs group = '+' '.join([sys for sys in sortedpdfkeys])+'\n')
-        combinedCard.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
-        combinedCard.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
-        combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
+        if len(sortedsystkeys):
+            combinedCard.write('\npdfs group = '+' '.join([sys for sys in sortedpdfkeys])+'\n')
+            combinedCard.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
+            combinedCard.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
+            combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
 
         combinedCard.close()
 
@@ -418,6 +421,8 @@ if __name__ == "__main__":
 
 ########################################
 ## I arrived until here
+########################################
+# Following part must be readapted
 ########################################
 
 
