@@ -176,6 +176,18 @@ def getXYBinsFromGlobalBin(globalbin, nbinsX, binFrom0=True):
         iy = iy + 1
     return ix,iy
 
+def getArrayBinNumberFromValue(binEdgesArray,val):
+    # assumes values in binEdgesArray are ordered in increasing order
+    # we follow ROOT convention: when evaluating bin=ibin, upper edge belongs to ibin+1, lower edge belongs to ibin
+    # return -2 for overflow, -1 for underflow, a number in [0,len(binEdgesArray)-1] otherwise
+    ret = -2
+    if val < binEdgesArray[0]: return -1
+    for bin in range(len(binEdgesArray)-1):
+        if val < binEdgesArray[bin+1]:
+            ret = bin
+            break
+    return ret
+
 
 if __name__ == "__main__":
 
@@ -335,11 +347,15 @@ if __name__ == "__main__":
                         for n in xrange(ngroup):
                             tmpGlobalBin = n + ibin * ngroup
                             ieta,ipt = getXYBinsFromGlobalBin(tmpGlobalBin,netabins)
-                            selectedSigProcess += 'W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}.*,'.format(charge=charge, channel=options.channel,
-                                                                                                              ieta=ieta,ipt=ipt)
+                            # caution with ending .* in regular expression: pt bin = 1 will match 11,12,... as well
+                            # consider elescale separately (for systematics, i.e. ivar!=0, it is excluded with --xp)
+                            if ivar == 0:
+                                selectedSigProcess += 'W{charge}_{channel}_ieta_{ieta}_ipt_{ipt},W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}_elescale.*,'.format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt)
+                            else:
+                                selectedSigProcess += 'W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}{syst},'.format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt,syst=syst)
                         if selectedSigProcess.endswith(','):
-                            selectedSigProcess = selectedSigProcess[:-1]
-                        selectedSigProcess += " "
+                            selectedSigProcess = selectedSigProcess[:-1]  # remove comma at the end
+                        selectedSigProcess += " "    # add some space to separate this option to possible following commands
                         dcname = "W{charge}_{channel}_group_{gr}{syst}".format(charge=charge, channel=options.channel,gr=ibin,syst=syst)
 
                     elif options.xsec_sigcard_binned:
@@ -350,13 +366,18 @@ if __name__ == "__main__":
                                                                                                             etabinning[ieta],etabinning[ieta+1],
                                                                                                             charge)
                         ##########################
-                        # I don't need anymore to change the cut, because I am already runnion with an mca file having one process for each bin
+                        # I don't need anymore to change the cut, because I am already running with an mca file having one process for each bin
                         # (the cut is in the process definition inside the mca)
                         # ptcut=" -A alwaystrue pt%d '%s>=%s && %s<%s' " % (ipt,ptVarCut,ptbinning[ipt],ptVarCut,ptbinning[ipt+1])
                         # etacut=" -A alwaystrue eta%d '%s>=%s && %s<%s' " % (ieta,etaVarCut,etabinning[ieta],etaVarCut,etabinning[ieta+1])
                         # ycut += (ptcut + etacut)
 
-                        selectedSigProcess = ' -p W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}.*  '.format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt)  
+                        # caution with ending .* in regular expression: pt bin = 1 will match 11,12,... as well
+                        # here we don't need regular expression there is just one bin
+                        if ivar == 0:
+                            selectedSigProcess = ' -p W{charge}_{channel}_ieta_{ieta}_ipt_{ipt},W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}_elescale.*  '.format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt)  
+                        else:
+                            selectedSigProcess = ' -p W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}{syst}  '.format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt,syst=syst)  
 
                         ##dcname = "W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}{syst}".format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt,syst=syst)
                         ## keep same logic as before for the datacard name
