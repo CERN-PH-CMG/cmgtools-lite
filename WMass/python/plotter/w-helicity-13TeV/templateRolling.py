@@ -82,6 +82,7 @@ if __name__ == "__main__":
     parser.add_option('-s','--save', dest='outfile_templates', default='templates_2D', type='string', help='pass name of output file to save 2D histograms (charge is automatically appended before extension). No need to specify extension, .root is automatically added')
     parser.add_option(     '--draw-selected-etaPt', dest='draw_selected_etaPt', default='', type='string', help='Only for xsection. Pass pairs of eta,pt: only the corresponding bins will be plotted (inclusive signal is still drawn, unless options --noplot is used as well).')
     parser.add_option(     '--draw-all-bins', dest='draw_all_bins', default=False, action='store_true', help='Draw all bins for signal (default is false, it is quite a huge bunch of plots).')
+    parser.add_option('-r','--syst-ratio-range', dest='syst_ratio_range', default='0.98,1.02', type='string', help='Comma separated pair of floats used to define the range for the syst/nomi ratio. If "template" is passed, the template min and max values are used (it will be different for each template)')
     (options, args) = parser.parse_args()
 
     if len(args) < 1:
@@ -286,8 +287,12 @@ if __name__ == "__main__":
                                         "ForceTitle",outname,1,1,False,False,False,1)
                     for systvar in allsystsUpDn:
                         hSigInclusive_syst[systvar].Divide(hSigInclusive)
-                        #zaxisTitle = "Events::%.1f,%.1f" % (hSigInclusive_syst[systvar].GetMinimum(),hSigInclusive_syst[systvar].GetMaximum())
-                        zaxisTitle = "Events::0.98,1.02"
+                        if options.syst_ratio_range == "template":
+                            zaxisTitle = "Events::%.1f,%.1f" % (hSigInclusive_syst[systvar].GetMinimum(),hSigInclusive_syst[systvar].GetMaximum())
+                        else:
+                            ratiomin = syst_ratio_range.split(',')[0]
+                            ratiomax = syst_ratio_range.split(',')[1]
+                        zaxisTitle = "Events::%s,%s" % (ratiomin,ratiomax)
                         drawCorrelationPlot(hSigInclusive_syst[systvar], 
                                             xaxisTitle, yaxisTitle, zaxisTitle, 
                                             "systOverNorm_"+hSigInclusive_syst[systvar].GetName(),
