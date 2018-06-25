@@ -13,9 +13,9 @@ esac;
 T2L=" -P $ORIGIN/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_200618_v5"
 T3L=" -P $ORIGIN/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_withMEM_200618_v5"
 T4L=${T2L}
-if test -d $ORIGIN/TREES_TTH_190418_Fall17_skim4l ; then 
-    T4L=${T4L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim4l}; 
-fi
+#if test -d $ORIGIN/TREES_TTH_190418_Fall17_skim4l ; then
+#    T4L=${T4L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim4l};
+#fi
 
 if [[ "X$1" == "X" ]]; then echo "Provide output directory name!"; exit; fi
 OUTNAME=$1; shift;
@@ -69,14 +69,9 @@ DOFILE="--regularize"
 fi
 
 if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then
-    test -d $ORIGIN/TREES_TTH_190418_Fall17_skim2lss_3j_2b1B && T2L="${T2L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim2lss_3j_2b1B}"; 
+#    test -d $ORIGIN/TREES_TTH_190418_Fall17_skim2lss_3j_2b1B && T2L="${T2L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim2lss_3j_2b1B}";
     OPT_2L="${T2L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
     CATPOSTFIX=""
-
-    if [[ "$1" == "2lss_3j" ]]; then
-	OPT_2L="${OPT_2L} -X ^4j -E ^x3j"
-	CATPOSTFIX="_3j"
-    fi
 
     if [[ "$SVA" == "false" ]]; then
     CATFUNC="ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)"
@@ -86,6 +81,15 @@ if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then
     CATFUNC="ttH_catIndex_2lss_SVA(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nJet25)"
     CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"
     CATNAMES="$(echo ee_{lj,hj}${CATPOSTFIX} {em,mm}_{neg,pos}_{lj,hj}${CATPOSTFIX} | sed 's/ /,/g')"
+    fi
+
+    if [[ "$1" == "2lss_3j" ]]; then
+	OPT_2L="${OPT_2L} -X ^4j -E ^x3j"
+	CATPOSTFIX="_3j"
+	if [[ "$SVA" == "true" ]]; then
+	    CATBINS="[0.5,2.5,4.5,6.5,8.5,10.5]" # no high-jet category when requiring x3j
+	    CATNAMES="$(echo ee${CATPOSTFIX} {em,mm}_{neg,pos}${CATPOSTFIX} | sed 's/ /,/g')"
+	fi
     fi
 
     python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-2lss-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L --binname ttH_2lss --categorize $CATFUNC $CATBINS $CATNAMES;
@@ -144,7 +148,8 @@ if [[ "$1" == "3l_zpeak" || "$1" == "3l_zpeak_btight" ]]; then
 fi
 
 if [[ "$1" == "3l_crwz" ]]; then
-    test -d $ORIGIN/TREES_TTH_190418_Fall17_skim3l_2j_no2b1B_Zpeak_presc && T3L="${T3L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim3l_2j_no2b1B_Zpeak_presc}";
+    #test -d $ORIGIN/TREES_TTH_190418_Fall17_skim3l_2j_no2b1B_Zpeak_presc && T3L="${T3L/TREES_TTH_190418_Fall17_skim2lss3l/TREES_TTH_190418_Fall17_skim3l_2j_no2b1B_Zpeak_presc}";
+    T3L="${T3L/3_kinMVA_withMEM_200618_v5/3_kinMVA_noMEM_200618_v5}" # MEM not needed here
     OPT_3L="${T3L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[3]],LepGood_pt[iLepFO_Recl[3]],LepGood_eta[iLepFO_Recl[3]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
     OPT_3L="${OPT_3L} -I ^Zveto -I ^2b1B"
     echo "3l WZ";
