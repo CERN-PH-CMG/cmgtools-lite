@@ -84,6 +84,9 @@ for binname, report in allreports.iteritems():
     for p,h in report.iteritems(): 
       if p not in ("data", "data_obs"):
         h.addBinByBin(namePattern="%s_%s_%s_bin{bin}" % (options.bbb, binname, p), conservativePruning = True)
+  for p,h in report.iteritems():
+    for b in xrange(1,h.GetNbinsX()+1):
+      h.SetBinError(b,min(h.GetBinContent(b),h.GetBinError(b))) # crop all uncertainties to 100% to avoid negative variations
   nuisances = sorted(listAllNuisances(report))
 
   allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
