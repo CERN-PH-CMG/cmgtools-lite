@@ -81,6 +81,7 @@ if __name__ == "__main__":
     parser.add_option('-a','--analysis', dest='analysis', default='diffXsec', type='string', help='Which analysis the shapes file belongs to: helicity or diffXsec (default)')
     parser.add_option('-s','--save', dest='outfile_templates', default='templates_2D', type='string', help='pass name of output file to save 2D histograms (charge is automatically appended before extension). No need to specify extension, .root is automatically added')
     parser.add_option(     '--draw-selected-etaPt', dest='draw_selected_etaPt', default='', type='string', help='Only for xsection. Pass pairs of eta,pt: only the corresponding bins will be plotted (inclusive signal is still drawn, unless options --noplot is used as well).')
+    parser.add_option(     '--draw-all-bins', dest='draw_all_bins', default=False, action='store_true', help='Draw all bins for signal (default is false, it is quite a huge bunch of plots).')
     (options, args) = parser.parse_args()
 
     if len(args) < 1:
@@ -132,6 +133,16 @@ if __name__ == "__main__":
     lepton = "electron" if channel == "el" else " muon"
 
     charges = options.charge.split(',')
+
+    qcdsyst = ["muR", "muF", "muRmuF", "alphaS"]
+    pdfsyst = ["pdf%d" % i for i in range(1,61)]
+    allsysts = qcdsyst + pdfsyst + ["wptSlope", "elescale"]
+    allsystsUpDn = []
+    for x in allsysts:
+        allsystsUpDn.append(x+"Up")
+        allsystsUpDn.append(x+"Down")
+    outnameSyst = outname + "systematics/"
+    createPlotDirAndCopyPhp(outnameSyst)
 
     for charge in charges:
         shapesfile = "{indir}/W{flav}_{ch}_shapes{pf}.root".format(indir=args[0],flav=channel,ch=charge,pf=options.postfix)
@@ -186,7 +197,10 @@ if __name__ == "__main__":
                             h2_backrolled_1.Write(name2D)
                             hSigInclusive.Add(h2_backrolled_1)
 
-                            if not options.noplot:
+                            if options.draw_all_bins: drawThisBin = True
+                            else: drawThisBin = False
+
+                            if not options.noplot and drawThisBin:
                                 xaxisTitle = '%s #eta' % lepton
                                 yaxisTitle = '%s p_{T} [GeV]' % lepton
                                 zaxisTitle = "Events::0,%.1f" % h2_backrolled_1.GetMaximum()
@@ -210,6 +224,11 @@ if __name__ == "__main__":
                 inclSigName = 'W{ch}_{flav}_inclusive'.format(ch=charge,flav=channel)
                 inclSigTitle = 'W{chs} inclusive'.format(chs=chs)
                 hSigInclusive = ROOT.TH2F(inclSigName,inclSigTitle,len(etabinning)-1, array('d',etabinning), len(ptbinning)-1, array('d',ptbinning))
+                hSigInclusive_syst = {}
+                for systvar in allsystsUpDn:
+                    sysName  = inclSigName  + "_" + systvar
+                    sysTitle = inclSigTitle + "_" + systvar
+                    hSigInclusive_syst[systvar] = ROOT.TH2F(sysName,sysTitle,len(etabinning)-1, array('d',etabinning), len(ptbinning)-1, array('d',ptbinning))
 
                 # diff cross section
                 for k in infile.GetListOfKeys():
@@ -219,34 +238,43 @@ if __name__ == "__main__":
                     signalMatch = "{ch}_{flav}_ieta".format(ch=charge,flav=channel)                      
                     # name.split('_')[-2] == "group" : this condition excludes systematics
 
-                    if obj.InheritsFrom("TH1") and signalMatch in name and name.split('_')[-2] == "group":
-                        tokens = name.split('_')
-                        drawThisBin = True
-                        for i,tkn in enumerate(tokens):                            
-                            #print "%d %s" % (i, tkn)
-                            if tkn == "ieta": etabinIndex = int(tokens[i + 1])
-                            if tkn == "ipt": ptbinIndex = int(tokens[i + 1])                        
-                        if options.draw_selected_etaPt != '':
-                            if etabinIndex != ieta_sel or ptbinIndex != ipt_sel: drawThisBin = False
-                        name2D = 'W{ch}_{flav}_ieta_{ieta}_ipt_{ipt}'.format(ch=charge,flav=channel,ieta=etabinIndex,ipt=ptbinIndex)
-                        title2D = 'W{chs}: #eta #in [{etamin},{etamax})#; p_{{T}} #in [{ptmin:.0f},{ptmax:.0f})'.format(etamin=etabinning[etabinIndex],
-                                                                                                                        etamax=etabinning[etabinIndex+1],
-                                                                                                                        ptmin=ptbinning[ptbinIndex],
-                                                                                                                        ptmax=ptbinning[ptbinIndex+1],
-                                                                                                                        chs=chs)
-                        h2_backrolled_1 = dressed2D(obj,binning,name2D,title2D)
-                        h2_backrolled_1.Write(name2D)
-                        hSigInclusive.Add(h2_backrolled_1)
+                    if obj.InheritsFrom("TH1") and signalMatch in name:
 
-                        if not options.noplot and drawThisBin:
-                            xaxisTitle = '%s #eta' % lepton
-                            yaxisTitle = '%s p_{T} [GeV]' % lepton
-                            zaxisTitle = "Events::0,%.1f" % h2_backrolled_1.GetMaximum()
-                            drawCorrelationPlot(h2_backrolled_1, 
-                                                xaxisTitle, yaxisTitle, zaxisTitle, 
-                                                h2_backrolled_1.GetName(),
-                                                "ForceTitle",outname,1,1,False,False,False,1)
-                
+                        if name.split('_')[-2] == "group":
+
+                            tokens = name.split('_')
+                            for i,tkn in enumerate(tokens):                            
+                                #print "%d %s" % (i, tkn)
+                                if tkn == "ieta": etabinIndex = int(tokens[i + 1])
+                                if tkn == "ipt": ptbinIndex = int(tokens[i + 1])                                                    
+                            if options.draw_all_bins: drawThisBin = True
+                            elif options.draw_selected_etaPt != '':
+                                if etabinIndex != ieta_sel or ptbinIndex != ipt_sel: drawThisBin = False                            
+                            else: drawThisBin = False
+                            name2D = 'W{ch}_{flav}_ieta_{ieta}_ipt_{ipt}'.format(ch=charge,flav=channel,ieta=etabinIndex,ipt=ptbinIndex)
+                            title2D = 'W{chs}: #eta #in [{etamin},{etamax})#; p_{{T}} #in [{ptmin:.0f},{ptmax:.0f})'.format(etamin=etabinning[etabinIndex],
+                                                                                                                            etamax=etabinning[etabinIndex+1],
+                                                                                                                            ptmin=ptbinning[ptbinIndex],
+                                                                                                                            ptmax=ptbinning[ptbinIndex+1],
+                                                                                                                            chs=chs)
+                            h2_backrolled_1 = dressed2D(obj,binning,name2D,title2D)
+                            h2_backrolled_1.Write(name2D)
+                            hSigInclusive.Add(h2_backrolled_1)
+
+                            if not options.noplot and drawThisBin:
+                                xaxisTitle = '%s #eta' % lepton
+                                yaxisTitle = '%s p_{T} [GeV]' % lepton
+                                zaxisTitle = "Events::0,%.1f" % h2_backrolled_1.GetMaximum()
+                                drawCorrelationPlot(h2_backrolled_1, 
+                                                    xaxisTitle, yaxisTitle, zaxisTitle, 
+                                                    h2_backrolled_1.GetName(),
+                                                    "ForceTitle",outname,1,1,False,False,False,1)
+
+                        else:
+                            h2_backrolled_1 = dressed2D(obj,binning,name+"_tmp","")                            
+                            systvar = name.split('_')[-1]
+                            hSigInclusive_syst[systvar].Add(h2_backrolled_1)
+                            
                 hSigInclusive.Write()
                 if not options.noplot:
                     xaxisTitle = '%s #eta' % lepton
@@ -256,7 +284,14 @@ if __name__ == "__main__":
                                         xaxisTitle, yaxisTitle, zaxisTitle, 
                                         hSigInclusive.GetName(),
                                         "ForceTitle",outname,1,1,False,False,False,1)
-                
+                    for systvar in allsystsUpDn:
+                        hSigInclusive_syst[systvar].Divide(hSigInclusive)
+                        #zaxisTitle = "Events::%.1f,%.1f" % (hSigInclusive_syst[systvar].GetMinimum(),hSigInclusive_syst[systvar].GetMaximum())
+                        zaxisTitle = "Events::0.98,1.02"
+                        drawCorrelationPlot(hSigInclusive_syst[systvar], 
+                                            xaxisTitle, yaxisTitle, zaxisTitle, 
+                                            "systOverNorm_"+hSigInclusive_syst[systvar].GetName(),
+                                            "ForceTitle",outnameSyst,1,1,False,False,False,1)
 
 
         # do backgrounds and, if requested, inclusive signal
