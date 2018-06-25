@@ -203,33 +203,31 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
 
   if (abs(pdgid)==13){
 
-    // var is ignored for muons (handled in systsEnv.txt)
-
     float out = 1;
 
     TH2F *hist = (pt<30) ? _histo_recoToLoose_leptonSF_mu1_lt30 : _histo_recoToLoose_leptonSF_mu1_gt30;
     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    out *= (pt>=15 && pt<30 && fabs(eta)>=2.1 && fabs(eta)<2.4) ? 1 : hist->GetBinContent(ptbin,etabin); // careful: workaround, SF was not measured there
+    out *= (pt>=15 && pt<30 && fabs(eta)>=2.1 && fabs(eta)<2.4) ? 1 : hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin); // careful: workaround, SF was not measured there
 
     if (_histo_recoToLoose_leptonSF_mu2){
     hist = _histo_recoToLoose_leptonSF_mu2;
     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    out *= hist->GetBinContent(ptbin,etabin);
+    out *= hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
     }
 
     if (_histo_recoToLoose_leptonSF_mu3){
     hist = _histo_recoToLoose_leptonSF_mu3;
     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    out *= hist->GetBinContent(ptbin,etabin);
+    out *= hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
     }
 
     if (_histo_recoToLoose_leptonSF_mu4_lt10 || _histo_recoToLoose_leptonSF_mu4_gt10){
       TGraphAsymmErrors *hist1 = (pt<10) ? _histo_recoToLoose_leptonSF_mu4_lt10 : _histo_recoToLoose_leptonSF_mu4_gt10;
       float eta1 = std::max(float(hist1->GetXaxis()->GetXmin()+1e-5), std::min(float(hist1->GetXaxis()->GetXmax()-1e-5), eta));
-      out *= hist1->Eval(eta1);
+      out *= hist1->Eval(eta1); // uncertainty ignored here
     }
 
     if (out<=0) std::cout << "ERROR in muon recoToLoose SF: " << out << std::endl;
@@ -291,9 +289,7 @@ TH2F *_histo_looseToTight_leptonSF_mu_3l = NULL;
 TFile *_file_looseToTight_leptonSF_el_3l = NULL;
 TH2F *_histo_looseToTight_leptonSF_el_3l = NULL;
 
-float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var){
-
-  // var is ignored in all cases (systematics handled in systsEnv.txt)
+float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep){
 
   if (!_histo_looseToTight_leptonSF_mu_2lss) {
     _file_looseToTight_leptonSF_mu_2lss = new TFile("../../data/leptonSF/lepMVAEffSF_m_2lss.root","read");
@@ -325,10 +321,19 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, f
 float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
   float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
-  float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep,var);
+  float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep); // var is ignored in all cases for the tight part (systematics handled as nuisance parameter)
   float res = recoToLoose*looseToTight;
   if (!(res>0)) {std::cout << "ERROR in leptonSF " << res << std::endl; std::abort();}
   return res;
+
+}
+
+float leptonSF_ttH_var(int pdgid, float pt, float eta, int nlep, float var_e, float var_m){
+
+  if (abs(pdgid)==11) return (var_e==0) ? 1 : leptonSF_ttH(pdgid,pt,eta,nlep,var_e)/leptonSF_ttH(pdgid,pt,eta,nlep);
+  if (abs(pdgid)==13) return (var_m==0) ? 1 : leptonSF_ttH(pdgid,pt,eta,nlep,var_m)/leptonSF_ttH(pdgid,pt,eta,nlep);
+
+  return 1;
 
 }
 

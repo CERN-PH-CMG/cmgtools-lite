@@ -16,31 +16,25 @@ $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 lumi_13TeV_2017		: $PromptFromMC : .* : normSymm : 1.023
 
 # lepton efficiencies
-CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.02\, 1.04)'
-CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss_ee.* : none
-CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss_mm.* : normSymm : 1.04
-CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss_em.* : normSymm : 1.02
-CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*3l.* : normSymm : 1.03
-CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*4l.* : normSymm : 1.04
+CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['muLooseUnc_2lss_up'\,'muLooseUnc_2lss_dn']
+CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['muLooseUnc_3l_up'\,'muLooseUnc_3l_dn']
+CMS_ttHl16_lepEff_muloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['muLooseUnc_4l_up'\,'muLooseUnc_4l_dn']
 
-#CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
-#CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
-#CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
+CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
+CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
+CMS_ttHl16_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
 
-CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.03\, 1.06)'
+CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.02\, 1.04)'
 CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss_ee.* : none
-CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss_mm.* : normSymm : 1.06
-CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss_em.* : normSymm : 1.03
-CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*3l.* : normSymm : 1.04
-CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*4l.* : normSymm : 1.06
+CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss_mm.* : normSymm : 1.04
+CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*2lss_em.* : normSymm : 1.02
+CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*3l.* : normSymm : 1.03
+CMS_ttHl16_lepEff_mutight : $PromptFromMC : .*4l.* : normSymm : 1.04
 
-CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.06\, 1.03\, 1.00)'
-CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*2lss_ee.* : normSymm : 1.06
-CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*2lss_em.* : normSymm : 1.03
+CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)'
 CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*2lss_mm.* : none
-CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*3l.* : normSymm : 1.04
-CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*4l.* : normSymm : 1.06
-
+CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*3l.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)+(abs(LepGood3_pdgId)==11)*if3(LepGood3_pt<25\,0.05\,0.03)'
+CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*4l.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)+(abs(LepGood3_pdgId)==11)*if3(LepGood3_pt<25\,0.05\,0.03)+(abs(LepGood4_pdgId)==11)*if3(LepGood4_pt<25\,0.05\,0.03)'
 
 ### todo: replace with tau veto efficiency
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
