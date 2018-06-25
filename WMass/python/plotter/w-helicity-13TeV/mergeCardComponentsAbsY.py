@@ -148,12 +148,12 @@ if __name__ == "__main__":
         files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not any(bkg in x for bkg in ['bkg','Z_']) else -1) ## ugly but works
         files = list( ( os.path.join(options.inputdir, f) for f in files ) )
         
-        existing_bins = {'left': [], 'right': []}
-        empty_bins = {'left': [], 'right': []}
+        existing_bins = {'left': [], 'right': [], 'long': []}
+        empty_bins = {'left': [], 'right': [], 'long': []}
     
     
         ybins = {}
-        for pol in ['left','right']:
+        for pol in ['left','right','long']:
             cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
             ybins[pol] = binningYW[cp]
 
@@ -494,7 +494,7 @@ if __name__ == "__main__":
 
         ## first make a list of all the signal processes. this excludes the long!!!!
         tmp_sigprocs = [p for p in realprocesses if 'Wminus' in p or 'Wplus' in p]
-        tmp_sigprocs = [p for p in tmp_sigprocs if not 'long' in p]
+        ## long now signal tmp_sigprocs = [p for p in tmp_sigprocs if not 'long' in p]
 
         ## xsecfilname 
         hists = getXsecs(tmp_sigprocs, 
