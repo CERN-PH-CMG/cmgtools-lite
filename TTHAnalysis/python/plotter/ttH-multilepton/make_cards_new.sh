@@ -22,7 +22,7 @@ OUTNAME=$1; shift;
 if [[ "X$1" == "X" ]]; then echo "Provide luminosity!"; exit; fi
 LUMI="$1"; shift
 echo "Normalizing to ${LUMI}/fb";
-OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --WA prescaleFromSkim --asimov s+b"
+OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --WA prescaleFromSkim"
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 

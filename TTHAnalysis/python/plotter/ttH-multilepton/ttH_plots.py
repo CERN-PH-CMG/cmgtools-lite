@@ -83,7 +83,7 @@ def fulltrees(x):
 def doprescale3l(x,torun):
     return x.replace(TREESONLYSKIM,TREESONLYMEMZPEAK if any([(_y in torun) for _y in ['cr_wz','cr_ttz','cr_fourlep_onZ','_Zpeak']]) else TREESONLYMEMZVETO)
 
-allow_unblinding = False
+allow_unblinding = True
 
 if __name__ == '__main__':
 
