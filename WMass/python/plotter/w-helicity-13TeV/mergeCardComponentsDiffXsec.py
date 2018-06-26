@@ -416,8 +416,14 @@ if __name__ == "__main__":
 
         ## end of all the xsec construction of datacard and making the file                                                               
 
+        # need to run this command
+        #combineCards.py Wel_plus=Wel_plus_card.txt Wel_plus_xsec=Wel_plus_xsec_card.txt > Wel_plus_card_withXsecMask.txt
+        # text2tf.py Wel_plus_card_withXsecMask.txt --maskedChan Wel_plus_xsec --X-allow-no-background
 
-        quit()
+        print "####################################"
+        print "Forcing continue (the rest part of the loop does not apply for differential cross section and is under development)"
+        print "####################################"
+        continue
 
 ########################################
 ## I arrived until here
@@ -513,6 +519,11 @@ if __name__ == "__main__":
         os.system(txt2wsCmd)
         print combineCmd
     # end of loop over charges
+
+    print "####################################"
+    print "Forcing end of script here (the rest is under development)"
+    print "####################################"
+    quit()
 
     datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
     if sum([os.path.exists(card) for card in datacards])==2:
