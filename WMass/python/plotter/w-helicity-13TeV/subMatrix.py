@@ -22,7 +22,10 @@ def niceName(name):
         nn  = '#mu: ' if '_mu_' in name else 'el: '
         nn += 'W+ ' if 'plus' in name else 'W- '
         nn += 'left ' if 'left' in name else 'right '
-        nn += name.split('_')[-1]
+        idx = -2 if 'masked' in name else -1
+        nn += name.split('_')[idx]
+        if 'pmaskedexp' in name: nn += ' #sigma'
+        if 'norm' in name: nn += '_{norm}'
 
         if 'eff_unc' in name:
             nn = '#epsilon_{unc}^{'+nn+'}'
@@ -96,7 +99,7 @@ if __name__ == "__main__":
             corr[(p1,p2)] = cov[(p1,p2)]/(fiterrs[p1]*fiterrs[p2])
 
     ## sort the floatParams. alphabetically, except for pdfs, which are sorted by number
-    params = sorted(params, key= lambda x: int(x.split('_')[-1]) if '_Ybin_' in x else 0)
+    params = sorted(params, key= lambda x: int(x.split('_')[-2]) if '_Ybin_' in x else 0)
     params = sorted(params, key= lambda x: int(x.replace('pdf','')) if 'pdf' in x else 0)
             
     print "sorted params = ", params
@@ -107,7 +110,7 @@ if __name__ == "__main__":
     ROOT.gStyle.SetPalette(55)
     ROOT.gStyle.SetNumberContours(200); # default is 20 (values on palette go from -1 to 1)
 
-    c.SetLeftMargin(0.09)
+    c.SetLeftMargin(0.15)
     c.SetRightMargin(0.11)
     c.SetBottomMargin(0.15)
 

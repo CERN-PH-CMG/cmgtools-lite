@@ -98,6 +98,7 @@ if __name__ == "__main__":
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
     parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='plusR=99;plusL=99;minusR=99;minusL=99', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
     parser.add_option('-p','--POIs', dest='POIsToMinos', type='string', default=None, help='Decide which are the nuiscances for which to run MINOS (a.k.a. POIs). Default is all non fixed YBins. With format poi1,poi2 ')
+    parser.add_option('--fp', '--freezePOIs'    , dest='freezePOIs'    , action='store_true'               , help='run tensorflow with --freezePOIs (for the pdf only fit)');
     parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
     parser.add_option(     '--lumiLnN'    , dest='lumiLnN'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
@@ -445,7 +446,8 @@ if __name__ == "__main__":
             combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
             POIs.append('norm_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel))) # at this stage, norm POIs have still the channel inside
         else:
-            POIs.append('r_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel)))
+            pass
+            # POIs.append('r_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel)))
     
         if options.scaleFile: ## make an efficiency nuisance group
             combinedCardNew.write('\nefficiencies group = '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
@@ -482,7 +484,7 @@ if __name__ == "__main__":
         combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
 
         ## now assign a uniform luminosity uncertainty to all the MC processes
-        combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join(['-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
+        # combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join(['-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
         ## not needed as  far as we float all the Y bins
         # combinedCard.write('CMS_W   lnN %s\n' % (" ".join(['%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
         combinedCard.close() 
@@ -563,7 +565,11 @@ if __name__ == "__main__":
 
             txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-background --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
             txt2wsCmd_noXsec = 'text2workspace.py {cf} -o {ws} --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} '.format(cf=cardfile, ws=ws, pos=multisig)
-            txt2tfCmd = 'text2tf.py --maskedChan {maskch} --X-allow-no-background {cf}'.format(maskch=chname_xsec,cf=cardfile_xsec)
+            if options.freezePOIs:
+                # doesn't make sense to have the xsec masked channel if you freeze the rates (POIs) -- and doesn't work either
+                txt2tfCmd = 'text2tf.py --POIMode none {cf}'.format(maskch=chname_xsec,cf=cardfile)
+            else:
+                txt2tfCmd = 'text2tf.py --maskedChan {maskch} --X-allow-no-background {cf}'.format(maskch=chname_xsec,cf=cardfile_xsec)
 
             #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
             combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
