@@ -40,7 +40,9 @@ CMS_ttHl16_lepEff_eltight : $PromptFromMC : .*4l.* : templateSymm ; AddWeight='1
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl17_trigger	: $PromptFromMC : .* : templateAsymm; AddWeights=['triggerUnc_up'\,'triggerUnc_dn']
+CMS_ttHl17_trigger	: $PromptFromMC : .*2lss.* : templateAsymm; AddWeights=['1.02*triggerUnc_up'\,'0.98*triggerUnc_dn']
+CMS_ttHl17_trigger	: $PromptFromMC : .*3l.* : templateAsymm; AddWeights=['triggerUnc_up'\,'triggerUnc_dn']
+CMS_ttHl17_trigger	: $PromptFromMC : .*4l.* : templateAsymm; AddWeights=['triggerUnc_up'\,'triggerUnc_dn']
 
 CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
@@ -71,7 +73,7 @@ CMS_ttHl_WZ_theo : WZ : .*3l.*      : normSymm : 1.07
 CMS_ttHl_WZ_theo : WZ : .*3l_crwz.* : none
 CMS_ttHl_WZ_bkg  : .* : .*3l_crwz.* : normSymm : 2.0 
 CMS_ttHl_WZ_bkg  : WZ : .*3l_crwz.* : none
-CMS_ttHl_ZZ_lnU  : ZZ : .*          : normSymm : 2.0 ; lnU=True
+CMS_ttHl_ZZ_lnU  : ZZ : .*          : normSymm : 3.0 ; lnU=True
 CMS_ttHl_ZZ_bkg  : .* : .*4l_crzz.* : normSymm : 2.0 
 CMS_ttHl_ZZ_bkg  : ZZ : .*4l_crzz.* : none
 
