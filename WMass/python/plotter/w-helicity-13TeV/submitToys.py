@@ -1,6 +1,6 @@
 #!/bin/env python
 
-# usage: python submitToys.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root 1000 plus -n 10
+# usage: python submitToys.py cards_el/Wel_card_withXsecMask.meta 10000 --tf -n 5 --outdir output
 
 jobstring  = '''#!/bin/sh
 ulimit -c 0 -S
