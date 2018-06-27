@@ -6,8 +6,8 @@ trigger1mu    : (HLT_BIT_HLT_Mu17_TrkIsoVVL_v >0 )
 ## muon selection
 ## =============================================
 1l            : nLepGood == 1
-muon          : abs(LepGood1_pdgId) == 13
-muonLooseId   : LepGood1_mvaTTH > -1.0
+muon          : abs(LepGood1_pdgId) == 13 && abs(LepGood1_eta) < 2.4
+muonLooseId   : LepGood1_mvaTTH > -1.0 && LepGood1_mediumMuonId > 0
 muonTightMVA : LepGood1_mvaTTH > 0.9 
 #tightCharge  : LepGood1_tightCharge > 1
 #chargecon    : (LepGood1_chargeConsistency >= 3)

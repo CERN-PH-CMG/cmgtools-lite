@@ -3,9 +3,9 @@
 
 DPSWW+       : WWDoubleTo2L             : 0.1729 : 1 ; FillColor=ROOT.kRed+1   , Label="DPS"
 DPSWW_alt    : WW_DPS_herwig            : 0.1729 : 1 ; FillColor=ROOT.kGreen+1   , Label="DPS herwig" , SkipMe=True
-
+DY	     :DYJetsToLL_M50_LO_ext_part*: 2008.*3:1; FillColor=ROOT.kCyan,	 Label="DY" 		 
 data: DoubleEG_2016*
-data: SingleElectron_2016*
+#data: SingleElectron_2016*
 
 
 rares    : WpWpJJ      : 0.0539 : 1                                                   ; FillColor=ROOT.kSpring-2 , Label="rare MC" , NormSystematic=0.50
@@ -20,8 +20,8 @@ WZamcatnlo : WZTo3LNu_amcatnlo : xsec : 1  ; FillColor=ROOT.kAzure+1  , Label="W
 WG_wg     : WZTo3LNu_mll01+WZTo3LNu_mll01_ext_part1+WZTo3LNu_mll01_ext_part2+WZTo3LNu_mll01_ext_part3 : 0.7*58.59 : (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 && Sum$(abs(GenPart_pdgId)==23 && GenPart_mass < 4.) == 1 ) ; FillColor=ROOT.kOrange-5 , Label="W\#gamma^{*}", NormSystematic=0.50
 
 
-fakes_data : DoubleEG_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data.txt', Label="Fakes", NormSystematic=0.35
-fakes_data : SingleElectron_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data.txt', Label="Fakes", NormSystematic=0.35
+fakes_data : DoubleEG_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data_v1.txt', Label="Fakes", NormSystematic=0.35
+#fakes_data : SingleElectron_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data_v1.txt', Label="Fakes", NormSystematic=0.35
 
 
 

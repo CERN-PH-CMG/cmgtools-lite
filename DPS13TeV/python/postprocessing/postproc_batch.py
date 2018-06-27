@@ -7,12 +7,13 @@ from glob import glob
 import re, pickle, math
 from CMGTools.DPS13TeV.postprocessing.framework.postprocessor import PostProcessor
 
-DEFAULT_MODULES = [##("CMGTools.DPS13TeV.postprocessing.examples.puWeightProducer", "puWeight,puWeightXsecup,puWeightXsecdown"),
-                   ##("CMGTools.DPS13TeV.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
+DEFAULT_MODULES = [("CMGTools.DPS13TeV.postprocessing.examples.puWeightProducer", "puWeight,puWeightXsecup,puWeightXsecdown"),
+                   ("CMGTools.DPS13TeV.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
-                   ("CMGTools.DPS13TeV.postprocessing.examples.jetReCleaner","jetReCleaner"),
+                   #("CMGTools.DPS13TeV.postprocessing.examples.jetReCleaner","jetReCleaner"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.genFriendProducer","genQEDJets"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.bdtWeigthsDPS_WZ_and_fakes","BDT_WZ_and_fakes"),
+                   ("CMGTools.DPS13TeV.postprocessing.examples.DPSCleaner","TauHadFlag")
                    ]
 
 RECOILTEST_MODULES=[("CMGTools.DPS13TeV.postprocessing.examples.puWeightProducer", "puWeight,puWeightXsecup,puWeightXsecdown"),
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     #print jobs
     print "\n"
-    print "I have %d taks to process" % len(jobs)
+    print "I have %d tasks to process" % len(jobs)
 
     print 'I\'m using the following list of modules',options.moduleList
     imports = globals()[options.moduleList] + options.imports

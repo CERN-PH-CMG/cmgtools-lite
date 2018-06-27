@@ -303,39 +303,74 @@ float weights_TT_and_TL(float iso1, float iso2, float cut, int category){
   else return 0;
 }
 
-float eps_smoothFR(float lpt, float leta, int lpdgId){
+
+float eps_smoothFR(float lpt, float leta, int lpdgId, int variation){
   TH2 *hist = (abs(lpdgId) == 11 ? FR_el : FR_mu);
   int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(abs(leta))));
   float p0 = hist->GetBinContent(etabin, 1);
   float p1 = hist->GetBinContent(etabin, 2);
+  if(variation == 1){
+    p0+=hist->GetBinError(etabin, 1);
+    p1+=hist->GetBinError(etabin, 2);
+  }
+  else if (variation == 2){
+    p0-=hist->GetBinError(etabin, 1);
+    p1-=hist->GetBinError(etabin, 2);
+  }
+  
+  else{
+    p0+=0;
+    p1+=0;
+
+  }  
   float SFR = (lpt < 60.0 ? p0 + p1*lpt : p0 + p1*60);
   return(SFR/(1-SFR));
 }
-float eta_smoothPR(float lpt, float leta, int lpdgId){
+
+float eta_smoothPR(float lpt, float leta, int lpdgId, int variation){
   TH2 *hist = (abs(lpdgId) == 11 ? PR_el : PR_mu);
   int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(abs(leta))));
+  
   float p0 = hist->GetBinContent(etabin,1);
   float p1 = hist->GetBinContent(etabin,2);
   float p2 = hist->GetBinContent(etabin,3);
+  
+  if(variation == 1){
+    p0+=hist->GetBinError(etabin, 1);
+    p1+=hist->GetBinError(etabin, 2);
+    p2+=hist->GetBinError(etabin, 3);
+  }
+  else if (variation == 2){
+    p0-=hist->GetBinError(etabin, 1);
+    p1-=hist->GetBinError(etabin, 2);
+    p2-=hist->GetBinError(etabin, 3);
+  }
+  else{
+    p0+=0;
+    p1+=0;
+    p2+=0;
+
+  }  
+
   float SPR = p0*TMath::Erf((lpt-p1)/p2);
   return((1-SPR)/SPR);
 }
 
 
-
-
 float fakeRateWeight_2lssMVA_usingPRs_smooth(float l1pt, float l1eta, int l1pdgId, float l1mva,
-                                             float l2pt, float l2eta, int l2pdgId, float l2mva, float WP)
-{
+                                             float l2pt, float l2eta, int l2pdgId, float l2mva,int syst){
+
+  //syst variation = 0 for nominal FRs/PRs, 1 for Up, 2 for Down variation
+  float WP=0.9;
   double  wSum =0.0;
   double  qSum =0.0;
   bool l1pass=l1mva > WP;
   bool l2pass=l2mva > WP;
-
-  float Eta_l1=eta_smoothPR(l1pt,l1eta,l1pdgId);
-  float Eta_l2=eta_smoothPR(l2pt,l2eta,l2pdgId);
-  float Eps_l1=eps_smoothFR(l1pt,l1eta,l1pdgId);
-  float Eps_l2=eps_smoothFR(l2pt,l2eta,l2pdgId);
+  //  int syst = 0;
+  float Eta_l1=eta_smoothPR(l1pt,l1eta,l1pdgId,syst);
+  float Eta_l2=eta_smoothPR(l2pt,l2eta,l2pdgId,syst);
+  float Eps_l1=eps_smoothFR(l1pt,l1eta,l1pdgId,syst);
+  float Eps_l2=eps_smoothFR(l2pt,l2eta,l2pdgId,syst);
   
   double  norm  = 1./((1-Eps_l1*Eta_l1)*(1-Eps_l2*Eta_l2));
 
@@ -369,10 +404,12 @@ float fakeRateWeight_2lssMVA_usingPRs_smooth(float l1pt, float l1eta, int l1pdgI
     //    cout<<"MVA values"<<l1mva<<"\t"<<l2mva<<endl;
     return 0;
   }
-  
+}  
+
+  // for syst uncertainty on Fake ratios
 
 
-}
+
 
 
 

@@ -1,3 +1,13 @@
+#new frnds
+
+njetsclean:nJet_Clean:[0,1,2,3,4,5,6] ; XTitle='njetsclean'
+njets30clean:nJet30_Clean:[0,1,2,3,4,5,6] ; XTitle='njetsclean 30'
+nbjetscleanCSVL25:nbJetCSVL25_Clean:[0,1,2,3,4,5,6] ; XTitle='nbjetscleanCSVL25'
+nbjetscleanCSVM25:nbJetCSVM25_Clean:[0,1,2,3,4,5,6] ; XTitle='nbjetscleanCSVM25'
+nbjetscleanCSVL30:nbJetCSVL30_Clean:[0,1,2,3,4,5,6] ; XTitle='nbjetscleanCSVL30'
+nbjetscleanCSVM30:nbJetCSVM30_Clean:[0,1,2,3,4,5,6] ; XTitle='nbjetscleanCSVM30'
+nhadtausclean:nTauGoodHad_Clean:[0,1,2,3,4,5,6] ; XTitle='nhadtausclean'
+
 #changed deltaPHI to deltaPhi
 mt2ll         : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 20,0,120 ; XTitle="M_{T2}^{ll} (GeV)"
 mt2ll_smeared : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,smearedMET(met_pt),met_phi) : 20,0,120 ; XTitle="M_{T2}^{ll} (GeV) - smeared"
@@ -76,6 +86,15 @@ dphil2met     : abs(deltaPhi(LepGood2_phi,met_phi)) : 20,0.,3.15; XTitle="#Delta
 rho_mumu :rho: 70,0,70; XTitle="#rho"
 
 lepMVA1       : LepGood1_mvaTTH : 20,0.85,1; XTitle="LepMVA1" 
+mcMatchId1_mumu	   :LepGood1_mcMatchId:[0,1,23,24,25,26];XTitle="Lep1MCMatchId"
+mcMatchId2_mumu    :LepGood2_mcMatchId:[0,1,23,24,25,26];XTitle="Lep2MCMatchId"
+
+
+
+pt_mcMatchId1_mumu        : abs(LepGood1_mcMatchId)\:LepGood1_pt :  [20,40,60,70,80,90,100]*[0,1,23,24,25,26];XTitle="p_{T} lepton 1 ",YTitle="#mcMatchId"
+
+pt_mcMatchId2_mumu        : abs(LepGood2_mcMatchId)\:LepGood2_pt :  [20,40,60,70,80,90,100]*[0,1,23,24,25,26];XTitle="p_{T} lepton 2 ",YTitle="#mcMatchId"
+
 eta1_mumu          : LepGood1_eta    : 10,-2.5,2.5; XTitle="#eta lead."
 eta2_mumu          : LepGood2_eta    : 10,-2.5,2.5; XTitle="#eta trail."
 phi1_mumu          : LepGood1_phi    : 10,-3.2,3.2; XTitle="#phi lead."
@@ -204,6 +223,8 @@ BDTforCombine_elmuminusminus_15bins   :  Binnumberset1D(BDT_DPS_fakes,BDT_DPS_WZ
 pt1_elmu           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=350
 pt2_elmu           : LepGood2_pt     : 20,20,100; XTitle="p_{T} trail. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=750
 
+pt1_elmuplusplus           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (e^{+}#mu^{+}) (GeV)",YMin=0,YMax=350
+pt1_elmuminusminus           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (e^{-}#mu^{-}) (GeV)",YMin=0,YMax=350
 pt1_el_elmu           : if3(abs(LepGood1_pdgId)==11,LepGood1_pt,-999)  : 20,20,100; XTitle="p_{T}(el) lead. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=350
 pt2_el_elmu           : if3(abs(LepGood2_pdgId)==11,LepGood2_pt,-999)  : 20,20,100; XTitle="p_{T}(el) trail. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=750
 
@@ -229,6 +250,18 @@ BDT_fakes_elmu_20bins   : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT fake
 
 
 
+N_elelOS : leppair_eta(LepGood1_eta,LepGood2_eta):3,1,4;XTitle="BB BE/EB EE for OS" 
+N_elelSS : leppair_eta(LepGood1_eta,LepGood2_eta):3,1,4;XTitle="BB BE/EB EE for SS"
+mll_elelOS           : m2l             : 15,70,100; XTitle="m_{ll}((e^{#pm}el^{#mp}) (GeV)"
+mll_elelSS           : m2l             : 15,70,100; XTitle="m_{ll}((e^{#pm}el^{#pm}) (GeV)"
+mtll_elelOS          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,250; XTitle="m_{T} ll (e^{#pm}#mu^{#mp}) (GeV)"
+mtll_elelSS          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,250; XTitle="m_{T} ll (e^{#pm}#mu^{#pm}) (GeV)"
+mtl2met_elelOS          : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} l2MET (e^{#pm}e^{#mp}) (GeV)"
+mtl2met_elelSS          : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} l2MET (e^{#pm}e^{#pm}) (GeV)"
+mtl1met_elelOS          : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} l1MET (e^{#pm}e^{#mp}) (GeV)"
+mtl1met_elelSS          : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} l1MET (e^{#pm}e^{#pm}) (GeV)"
+met_elelOS 		:met_pt : 20,0,100; XTitle="MET (e^{#pm}e^{#mp}) (GeV)"
+met_elelSS 		:met_pt : 20,0,100; XTitle="MET (e^{#pm}e^{#pm}) (GeV)"
 
 pt_eta_elelminusminus        : abs(LepGood1_eta)\:LepGood1_pt :  [20,30,40,50,60,70,80,100,120,140]*[0.0,1.5,2.5];XTitle="p_{T} lepton 1 SS",YTitle="#eta lepton 1"
 pt_eta_elelplusplus        : abs(LepGood1_eta)\:LepGood1_pt :  [20,30,40,50,60,70,80,100,120,140]*[0.0,1.5,2.5];XTitle="p_{T} lepton 1 OS",YTitle="#eta lepton 1"

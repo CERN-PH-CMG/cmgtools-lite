@@ -208,7 +208,9 @@ float _new_puwts2016[100]={0.366077,0.893925,1.19772,0.9627,1.12098,1.16486,0.79
 
 float new_puwts2016(int nTrueInt) { if (nTrueInt<100) return _new_puwts2016[nTrueInt]; else return 0; }
 
+float _new_puwts_HLT_Ele12_prescaled_2016[100]={2.75572,3.26561,3.39527,1.46399,1.77265,1.88686,1.48536,2.26117,4.33675,3.67411,3.03011,2.84148,2.5912,2.42474,2.29697,2.15414,1.97498,1.76292,1.5127,1.25696,1.0431,0.886597,0.787004,0.719569,0.672394,0.642142,0.621938,0.604979,0.593663,0.586311,0.569034,0.554639,0.526194,0.491115,0.446967,0.396596,0.340905,0.285737,0.232259,0.184334,0.138977,0.101221,0.0718936,0.0492075,0.0333019,0.0217615,0.0135377,0.00848631,0.00516764,0.00313836,0.00187523,0.00115506,0.000748393,0.000536696,0.000499682,0.000575907,0.000730489,0.00102678,0.00151582,0.00214482,0.00350559,0.00466592,0.00555445,0.00599003,0.00659298,0.00628491,0.00569882,0.00502567,0.00457254,0.00404294,0.00354145,0.00307944,0.00266324,0.0023081,0.00196392,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
+float new_puwts_HLT_Ele12_prescaled_2016(int nTrueInt) { if (nTrueInt<100) return _new_puwts_HLT_Ele12_prescaled_2016[nTrueInt]; else return 0;}
 float _new_puwts_HLT_Mu17_prescaled_2016[100]={1.36102,2.33936,2.82024,1.89362,2.36757,2.43088,2.56461,7.67523,14.612,8.00805,4.54726,3.90327,3.19027,2.72778,2.4594,2.24152,2.01599,1.78067,1.5265,1.27223,1.04991,0.871267,0.743476,0.650848,0.584627,0.539026,0.503884,0.470304,0.438861,0.408835,0.372656,0.341062,0.304517,0.268198,0.230692,0.193453,0.156973,0.124039,0.0950057,0.0711117,0.0506811,0.0350182,0.023702,0.0155383,0.010127,0.0064098,0.00388694,0.00239396,0.00144895,0.000892292,0.000561206,0.000388746,0.000310786,0.00029568,0.000360301,0.000497828,0.000693098,0.00101452,0.00152231,0.00216778,0.00355203,0.00473256,0.00563624,0.00607942,0.00669199,0.00637959,0.00578481,0.00510157,0.00464163,0.00410404,0.00359498,0.00312599,0.0027035,0.002343,0.00199361,1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
 float new_puwts_HLT_Mu17_prescaled_2016(int nTrueInt) { if (nTrueInt<100) return _new_puwts_HLT_Mu17_prescaled_2016[nTrueInt]; else return 0; }
@@ -787,7 +789,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
     exit(EXIT_FAILURE);}
-  */
+  
   //v12 good for emu
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
@@ -808,7 +810,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   else{
   std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
     exit(EXIT_FAILURE);}
-  /*  
+    
   //v13 (arranged in S/sqrt(B))
 
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 13;
@@ -889,10 +891,9 @@ int Binnumberset1D(float BDTx,float BDTy){
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
     exit(EXIT_FAILURE);}
-  
+  */
   
   //v13 arranged acc to signal strength(final)
-
   if(BDTx  <= 0.1 )return 1;
   else if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 2;
   else if((BDTx > 0.1 && BDTx <=0.3 && BDTy >0.35) || (BDTx  > 0.3 && BDTx <=0.35 && BDTy >0.35 && BDTy <= 0.65))return 3;
@@ -910,7 +911,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   else if(BDTx  > 0.95  && BDTy > 0.95)return 15;
   else{
     std::cout << "values of BDT variables are out of bounds, please check" << std::endl;
-    exit(EXIT_FAILURE);}*/
+    exit(EXIT_FAILURE);}
 
 }
 
@@ -925,14 +926,20 @@ bool clean_n_FO_selection_TTH(float Lpt, float Leta,int LpdgId, bool LmediumMuon
   bool final=(conept_TTH(Lpt,LpdgId,LmediumMuonId,LmvaTTH,LjetPtRatiov2) > 10.0 && LjetBTagCSV<0.8484 && (abs(LpdgId)!=11 || LidEmuTTH > 0) &&
     (LmvaTTH>0.90 || (LjetPtRatiov2 > 0.5 && LjetBTagCSV<0.3 && 
 		      (abs(LpdgId)!=13 || LsegmentCompatibility>0.3))));// && (abs(LpdgId)!=11 ||  (LmvaIdSpring16HZZ > if3(abs(Leta) < 1.479,0.0,0.7))))));
-  std::cout<<"conept"<<conept_TTH(Lpt,LpdgId,LmediumMuonId,LmvaTTH,LjetPtRatiov2)<<"\t the long one "<<final<<std::endl;
+  //  std::cout<<"conept"<<conept_TTH(Lpt,LpdgId,LmediumMuonId,LmvaTTH,LjetPtRatiov2)<<"\t the long one "<<final<<std::endl;
 
   return (final);
 
 }
-
-
-
+int leppair_eta(float L1eta, float L2eta){
+  if(abs(L1eta) < 1.479 && abs(L2eta)< 1.479) return 1;
+  else if ((abs(L1eta) < 1.479 && abs(L2eta) > 1.479) || (abs(L1eta) > 1.479 && abs(L2eta) < 1.479)) return 2;
+  else if (abs(L1eta) > 1.479 && abs(L2eta) > 1.479)return 3;
+  else{
+    std::cout << "weird combination of electrons, please check" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+}
 void functions() {}
 
 //#endif

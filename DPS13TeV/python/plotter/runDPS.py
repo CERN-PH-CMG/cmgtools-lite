@@ -1,8 +1,8 @@
 import optparse, subprocess, ROOT, datetime, math, array, copy, os
 import numpy as np
 
-doPUreweighting = False
-doPUandSF = True
+doPUreweighting = True
+doPUandSF = False
 
 def submitFRrecursive(ODIR, name, cmd, dryRun=False):
     outdir=ODIR+"/jobs/"
@@ -110,7 +110,7 @@ def runefficiencies(trees, friends, targetdir, fmca, fcut, ftight, fxvar, enable
     ## cmd += ' --obj treeProducerWMassEle ' ## the tree is called 'treeProducerWMassEle' not 'tree'
     cmd += ' --groupBy cut '
     ## if doPUreweighting: cmd += ' -W puw_8TeV_nVert_dataWjets(nVert) ' ## adding pu weight
-    if doPUreweighting: cmd += ' -W new_puwts2016(nTrueInt)'#new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#new_puwts2016(nTrueInt)'#puWeight' # ' ## adding pu weight
+    if doPUreweighting: cmd += ' -W new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#new_puwts2016(nTrueInt)'#puWeight' # ' ## adding pu weight
 
     if doPUandSF and not '-W ' in extraopts: cmd += ' -W puw*LepGood_effSF[0]*LepGood_effSF[1]'
 
@@ -147,7 +147,7 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     if invertedcuts:
         cmd += ''.join(' -I ^'+cut for cut in invertedcuts )
     if doPUandSF and not '-W ' in extraopts: cmd += ' -W puw*LepGood_effSF[0]*LepGood_effSF[1]' ##_get_muonSF_trgIsoID(LepGood_pdgId[0],LepGood_pt[0],LepGood_eta[0],0)' ## adding pu weight
-    if doPUreweighting: cmd += ' -W new_puwts2016(nTrueInt)'#new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#puWeight' #new_puwts2016(nTrueInt) ' ## adding pu weight
+    if doPUreweighting: cmd += ' -W new_puwts_HLT_Mu17_prescaled_2016(nTrueInt)'#puWeight' #new_puwts2016(nTrueInt) ' ## adding pu weight
     cmd += ' -o '+targetdir+'/'+'_AND_'.join(plot for plot in plotlist)+'.root'
     if fitdataprocess:
         cmd+= ' --fitData '
@@ -165,7 +165,7 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     print 'running: python', cmd
     subprocess.call(['python']+cmd.split())#+['/dev/null'],stderr=subprocess.PIPE)
 
-def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, splitCharge = True):
+def makeResults(onlyEE = False,onlyMM = True, splitsign =False, splitCharge = False): #sfdate, onlyMM = True, splitCharge = True):
 #def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts, disabledcuts, processes, scaleprocesses, extraopts = ''):
 #python makeShapeCardsSusy.py --s2v -P /afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/ --Fs /afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/ -l 12.9 dps-ww/final_mca.txt dps-ww/cutfinal.txt finalMVA_DPS 10,0.,1.0  --od dps-ww/cards -p DPSWW,WZ,ZZ,WWW,WpWpJJ,Wjets  -W 0.8874 --asimov dps-ww/syst.txt
     
@@ -174,8 +174,8 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
     targetcarddir = 'cards_{date}{pf}_MuMu_Signalscaled'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends_jet_pu_lepSF/', trees+'/friends_latest_bdt/']
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}ElMu_NEWMVAWP_Fakes_PU_SF/'.format(date=date, pf=('-'+postfix if postfix else '') ) #ElMu_NEWMVAWP_Fakes_PU_SF
-    fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt' #cuts_results.txt'#
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}MuMu_tauveto/'.format(date=date, pf=('-'+postfix if postfix else '') ) 
+    #fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt' #cuts_results.txt'#'#
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
 
@@ -188,6 +188,8 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
 
     if splitCharge: 
         loop = [ ['minusminus'], ['plusplus']]
+    elif splitsign:
+        loop = [ ['SS'], ['OS']]
     else:
         loop = [ [] ]
 
@@ -195,17 +197,31 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
 
 
 
-    processes      = ['data','DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
+    processes      = ['DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares','fakes_data','data']#'DY',
     processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo', 'DPSWW_alt']
 
     binningBDT   = ' Binnumberset1D(BDT_DPS_fakes,BDT_DPS_WZ) 15,1.0,16.0'
     nbinspostifx = '_15bins'
-    fmca   = 'dpsww13TeV/dps2016/results/elmu_mca_v1.txt'#mumuelmu_mca_v1.txt'
-    
+    #fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca_v1.txt'#elmu_mca_v1.txt'#
+    #fmca_elmu='dpsww13TeV/dps2016/results/elmu_mca_v1.txt'
     for bdt in ['wz']:
         for ich,ch in enumerate(loop):
             #if not ich: continue
-            enable    = ['trigelmu','elmu'] + ch
+            if onlyMM:
+                fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca_v1.txt'
+                fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP1.txt'
+                enable    = ['trigmumu','mumu'] + ch
+                state='mumu'
+            elif onlyEE:
+                fmca='dpsww13TeV/dps2016/results/elel_mca.txt'
+                fcut   = 'dpsww13TeV/dps2016/results/cuts_results_DY.txt'
+                enable= ['trigelel','elel'] + ch
+                state='elel'
+            else:
+                enable    = ['trigelmu','elmu'] + ch
+                fmca='dpsww13TeV/dps2016/results/elmu_mca_v1.txt'
+                fcut   = 'dpsww13TeV/dps2016/results/cuts_results_MVA_tight_WP.txt'
+                state='elmu'
             disable   = []
             fittodata = []#'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
             scalethem = {}#'DPSWW':'{sf:.3f}'.format(sf=0.50)}#'WZ': '{sf:.3f}'.format(sf=1.04),
@@ -213,13 +229,19 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
                          
             mumusf = 0.95
             extraopts = '--showIndivSigs'.format(sf=mumusf) # --plotmode=norm -W {sf:.3f}
+            #drawvars=['mcMatchId1','mcMatchId2']#N','pt_mcMatchId2','pt_mcMatchId1',
+            drawvars=['pt1']#mll','met','mtl1met','mtl2met','mtll']
+            if splitCharge or splitsign:
+                makeplots  = ['{}_{}{}'.format(a, state,ch[0])  for a in drawvars]
+            else:
+                makeplots  = ['{}_{}'.format(a, state)  for a in drawvars]
+
             #makeplots = ['lepMVA1_mumu','lepMVA2_mumu']
             #makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] 
-            #makeplots = ['BDTforCombine_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDTfakes_BDTWZ_elmu{ch}_20bins'.format(ch=(ch[0] if ch else ''))]
-            #'BDT_wz_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_fakes_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),
+            #makeplots = ['BDTforCombine_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDTfakes_BDTWZ_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_wz_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),'BDT_fakes_elmu{ch}_20bins'.format(ch=(ch[0] if ch else '')),
             #            makeplots=['pt_eta_elel_OS','pt_eta_elel_OS','mll_elel']
-            #makeplots=['BDT_wz_mumu_20bins']
-            makeplots=['pt_mu_elmu','nVert_elmu']#'pt_el_elmu',]#'pt2_mumu','eta1_mumu','eta2_mumu','phi1_mumu','phi2_mumu']#'lepMVA1_mumu','lepMVA2_mumu']
+
+            #makeplots=['pt_mu_elmu','nVert_elmu']#'pt_el_elmu',]#'pt2_mumu','eta1_mumu','eta2_mumu','phi1_mumu','phi2_mumu']#'lepMVA1_mumu','lepMVA2_mumu']
             #makeplots=['pt1_mumu']
             #makeplots=['met_elmu','pt1_elmu','nVert_elmu','mt1_elmu','mt2_elmu','dphiLep_elmu','pt2_elmu','eta_sum_elmu','dphilll2_elmu']
             #makeplots=['pt1_el_elmu','pt1_mu_elmu','pt2_el_elmu','pt2_mu_elmu']#etaprod_elmu','mt1_elmu','met_elmu','mt2ll_elmu','mtll_elmu','dphil2met_elmu','mll_elmu','BDT_wz_elmu_20bins','BDT_fakes_elmu_20bins']
@@ -333,7 +355,7 @@ def makeFakeRatesFast(recalculate):
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_fr_2016/'
     #friends  ='/afs/cern.ch/work/a/anmehta/work/Test/Test2/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/postprocessing/JetCleaning_1lskim_DblEl_friendsJune07_All/'
     friends   = trees+'/friends/'
-    targetdir = '/eos/user/a/anmehta/www/Muon_fakerates_LooserCuts_EWKcombined_PU2018-06-11/'#Muon_fakerates_LooserCuts_EWKcombined_PU{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}Muon_fakerates_redefinedLoose/'.format(date=date, pf=('-'+postfix if postfix else '') )
     ## accordingly we have to change the mca file here. we also need to adapt the cuts file here.
     ## also the tight cut should now be 0.9 if we are moving to what the tHq people use
     fmca   = 'dpsww13TeV/dps2016/New_FRfast/mca_fr.txt' 
@@ -719,7 +741,7 @@ if __name__ == '__main__':
 
     global date, postfix, lumi, date
     postfix = opts.postfix
-    lumi = 36.0 if not opts.lumi else opts.lumi##here 16.614
+    lumi = 0.29 if not opts.lumi else opts.lumi##here 16.614
     date = datetime.date.today().isoformat()
     if opts.date:
         date = opts.date

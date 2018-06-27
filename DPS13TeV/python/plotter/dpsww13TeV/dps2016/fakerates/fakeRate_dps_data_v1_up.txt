@@ -10,7 +10,6 @@ load-histo: PR_el  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_ele_smooth
 ## more fancy way for later load-histo: FR_el : $DATA/fakerate/FR_ttl.root : FR_tight_el
 ## define the FR weight
 ##weight: fakeRateWeight_2lssMVA_smoothed_FR(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH > if3(abs(LepGood1_pdgId)==13,0.9,0.9),LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH > if3(abs(LepGood2_pdgId)==13,0.9,0.9), 0.5) 
-
-weight: fakeRateWeight_2lssMVA_usingPRs_smooth(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH,0) 
+weight: fakeRateWeight_2lssMVA_usingPRs_smooth(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH,1) 
 
 
