@@ -159,6 +159,28 @@ class util:
      
         return _dict
 
+    def getHistosFromToys(self, infile):
+        _dict = {}
+        
+        f = ROOT.TFile(infile, 'read')
+        tree = f.Get('fitresults')
+        lok  = tree.GetListOfLeaves()
+        
+        for p in lok:
+            if '_err'   in p.GetName(): continue
+            if '_minos' in p.GetName(): continue
+            if '_gen'   in p.GetName(): continue
+            if '_In'    in p.GetName(): continue
+            
+            tmp_hist = ROOT.TH1F(p.GetName(),p.GetName(), 100, -3., 3.)
+            tree.Draw(p.GetName()+'>>'+p.GetName())
+            mean = tmp_hist.GetMean()
+            err  = tmp_hist.GetRMS()
+            tmp_hist.SetDirectory(None)
+            _dict[p.GetName()] = (mean, mean+err, mean-err, tmp_hist)
+     
+        return _dict
+
 
     def getExprFromToys(self, name, expression, infile):
         f = ROOT.TFile(infile, 'read')
@@ -212,3 +234,50 @@ class util:
         return _dict
 
 
+    def effSigma(self, histo):
+        xaxis = histo.GetXaxis()
+        nb = xaxis.GetNbins()
+        xmin = xaxis.GetXmin()
+        ave = histo.GetMean()
+        rms = histo.GetRMS()
+        total=histo.Integral()
+        if total < 100: 
+            print "effsigma: Too few entries to compute it: ", total
+            return 0.
+        ierr=0
+        ismin=999
+        rlim=0.683*total
+        bwid = xaxis.GetBinWidth(1)
+        nrms=int(rms/bwid)
+        if nrms > nb/10: nrms=int(nb/10) # Could be tuned...
+        widmin=9999999.
+        for iscan in xrange(-nrms,nrms+1): # // Scan window centre 
+            ibm=int((ave-xmin)/bwid)+1+iscan
+            x=(ibm-0.5)*bwid+xmin
+            xj=x; xk=x;
+            jbm=ibm; kbm=ibm;
+            bin=histo.GetBinContent(ibm)
+            total=bin
+            for j in xrange(1,nb):
+                if jbm < nb:
+                    jbm += 1
+                    xj += bwid
+                    bin=histo.GetBinContent(jbm)
+                    total += bin
+                    if total > rlim: break
+                else: ierr=1
+                if kbm > 0:
+                    kbm -= 1
+                    xk -= bwid
+                    bin=histo.GetBinContent(kbm)
+                    total+=bin
+                if total > rlim: break
+                else: ierr=1
+            dxf=(total-rlim)*bwid/bin
+            wid=(xj-xk+bwid-dxf)*0.5
+            if wid < widmin:
+                widmin=wid
+                ismin=iscan
+        if ismin == nrms or ismin == -nrms: ierr=3
+        if ierr != 0: print "effsigma: Error of type ", ierr
+        return widmin

@@ -1,7 +1,9 @@
 #!/bin/env python
 
-# usage: ./mergeCardComponents.py -b Wmu -C minus,plus -i ../cards/helicity_xxxxx/
-# fit scaling by eff: ./mergeCardComponentsAbsY.py [-m] -b Wel -C minus,plus -i cards/ --sf eff_el_PFMT40.root 
+# usage:
+# make the single charge: ./mergeCardComponentsAbsY.py -b Wel -C plus,minus -i cards_el [--fp]
+# make the W+ / W- comb:  ./mergeCardComponentsAbsY.py -b Wel --comb -i cards_el [--fp]
+# [--fp] is used to make the meta file freezing ALL the rates (POIs). Use it to make the fit for PDFs only. When not used the xsecs are tracked via masked channel trick
 
 import ROOT
 import sys,os,re,json, copy
@@ -24,7 +26,6 @@ def getXsecs(processes, systs, ybins, lumi, infile):
         # before searching the bin, sum epsilon to the y value being inspected
         # Root assigns the lower bin edge to the bin, while the upper bin edge is assigned to the adjacent bin. However, depending on the number y being used,
         # there can be a precision issue which might induce the selection of the wrong bin (since yfirst and yvalue are actually bin boundaries)
-        # It seems odd, but I noticed that with the fake rate graphs (I was getting events migrating between adjacent eta bins)
         epsilon = 0.00001
         istart = cen_hist.FindBin(yfirst + epsilon)
         iend   = cen_hist.FindBin(ylast + epsilon)
@@ -87,6 +88,31 @@ def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
         mirror.Scale(nominal.Integral()/mirror.Integral())
     return (alternate,mirror)
 
+def combCharges(options):
+    suffix = 'card' if options.freezePOIs else 'card_withXsecMask'
+    datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_{sfx}.txt'.format(ch=charge,sfx=suffix) for charge in ['plus','minus']]
+    if options.combineCharges and sum([os.path.exists(card) for card in datacards])==2:
+        print "Cards for W+ and W- done. Combining them now..."
+        combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_'+suffix+'.txt'
+        ccCmd = 'combineCards.py '+' '.join(['{bin}_{ch}={inp}/{bin}_{ch}_{sfx}.txt'.format(inp=os.path.abspath(options.inputdir),bin=options.bin,ch=charge,sfx=suffix) for charge in ['plus','minus']])+' > '+combinedCard
+        if options.freezePOIs:
+            # doesn't make sense to have the xsec masked channel if you freeze the rates (POIs) -- and doesn't work either
+            txt2tfCmd = 'text2tf.py --POIMode none {cf}'.format(cf=combinedCard)
+        else:
+            maskchan = [' --maskedChan {bin}_{charge}_xsec'.format(bin=options.bin,charge=ch) for ch in ['plus','minus']]
+            txt2tfCmd = 'text2tf.py {maskch} --X-allow-no-background {cf}'.format(maskch=' '.join(maskchan),cf=combinedCard)
+        ## here running the combine cards command first 
+        print ccCmd
+        os.system(ccCmd)
+        ## here making the TF meta file
+        print '--- will run text2tf for the combined charges ---------------------'
+        print txt2tfCmd
+        os.system(txt2tfCmd)
+        ## print out the command to run in combine
+        combineCmd = 'combinetf.py -t -1 {metafile}'.format(metafile=combinedCard.replace('txt','meta'))
+        print combineCmd
+
+
 if __name__ == "__main__":
     
 
@@ -108,6 +134,10 @@ if __name__ == "__main__":
     parser.add_option(     '--comb'   , dest='combineCharges' , default=False, action='store_true', help='Combine W+ and W-, if single cards are done')
     (options, args) = parser.parse_args()
     
+    if options.combineCharges:
+        combCharges(options)
+        sys.exit()
+
     from symmetrizeMatrixAbsY import getScales
     
     charges = options.charge.split(',')
@@ -570,37 +600,22 @@ if __name__ == "__main__":
                 txt2tfCmd = 'text2tf.py --POIMode none {cf}'.format(maskch=chname_xsec,cf=cardfile)
             else:
                 txt2tfCmd = 'text2tf.py --maskedChan {maskch} --X-allow-no-background {cf}'.format(maskch=chname_xsec,cf=cardfile_xsec)
-
             #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
-            combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
+            # combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
         ## here running the combine cards command first
         print ccCmd
         os.system(ccCmd)
         ## then running the t2w command afterwards
-        print txt2wsCmd
-        print '-- will NOT run text2workspace -----------------------'
-        #os.system(txt2wsCmd)
-        print "NOT doing the noXsec workspace..."
-        #os.system(txt2wsCmd_noXsec)
-        print '-- will run text2tf ---------------------'
+        # print txt2wsCmd
+        # print '-- will NOT run text2workspace -----------------------'
+        # os.system(txt2wsCmd)
+        # print "NOT doing the noXsec workspace..."
+        # os.system(txt2wsCmd_noXsec)
+        ## here making the TF meta file
+        print '--- will run text2tf ---------------------'
         os.system(txt2tfCmd)
         ## print out the command to run in combine
+        combineCmd = 'combinetf.py -t -1 {metafile}'.format(metafile=cardfile_xsec.replace('txt','meta'))
         print combineCmd
     # end of loop over charges
 
-    datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
-    if options.combineCharges and sum([os.path.exists(card) for card in datacards])==2:
-        print "Cards for W+ and W- done. Combining them now..."
-        combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_card.txt'
-        combineCards = 'combineCards.py '+' '.join(['{bin}_{ch}={bin}_{ch}_card.txt'.format(bin=options.bin,ch=charge) for charge in ['plus','minus']])+' > '+combinedCard
-        print "combining W+ and W- with: ",combineCards
-        # go into the input dir to issue the combine command w/o paths not to screw up the paths of the shapes in the cards
-        os.system('cd {inputdir}; {cmd}; cd -'.format(inputdir=os.path.abspath(options.inputdir),cmd=combineCards))
-      
-        ws = combinedCard.replace('_card.txt', '_ws.root')
-        t2w = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=combinedCard, ws=ws)
-        print "combined t2w command: ",t2w
-        ## marc os.system(t2w)
-        combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''))
-        print combineCmdTwoCharges
-        print "DONE. ENJOY FITTING !"

@@ -55,8 +55,7 @@ def makeFixedYWBinning():
     for ch in ['plus', 'minus']:
         for pol in ['left', 'right', 'long']:
             cp = '{ch}_{pol}'.format(ch=ch,pol=pol)
-            yw_binning[cp]  = [float('{n:.2f}'.format(n=    i*0.10)) for i in range(16) ] 
-            yw_binning[cp] += [float('{n:.2f}'.format(n=1.5+i*0.20)) for i in range(1,8)] + [6.0]
+            yw_binning[cp]  = [float('{n:.2f}'.format(n=    i*0.20)) for i in range(16) ] + [6.0]
             
     return yw_binning
             
