@@ -72,7 +72,7 @@ class lepSFProducer(Module):
             else:
                 worker = self._worker_el if abs(l.pdgId)==11 else self._worker_mu
                 sf.append(worker.getSF(l.pdgId,l.pt,l.eta))
-                print('check the leptons for {lep} with {PT}: {ETA}: is {SF}:'.format(lep=l.pdgId,PT=l.pt,ETA=l.eta,SF=sf))
+                #print('check the leptons for {lep} with {PT}: {ETA}: is {SF}:'.format(lep=l.pdgId,PT=l.pt,ETA=l.eta,SF=sf))
         self.out.fillBranch("LepGood_effSF", sf)
         return True
 

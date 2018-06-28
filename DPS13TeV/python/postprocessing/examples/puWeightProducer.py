@@ -39,7 +39,7 @@ class puWeightProducer(Module):
         if hasattr(event,self.nvtxVar):
             nvtx = int(getattr(event,self.nvtxVar))
             weight = self._worker.getWeight(nvtx) if nvtx < self.myh.GetNbinsX() else 1
-            print('here is the PU {wt} for {NINT}'.format(wt=weight,NINT=nvtx))
+            #print('here is the PU {wt} for {NINT}'.format(wt=weight,NINT=nvtx))
         else: weight = 1
         self.out.fillBranch(self.name,weight)
         return True
