@@ -77,7 +77,7 @@ class util:
     def getXSecFromShapes(self, ybins, charge, infile, channel, ip):
         values = {}
         if not infile:
-            for pol in ['left','right']: #,'long']: 
+            for pol in ['left','right','long']: 
                 cp = '{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')
                 xsecs = []
                 for iv in xrange(len(ybins[cp][:-1])):
@@ -89,7 +89,7 @@ class util:
     
         pstr = '' if not ip else '_pdf{ip}Up'.format(ip=ip)
     
-        for pol in ['left','right']: #,'long']
+        for pol in ['left','right','long']:
             cp = '{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')
             xsecs = []
             for iv, val in enumerate(ybins[cp][:-1]):
