@@ -1,6 +1,6 @@
 #!/bin/env python
 
-# usage: python submitToys.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root 1000 plus -n 10
+# usage: python submitToys.py cards_el/Wel_card_withXsecMask.meta 10000 --tf -n 5 --outdir output
 
 jobstring  = '''#!/bin/sh
 ulimit -c 0 -S
@@ -29,7 +29,7 @@ COMBINESTRING
 '''
 
 
-import ROOT, random, array, os
+import ROOT, random, array, os, sys
 
 if __name__ == "__main__":
     
@@ -41,7 +41,6 @@ if __name__ == "__main__":
     parser.add_option(        '--norm-only'     , dest='normonly'      , action='store_true', default=False, help='Run the fit fixing the PDF uncertainties');
     parser.add_option('--fd', '--fitDiagnostics', dest='fitDiagnostics', action='store_true'               , help='run FitDiagnostics instead of MultiDimFit');
     parser.add_option('--tf', '--tensorFlow'    , dest='useTensorFlow' , action='store_true'               , help='run with josh\'s tensorflow implementation. needs cmssw 10X');
-    parser.add_option('--fp', '--freezePOIs'    , dest='freezePOIs'    , action='store_true'               , help='run tensorflow with --freezePOIs (for the pdf only fit)');
     parser.add_option('--outdir', dest='outdir', type="string", default=None, help='outdirectory');
     (options, args) = parser.parse_args()
 
@@ -78,8 +77,6 @@ if __name__ == "__main__":
             tmp_filecont = jobstring_tf
             #cmd = 'text2tf.py -t {n} --seed {j}{jn} {dc}'.format(n=int(options.nTj),dc=os.path.abspath(workspace),j=j*int(options.nTj)+1,jn=(j+1)*int(options.nTj)+1)
             cmd = 'combinetf.py -t {n} --seed {j}{jn} {dc} --nThreads 2'.format(n=int(options.nTj),dc=os.path.abspath(workspace),j=j*int(options.nTj)+1,jn=(j+1)*int(options.nTj)+1)
-            if options.freezePOIs:
-                cmd += ' --freezePOIs '
             tmp_filecont = tmp_filecont.replace('COMBINESTRING', cmd)
             tmp_filecont = tmp_filecont.replace('CMSSWBASE', os.environ['CMSSW_BASE']+'/src/')
             tmp_filecont = tmp_filecont.replace('OUTDIR', absopath+'/')

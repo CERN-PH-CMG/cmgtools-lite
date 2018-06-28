@@ -31,7 +31,7 @@ components=[" -s "," -b "]
 
 for c in components:
     cmd="python " + " ".join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR]) + \
-        (" --long-bkg -W %s " % WEIGHTSTRING) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c + \
+        (" -W %s " % WEIGHTSTRING) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c + \
         (" -l %f " % LUMI)
     if options.dryRun: cmd += '  --dry-run '
     if options.addSyst: cmd += '  --pdf-syst --qcd-syst '
