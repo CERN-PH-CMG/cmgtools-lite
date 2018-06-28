@@ -1,0 +1,5 @@
+cut-change: LepGood1_eleMVAId: 3
+cut-change: LepGood1_relIso04: -1
+cut-change: LepGood1_convVetoFull: 1
+weight: fakeRateWeight_1l_i(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_eleMVAId>=2 && LepGood1_relIso04 < 0.15 && LepGood1_convVetoFull,3)
+load-histo: FR_el_i3 : $DATA/fakerate/FR_data_el_mvatrg.root : FR_FullSel_MVATrig_el_data_comb_pt1

@@ -1,0 +1,58 @@
+QCD: QCD_Pt20to30_EMEnriched                             : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD: QCD_Pt30to50_EMEnriched+QCD_Pt30to50_EMEnriched_ext : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD: QCD_Pt50to80_EMEnriched_ext                         : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD: QCD_Pt80to120_EMEnriched_ext                        : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+
+QCD : QCD_Pt_170to250_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_20to30_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_250toInf_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_30to80_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_80to170_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD", NormSystematic=1.00
+
+# QCD_EM: QCD_Pt20to30_EMEnriched                             : xsec; FillColor=ROOT.kGray+1, Label="QCD_EM", NormSystematic=1.00
+# QCD_EM: QCD_Pt30to50_EMEnriched+QCD_Pt30to50_EMEnriched_ext : xsec; FillColor=ROOT.kGray+1, Label="QCD_EM", NormSystematic=1.00
+# QCD_EM: QCD_Pt50to80_EMEnriched_ext                         : xsec; FillColor=ROOT.kGray+1, Label="QCD_EM", NormSystematic=1.00
+# QCD_EM: QCD_Pt80to120_EMEnriched_ext                        : xsec; FillColor=ROOT.kGray+1, Label="QCD_EM", NormSystematic=1.00
+
+# QCD_bc : QCD_Pt_170to250_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD_bc", NormSystematic=1.00
+# QCD_bc : QCD_Pt_20to30_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD_bc", NormSystematic=1.00
+# QCD_bc : QCD_Pt_250toInf_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD_bc", NormSystematic=1.00
+# QCD_bc : QCD_Pt_30to80_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD_bc", NormSystematic=1.00
+# QCD_bc : QCD_Pt_80to170_bcToE : xsec; FillColor=ROOT.kGray, Label="QCD_bc", NormSystematic=1.00
+
+#W   : WJetsToLNu_part* :  xsec; FillColor=ROOT.kRed+2, Label="W (amc@NLO)", NormSystematic=0.026
+W   : WJetsToLNu_NoSkim :  xsec; FillColor=ROOT.kRed+2, Label="W (amc@NLO)", NormSystematic=0.026
+
+W_LO   : WJetsToLNu_LO_* :  xsec; FillColor=ROOT.kRed+2, Label="W (Madgraph)", NormSystematic=0.026
+
+Z_LO : DYJetsToLL_M50_LO_* : 5765.40 ; FillColor=ROOT.kAzure+2, Label="Z (Madgraph)", NormSystematic=0.04
+
+Z   : DYJetsToLL_M50_part* : 5765.40 ; FillColor=ROOT.kAzure+2, Label="Z (amc@NLO)", NormSystematic=0.04
+
+Top : TTJets_SingleLeptonFromT* : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.09
+
+Top : TTJets_SingleLeptonFromTbar* :  xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.09
+
+Top : TToLeptons_sch_amcatnlo : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.04
+Top : T_tWch_ext              : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.06
+Top : TBar_tWch_ext           : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.06
+Top : TBar_tch_powheg_part* : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.04
+Top : T_tch_powheg_part* : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.04
+
+DiBosons : WW+WW_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.03
+DiBosons : WZ+WZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+
+
+# use options --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp data_G,data_H
+# to exlude samples you don't want to run on and group all the remaining data together 
+# reminder: mcAnalysis identify data as "data", while "dataXXX" will not be considered data (unless you use the --pg trick)
+# data_B: SingleElectron_Run2016B_part*
+# data_C: SingleElectron_Run2016C_part*
+# data_D: SingleElectron_Run2016D_part*
+# data_E: SingleElectron_Run2016E_part*
+# data_F: SingleElectron_Run2016F_part*
+# data_G: SingleElectron_Run2016G_part*
+# data_H: SingleElectron_Run2016H_part*
+#data: SingleElectron_Run2016*
+data: SingleElectron_07Aug17_Run2016*

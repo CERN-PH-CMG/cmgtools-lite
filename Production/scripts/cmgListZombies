@@ -17,7 +17,7 @@ for f in sys.argv:
     for file in iglob(f):
         if not file.endswith(".root"): continue
         tfile = ROOT.TFile.Open(file)
-        if not tfile or tfile.IsZombie():
+        if not tfile or tfile.IsZombie() or tfile.Recover()==1:
             print file
         try:
             tfile.Close()

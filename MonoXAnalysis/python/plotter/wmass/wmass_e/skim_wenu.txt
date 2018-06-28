@@ -1,0 +1,5 @@
+alwaystrue: 1
+trigger: HLT_SingleEl==1
+one reco el: nLepGood==1 && abs(LepGood1_pdgId)==11
+el acceptance: LepGood1_pt > 25 && abs(LepGood1_eta)<2.5
+el HLT-safe ID: LepGood1_hltId==1

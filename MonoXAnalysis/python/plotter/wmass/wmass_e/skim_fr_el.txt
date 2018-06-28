@@ -1,0 +1,6 @@
+alwaystrue: 1
+trigger: HLT_SingleEl==1
+one electron: nLepGood==1 && abs(LepGood1_pdgId)==11
+el acceptance: LepGood1_pt > 25 && abs(LepGood1_eta)<2.5
+el HLT-safe ID: LepGood1_hltId==1
+one away jet: LepGood1_awayJet_pt>30 

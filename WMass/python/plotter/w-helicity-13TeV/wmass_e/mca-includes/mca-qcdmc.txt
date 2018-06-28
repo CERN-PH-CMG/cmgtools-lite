@@ -1,0 +1,10 @@
+QCD: QCD_Pt20to30_EMEnriched                             : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD: QCD_Pt30to50_EMEnriched+QCD_Pt30to50_EMEnriched_ext : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD: QCD_Pt50to80_EMEnriched_ext                         : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD: QCD_Pt80to120_EMEnriched_ext                        : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+
+QCD : QCD_Pt_170to250_bcToE : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_20to30_bcToE : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_250toInf_bcToE : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_30to80_bcToE : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
+QCD : QCD_Pt_80to170_bcToE : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00

@@ -2,7 +2,8 @@
 #from tree2yield import *
 from CMGTools.MonoXAnalysis.plotter.tree2yield import *
 from CMGTools.MonoXAnalysis.plotter.projections import *
-import pickle, re, random, time
+from CMGTools.MonoXAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
+import pickle, re, random, time, glob
 
 #_T0 = long(ROOT.gSystem.Now())
 
@@ -12,10 +13,10 @@ def _runYields(args):
     return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
 
 def _runPlot(args):
-    key,tty,plotspec,cut,fsplit = args
+    key,tty,plotspec,cut,fsplit,closeTree = args
     timer = ROOT.TStopwatch()
     #print "Starting plot %s for %s, %s" % (plotspec.name,key,tty._cname)
-    ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit))
+    ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=closeTree))
     #print "Done plot %s for %s, %s, fsplit %s in %s s, at %.2f; entries = %d, time/entry = %.3f ms" % (plotspec.name,key,tty._cname,fsplit,timer.RealTime(), 0.001*(long(ROOT.gSystem.Now()) - _T0), ret[1].GetEntries(), (long(ROOT.gSystem.Now()) - _T0)/float(ret[1].GetEntries()))
     return ret
 
@@ -40,13 +41,23 @@ class MCAnalysis:
         self._projection  = Projections(options.project, options) if options.project != None else None
         self._premap = []
         self._optionsOnlyProcesses = {}
-        defaults = {}
+        self.init_defaults = {}
         for premap in options.premap:
             to,fro = premap.split("=")
             if to[-1] == ":": to = to[:-1]
             to = to.strip()
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
+        self.readMca(samples,options)
+
+    def readMca(self,samples,options,addExtras={},field0_addExtras=""):
+
+        # when called with not empty addExtras, issue a warning in case you are overwriting settings
+        if "ALLOW_OVERWRITE_SETTINGS" in addExtras:
+            if addExtras["ALLOW_OVERWRITE_SETTINGS"] == True:
+                print "### WARNING: found setting ALLOW_OVERWRITE_SETTINGS=True in %s. " % str(field0_addExtras)
+                print "### Will use new settings overwriting those in mca included file %s." % str(samples)                    
+
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -55,23 +66,37 @@ class MCAnalysis:
             if ";" in line:
                 (line,more) = line.split(";")[:2]
                 for setting in [f.replace(';',',').strip() for f in more.replace('\\,',';').split(',')]:
+                    if setting == "": continue
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        (key,val) = [f.strip() for f in setting.split("=",1)]
                         extra[key] = eval(val)
                     else: extra[setting] = True
+            for k,v in addExtras.iteritems():
+                if k in extra: 
+                    if "ALLOW_OVERWRITE_SETTINGS" in addExtras and addExtras["ALLOW_OVERWRITE_SETTINGS"] == True:
+                        pass
+                    else:
+                        raise RuntimeError, 'You are trying to overwrite an extra option already set (did you forget ALLOW_OVERWRITE_SETTINGS=True ?)'
+                extra[k] = v
             field = [f.strip() for f in line.split(':')]
             if len(field) == 1 and field[0] == "*":
                 if len(self._allData): raise RuntimeError, "MCA defaults ('*') can be specified only before all processes"
                 #print "Setting the following defaults for all samples: "
                 for k,v in extra.iteritems():
                     #print "\t%s: %r" % (k,v)
-                    defaults[k] = v
+                    self.init_defaults[k] = v
                 continue
             else:
-                for k,v in defaults.iteritems():
+                for k,v in self.init_defaults.iteritems():
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
+            field0noPostFix = field[0]
+            if 'PostFix' in extra:
+                hasPlus = (field[0][-1]=='+')
+                if hasPlus: field[0] = field[0][:-1]
+                field[0] += extra['PostFix']
+                if hasPlus: field[0]+='+'
             signal = False
             pname = field[0]
             if pname[-1] == "+": 
@@ -92,6 +117,17 @@ class MCAnalysis:
                 self._optionsOnlyProcesses[field[0]] = extra
                 self._isSignal[field[0]] = signal
                 continue
+            if field[1] == "+": # include an mca into another one, usage:   otherprocesses : + ; IncludeMca="path/to/other/mca.txt"
+                if 'IncludeMca' not in extra: raise RuntimeError, 'You have declared a component with IncludeMca format, but not included this option'
+                extra_to_pass = copy(extra)
+                del extra_to_pass['IncludeMca']
+                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass,field0_addExtras=field0noPostFix) # call readMca recursively on included mca files
+                continue
+            # Customize with additional weight if requested
+            if 'AddWeight' in extra:
+                if len(field)<2: raise RuntimeError, 'You are trying to set an additional weight, but there is no weight initially defined for this component'
+                elif len(field)==2: field.append(extra['AddWeight'])
+                else: field[2] = '(%s)*(%s)'%(field[2],extra['AddWeight'])
             ## If we have a selection of process names, apply it
             skipMe = (len(options.processes) > 0)
             for p0 in options.processes:
@@ -104,27 +140,46 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
-            cnames = [ x.strip() for x in field[1].split("+") ]
+            match=re.match("(\S+)\*",field[1]) 
+            if match:
+                cnamesWithPath = []
+                for treepath in options.path:
+                    cnamesWithPath += (list(glob.iglob("%s/%s*" % (treepath,match.group(0)))))
+                cnames = [os.path.basename(cname) for cname in cnamesWithPath]
+            else: cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             is_w = -1
+            pname0 = pname
             for cname in cnames:
+                if options.useCnames: pname = pname0+"."+cname
+                for (ffrom, fto) in options.filesToSwap:
+                    if cname == ffrom: cname = fto
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
-                rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
+                objname  = extra["ObjName"]  if "ObjName"  in extra else options.obj
+
+                basepath = None
+                for treepath in options.path:
+                    if os.path.exists(treepath+"/"+cname):
+                        basepath = treepath
+                        break
+                if not basepath:
+                    raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
+
+                rootfile = "%s/%s/%s/%s_tree.root" % (basepath, cname, treename, treename)
                 if options.remotePath:
                     rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
                 elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
                     rootfile = open(rootfile+".url","r").readline().strip()
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (basepath, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
-                    treename = "tree"
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
+                    rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (basepath, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
+                    rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
-                    treename = "tree"
-                pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename); ttys.append(tty)
+                pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -143,6 +198,11 @@ class MCAnalysis:
                         is_w = 1; 
                         total_w += counters['Sum Weights']
                         scale = "genWeight*(%s)" % field[2]
+                    elif not options.weight:
+                        scale = 1
+                        total_w = 1
+                        if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        is_w = 0
                     else:
                         if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
                         is_w = 0;
@@ -153,14 +213,13 @@ class MCAnalysis:
                         for p in p0.split(","):
                             if re.match(p+"$", pname): scale += "*("+s+")"
                     to_norm = True
+                elif len(field) == 2:
+                    pass
                 elif len(field) == 3:
                     tty.setScaleFactor(field[2])
                 else:
-                    try:
-                        pckobj  = pickle.load(open(pckfile,'r'))
-                        counters = dict(pckobj)
-                    except:
-                        pass
+                    print "Poorly formatted line: ", field
+                    raise RuntimeError                    
                 # Adjust free-float and fixed from command line
                 for p0 in options.processesToFloat:
                     for p in p0.split(","):
@@ -171,14 +230,21 @@ class MCAnalysis:
                 for p0, p1 in options.processesToPeg:
                     for p in p0.split(","):
                         if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
+                for p0, p1 in options.processesToSetNormSystematic:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): tty.setOption('NormSystematic', float(p1))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
-                for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                for tty in ttys: 
+                    if options.weight: 
+                        tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                    else: 
+                        tty.setScaleFactor(1)
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
-    def listProcesses(self):
-        ret = self._allData.keys()[:]
-        ret.sort(key = lambda n : self._rank[n])
+    def listProcesses(self,allProcs=False):
+        ret = self.listSignals(allProcs=allProcs) + self.listBackgrounds(allProcs=allProcs)
+        if 'data' in self._allData.keys(): ret.append('data')
         return ret
     def listOptionsOnlyProcesses(self):
         return self._optionsOnlyProcesses.keys()
@@ -201,12 +267,14 @@ class MCAnalysis:
     def scaleUpProcess(self,process,scaleFactor):
         for tty in self._allData[process]: 
             tty.setScaleFactor( "((%s) * (%s))" % (tty.getScaleFactor(),scaleFactor) )
-    def getProcessOption(self,process,name,default=None):
+    def getProcessOption(self,process,name,default=None,noThrow=False):
         if process in self._allData:
             return self._allData[process][0].getOption(name,default=default)
         elif process in self._optionsOnlyProcesses:
             options = self._optionsOnlyProcesses[process]
             return options[name] if name in options else default
+        elif noThrow:
+            return default
         else: raise RuntimeError, "Can't get option %s for undefined process %s" % (name,process)
     def setProcessOption(self,process,name,value):
         if process in self._allData:
@@ -216,6 +284,8 @@ class MCAnalysis:
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
+    def setScales(self,process,scales):
+        for (tty,factor) in zip(self._allData[process],scales): tty.setScaleFactor(factor,mcCorrs=False)
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
         ## first figure out what we want to do
         tasks = []
@@ -261,9 +331,9 @@ class MCAnalysis:
             if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
                 ret['background'] = mergeReports(allBg)
         return ret
-    def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False):
-        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary)
-    def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,replaceweight=None):
+    def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
+        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary,closeTreeAfter)
+    def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
         ret = { }
         allSig = []; allBg = []
         tasks = []
@@ -271,9 +341,7 @@ class MCAnalysis:
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                if replaceweight != None:
-                    tty._weightString = replaceweight
-                tasks.append((key,tty,plotspec,cut,None))
+                tasks.append((key,tty,plotspec,cut,None,closeTreeAfter))
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
         retlist = self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)
@@ -358,6 +426,10 @@ class MCAnalysis:
             if len(allBg)>1:
                 table.append(('ALL BKG',mergeReports([v for n,v in allBg])))
         if "data" in reports: table += [ ('DATA', reports['data']) ]
+        for fomname in self._options.figureOfMerit:
+            fom = FOM_BY_NAME[fomname]
+            nrows = len(table[0][1])
+            table += [ (fomname, [ (None, [fom(self, reports, row), 0, 0]) for row in xrange(nrows) ] ) ]
 
         # maximum length of the cut descriptions
         clen = max([len(cut) for cut,yields in table[0][1]]) + 3
@@ -397,7 +469,9 @@ class MCAnalysis:
                     den = report[i-1][1][0] if i>0 else 0
                     fraction = nev/float(den) if den > 0 else 1
                     if self._options.nMinusOne: 
-                        fraction = report[-1][1][0]/nev if nev > 0 else 1
+                        fraction = report[-1][1][0]/float(nev) if nev > 0 else 1
+                    elif self._options.nMinusOneInverted: 
+                        fraction = float(nev)/report[-1][1][0] if report[-1][1][0] > 0 else 1
                     toPrint = (nev,)
                     if self._options.errors:    toPrint+=(err,)
                     if self._options.fractions: toPrint+=(fraction*100,)
@@ -535,27 +609,33 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--split-static",         dest="splitDynamic", action="store_false", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
     #parser.add_option("--split-sort",         dest="splitSort", action="store_true", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
     parser.add_option("--split-nosort",         dest="splitSort", action="store_false", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
-    parser.add_option("-P", "--path",           dest="path",        type="string", default="./",      help="path to directory with input trees and pickle files (./)") 
+    parser.add_option("-P", "--path", dest="path", action="append", type="string", default=[], help="Path to directory with input trees and pickle files. Can supply multiple paths which will be searched in order. (default: ./") 
     parser.add_option("--RP", "--remote-path",   dest="remotePath",  type="string", default=None,      help="path to remote directory with trees, but not other metadata (default: same as path)") 
     parser.add_option("-p", "--process", dest="processes", type="string", default=[], action="append", help="Processes to print (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--pg", "--pgroup", dest="premap", type="string", default=[], action="append", help="Group proceses into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note tahat it is applied _before_ -p, --sp and --xp");
     parser.add_option("--xf", "--exclude-files", dest="filesToExclude", type="string", default=[], action="append", help="Files to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--xp", "--exclude-process", dest="processesToExclude", type="string", default=[], action="append", help="Processes to exclude (comma-separated list of regexp, can specify multiple ones)");
+    parser.add_option("--sf", "--swap-files", dest="filesToSwap", type="string", default=[], nargs=2, action="append", help="--swap-files X Y uses file Y instead of X in the MCA");
     parser.add_option("--sp", "--signal-process", dest="processesAsSignal", type="string", default=[], action="append", help="Processes to set as signal (overriding the '+' in the text file)");
     parser.add_option("--float-process", "--flp", dest="processesToFloat", type="string", default=[], action="append", help="Processes to set as freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--fix-process", "--fxp", dest="processesToFix", type="string", default=[], action="append", help="Processes to set as not freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--peg-process", dest="processesToPeg", type="string", default=[], nargs=2, action="append", help="--peg-process X Y make X scale as Y (equivalent to set PegNormToProcess=Y in the mca.txt)");
     parser.add_option("--scale-process", dest="processesToScale", type="string", default=[], nargs=2, action="append", help="--scale-process X Y make X scale by Y (equivalent to add it in the mca.txt)");
+    parser.add_option("--process-norm-syst", dest="processesToSetNormSystematic", type="string", default=[], nargs=2, action="append", help="--process-norm-syst X Y sets the NormSystematic of X to be Y (for plots, etc. Overrides mca.txt)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
+    parser.add_option("--use-cnames",  dest="useCnames", action="store_true", help="Use component names instead of process names (for debugging)")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
+    parser.add_option("-t", "--tree",          dest="tree", default='treeProducerWMass', help="Pattern for tree name");
+    parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
 
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] tree.root cuts.txt")
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
+    if not options.path: options.path = ['./']
     tty = TreeToYield(args[0],options) if ".root" in args[0] else MCAnalysis(args[0],options)
     cf  = CutsFile(args[1],options)
     for cutFile in args[2:]:

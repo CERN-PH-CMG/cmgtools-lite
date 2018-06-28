@@ -1,0 +1,44 @@
+N.B.: to run the whole machinery I created the script runfakerate.sh located in ${CMSSW_BASE}/src/CMGTools/MonoXAnalysis/python/plotter
+This script is a wrapper of the python commands described below
+To access the files on eos, the script should be run from lxplus, not pccmsrm29 or other local pc
+
+The trees we use are the same of the signal region (we also have another set obtained with special Fake-rate triggers, but we do not use them)
+
+The base command for electrons (you can use more options) is:
+python wmass/make_fake_rates_data.py | grep python > commands4fakeRate.sh
+that prints the commands to be used
+grep python is just needed to select only commands that run python scripts, removing all other lines
+
+For muons, do 
+python wmass/make_fake_rates_data.py --mu | grep python > commands4fakeRate_mu.sh
+
+Use --etaRange "<arg1>,<arg2>,...,<argN>" passing two or more numbers separated by a comma. They represent the eta bins used to compute fake rate. E.g., 0,1.479,2.1,25 uses a single bin in EB and 2 bins in EE, separated at eta=2.1.
+Use --qcdmc to add QCD MC (true if --mu option is used)
+Use --charge [p/n] to select positive or negative leptons (default use both)
+Use --wp to select working points for numerator selection, 1 for each eta range defined by --etaRange (1 less than number of boundaries). Default is the tight one, can choose tight,medium,loose
+Use --fqcd-ranges to pass the ranges for mt to be used to compute FR (4 numbers separated by commas, e.g. 0,50,70,120 will use [0,50] and [70,120]
+Use --test to select the name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
+Use --mt to select which definition of mT to use: pfmt, trkmt, pfmtfix, trkmtfix (default)
+Use --pt to select which definition of pT to use: pt_coarse, pt_granular (default). Note that this is only for electrons, muons use another definition by default (to be fixed)
+Use --full2016data to use full 2016 dataset (default is B to F). Luminosity is automatically set (35.5 for BtoH, 19.3 for BtoF)
+Use --useSkim to run fake rate on skimmed samples in TREES_1LEP_80X_V3_FRELSKIM_V2 (currently on eos)
+Use --addOpts to pass some options to add to the command (useful when you run the script from another one where you change settings). The argument is a string, use "" to enclose the command (important when you pass options with arguments, e.g. --addOpts " -A cut newcut 'var > threshold' " 
+
+
+WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
+
+Then you can use pack_fake_rates_data.py, which creates the files with TH2 histogram. First argument is the output file name (give absolute path)
+Options --lep-flavour is used to select electrons or muons and it is mandatory.
+
+Use for electrons
+python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_el.root --lep-flavour el
+
+and for muons
+python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_mu.root --lep-flavour mu
+
+Use --charge [p/n] to select positive or negative leptons (default use both)
+Use --wfake to use W_fake instead of QCD as MC (default is QCD)
+Use --inputh-path to specify the path where root files with FR are (provide full path up to the folder containing the root file) 
+
+REMEMBER to change some settings consistently with the pt,eta binning defined in make_fake_rates_xvars.txt. This can be done by using options --etaBinEdges and --ptBinEdges
+

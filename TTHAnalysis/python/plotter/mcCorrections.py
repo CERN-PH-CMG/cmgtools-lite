@@ -15,7 +15,8 @@ class SimpleCorrection:
         self._componentMatch = re.compile(componentMatch) if componentMatch else None
         self._onlyForCuts = onlyForCuts
         self.alsoData = alsoData
-    def __call__(self,expr,process,component,iscut,isdata):
+    #def __call__(self,expr,process,component,iscut,isdata):
+    def __call__(self,expr,process,component,iscut,isdata=False):
         if isdata and not self.alsoData: return expr
         if self._procMatch and not re.match(self._procMatch, process): return expr
         if self._componentMatch and not re.match(self._componentMatch, component   ): return expr

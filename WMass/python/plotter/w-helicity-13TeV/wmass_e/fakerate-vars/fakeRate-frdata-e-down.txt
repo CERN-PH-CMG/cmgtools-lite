@@ -1,0 +1,5 @@
+cut-change: LepGood1_customId: 1
+cut-change: LepGood1_tightChargeFix: 2
+load-histo: FR_el_i2 : $DATA/fakerate/fakeRateSmoothed_el_mT40_json30p9fb_signedEta_pt65_fullWMC.root : frSmoothParameter_data
+load-histo: PR_el_i2 : $DATA/fakerate/fakeRateSmoothed_el_mT40_json30p9fb_signedEta_pt65_fullWMC.root : frSmoothParameter_ewk
+weight: fakeRateWeight_promptRateCorr_1l_i_smoothed(ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_eta,LepGood1_pdgId,LepGood1_customId && LepGood1_tightChargeFix == 2,2,0)

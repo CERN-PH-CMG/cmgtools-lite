@@ -1,0 +1,7 @@
+cut-change: LepGood1_tightId: 4
+cut-change: LepGood1_relIso04EA: 0.0
+cut-change: LepGood1_dz: 0.0
+cut-change: LepGood1_dxy: 0.0
+cut-change: LepGood1_lostHits: 0
+cut-change: LepGood1_convVeto: 1
+weight: getSmoothedFakeRateWeight(ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood1_eta,LepGood1_pdgId,pass_FakerateNumerator2016((abs(LepGood1_etaSc)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA),isData)

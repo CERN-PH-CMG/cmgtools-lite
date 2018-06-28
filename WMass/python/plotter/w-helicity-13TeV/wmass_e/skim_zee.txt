@@ -1,0 +1,6 @@
+alwaystrue: 1
+trigger: HLT_BIT_HLT_Ele27_WPTight_Gsf_v == 1
+two electrons: nLepGood>1 && abs(LepGood1_pdgId)==11 && LepGood1_pdgId == -LepGood2_pdgId
+el acceptance: LepGood1_calPt > 30 && LepGood2_calPt > 20 && abs(LepGood1_eta)<2.5 && abs(LepGood2_eta)<2.5
+el ID: LepGood1_hltId > 0 && LepGood1_customId == 1 && LepGood1_tightChargeFix == 2
+inv mass: abs(mass_2(LepGood1_calPt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_calPt,LepGood2_eta,LepGood2_phi,0.5e-3)-90) < 20

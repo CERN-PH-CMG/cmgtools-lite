@@ -1,0 +1,20 @@
+#pt_coarse:     LepGood_pt: [ 25,27,30,35,40,50,65,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+#pt_coarse:     LepGood_pt: [ 25,30,32,34,36,38,40,42,44,46,50,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+#pt_granular:    ptElFull(LepGood1_calPt,LepGood1_eta) : [ 30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,48,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+pt_granular:    ptElFull(LepGood1_calPt,LepGood1_eta) : [ 30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,52,54,57,60,65 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+pt_coarse:     ptElFull(LepGood1_calPt,LepGood1_eta) : [ 30,34,38,42,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+# pt_granular:    ptElFull(LepGood1_calPt,LepGood1_eta) : [ 25,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+# pt_coarse:     ptElFull(LepGood1_calPt,LepGood1_eta) : [ 25,30,34,38,42,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+#pt_finer:      LepGood_pt: [ 25,27,30,35,45,55,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+#pt_finer:      LepGood_pt: [ 25,27,30,35,45,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+
+pfmt :     mt_2(met_pt,   met_phi, ptElFull(LepGood1_calPt,LepGood1_eta), LepGood1_phi) : 30,0,120; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)"
+trkmt :    mt_2(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta) ,LepGood1_phi) : 30,0,120; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)"
+pfmtfix :  mt_2(met_pt,   met_phi,   35,LepGood1_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
+#trkmtfix : mt_2(met_trkPt,met_trkPhi,35,LepGood1_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
+trkmtfix : tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi, abs(LepGood1_dz)<0.1 ) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
+met : met_pt : 24,0,120; XTitle="E_{T}^{miss} (GeV)"
+
+
+absetal1: abs(LepGood1_eta) : [ 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.4442, 1.479, 1.5, 1.566, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5 ]; XTitle="lepton |#eta|"
+etal1: LepGood1_eta : [ -2.5, -2.4, -2.3, -2.2, -2.1, -2.0, -1.9, -1.8, -1.7, -1.6, -1.566, -1.5, -1.479, -1.4442, -1.4, -1.3, -1.2, -1.1, -1.0, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.4442, 1.479, 1.5, 1.566, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5 ]; XTitle="lepton #eta"

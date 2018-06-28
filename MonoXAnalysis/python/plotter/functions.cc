@@ -1,7 +1,16 @@
+// #include <stdio.h>
+// #include <stdlib.h>
+#include <iostream>
+#include <cstdlib> //as stdlib.h                 
+#include <cstdio>
+#include <map>
+#include <string>
 #include <cmath>
 #include "TH2F.h"
 #include "Math/GenVector/LorentzVector.h"
 #include "Math/GenVector/PtEtaPhiM4D.h"
+
+using namespace std;
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
 
@@ -23,6 +32,10 @@ float deltaR2(float eta1, float phi1, float eta2, float phi2) {
 }
 float deltaR(float eta1, float phi1, float eta2, float phi2) {
     return std::sqrt(deltaR2(eta1,phi1,eta2,phi2));
+}
+
+float Hypot(float x, float y) {
+  return hypot(x,y);
 }
 
 float pt_2(float pt1, float phi1, float pt2, float phi2) {
@@ -52,6 +65,13 @@ float mass_2(float pt1, float eta1, float phi1, float m1, float pt2, float eta2,
     PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
     PtEtaPhiMVector p42(pt2,eta2,phi2,m2);
     return (p41+p42).M();
+}
+
+float eta_2(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, float phi2, float m2) {
+    typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+    PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
+    PtEtaPhiMVector p42(pt2,eta2,phi2,m2);
+    return (p41+p42).Eta();
 }
 
 float pt_3(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3) {
@@ -107,69 +127,305 @@ float mtw_wz3l(float pt1, float eta1, float phi1, float m1, float pt2, float eta
     return 0;
 }
 
+float mt_lu_cart(float lep_pt, float lep_phi, float u_x, float u_y)
+{
+    float lep_px = lep_pt*std::cos(lep_phi), lep_py = lep_pt*std::sin(lep_phi);
+    float u = hypot(u_x,u_y);
+    float uDotLep = u_x*lep_px + u_y*lep_py;
+    return sqrt(2*lep_pt*sqrt(u*u+lep_pt*lep_pt+2*uDotLep) + 2*uDotLep + 2*lep_pt*lep_pt);
+}
+
 float u1_2(float met_pt, float met_phi, float ref_pt, float ref_phi) 
 {
     float met_px = met_pt*std::cos(met_phi), met_py = met_pt*std::sin(met_phi);
     float ref_px = ref_pt*std::cos(ref_phi), ref_py = ref_pt*std::sin(ref_phi);
-    float ux = - met_px + ref_px, uy = - met_px + ref_px;
+    float ux = - met_px + ref_px, uy = - met_py + ref_py;
     return (ux*ref_px + uy*ref_py)/ref_pt;
 }
 float u2_2(float met_pt, float met_phi, float ref_pt, float ref_phi)
 {
     float met_px = met_pt*std::cos(met_phi), met_py = met_pt*std::sin(met_phi);
     float ref_px = ref_pt*std::cos(ref_phi), ref_py = ref_pt*std::sin(ref_phi);
-    float ux = - met_px + ref_px, uy = - met_px + ref_px;
+    float ux = - met_px + ref_px, uy = - met_py + ref_py;
     return (ux*ref_py - uy*ref_px)/ref_pt;
 }
 
-int monojetIDcentralJet(float jetClean_leadClean, float jetClean_eta)
+float met_cal(float met_pt, float met_phi, float lep_pt, float lep_phi, float u_coeff, float u_syst)
 {
-
-  // if jet is central, apply monojet ID requiring jetClean_leadClean (which is 1 or 0 depending on the jet to pass the ID)
-  // if jet is not central, this selection is not applied and condition is always considered true (that is 1)
-  // this condition is tipically applied on the leading jet
-
-  // WARNING: jetClean_leadClean is a float, but it should be a flag, so better to cast it to int after summing 0.5
-  // e.g. if 1 in float is read as 0.9999999...., then when casting the flag could be converted to 0, so add 0.5 and (int) 1.4999999 will be 1
-
-  if (abs(jetClean_eta) < 2.5) return ((int) jetClean_leadClean + 0.5);
-  else return 1;
-
+    float met_px = met_pt*std::cos(met_phi), met_py = met_pt*std::sin(met_phi);
+    float lep_px = lep_pt*std::cos(lep_phi), lep_py = lep_pt*std::sin(lep_phi);
+    float ux = met_px + lep_px, uy = met_py + lep_py;
+    float metcal_px = - u_coeff*ux*(1+u_syst) - lep_px, metcal_py = - u_coeff*uy*(1+u_syst) - lep_py;
+    return hypot(metcal_px,metcal_py);
 }
 
-int lepTightIdAndPt(float nLepT, float lep1_pt, int lep1_tightID, float lep2_pt, int lep2_tightID, float pT_threshold, int absLepPdgId)
+float _puw2016_nTrueInt_BF[60] = {0.0004627598152210959, 0.014334910915287028, 0.01754727657726197, 0.03181477917631854, 0.046128282569231016, 0.03929080994013006, 0.057066019809589925, 0.19570744862221007, 0.3720256062526554, 0.6440076202772811, 0.9218024454406528, 1.246743510634073, 1.5292543296414058, 1.6670061646418215, 1.7390553377117133, 1.6114721876895595, 1.4177294439817985, 1.420132866045718, 1.3157656415540477, 1.3365188060918483, 1.1191478126677334, 0.9731079434848392, 0.9219564145009487, 0.8811793391804676, 0.7627315352977334, 0.7265186492688713, 0.558602385324645, 0.4805954159733825, 0.34125298049234554, 0.2584848657646724, 0.1819638766151892, 0.12529545619337035, 0.11065705912071645, 0.08587356267495487, 0.09146322371620583, 0.11885517671051576, 0.1952483711863489, 0.23589115679998116, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+float puw2016_nTrueInt_BF(int nTrueInt) { if (nTrueInt<60) return _puw2016_nTrueInt_BF[nTrueInt]; else return 0; }
+
+float _puw2016_nTrueInt_36fb[100] = {0.3505407355600995, 0.8996968628890968, 1.100322319466069, 0.9562526765089195, 1.0366251229154624, 1.0713954619016586, 0.7593488199769544, 0.47490309461978414, 0.7059895997695581, 0.8447022252423783, 0.9169159386164522, 1.0248924033173097, 1.0848877947714115, 1.1350984224561655, 1.1589888429954602, 1.169048420382294, 1.1650383018054549, 1.1507200023444994, 1.1152571438041776, 1.0739529436969637, 1.0458014000030829, 1.032500407707141, 1.0391236062781293, 1.041283620738903, 1.0412963370894526, 1.0558823002770783, 1.073481674823461, 1.0887053272606795, 1.1041701696801014, 1.123218903738397, 1.1157169321377927, 1.1052520327174429, 1.0697489590429388, 1.0144652740600584, 0.9402657069968621, 0.857142825520793, 0.7527112615290031, 0.6420618248685722, 0.5324755829715156, 0.4306470627563325, 0.33289171600176093, 0.24686361729094983, 0.17781595237914027, 0.12404411884835284, 0.08487088505600057, 0.056447805688061216, 0.03540829360547507, 0.022412461576677457, 0.013970541270658443, 0.008587896629717911, 0.004986410514292661, 0.00305102303701641, 0.001832072556146534, 0.0011570757619737708, 0.0008992999249003301, 0.0008241241729452477, 0.0008825716073180279, 0.001187003960081393, 0.0016454104270429153, 0.0022514113879764414, 0.003683196037880878, 0.005456695951503178, 0.006165248770884191, 0.007552675218762607, 0.008525338219226993, 0.008654690499815343, 0.006289068906974821, 0.00652551838513972, 0.005139581024893171, 0.005115751962934923, 0.004182527768384693, 0.004317593022028565, 0.0035749335962533355, 0.003773660372937113, 0.002618732319396435, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+float puw2016_nTrueInt_36fb(int nTrueInt) { if (nTrueInt<100) return _puw2016_nTrueInt_36fb[nTrueInt]; else return 0; }
+
+// functions to assess if events pass given ID cuts
+// isEB can be defined as (LepGood1_etaSc)<1.479 
+// note that 2016 cut-based ID defines thesholds for EB and EE using SuperCluster eta
+// the real ID WP part is in LepGood1_tightId, LepGood1_lostHits and LepGood1_convVeto
+// dxy and dz are not part of the official ID WP, but we use the suggested thresholds anyway
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2
+// 
+// list of functions to manage IDs
+// those marked with ** are work in progress (problems with string, format is n tcompatible with TTree::Draw() used by mcPlots.py)
+// -------------------------------
+// pass_dxy_dz
+// pass_lostHits_conVe
+// pass_looseIDnoIso_2016
+// pass_mediumIDnoIso_2016
+// pass_tightIDnoIso_2016
+// pass_workingPointIDnoIso_2016 **
+// pass_isolation_2016 **
+// passFakerateNumerator2016 **
+// isInFakerateApplicationRegion2016 **
+// pass_isolation_WP
+// pass_FakerateNumerator2016
+// pass_FakerateApplicationRegion2016
+//
+//
+// -------------------------------
+
+
+// pass dxy and dz
+bool pass_dxy_dz(const bool isEB = true, 
+		 const float LepGood1_dxy = -999, 
+		 const float LepGood1_dz = -999
+		 ) 
 {
-
-  // when using nMu20T and nEle40T in Z(ll), if there is only 1 tightID lepton it is not guaranteed that the tight one is that with highest pT.
-  // this function manage the possible cases, so it basically returns -->  (lep1_isTight and pT1> XXX) || lep2_isTight and pT2 > XXX)
-  // usually the requirement on the number of tight leptons from the Z is used together with nMu10V or nEle10V = 2.
-  //Therefore,  only the case nTightLeptons = 1 or 2 are considered
-
-  int NlepT = (int) (nLepT + 0.5); 
-
-  if (NlepT == 1) {
-
-    if      (absLepPdgId == 11) return ( (lep1_tightID >= 3 && lep1_pt > pT_threshold) || (lep2_tightID >= 3 && lep2_pt > pT_threshold) );
-    else if (absLepPdgId == 13) return ( (lep1_tightID >= 1 && lep1_pt > pT_threshold) || (lep2_tightID >= 1 && lep2_pt > pT_threshold) );
-    else                        return 0;   // in case the pdgId is wrong
-
-  } else if (NlepT == 2) {
-
-    return (lep1_pt > pT_threshold || lep2_pt > pT_threshold);
-
-  } else return 0;
-
-}
-
-float vbfdm_2Dto1D(float mjj, float detajj) {
-  float bins_mjj[6] = {0,750,1100,2000,3000,7000};
-  float bins_detajj[4] = {0,3,5,20};
   
-  TH2F binning("binning_2D","",5,bins_mjj,3,bins_detajj);
-  if (detajj<bins_detajj[1] && mjj>bins_mjj[2]) return 3;
-  else if (detajj>bins_detajj[1] && detajj<bins_detajj[2] && mjj>bins_mjj[4]) return 7;
-  else if (detajj>bins_detajj[2] && mjj<bins_mjj[3]) return 8;
-  else return binning.GetNbinsX()*(binning.GetYaxis()->FindBin(detajj)-1) + binning.GetXaxis()->FindBin(mjj) - 2*(detajj>bins_detajj[1] && detajj<bins_detajj[2]) - 5*(detajj>bins_detajj[2]);
+  if (isEB) return (abs(LepGood1_dxy) < 0.05 && abs(LepGood1_dz) < 0.1);
+  else      return (abs(LepGood1_dxy) < 0.1  && abs(LepGood1_dz) < 0.2);
+
 }
+
+// missing hits and conversion veto
+bool pass_lostHits_conVeto(const float LepGood1_lostHits = -999, 
+			   const float LepGood1_convVeto = -999
+			   ) 
+{
+  return (LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+}
+
+
+// loose ID no isolation
+bool pass_looseIDnoIso_2016(const bool  isEB = true, 
+			    const int   LepGood1_tightId = -1, 
+			    const float LepGood1_dxy = -999, 
+			    const float LepGood1_dz = -999,
+			    const int   LepGood1_lostHits = -1,
+			    const int   LepGood1_convVeto = -999
+			    ) 
+{
+
+  return (LepGood1_tightId >= 1 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits,LepGood1_convVeto) );
+
+}
+
+// medium ID no isolation
+bool pass_mediumIDnoIso_2016(const bool  isEB = true, 
+			     const int   LepGood1_tightId = -1, 
+			     const float LepGood1_dxy = -999, 
+			     const float LepGood1_dz = -999,
+			     const int   LepGood1_lostHits = -1,
+			     const int   LepGood1_convVeto = -999
+			     ) 
+{
+
+  return (LepGood1_tightId >= 2 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits,LepGood1_convVeto) );
+
+}
+
+// tight ID no isolation
+bool pass_tightIDnoIso_2016(const bool  isEB = true, 
+			    const int   LepGood1_tightId = -1, 
+			    const float LepGood1_dxy = -999, 
+			    const float LepGood1_dz = -999,
+			    const int   LepGood1_lostHits = -1,
+			    const int   LepGood1_convVeto = -999
+			    ) 
+{
+
+  return (LepGood1_tightId >= 3 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits,LepGood1_convVeto) );
+
+}
+
+/////////////////////////////////////////////////////
+//
+// Following commented functions are work in progress
+// Problems in using string
+//
+/////////////////////////////////////////////////////
+
+// bool pass_workingPointIDnoIso_2016(const string workingPoint = "loose", // loose, medium, tight
+// 				   const bool  isEB = true, 
+// 				   const int   LepGood1_tightId = -1, 
+// 				   const float LepGood1_dxy = -999, 
+// 				   const float LepGood1_dz = -999,
+// 				   const int   LepGood1_lostHits = -1,
+// 				   const int   LepGood1_convVeto = -999
+// 				   ) 
+// {
+
+//   if      (workingPoint == "loose" ) return pass_looseIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+//   else if (workingPoint == "medium") return pass_mediumIDnoIso_2016( isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+//   else if (workingPoint == "tight" ) return pass_tightIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+//   else {
+//     cout << "Error in function pass_workingPointIDnoIso_2016(): undefined working point "<< workingPoint << ", please check. Exiting ..." <<endl;
+//     exit(EXIT_FAILURE);
+//   }
+
+// }
+
+
+// bool pass_isolation_2016(const string workingPoint = "loose", // loose, medium, tight, custom
+// 			 const bool   isEB = true,
+// 			 const float  LepGood1_relIso04EA = -1,
+// 			 )
+// {
+
+//   // WARNING: test that strings are accepted by mc*.py, currently they are not
+//   // function format should be compatible with TTre::Draw()
+//   std::map<string,float> workingPointIsolation_EB;
+//   workingPointIsolation_EB["veto"  ] = 0.175; 
+//   workingPointIsolation_EB["loose" ] = 0.0994; 
+//   workingPointIsolation_EB["medium"] = 0.0695; 
+//   workingPointIsolation_EB["tight" ] = 0.0588; 
+//   workingPointIsolation_EB["custom"] = 0.2; 
+//   std::map<std::string,float> workingPointIsolation_EE;
+//   workingPointIsolation_EE["veto"  ] = 0.159; 
+//   workingPointIsolation_EE["loose" ] = 0.107; 
+//   workingPointIsolation_EE["medium"] = 0.0821; 
+//   workingPointIsolation_EE["tight" ] = 0.0571; 
+//   workingPointIsolation_EE["custom"] = 0.0821;
+
+//   if (isEB) return LepGood1_relIso04EA < workingPointIsolation_EB[workingPoint];
+//   else      return LepGood1_relIso04EA < workingPointIsolation_EE[workingPoint];
+
+// }
+
+// bool passFakerateNumerator2016(const string workingPoint = "loose", // loose, medium, tight
+// 			       const bool   isEB = true, 
+// 			       const int    LepGood1_tightId = -1, 
+// 			       const float  LepGood1_dxy = -999, 
+// 			       const float  LepGood1_dz = -999,
+// 			       const int    LepGood1_lostHits = -1,
+// 			       const int    LepGood1_convVeto = -999,
+// 			       const float  LepGood1_relIso04EA = -1,
+// 			       const bool   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+// 			       ) 
+// {
+
+//   return (pass_workingPointIDnoIso_2016(workingPoint,isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto) 
+// 	  && 
+// 	  pass_isolation_2016(workingPoint,isEB,LepGood1_relIso04EA,useCustomRelIso04EA)
+// 	  );
+
+// }
+
+
+// bool isInFakerateApplicationRegion2016(const string workingPoint = "loose", // loose, medium, tight
+// 				       const bool   isEB = true, 
+// 				       const int    LepGood1_tightId = -1, 
+// 				       const float  LepGood1_dxy = -999, 
+// 				       const float  LepGood1_dz = -999,
+// 				       const int    LepGood1_lostHits = -1,
+// 				       const int    LepGood1_convVeto = -999,
+// 				       const float  LepGood1_relIso04EA = -1,
+// 				       const bool   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+// 				       ) 
+// {
+
+//   return (not passFakerateNumerator2016(workingPoint,isEB,
+// 					LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,
+// 					LepGood1_relIso04EA,useCustomRelIso04EA
+// 					)
+// 	  );
+
+// }
+
+//==========================
+
+bool pass_isolation_WP(const bool isEB = true, const float  LepGood1_relIso04EA = -1)
+{
+  return (LepGood1_relIso04EA < (isEB ? 0.2 : 0.0821)); // custom value for EB, medium WP for EE
+}
+
+//==========================
+
+bool pass_FakerateNumerator2016(const bool   isEB = true, 
+				const int    LepGood1_tightId = -1, 
+				const float  LepGood1_dxy = -999, 
+				const float  LepGood1_dz = -999,
+				const int    LepGood1_lostHits = -1,
+				const int    LepGood1_convVeto = -999,
+				const float  LepGood1_relIso04EA = -1
+				) 
+{
+
+  // EB, loose ID + iso < 0.2
+  // EE full medium ID + iso
+
+  if (isEB) {
+    return (pass_looseIDnoIso_2016(isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto)
+	    && 
+	    pass_isolation_WP(isEB,LepGood1_relIso04EA)
+	    );
+  } else {
+    return (pass_mediumIDnoIso_2016(isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto)
+	    &&
+	    pass_isolation_WP(isEB,LepGood1_relIso04EA)
+	    );
+  }
+
+}
+
+//==========================
+
+
+bool pass_FakerateApplicationRegion2016(const bool   isEB = true, 
+					const int    LepGood1_tightId = -1, 
+					const float  LepGood1_dxy = -999, 
+					const float  LepGood1_dz = -999,
+					const int    LepGood1_lostHits = -1,
+					const int    LepGood1_convVeto = -999,
+					const float  LepGood1_relIso04EA = -1
+					) 
+{
+
+  return (not pass_FakerateNumerator2016(isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA));
+
+}
+
+
+//==================================================
+
+bool pass_FakerateNum_debug(const bool  isEB = true, 
+			    const int   LepGood1_tightId = -1, 
+			    const float LepGood1_dxy = -999, 
+			    const float LepGood1_dz = -999,
+			    const int   LepGood1_lostHits = -1,
+			    const int   LepGood1_convVeto = -999,
+			    const float LepGood1_relIso04EA = -1
+			    ) 
+{
+
+  // EB, loose ID + iso < 0.2
+  // EE full medium ID + iso
+
+  if (isEB) {
+    return (LepGood1_tightId >= 1 && abs(LepGood1_dxy) <= 0.05 && abs(LepGood1_dxy) <= 0.1 && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1 && LepGood1_relIso04EA <= 0.2);
+  } else {
+    return (LepGood1_tightId >= 2 && abs(LepGood1_dxy) <= 0.1 && abs(LepGood1_dxy) <= 0.2 && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1 && LepGood1_relIso04EA <= 0.0821);
+  }
+
+}
+//==================================================
+
 
 void functions() {}

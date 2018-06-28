@@ -1,0 +1,7 @@
+data: DoubleEG_Run2016B
+data: DoubleEG_Run2016C
+data: DoubleEG_Run2016D
+data: DoubleEG_Run2016E
+data: DoubleEG_Run2016F
+data: DoubleEG_Run2016G
+data: DoubleEG_Run2016H

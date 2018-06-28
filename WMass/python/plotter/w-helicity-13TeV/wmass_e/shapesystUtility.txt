@@ -1,0 +1,25 @@
+###############################
+#
+# names matches the histogram name in datacard (+ Up or Down)
+# 3rd field, if present, indicates that there are N variations (like for pfd, we have 60)
+#
+# ==================================================================
+# Fake rate uncertainties
+# Measurement of the fake rate: shapes (slope of FR)
+# ==================================================================
+CMS_We_FRe_pt        : data_fakes  
+
+# ==================================================================
+# PDF and QCD scales 
+# ==================================================================
+pdf                  : W.*|Z      :  60
+alphaS               : W.*|Z
+muR                  : W.*|Z
+muF                  : W.*|Z
+muRmuF               : W.*|Z
+
+# ==================================================================
+# W only 
+# ==================================================================
+CMS_We_elescale      : W.*        
+wptSlope             : W.*

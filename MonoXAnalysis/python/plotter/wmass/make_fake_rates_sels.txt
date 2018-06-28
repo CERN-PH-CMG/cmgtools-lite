@@ -1,0 +1,14 @@
+# tight ID for electron
+FullSel_tightID: LepGood1_hltId > 0 && LepGood1_relIso04EA < if3(abs(LepGood1_etaSc)<1.479,0.0588,0.0571) && LepGood1_tightId >= 3 && LepGood1_convVeto && LepGood1_lostHits <= 1 && abs(LepGood1_dz) < if3(abs(LepGood1_etaSc)<1.479,0.1,0.2) && abs(LepGood1_dxy) < if3(abs(LepGood1_etaSc)<1.479,0.05,0.1):  2,-0.5,1.5;   Title="tight ID EGM", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+# medium ID for electron
+FullSel_mediumID: LepGood1_hltId > 0 && LepGood1_tightId >= 2 && LepGood1_convVeto && LepGood1_lostHits <= 1 && if3(abs(LepGood1_etaSc)<1.479, LepGood1_relIso04EA < 0.0695 && abs(LepGood1_dz) < 0.1 && abs(LepGood1_dxy) < 0.05, LepGood1_relIso04EA < 0.0821 && abs(LepGood1_dz) < 0.2 && abs(LepGood1_dxy) < 0.1):  2,-0.5,1.5;   Title="medium ID EGM", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+#
+# loose ID for electons (warning, looser isolation wrt WP)
+FullSel_looseID: LepGood1_hltId > 0 && LepGood1_tightId >= 1 && LepGood1_convVeto && LepGood1_lostHits <= 1 && if3(abs(LepGood1_etaSc)<1.479, LepGood1_relIso04EA < 0.2 && abs(LepGood1_dz) < 0.1 && abs(LepGood1_dxy) < 0.05, LepGood1_relIso04EA < 0.2 && abs(LepGood1_dz) < 0.2 && abs(LepGood1_dxy) < 0.1):  2,-0.5,1.5;   Title="Loose ID EGM (iso < 0.2)", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+#
+# Run2 cut-based ID: https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2
+#
+# muon cuts to be revisited, they are taken from 8 TeV
+MuonIso: LepGood1_relIso04 < 0.12 :  2,-0.5,1.5;   Title="muon isolation", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+MuonTightIso: LepGood1_tightId > 0 && LepGood1_relIso04 < 0.12 :  2,-0.5,1.5;   Title="muon isolation", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+

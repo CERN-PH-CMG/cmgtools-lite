@@ -1,0 +1,26 @@
+trkmt: mt_2(met_trkPt,met_trkPhi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood_phi) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TR', IncludeOverflows=False
+trkmtfix: mt_2(met_trkPt,met_trkPhi,35,LepGood_phi): 60,0,120 ; XTitle="Trk m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TR', IncludeOverflows=False
+pfmt: mt_2(met_pt,met_phi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood_phi) : 60,0,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+pfmtfix: mt_2(met_pt,met_phi,35,LepGood_phi): 60,0,120 ; XTitle="PF m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TR', IncludeOverflows=False
+
+ele1Iso04: LepGood1_relIso04EA : 50,0,0.5 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
+nJetClean: nJet_Clean : 5,-0.5,4.5 ; XTitle="number of jets (cleaned)", Legend='TR', IncludeOverflows=True
+
+ptl1: ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt): 40,25,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+etal1: LepGood1_eta: 50,-2.5,2.5 ; XTitle="trailing electron #eta", Legend='TL', IncludeOverflows=False
+
+pfmet: met_pt : 20,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+tkmet: met_trkPt : 20,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+
+nVert: nVert : 20,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
+rho: rho : 20,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
+ele1ID: LepGood1_tightId : 5,-0.5,4.5 ; XTitle="electron ID (ele1)", Legend='TL', IncludeOverflows=True
+
+awayJet_pt: LepGood_awayJet_pt : 60,20,80; XTitle="away jet p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+
+wpt_tk: pt_2(ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt), LepGood1_phi, met_trkPt, met_trkPhi ): 40,0,40 ; XTitle="W p_{T} (charged PF E_{T}^{miss}) [GeV]", Legend='TR', IncludeOverflows=False 
+#wpt_pf: pt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi ): 40,0,40 ; XTitle="W p_{T} (PF E_{T}^{miss}) [GeV]", Legend='TR', IncludeOverflows=False 
+
+#dphiLepJet : abs(deltaPhi(LepGood1_phi,Jet1_phi))*(nJet>1) : 32,0.0,3.2; XTitle="#Delta#phi(electron\,jet)\, nJet>1", Legend='TR', IncludeOverflows=True, Logy=True
+ele1dxy: abs(LepGood1_dxy) : 40,0,0.4 ; XTitle="#Deltaxy (ele1) [cm]", Legend='TR', IncludeOverflows=False, Logy=True
+

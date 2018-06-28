@@ -1,0 +1,2 @@
+alwaystrue : 1
+wtomu      : abs(genw_decayId) == 14
