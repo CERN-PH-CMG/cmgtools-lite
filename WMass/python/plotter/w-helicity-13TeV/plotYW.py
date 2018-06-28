@@ -9,6 +9,68 @@ ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
 import utilities
 utilities = utilities.util()
 
+
+class valueClass:
+    def __init__(self, name):
+        self.name = name
+
+        self.pol = 'left' if 'left' in self.name else 'right' if 'right' in self.name else 'long'
+        self.isleft  = self.pol == 'left'
+        self.isright = self.pol == 'right'
+        self.islong  = self.pol == 'long'
+
+        self.charge = 'plus' if 'plus' in name else 'minus'
+        self.ch     = '+' if 'plus' in name else '-'
+
+        self.color  = ROOT.kAzure+8 if self.isleft else ROOT.kOrange+7 if self.isright else ROOT.kGray+1
+        self.colorf = ROOT.kAzure+3 if self.isleft else ROOT.kOrange+9 if self.isright else ROOT.kGray+3
+
+        ## here all the arrays that will contain the values and errors etc.
+        self.val       = array.array('f', []); self.ehi       = array.array('f', []); self.elo       = array.array('f', []);
+        self.val_fit   = array.array('f', []); self.ehi_fit   = array.array('f', []); self.elo_fit   = array.array('f', []);
+        self.relv      = array.array('f', []); self.relhi     = array.array('f', []); self.rello     = array.array('f', []);
+        self.relv_fit  = array.array('f', []); self.relhi_fit = array.array('f', []); self.rello_fit = array.array('f', []);
+        self.rap       = array.array('f', []); self.rlo       = array.array('f', []); self.rhi       = array.array('f', []);
+
+    def makeGraphs(self):
+        self.graph = ROOT.TGraphAsymmErrors(len(self.val), self.rap, self.val, self.rlo, self.rhi, self.elo, self.ehi)
+        self.graph.SetName('graph'+self.pol)
+        self.graph_rel= ROOT.TGraphAsymmErrors(len(self.relv), self.rap, self.relv, self.rlo, self.rhi, self.rello, self.relhi)
+        self.graph_rel.SetName('graph'+self.pol+'_rel')
+
+        self.graph_fit = ROOT.TGraphAsymmErrors(len(self.val_fit), self.rap, self.val_fit, self.rlo, self.rhi, self.elo_fit, self.ehi_fit)
+        self.graph_fit.SetName('graph'+self.pol+'_fit')
+        self.graph_fit_rel = ROOT.TGraphAsymmErrors(len(self.relv_fit), self.rap, self.relv_fit, self.rlo, self.rhi, self.rello_fit, self.relhi_fit)
+        self.graph_fit_rel.SetName('graph'+self.pol+'_fit_rel')
+    
+        self.graphStyle()
+        self.makeMultiGraphRel()
+
+    def makeMultiGraphRel(self):
+        self.mg = ROOT.TMultiGraph()
+        self.mg.SetTitle('W^{{{ch}}}: {p}'.format(ch=self.ch,p=self.pol))
+        self.mg.Add(self.graph_rel,'P2')
+        self.mg.Add(self.graph_fit_rel)
+
+    def graphStyle(self):
+        if not self.graph:
+            print 'ERROR: this struct has no graphs!!!'
+            sys.exit()
+        self.graph.SetLineColor(self.color)
+        self.graph.SetFillColor(self.color)
+        self.graph.SetFillStyle(3002)
+    
+        self.graph_fit.SetLineWidth(2)
+        self.graph_fit.SetLineColor(self.colorf)
+    
+        self.graph_rel.SetLineWidth(5)
+        self.graph_rel.SetLineColor(self.color)
+        self.graph_rel.SetFillColor(self.color)
+        self.graph_rel.SetFillStyle(3002)
+        self.graph_fit_rel.SetLineWidth(2)
+        self.graph_fit_rel.SetLineColor(self.colorf)
+        
+
 NPDFs = 60
 
 if __name__ == "__main__":
@@ -85,7 +147,7 @@ if __name__ == "__main__":
 
         shape_syst = {}
         value_syst = {}
-        for pol in ['left','right']: #,'long']:
+        for pol in ['left','right', 'long']:
             histos = []
             values = []
             for ip in xrange(1,NPDFs+1):
@@ -100,7 +162,7 @@ if __name__ == "__main__":
 
         systematics = {}
         xsec_systematics = {}
-        for pol in ['left','right']: #,'long']:
+        for pol in ['left','right', 'long']:
             #print "===> Running pol = ",pol
             systs=[]
             xsec_systs=[]
@@ -128,49 +190,29 @@ if __name__ == "__main__":
             systematics[pol]=systs
             xsec_systematics[pol]=xsec_systs
 
-        ## this is where the ugly stuff starts
-        arr_val   = array.array('f', [])
-        arr_ehi   = array.array('f', [])
-        arr_elo   = array.array('f', [])
-        arr_relv  = array.array('f', [])
-        arr_relhi = array.array('f', [])
-        arr_rello = array.array('f', [])
-        arr_val_fit   = array.array('f', [])
-        arr_ehi_fit   = array.array('f', [])
-        arr_elo_fit   = array.array('f', [])
-        arr_relv_fit  = array.array('f', [])
-        arr_relhi_fit = array.array('f', [])
-        arr_rello_fit = array.array('f', [])
-        arr_rap   = array.array('f', [])
-        arr_rlo   = array.array('f', [])
-        arr_rhi   = array.array('f', [])
-
-        for pol in ['left','right']:
+        allValues = {}
+        for pol in ['left','right', 'long']:
             cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
             MAXYFORNORM = ybins[cp][-2] # exclude the outermost bin which has huge error due to acceptance
             normsigma = sum([xsec_nominal[pol][iy] for iy,y in enumerate(ybins[cp][:-1]) if abs(y)<MAXYFORNORM])
             print "total xsec up to |Y|<{maxy} = {sigma:.3f} (pb)".format(maxy=MAXYFORNORM,sigma=normsigma)
 
-            arr_val       = array.array('f', []); arr_ehi       = array.array('f', []); arr_elo       = array.array('f', []);
-            arr_val_fit   = array.array('f', []); arr_ehi_fit   = array.array('f', []); arr_elo_fit   = array.array('f', []);
-            arr_relv      = array.array('f', []); arr_relhi     = array.array('f', []); arr_rello     = array.array('f', []);
-            arr_relv_fit  = array.array('f', []); arr_relhi_fit = array.array('f', []); arr_rello_fit = array.array('f', []);
-            arr_rap       = array.array('f', []); arr_rlo       = array.array('f', []); arr_rhi       = array.array('f', []);
+            tmp_val = valueClass('values_'+charge+'_'+pol)
 
             for iy,y in enumerate(ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)]):
                 parname = 'W{charge}_{pol}_W{charge}_{pol}_{ch}_Ybin_{iy}'.format(charge=charge,pol=pol,ch=channel,iy=iy)
 
-                arr_val.append(xsec_nominal[pol][iy]/ybinwidths[cp][iy])
-                arr_ehi.append(xsec_systematics[pol][iy]/ybinwidths[cp][iy])
-                arr_elo.append(xsec_systematics[pol][iy]/ybinwidths[cp][iy]) # symmetric for the expected
+                tmp_val.val.append(xsec_nominal[pol][iy]/ybinwidths[cp][iy])
+                tmp_val.ehi.append(xsec_systematics[pol][iy]/ybinwidths[cp][iy])
+                tmp_val.elo.append(xsec_systematics[pol][iy]/ybinwidths[cp][iy]) # symmetric for the expected
                 if options.normxsec:
-                    arr_val[-1] = arr_val[-1]/normsigma
-                    arr_ehi[-1] = arr_ehi[-1]/normsigma
-                    arr_elo[-1] = arr_elo[-1]/normsigma
+                    tmp_val.val[-1] = tmp_val.val[-1]/normsigma
+                    tmp_val.ehi[-1] = tmp_val.ehi[-1]/normsigma
+                    tmp_val.elo[-1] = tmp_val.elo[-1]/normsigma
 
-                arr_relv. append(1.);
-                arr_rello.append(systematics[pol][iy]/nominal[pol][iy])
-                arr_relhi.append(systematics[pol][iy]/nominal[pol][iy]) # symmetric for the expected
+                tmp_val.relv. append(1.);
+                tmp_val.rello.append(systematics[pol][iy]/nominal[pol][iy])
+                tmp_val.relhi.append(systematics[pol][iy]/nominal[pol][iy]) # symmetric for the expected
                 
                 if options.normxsec:
                     xsec_fit = utilities.getNormalizedXsecFromToys(ybins,charge,pol,channel,iy,options.infile,MAXYFORNORM)
@@ -178,96 +220,59 @@ if __name__ == "__main__":
                     xsec_parname = parname+'_pmaskedexp'
                     xsec_fit = valuesAndErrors[xsec_parname]
                 
-                arr_val_fit.append(xsec_fit[0]/ybinwidths[cp][iy])
-                arr_elo_fit.append(abs(xsec_fit[0]-xsec_fit[1])/ybinwidths[cp][iy])
-                arr_ehi_fit.append(abs(xsec_fit[0]-xsec_fit[2])/ybinwidths[cp][iy])
+                tmp_val.val_fit.append(xsec_fit[0]/ybinwidths[cp][iy])
+                tmp_val.elo_fit.append(abs(xsec_fit[0]-xsec_fit[1])/ybinwidths[cp][iy])
+                tmp_val.ehi_fit.append(abs(xsec_fit[0]-xsec_fit[2])/ybinwidths[cp][iy])
 
                 units = '' if options.normxsec else '(pb)'
                 print "par = {parname}, expected sigma = {sigma:.3f} {units}   fitted = {val:.3f} + {ehi:.3f} - {elo:.3f} {units}".format(parname=parname,
-                                                                                                                                          sigma=arr_val[-1],units=units,
-                                                                                                                                          val=arr_val_fit[-1],ehi=arr_ehi_fit[-1],elo=arr_elo_fit[-1])
-
-                ## old # renormalize the theo to the fitted ones (should match when running on the expected)
-                ## old arr_ehi[-1] = arr_ehi[-1]/arr_val[-1]*arr_val_fit[-1]
-                ## old arr_elo[-1] = arr_elo[-1]/arr_val[-1]*arr_val_fit[-1]
-                ## old arr_val[-1] = arr_val_fit[-1]
-
-                ## old arr_relv_fit .append(fitval[parname]/nominal[pol][iy])
-                ## old arr_rello_fit.append(fiterr[parname]/nominal[pol][iy])
-                ## old arr_relhi_fit.append(fiterr[parname]/nominal[pol][iy]) ## forced to be symmetric for now
+                                                                                                                                          sigma=tmp_val.val[-1],units=units,
+                                                                                                                                          val=tmp_val.val_fit[-1],ehi=tmp_val.ehi_fit[-1],elo=tmp_val.elo_fit[-1])
 
                 if options.normxsec:
                     rfit = tuple([xs/xsec_nominal[pol][iy]*normsigma for xs in xsec_fit]) # rescale the fit xsec by the expected xsec in that bin
                 else:
                     rfit = valuesAndErrors[parname] # r values: contain all the common norm uncertainties (lumi, eff...)
 
-                arr_relv_fit .append(rfit[0])
-                arr_rello_fit.append(abs(rfit[0]-rfit[1]))
-                arr_relhi_fit.append(abs(rfit[0]-rfit[2]))
+                tmp_val.relv_fit .append(rfit[0])
+                tmp_val.rello_fit.append(abs(rfit[0]-rfit[1]))
+                tmp_val.relhi_fit.append(abs(rfit[0]-rfit[2]))
 
-                arr_rap.append((ybins[cp][iy]+ybins[cp][iy+1])/2.)
-                arr_rlo.append(abs(ybins[cp][iy]-arr_rap[-1]))
-                arr_rhi.append(abs(ybins[cp][iy]-arr_rap[-1]))
+                tmp_val.rap.append((ybins[cp][iy]+ybins[cp][iy+1])/2.)
+                tmp_val.rlo.append(abs(ybins[cp][iy]-tmp_val.rap[-1]))
+                tmp_val.rhi.append(abs(ybins[cp][iy]-tmp_val.rap[-1]))
 
-            if 'left' in pol:
-                # print 'left {ch}: {i}'.format(ch=charge, i=sum(arr_val))
-                graphLeft      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
-                graphLeft_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
-                graphLeft     .SetName('graphLeft')
-                graphLeft_rel .SetName('graphLeft_rel')
-                graphLeft_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
-                graphLeft_fit_rel  = ROOT.TGraphAsymmErrors(len(arr_relv_fit), arr_rap, arr_relv_fit, arr_rlo, arr_rhi, arr_rello_fit, arr_relhi_fit)
-                graphLeft_fit     .SetName('graphLeft_fit')
-                graphLeft_fit_rel .SetName('graphLeft_fit_rel')
-            else:
-                # print 'right {ch}: {i}'.format(ch=charge, i=sum(arr_val))
-                graphRight      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
-                graphRight_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
-                graphRight     .SetName('graphRight')
-                graphRight_rel .SetName('graphRight_rel')
-                graphRight_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
-                graphRight_fit_rel  = ROOT.TGraphAsymmErrors(len(arr_relv_fit), arr_rap, arr_relv_fit, arr_rlo, arr_rhi, arr_rello_fit, arr_relhi_fit)
-                graphRight_fit     .SetName('graphRight_fit')
-                graphRight_fit_rel .SetName('graphRight_fit_rel')
+                tmp_val.makeGraphs()
+
+                allValues[pol] = tmp_val
+
 
         c2 = ROOT.TCanvas('foo','', 800, 800)
         c2.GetPad(0).SetTopMargin(0.05)
         c2.GetPad(0).SetBottomMargin(0.15)
         c2.GetPad(0).SetLeftMargin(0.16)
 
-        ## these are the colors...
-        colorL = ROOT.kAzure+8
-        colorR = ROOT.kOrange+7
-        colorLf = ROOT.kAzure+3
-        colorRf = ROOT.kOrange+9
-
         ## the four graphs exist now. now starting to draw them
         ## ===========================================================
-        leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
+        leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.90)
         leg.SetFillStyle(0)
         leg.SetBorderSize(0)
-        leg.AddEntry(graphLeft , 'W^{{{ch}}} left (PDF systs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
-        leg.AddEntry(graphLeft_fit , 'W^{{{ch}}} left (fit)' .format(ch='+' if charge == 'plus' else '-'), 'pl')
-        leg.AddEntry(graphRight, 'W^{{{ch}}} right (PDF systs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
-        leg.AddEntry(graphRight_fit, 'W^{{{ch}}} right (fit)'.format(ch='+' if charge == 'plus' else '-'), 'pl')
+        leg.AddEntry(allValues['left'] .graph     , 'W^{{{ch}}} left (PDF systs)' .format(ch='+' if charge == 'plus' else '-') , 'f')
+        leg.AddEntry(allValues['left'] .graph_fit , 'W^{{{ch}}} left (fit)' .format(ch='+' if charge == 'plus' else '-')       , 'pl')
+        leg.AddEntry(allValues['right'].graph     , 'W^{{{ch}}} right (PDF systs)'.format(ch='+' if charge == 'plus' else '-') , 'f')
+        leg.AddEntry(allValues['right'].graph_fit , 'W^{{{ch}}} right (fit)'.format(ch='+' if charge == 'plus' else '-')       , 'pl')
+        leg.AddEntry(allValues['long'] .graph     , 'W^{{{ch}}} long (PDF systs)'.format(ch='+' if charge == 'plus' else '-') , 'f')
+        leg.AddEntry(allValues['long'] .graph_fit , 'W^{{{ch}}} long (fit)'.format(ch='+' if charge == 'plus' else '-')       , 'pl')
 
-        graphLeft.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
-        graphLeft.SetLineColor(colorL)
-        graphLeft.SetFillColor(colorL)
-        graphLeft.SetFillStyle(3002)
-        graphLeft_fit.SetLineWidth(2)
-        graphLeft_fit.SetLineColor(colorLf)
-        graphRight.SetLineColor(colorR)
-        graphRight.SetFillColor(colorR)
-        graphRight.SetFillStyle(3002)
-        graphRight_fit.SetLineWidth(2)
-        graphRight_fit.SetLineColor(colorRf)
+        allValues['left'].graph.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
             
         mg = ROOT.TMultiGraph()
-        mg.Add(graphLeft,'P2')
-        mg.Add(graphRight,'P2')
-        mg.Add(graphLeft_fit)
-        mg.Add(graphRight_fit)
+        mg.Add(allValues['left'] .graph,'P2')
+        mg.Add(allValues['right'].graph,'P2')
+        mg.Add(allValues['long'] .graph,'P2')
+        mg.Add(allValues['left'] .graph_fit)
+        mg.Add(allValues['right'].graph_fit)
+        mg.Add(allValues['long'] .graph_fit)
  
         mg.Draw('Pa')
         mg.GetXaxis().SetRangeUser(0.,6.)
@@ -293,7 +298,7 @@ if __name__ == "__main__":
         ## ======================================
 
         c2.Clear()
-        c2.Divide(1,2)
+        c2.Divide(1,3)
 
         line = ROOT.TF1("horiz_line","1",0.0,3.0);
         line.SetLineColor(ROOT.kBlack);
@@ -306,57 +311,54 @@ if __name__ == "__main__":
         padUp.SetLeftMargin(0.15)
         padUp.SetBottomMargin(0.10)
 
-        graphLeft_rel.SetLineWidth(5)
-        graphLeft_rel.SetLineColor(colorL)
-        graphLeft_rel.SetFillColor(colorL)
-        graphLeft_rel.SetFillStyle(3002)
-        graphLeft_fit_rel.SetLineWidth(2)
-        graphLeft_fit_rel.SetLineColor(colorLf)
-        graphRight_rel.SetLineWidth(5)
-        graphRight_rel.SetLineColor(colorR)
-        graphRight_rel.SetFillColor(colorR)
-        graphRight_rel.SetFillStyle(3002)
-        graphRight_fit_rel.SetLineWidth(2)
-        graphRight_fit_rel.SetLineColor(colorRf)
-
         yaxtitle = '#frac{d#sigma/dy/#sigma_{tot}}{d#sigma^{exp}/dy/#sigma^{exp}_{tot}}' if options.normxsec else '#frac{dN/dy}{dN^{exp}/dy}'
-        mgLeft = ROOT.TMultiGraph()
-        mgLeft.SetTitle('W^{{{ch}}}: left'.format(ch='+' if charge=='plus' else '-'))
-        mgLeft.Add(graphLeft_rel,'P2')
-        mgLeft.Add(graphLeft_fit_rel)
-        mgRight = ROOT.TMultiGraph()
-        mgRight.SetTitle('W^{{{ch}}}: right'.format(ch='+' if charge=='plus' else '-'))
-        mgRight.Add(graphRight_rel,'P2')
-        mgRight.Add(graphRight_fit_rel)
 
-        mgLeft.Draw('Pa')
-        mgLeft.GetXaxis().SetRangeUser(0., 3.)
-        mgLeft.GetYaxis().SetRangeUser(0.85, 1.15)
-        mgLeft.GetXaxis().SetTitleSize(0.06)
-        mgLeft.GetXaxis().SetLabelSize(0.06)
-        mgLeft.GetYaxis().SetTitleSize(0.06)
-        mgLeft.GetYaxis().SetLabelSize(0.06)
-        mgLeft.GetYaxis().SetTitle(yaxtitle)
+        allValues['left'].mg.Draw('Pa')
+        allValues['left'].mg.GetXaxis().SetRangeUser(0., 3.)
+        allValues['left'].mg.GetYaxis().SetRangeUser(0.85, 1.15)
+        allValues['left'].mg.GetXaxis().SetTitleSize(0.06)
+        allValues['left'].mg.GetXaxis().SetLabelSize(0.06)
+        allValues['left'].mg.GetYaxis().SetTitleSize(0.06)
+        allValues['left'].mg.GetYaxis().SetLabelSize(0.06)
+        allValues['left'].mg.GetYaxis().SetTitle(yaxtitle)
 
         leg.Draw('same')
         line.Draw("Lsame");
         padUp.RedrawAxis("sameaxis");
 
-        padDown = c2.cd(2)
+        padMiddle = c2.cd(2)
+        padMiddle.SetTickx(1)
+        padMiddle.SetTicky(1)
+        padMiddle.SetGridy(1)
+        padMiddle.SetLeftMargin(0.15)
+        padMiddle.SetBottomMargin(0.15)
+        allValues['right'].mg.Draw('pa')
+        allValues['right'].mg.GetXaxis().SetRangeUser(0., 3.)
+        allValues['right'].mg.GetYaxis().SetRangeUser(0.85, 1.15)
+        allValues['right'].mg.GetXaxis().SetTitle('|Y_{W}|')
+        allValues['right'].mg.GetXaxis().SetTitleSize(0.06)
+        allValues['right'].mg.GetXaxis().SetLabelSize(0.06)
+        allValues['right'].mg.GetYaxis().SetTitleSize(0.06)
+        allValues['right'].mg.GetYaxis().SetLabelSize(0.06)
+        allValues['right'].mg.GetYaxis().SetTitle(yaxtitle)
+        line.Draw("Lsame");
+        padMiddle.RedrawAxis("sameaxis");
+
+        padDown = c2.cd(3)
         padDown.SetTickx(1)
         padDown.SetTicky(1)
         padDown.SetGridy(1)
         padDown.SetLeftMargin(0.15)
         padDown.SetBottomMargin(0.15)
-        mgRight.Draw('pa')
-        mgRight.GetXaxis().SetRangeUser(0., 3.)
-        mgRight.GetYaxis().SetRangeUser(0.85, 1.15)
-        mgRight.GetXaxis().SetTitle('|Y_{W}|')
-        mgRight.GetXaxis().SetTitleSize(0.06)
-        mgRight.GetXaxis().SetLabelSize(0.06)
-        mgRight.GetYaxis().SetTitleSize(0.06)
-        mgRight.GetYaxis().SetLabelSize(0.06)
-        mgRight.GetYaxis().SetTitle(yaxtitle)
+        allValues['long'].mg.Draw('pa')
+        allValues['long'].mg.GetXaxis().SetRangeUser(0., 3.)
+        allValues['long'].mg.GetYaxis().SetRangeUser(0.85, 1.15)
+        allValues['long'].mg.GetXaxis().SetTitle('|Y_{W}|')
+        allValues['long'].mg.GetXaxis().SetTitleSize(0.06)
+        allValues['long'].mg.GetXaxis().SetLabelSize(0.06)
+        allValues['long'].mg.GetYaxis().SetTitleSize(0.06)
+        allValues['long'].mg.GetYaxis().SetLabelSize(0.06)
+        allValues['long'].mg.GetYaxis().SetTitle(yaxtitle)
         line.Draw("Lsame");
         padDown.RedrawAxis("sameaxis");
 
