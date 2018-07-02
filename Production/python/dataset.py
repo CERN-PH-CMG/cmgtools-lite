@@ -156,21 +156,19 @@ class CMSDataset( BaseDataset ):
             query += "  status=VALID" # status doesn't interact well with run range
         if self.dbsInstance != None:
             query += "  instance=prod/%s" % self.dbsInstance
-        dbs='dasgoclient --query="file %s=%s"'%(qwhat,query) # files must be valid
+        dbs='dasgoclient --json --query="file %s=%s"'%(qwhat,query) # files must be valid
         if begin >= 0:
             dbs += ' --index %d' % begin
         if end >= 0:
             dbs += ' --limit %d' % (end-begin+1)
         else:
-            dbs += ' --limit 0' 
-        dbsOut = _dasPopen(dbs)
+            dbs += ' --limit 0'
+        dbsOut = json.load(_dasPopen(dbs))[0]['file']
         files = []
-        for line in dbsOut:
-            if line.find('/store')==-1:
+        for fileDict in dbsOut:
+            if 'name' not in fileDict:
                 continue
-            line = line.rstrip()
-            # print 'line',line
-            files.append(line)
+            files.append(fileDict['name'])
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
@@ -399,17 +397,15 @@ class PrivateDataset ( BaseDataset ):
     def buildListOfFilesDBS(self, name, dbsInstance):
         entries = self.findPrimaryDatasetNumFiles(name, dbsInstance, -1, -1)
         files = []
-        dbs = 'dasgoclient --query="file dataset=%s instance=prod/%s" --limit=%s' % (name, dbsInstance, entries)
-        dbsOut = _dasPopen(dbs)
-        for line in dbsOut:
-            if line.find('/store')==-1:
+        dbs = 'dasgoclient --json --query="file dataset=%s instance=prod/%s" --limit=%s' % (name, dbsInstance, entries)
+        dbsOut = json.load(_dasPopen(dbs))[0]['file']
+        for fileDict in dbsOut:
+            if 'name' not in fileDict:
                 continue
-            line = line.rstrip()
-            # print 'line',line
-            files.append(line)
+            files.append(fileDict['name'])
         #return ['root://eoscms//eos/cms%s' % f for f in files]
         return files
-    
+
     def buildListOfFiles(self, pattern='.*root'):
         self.files = self.buildListOfFilesDBS(self.name, self.dbsInstance)
 
@@ -425,17 +421,16 @@ class PrivateDataset ( BaseDataset ):
             else:
                 print "WARNING: queries with run ranges are slow in DAS"
                 query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
-        dbs='dasgoclient --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
-        dbsOut = _dasPopen(dbs).readlines()
+        dbs='dasgoclient --json --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
+        dbsOut = json.load(_dasPopen(dbs))[0]['summary']
         entries = []
-        for line in dbsOut:
-            line = line.replace('\n','')
-            if "nevents" in line:
-                entries.append(int(line.split(":")[1]))
+        for summaryDict in dbsOut:
+            if "nevents" in summaryDict:
+                entries.append(int(summaryDict["nevents"]))
         if entries:
             return sum(entries)
         return -1
-        
+
 
     @staticmethod
     def findPrimaryDatasetNumFiles(dataset, dbsInstance, runmin, runmax):
@@ -448,14 +443,12 @@ class PrivateDataset ( BaseDataset ):
             else:
                 print "WARNING: queries with run ranges are slow in DAS"
                 query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
-        dbs='dasgoclient --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
-        dbsOut = _dasPopen(dbs).readlines()
-        
+        dbs='dasgoclient --json --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
+        dbsOut = json.load(_dasPopen(dbs))[0]['summary']
         entries = []
-        for line in dbsOut:
-            line = line.replace('\n','')
-            if "nfiles" in line:
-                entries.append(int(line.split(":")[1]))
+        for summaryDict in dbsOut:
+            if "nfiles" in summaryDict:
+                entries.append(int(summaryDict["nfiles"]))
         if entries:
             return sum(entries)
         return -1
