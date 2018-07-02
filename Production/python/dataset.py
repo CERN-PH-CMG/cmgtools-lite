@@ -163,12 +163,14 @@ class CMSDataset( BaseDataset ):
             dbs += ' --limit %d' % (end-begin+1)
         else:
             dbs += ' --limit 0'
-        dbsOut = json.load(_dasPopen(dbs))[0]['file']
+        dbsOut = json.load(_dasPopen(dbs))
         files = []
-        for fileDict in dbsOut:
-            if 'name' not in fileDict:
-                continue
-            files.append(fileDict['name'])
+        if dbsOut:
+            dbsFiles = dbsOut[0]['file']
+            for fileDict in dbsFiles:
+                if 'name' not in fileDict:
+                    continue
+                files.append(fileDict['name'])
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
@@ -398,12 +400,13 @@ class PrivateDataset ( BaseDataset ):
         entries = self.findPrimaryDatasetNumFiles(name, dbsInstance, -1, -1)
         files = []
         dbs = 'dasgoclient --json --query="file dataset=%s instance=prod/%s" --limit=%s' % (name, dbsInstance, entries)
-        dbsOut = json.load(_dasPopen(dbs))[0]['file']
-        for fileDict in dbsOut:
-            if 'name' not in fileDict:
-                continue
-            files.append(fileDict['name'])
-        #return ['root://eoscms//eos/cms%s' % f for f in files]
+        dbsOut = json.load(_dasPopen(dbs))
+        if dbsOut:
+            dbsFiles = dbsOut[0]['file']
+            for fileDict in dbsFiles:
+                if 'name' not in fileDict:
+                    continue
+                files.append(fileDict['name'])
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
@@ -422,11 +425,13 @@ class PrivateDataset ( BaseDataset ):
                 print "WARNING: queries with run ranges are slow in DAS"
                 query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
         dbs='dasgoclient --json --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
-        dbsOut = json.load(_dasPopen(dbs))[0]['summary']
+        dbsOut = json.load(_dasPopen(dbs))
         entries = []
-        for summaryDict in dbsOut:
-            if "nevents" in summaryDict:
-                entries.append(int(summaryDict["nevents"]))
+        if dbsOut:
+            dbsSummary = dbsOut[0]['summary']
+            for summaryDict in dbsSummary:
+                if "nevents" in summaryDict:
+                    entries.append(int(summaryDict["nevents"]))
         if entries:
             return sum(entries)
         return -1
