@@ -779,7 +779,8 @@ else:
         ]
         for comp in selectedComponents:
             comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
-
+            comp.splitFactor = 500
+            
 #ISR jet counting
 from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
 nISRAna = cfg.Analyzer(NIsrAnalyzer, name="NIsrAnalyzer",)
