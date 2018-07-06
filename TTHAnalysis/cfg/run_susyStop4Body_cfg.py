@@ -673,7 +673,7 @@ else:
             TTSemi_pow,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 1000
+            comp.splitFactor = 2000
         
     if runWJets:
         selectedComponents = [
