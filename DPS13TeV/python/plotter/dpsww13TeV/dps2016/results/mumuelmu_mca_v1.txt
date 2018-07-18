@@ -18,7 +18,7 @@ ZZ         : ZZTo4L            : xsec : 1  ; FillColor=ROOT.kYellow+2 , Label="Z
 WZ         : WZTo3LNu          : xsec : 1  ; FillColor=ROOT.kAzure+1  , Label="WZ"      , NormSystematic=0.16
 WZamcatnlo : WZTo3LNu_amcatnlo : xsec : 1  ; FillColor=ROOT.kAzure+1  , Label="WZ"      , NormSystematic=0.16, SkipMe=True
 
-TTZ    : TTZ_LO      : xsec   : 1                                                   ; FillColor=ROOT.kSpring-2 , Label="rare MC" , NormSystematic=0.50
+
 
 WG_wg     : WZTo3LNu_mll01+WZTo3LNu_mll01_ext_part1+WZTo3LNu_mll01_ext_part2+WZTo3LNu_mll01_ext_part3 : 0.7*58.59 : (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 && Sum$(abs(GenPart_pdgId)==23 && GenPart_mass < 4.) == 1 ) ; FillColor=ROOT.kOrange-5 , Label="W\#gamma^{*}", NormSystematic=0.50
 
@@ -26,3 +26,4 @@ WG_wg     : WZTo3LNu_mll01+WZTo3LNu_mll01_ext_part1+WZTo3LNu_mll01_ext_part2+WZT
 fakes_data : DoubleMuon_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data_v1.txt', Label="Fakes", NormSystematic=0.35
 fakes_data : SingleMuon_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data_v1.txt', Label="Fakes", NormSystematic=0.35
 
+fakes_B :DoubleMuon_2016B* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data_v1.txt', Label="Fakes", NormSystematic=0.35

@@ -2,8 +2,8 @@
 cut-change: LepGood1_mvaTTH : (LepGood1_mvaTTH > if3(abs(LepGood1_pdgId) == 13, -1.0, -1.0))
 cut-change: LepGood2_mvaTTH : (LepGood2_mvaTTH > if3(abs(LepGood2_pdgId) == 13, -1.0, -1.0))
 ## load histograms 
-load-histo: FR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data-2018-06-09_v1.root : fakerates_smoothed_data
-load-histo: PR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data-2018-06-09_v1.root : promptrates_smoothed_data
+load-histo: FR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data_2018-06-27.root : fakerates_smoothed_data
+load-histo: PR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data_2018-06-27.root : promptrates_smoothed_data
 load-histo: FR_el  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_ele_smoothed_data.root : fakerates_smoothed_data
 load-histo: PR_el  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_ele_smoothed_data.root : promptrates_smoothed_data 
 

@@ -1,6 +1,44 @@
 #new frnds
+#njets : Sum$(Jet_Clean_pt > 30): [0,1,2,3,4,5,6] ; XTitle='njetsclean'
+#nbjets : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426): [0,1,2,3,4,5,6] ; XTitle='njetsclean'
+delRL1  : if3(LepGood1_mvaTTH < 0.9, deltaR(LepGood1_eta,LepGood1_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delR_Llep1'
+delRT1  : if3(LepGood1_mvaTTH > 0.9, deltaR(LepGood1_eta,LepGood1_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delRL_Tlep1'
+delRL2  : if3(LepGood2_mvaTTH < 0.9, deltaR(LepGood2_eta,LepGood2_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delR_Llep2'
+delRT2  : if3(LepGood2_mvaTTH > 0.9, deltaR(LepGood2_eta,LepGood2_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delRL_Tlep2'
 
-njetsclean:nJet_Clean:[0,1,2,3,4,5,6] ; XTitle='njetsclean'
+delRL  : if3(LepGood_mvaTTH < 0.9, deltaR(LepGood_eta,LepGood_phi,Jet_Clean_eta,Jet_Clean_phi),-999):20,0,1; XTitle='delR_Llep'
+delRT  : if3(LepGood_mvaTTH > 0.9, deltaR(LepGood_eta,LepGood_phi,Jet_Clean_eta,Jet_Clean_phi),-999):20,0,1; XTitle='delRL_Tlep'
+
+
+
+jetpt      : Jet_Clean_pt :	    40,0,200 ; XTitle="jetpt (GeV)"
+jetbtagCSV : Jet_Clean_btagCSV :	    20,0,1 ; XTitle="jetbtagCSV "
+njetpt      : Sum$(Jet_Clean_pt > 25) :	     [0,1,2,3,4,5,6] ; XTitle="njets"
+
+jetdpt      : Jet_DClean_pt :	    40,0,200 ; XTitle="jetpt (GeV)"
+jetdpt_old : JetOld_DClean_pt:           40,0,200 ; XTitle="jetpt (GeV)"
+jetdpt_cal  : Jet_Clean_against_LL_pt:     40,0,200 ; XTitle="jetpt (GeV)"
+jetdpt_cat  : Jet_Clean_against_TL_pt:     40,0,200 ; XTitle="jetpt (GeV)"
+
+
+jetdbtagCSV      : Jet_DClean_btagCSV :	    20,0,1 ; XTitle="jetbtagCSV "
+jetdbtagCSV_old : JetOld_DClean_btagCSV:           20,0,1 ; XTitle="jetbtagCSV "
+jetdbtagCSV_cal  : Jet_Clean_against_LL_btagCSV:     20,0,1 ; XTitle="jetbtagCSV "
+jetdbtagCSV_cat  : Jet_Clean_against_TL_btagCSV:     20,0,1 ; XTitle="jetbtagCSV "
+
+
+
+njetd      :  Sum$(Jet_DClean_pt > 25):	     [0,1,2,3,4,5,6] ; XTitle="njets"
+njetd_old :  Sum$(JetOld_DClean_pt > 25):            [0,1,2,3,4,5,6] ; XTitle="njets"
+njetd_cal  :  Sum$(Jet_Clean_against_LL_pt > 25):      [0,1,2,3,4,5,6] ; XTitle="njets"
+njetd_cat  :  Sum$(Jet_Clean_against_TL_pt > 25):      [0,1,2,3,4,5,6] ; XTitle="njets"
+
+
+bjetpt  : if3(Jet_btagCSV > 0.5426, Jet_pt, -9999):40,0,200 ; XTitle="bjetpt (GeV)"
+bjetcleanpt : if3(Jet_Clean_btagCSV > 0.5426, Jet_Clean_pt, -9999) : 40,0,200 ; XTitle="bjetpt (GeV)"
+
+
+
 njets30clean:nJet30_Clean:[0,1,2,3,4,5,6] ; XTitle='njetsclean 30'
 nbjetscleanCSVL25:nbJetCSVL25_Clean:[0,1,2,3,4,5,6] ; XTitle='nbjetscleanCSVL25'
 nbjetscleanCSVM25:nbJetCSVM25_Clean:[0,1,2,3,4,5,6] ; XTitle='nbjetscleanCSVM25'
@@ -95,6 +133,9 @@ pt_mcMatchId1_mumu        : abs(LepGood1_mcMatchId)\:LepGood1_pt :  [20,40,60,70
 
 pt_mcMatchId2_mumu        : abs(LepGood2_mcMatchId)\:LepGood2_pt :  [20,40,60,70,80,90,100]*[0,1,23,24,25,26];XTitle="p_{T} lepton 2 ",YTitle="#mcMatchId"
 
+
+njetsclean_mumu:Sum$(Jet_Clean_pt > 30):[0,1,2,3] ; XTitle='N_{jets} with p_{T} > 30'
+jetclean_csva_mumu:Jet_Clean_btagCSV: 10, 0.5,1; XTitle='CSVA Disc' 
 eta1_mumu          : LepGood1_eta    : 10,-2.5,2.5; XTitle="#eta lead."
 eta2_mumu          : LepGood2_eta    : 10,-2.5,2.5; XTitle="#eta trail."
 phi1_mumu          : LepGood1_phi    : 10,-3.2,3.2; XTitle="#phi lead."

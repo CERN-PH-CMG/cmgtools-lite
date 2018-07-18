@@ -6,7 +6,7 @@ metpt        : met_pt > 15
 met20        : met_pt > 20 ; Disable=True
 2l           : nLepGood == 2
 ## noother      : nLepFO_Recl == 2
-## noTau        : nTauSel_Recl == 0
+noTau        : nTauGoodHad_Clean == 0
 bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
 01jets       : Sum$(Jet_Clean_pt > 30) < 2
 lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.9
