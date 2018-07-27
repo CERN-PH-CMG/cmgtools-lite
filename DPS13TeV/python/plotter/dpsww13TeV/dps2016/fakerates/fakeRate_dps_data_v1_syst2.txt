@@ -2,14 +2,15 @@
 cut-change: LepGood1_mvaTTH : (LepGood1_mvaTTH > if3(abs(LepGood1_pdgId) == 13, -1.0, -1.0))
 cut-change: LepGood2_mvaTTH : (LepGood2_mvaTTH > if3(abs(LepGood2_pdgId) == 13, -1.0, -1.0))
 ## load histograms 
-load-histo: FR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data_2018-06-27.root : fakerates_smoothed_data
-load-histo: PR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data_2018-06-27.root : promptrates_smoothed_data
+load-histo: FR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data_AwaysideJetpT_gt_50_2018-07-18.root : fakerates_smoothed_data
+load-histo: PR_mu  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_mu_smoothed_data_AwaysideJetpT_gt_50_2018-07-18.root : promptrates_smoothed_data
 load-histo: FR_el  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_ele_smoothed_data.root : fakerates_smoothed_data
 load-histo: PR_el  : dpsww13TeV/dps2016/fakerates/fakerate_promptrate_ele_smoothed_data.root : promptrates_smoothed_data 
 
 ## more fancy way for later load-histo: FR_el : $DATA/fakerate/FR_ttl.root : FR_tight_el
 ## define the FR weight
 ##weight: fakeRateWeight_2lssMVA_smoothed_FR(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH > if3(abs(LepGood1_pdgId)==13,0.9,0.9),LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH > if3(abs(LepGood2_pdgId)==13,0.9,0.9), 0.5) 
-weight: fakeRateWeight_2lssMVA_usingPRs_smooth(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH,3) 
+
+weight: fakeRateWeight_2lssMVA_usingPRs_smooth(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH,0) 
 
 

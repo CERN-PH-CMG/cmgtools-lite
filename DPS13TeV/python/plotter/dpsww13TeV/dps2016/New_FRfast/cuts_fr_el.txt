@@ -1,0 +1,33 @@
+alwaystrue : 1
+## trigger selection
+## =============================================
+
+trigger1el    : (HLT_BIT_HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_v >0 )
+## muon selection
+## =============================================
+1l            : nLepGood == 1
+electron          : abs(LepGood1_pdgId) == 11
+#electronLooseId   : LepGood1_mvaTTH > -0.9
+eleId		  : LepGood1_idEmuTTH == 1
+electronTightMVA : LepGood1_mvaTTH > 0.9 
+#tightCharge  : LepGood1_tightCharge > 1
+#chargecon    : (LepGood1_chargeConsistency >= 3)
+etatranscut : (abs(LepGood1_eta) < 1.442 || abs(LepGood1_eta) > 1.556)
+etacut	    :abs(LepGood1_eta) < 2.5
+## kinematic selection
+## =============================================
+lpt25         : LepGood1_pt > 20.
+
+awayJet30 : Sum$(Jet_Clean_pt > 50. && abs(deltaPhi(LepGood1_phi,Jet_Clean_phi)) > 0.7 ) >= 1
+
+
+
+pfmet15max   : met_pt < 40.                                             ; Disable=True
+mtl1pf40max : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)  < 40.      ; Disable=True
+etacut 	    : (abs(LepGood1_eta) < 1.442 || abs(LepGood1_eta) > 1.556)
+barrel      : abs(LepGood1_eta) <=1.2                                   ; Disable=True
+endcap      : abs(LepGood1_eta) > 1.2                                   ; Disable=True
+##
+middle      : abs(LepGood1_eta) > 0.8 && abs(LepGood1_eta) < 1.4        ; Disable=True
+
+

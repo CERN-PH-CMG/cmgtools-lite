@@ -1,0 +1,74 @@
+event-filters : $DATA{Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonMoriond2017>=1 && Flag_badCloneMuonMoriond2017>=1} $MC{1}
+SameSign     : LepGood_charge[0] * LepGood_charge[1] > 0
+25/20        : LepGood1_pt > 25 && LepGood2_pt > 20
+#bump         :  LepGood1_pt > 80 && LepGood1_pt < 90
+metpt        : met_pt > 15
+met20        : met_pt > 20 ; Disable=True
+2l           : nLepGood == 2
+## noother      : nLepFO_Recl == 2
+## noTau        : nTauSel_Recl == 0
+bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
+hadtauveto   : Sum$(TauGood_pt > 20 && abs(TauGood_eta) < 2.3 && abs(TauGood_dxy) < 1000 && abs(TauGood_dz) < 0.2 && TauGood_idMVAdR03 >=2 && TauGood_idDecayMode) == 0
+
+01jets       : Sum$(Jet_Clean_pt > 30) < 2
+lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.9
+tightCharge  : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
+chargecon    : (LepGood1_chargeConsistency >= 3 || abs(LepGood1_pdgId)==11) && (LepGood2_chargeConsistency >= 3 || abs(LepGood2_pdgId)==11)
+lostHits     : (LepGood1_lostHits ==  0 || abs(LepGood1_pdgId)==13) &&  (LepGood2_lostHits ==  0 || abs(LepGood2_pdgId)==13)
+convVeto     : (LepGood1_convVeto >   0 || abs(LepGood1_pdgId)==13) &&  (LepGood2_convVeto >   0 || abs(LepGood2_pdgId)==13)
+
+etalep1      : abs(LepGood1_eta) < if3(abs(LepGood1_pdgId)==13,2.4,2.5)
+etalep2	     : abs(LepGood2_eta) < if3(abs(LepGood1_pdgId)==13,2.4,2.5)
+
+etael1      : (abs(LepGood1_pdgId) == 13 || (abs(LepGood1_eta) < 1.442 || abs(LepGood1_eta) > 1.556 && abs(LepGood1_pdgId)==11))
+etael1      : (abs(LepGood2_pdgId) == 13 || (abs(LepGood2_eta) < 1.442 || abs(LepGood2_eta) > 1.556 && abs(LepGood2_pdgId)==11))
+#test1	    : (LepGood1_sip3d < 8.0 && abs(LepGood1_dxy) < 0.05 && abs(LepGood1_dz) < 0.1 && LepGood1_miniRelIso < 0.4)
+#test2	    : (LepGood2_sip3d < 8.0 && abs(LepGood2_dxy) < 0.05 && abs(LepGood2_dz) < 0.1 && LepGood2_miniRelIso < 0.4)
+
+## marc Emu2 : (LepGood1_idEmu2 || abs(LepGood1_pdgId) == 13) && (LepGood2_idEmu2 || abs(LepGood2_pdgId) == 13)
+marc Emu2    : (LepGood1_idEmuTTH || abs(LepGood1_pdgId) == 13) && (LepGood2_idEmuTTH || abs(LepGood2_pdgId) == 13)
+#zveto :      abs(m2l - 92) > 15
+
+MediumMuonid  : (abs(LepGood1_pdgId) !=13 || LepGood1_mediumMuonId > 0) && (abs(LepGood2_pdgId) !=13 || LepGood2_mediumMuonId > 0)
+ 
+#pterrormu  : (abs(LepGood1_pdgId) !=13 || abs(LepGood1_ptErrTk)/LepGood1_pt < 0.2) && (abs(LepGood2_pdgId) !=13 || abs(LepGood2_ptErrTk)/LepGood2_pt < 0.2)
+ 
+
+#TTHselL1: clean_n_FO_selection_TTH(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mediumMuonId,LepGood1_mvaTTH,LepGood1_jetPtRatiov2,LepGood1_jetBTagCSV,LepGood1_idEmuTTH,LepGood1_segmentCompatibility)
+#,LepGood1_mvaIdSpring16HZZ) 
+
+#TTHselL1p2:(abs(LepGood1_pdgId) !=13 || LepGood1_mediumMuonId > 0) && LepGood1_mvaTTH > 0.90 && conept_TTH(LepGood1_pt,LepGood1_pdgId,LepGood1_mediumMuonId,LepGood1_mvaTTH,LepGood1_jetPtRatiov2) > 10.0 && LepGood1_jetBTagCSV < 0.8484 && (abs(LepGood1_pdgId)!=11 || LepGood1_idEmuTTH > 0)
+
+
+#TTHselL2: clean_n_FO_selection_TTH(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mediumMuonId,LepGood2_mvaTTH,LepGood2_jetPtRatiov2,LepGood2_jetBTagCSV,LepGood2_idEmuTTH,LepGood2_segmentCompatibility)
+#LepGood2_mvaIdSpring16HZZ) 
+
+#TTHselL2p2:(abs(LepGood2_pdgId) !=13 || LepGood2_mediumMuonId > 0) && LepGood2_mvaTTH > 0.90 && conept_TTH(LepGood2_pt,LepGood2_pdgId,LepGood2_mediumMuonId,LepGood2_mvaTTH,LepGood2_jetPtRatiov2) > 10.0 && LepGood2_jetBTagCSV < 0.8484 && (abs(LepGood2_pdgId)!=11 || LepGood2_idEmuTTH > 0)
+
+
+
+
+###
+plusplus     : LepGood1_charge > 0                                                                         ; Disable=True
+minusminus   : LepGood1_charge < 0                                                                         ; Disable=True
+###
+mumu         : abs(LepGood1_pdgId*LepGood2_pdgId) == 169                                                   ; Disable=True
+trigmumu     : (HLT_DoubleMu || HLT_SingleMu)                                                              ; Disable=True
+#
+elmu         : abs(LepGood1_pdgId*LepGood2_pdgId) == 143                                                   ; Disable=True
+trigelmu     : (HLT_MuEG || HLT_SingleMu || HLT_SingleEl)                                                  ; Disable=True
+#
+#mumuelmu     : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143      ; Disable=True
+#trigmumuelmu : (HLT_MuEG || HLT_SingleEl || HLT_DoubleMu || HLT_SingleMu)                                  ; Disable=True
+#
+elel         : abs(LepGood1_pdgId*LepGood2_pdgId) == 121   						   ; Disable=True
+trigelel     : (HLT_SingleEl || HLT_DoubleEl)                   			      	           ; Disable=True
+
+### dilepton
+
+#mumuelmuelel : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143 || abs(LepGood1_pdgId*LepGood2_pdgId) == 121                                                                                                        ; Disable=True
+#trigmumuelmuelel : (HLT_SingleEl || HLT_MuEG ||  HLT_DoubleMu || HLT_SingleMu || HLT_DoubleEl) 	      	   ; Disable=True
+
+##DataBDTblind : $DATA{finalMVA_DPS<0.7} $MC{1}                                                            ; Disable=True
+matched      : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0                                          ; Disable=True
+

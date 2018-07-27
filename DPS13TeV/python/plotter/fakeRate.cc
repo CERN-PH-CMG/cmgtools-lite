@@ -317,6 +317,12 @@ float eps_smoothFR(float lpt, float leta, int lpdgId, int variation){
     p0-=hist->GetBinError(etabin, 1);
     p1-=hist->GetBinError(etabin, 2);
   }
+  else if (variation == 3){
+    p1-=0.25*p1;
+  }
+  else if (variation == 4){
+    p1+=0.25*p1;
+  }
   
   else{
     p0+=0;
@@ -360,7 +366,8 @@ float eta_smoothPR(float lpt, float leta, int lpdgId, int variation){
 float fakeRateWeight_2lssMVA_usingPRs_smooth(float l1pt, float l1eta, int l1pdgId, float l1mva,
                                              float l2pt, float l2eta, int l2pdgId, float l2mva,int syst){
 
-  //syst variation = 0 for nominal FRs/PRs, 1 for Up, 2 for Down variation
+  //syst variation = 0 for nominal FRs/PRs, 1 for Up, 2 for Down variation within uncert of fit params.
+  //for variation = 3 & 4 slope of FR fit is varried down & up resp. by 25%. 
   float WP=0.9;
   double  wSum =0.0;
   double  qSum =0.0;
