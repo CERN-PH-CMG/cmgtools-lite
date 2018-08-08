@@ -68,7 +68,9 @@ def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 def runIt(GO,name,plots=[],noplots=[]):
     if '_74vs76' in name: GO = prep74vs76(GO)
-    if   dowhat == "plots":  print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
+    if dowhat == "plots":  
+        if not ('forcePlotChoice' in sys.argv[3:]): print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
+        else: print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join([x for x in sys.argv[3:] if x!='forcePlotChoice'])
     elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
     elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
     elif dowhat == "ntuple": print 'echo %s; python mcNtuple.py'%name,GO,' '.join(sys.argv[3:])
@@ -329,7 +331,7 @@ if __name__ == '__main__':
         if '_frdata' in torun:
             x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
-            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata-splitdecays.txt')
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         else: 
             print "ERROR: cr_wz with MC backgrounds does not work."
         if '_unc' in torun:
@@ -366,7 +368,7 @@ if __name__ == '__main__':
             runIt(x,'%s'%torun,plots)
 
     if 'cr_fourlep_onZ' in torun:
-        x = base('4l').replace('mca-4l-mc.txt','mca-4l-mcdata-splitdecays.txt')
+        x = base('4l').replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
         if '_data' not in torun: x = add(x, "--xp data ")
         if '_frdata' in torun:
             x = promptsub(x)
@@ -378,7 +380,7 @@ if __name__ == '__main__':
         runIt(x,'%s'%torun,plots)
     if 'cr_zz' in torun:
         x = base('4l')
-        x = x.replace('mca-4l-mc.txt','mca-4l-mcdata-splitdecays.txt')
+        x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
         x = x.replace("--binname 4l","--binname 4l_crzz")
         x = add(x,"-I ^Zveto -I ^2b1B")
         if '_data' not in torun: x = add(x, "--xp data ")
