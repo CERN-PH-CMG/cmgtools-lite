@@ -607,6 +607,7 @@ class HistoWithNuisances:
                 nuisances.add(nuis)
                 templates.Add(roofitContext.hist2roofit(hup))
                 templates.Add(roofitContext.hist2roofit(hdown))
+            if norm0==0: raise RuntimeError, '%s has zero central normalization'%self.central.GetName()
             if abs(hup.Integral()/norm0-1)>1e-5 or abs(hdown.Integral()/norm0-1)>1e-5:
                 kup   = min(max(0.1, hup.Integral()/norm0),   10) # sanitze
                 kdown = min(max(0.1, hdown.Integral()/norm0), 10) # sanitze
