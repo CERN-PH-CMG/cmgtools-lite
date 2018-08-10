@@ -10,12 +10,24 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *\
 
 # TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
 
-background = TTs+Ts+DYJetsToLLM50HT+WJetsToLNuHT+QCDHT+DiBosons+Ws
+#background = TTs+Ts+DYJetsToLLM50HT+WJetsToLNuHT+QCDHT+DiBosons+Ws
+W=[WJetsToLNu_LO]
+background = TTs+Ts+DYJetsToLLM50HT+QCDHT+DiBosons+W
 
 # Load signal from here
 mcSamples = background
+
 # load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
+
+#change things we do not like - e.g keep onlly isolated mu27
+triggers_1mu_iso = ['HLT_IsoMu27_v*']
+
+
+
+
+
+
 # Load Data samples
 from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 
@@ -26,6 +38,7 @@ JetHT = [JetHT_Run2017B_17Nov2017,JetHT_Run2017C_17Nov2017,JetHT_Run2017D_17Nov2
 MET = [MET_Run2017B_17Nov2017,MET_Run2017C_17Nov2017,MET_Run2017D_17Nov2017,MET_Run2017E_17Nov2017,MET_Run2017F_17Nov2017]
 
 
+triggers_met = triggers_met120_mht120+triggers_metNoMu120_mhtNoMu120
 
 # Single electron or muon to be used for lnu+J and ll+J (silver)
 for s in SingleMuon:
@@ -33,21 +46,20 @@ for s in SingleMuon:
     s.vetoTriggers = []
 
 for s in SingleElectron:
-    s.triggers = triggers_1e_noniso+triggers_1e
+    s.triggers = triggers_1e_noniso+triggers_1e_iso
     s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso
 # MET to be used for jj +MET but also to recover trigger efficiency for leptons
 for s in MET:
     s.triggers = triggers_met
-    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e
+    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e_iso
 # Jet HT to be used for jj (silver)
 for s in JetHT:
-    s.triggers = triggers_pfht1050+triggers_pfht800_mass50+triggers_pfjet500+triggers_pfjet400_mass30
-    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e+triggers_met
+    s.triggers = triggers_pfht1050+triggers_ak8pfht_mass50+triggers_ak8pfjet+triggers_ak8pfjet_mass30
+    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e_iso+triggers_met
 
 
 
 dataSamples = SingleMuon+SingleElectron+JetHT+MET
-
 dataSamplesLNUJ = SingleMuon+SingleElectron+MET
 
 from CMGTools.TTHAnalysis.setup.Efficiencies import *

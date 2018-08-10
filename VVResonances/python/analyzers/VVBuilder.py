@@ -66,6 +66,7 @@ class VVBuilder(Analyzer):
         # if we already filled it exit
         tag = 'substructure' + suffix
         if hasattr(jet, tag):
+
             return
 
         # constituents = []
@@ -117,16 +118,16 @@ class VVBuilder(Analyzer):
         jet.subJet_partonFlavour = [-99.0] * nSubjets
 
         for i, s in enumerate(substructure.prunedSubjets):
-            for o in jet.subjets("SoftDrop"):
+            for o in jet.subjets("SoftDropPuppi"):
                 dr = deltaR(s.eta(), s.phi(), o.eta(), o.phi())
                 if dr < 0.1:
                     # found = True
-                    jet.subJetTags[i] = o.bDiscriminator(
-                        self.cfg_ana.bDiscriminator)
-                    jet.subJetCTagL[i] = o.bDiscriminator(
-                        self.cfg_ana.cDiscriminatorL)
-                    jet.subJetCTagB[i] = o.bDiscriminator(
-                        self.cfg_ana.cDiscriminatorB)
+                    bTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorB)+o.bDiscriminator(self.cfg_ana.fDiscriminatorBB)
+                    cTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorC)
+                    lTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorL)
+                    jet.subJetTags[i] = bTag
+                    jet.subJetCTagL[i] = cTag/(cTag+lTag)
+                    jet.subJetCTagB[i] = cTag/(cTag+bTag)
                     jet.subJet_partonFlavour[i] = o.partonFlavour()
                     jet.subJet_hadronFlavour[i] = o.hadronFlavour()
                     break
@@ -214,21 +215,21 @@ class VVBuilder(Analyzer):
 
         VV.satteliteCentralJets = jetsCentral
         # cuts are taken from
-        # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X
+        # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation94X
         # (20.06.2016)
-        VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(
-            self.cfg_ana.bDiscriminator) > 0.5426, jetsCentral))
-        VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(
-            self.cfg_ana.bDiscriminator) > 0.8484, jetsCentral))
-        VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(
-            self.cfg_ana.bDiscriminator) > 0.9535, jetsCentral))
+        VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.fDiscriminatorB)+
+                                    x.bDiscriminator(self.cfg_ana.fDiscriminatorBB)> 0.1522, jetsCentral))
+        VV.nMediumBTags =len(filter(lambda x: x.bDiscriminator(self.cfg_ana.fDiscriminatorB)+
+                                    x.bDiscriminator(self.cfg_ana.fDiscriminatorBB)> 0.4941, jetsCentral)) 
+        VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.fDiscriminatorB)+
+                                    x.bDiscriminator(self.cfg_ana.fDiscriminatorBB)> 0.8001, jetsCentral)) 
         VV.nOtherLeptons = len(leptons)
 
         maxbtag = -100.0
 
         VV.btagWeight = 1.0
         for j in jetsCentral:
-            btag = j.bDiscriminator(self.cfg_ana.bDiscriminator)
+            btag = j.bDiscriminator(self.cfg_ana.fDiscriminatorB)+j.bDiscriminator(self.cfg_ana.fDiscriminatorBB)
             flavor = j.hadronFlavour()
 
             # btag event weight

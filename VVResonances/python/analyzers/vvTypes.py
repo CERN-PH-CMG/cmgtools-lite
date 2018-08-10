@@ -27,7 +27,7 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2BTag",   lambda x : x.subJetTags[1], float),
     # BTV-15-002: AK8 jets (w/ JEC applied, jetID applied, |eta| < 2.4, efficiency are computed by using pT > 300 GeV and pruned m_jet > 50 GeV)
     NTupleVariable("btagBOOSTED",   lambda x : x.btag("pfBoostedDoubleSecondaryVertexAK8BJetTags"), float),
-    NTupleVariable("btagBOOSTED_recalc", lambda x : x.Hbbtag if hasattr(x,'Hbbtag') else -1.0, float),
+#    NTupleVariable("btagBOOSTED_recalc", lambda x : x.Hbbtag if hasattr(x,'Hbbtag') else -1.0, float), #Use the default for now so we do not need this
     NTupleVariable("s1CTagL",   lambda x : x.subJetCTagL[0], float),
     NTupleVariable("s2CTagL",   lambda x : x.subJetCTagL[1], float),
     NTupleVariable("s1CTagB",   lambda x : x.subJetCTagB[0], float),
