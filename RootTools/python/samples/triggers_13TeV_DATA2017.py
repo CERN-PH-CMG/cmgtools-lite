@@ -66,6 +66,12 @@ triggers_ak8pfjet = ['HLT_AK8PFJet500_v*']
 triggers_ak8pfjet_mass30 = ['HLT_AK8PFJet%d_TrimMass30_v*' % pt for pt in (360, 380, 400)]
 
 
+
+#MET
+triggers_met120_mht120 = ["HLT_PFMET120_PFMHT120_IDTight_v*"]
+triggers_metNoMu120_mhtNoMu120 = ["HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*"]
+
+
 # MET and muon+MET triggers for SOS
 triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_DZ_PFMET50_PFMHT60_v*"]
 triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight", "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight"] #NoMu version
