@@ -235,14 +235,14 @@ class VVBuilder_JJ(Analyzer):
 
         VV.satteliteCentralJets = jetsCentral
         # cuts are taken from
-        # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X
-        # (20.06.2016)
+        # https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation94X
+        # for DeepCSV (08.06.2018)
         VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(
-            self.cfg_ana.bDiscriminator) > 0.5426, jetsCentral))
+            self.cfg_ana.bDiscriminator) > 0.1522, jetsCentral))
         VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(
-            self.cfg_ana.bDiscriminator) > 0.8484, jetsCentral))
+            self.cfg_ana.bDiscriminator) > 0.4941, jetsCentral))
         VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(
-            self.cfg_ana.bDiscriminator) > 0.9535, jetsCentral))
+            self.cfg_ana.bDiscriminator) > 0.8001, jetsCentral))
         VV.nOtherLeptons = len(leptons)
 
         maxbtag = -100.0

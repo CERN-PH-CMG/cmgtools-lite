@@ -12,7 +12,7 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetTypeID], variabl
     NTupleVariable("s2BTag",   lambda x : x.subJetTags[1], float),
     # BTV-15-002: AK8 jets (w/ JEC applied, jetID applied, |eta| < 2.4, efficiency are computed by using pT > 300 GeV and pruned m_jet > 50 GeV)
     NTupleVariable("btagBOOSTED",   lambda x : x.btag("pfBoostedDoubleSecondaryVertexAK8BJetTags"), float),
-    NTupleVariable("btagBOOSTED_recalc", lambda x : x.Hbbtag if hasattr(x,'Hbbtag') else -1.0, float),
+    # NTupleVariable("btagBOOSTED_recalc", lambda x : x.Hbbtag if hasattr(x,'Hbbtag') else -1.0, float),
     NTupleVariable("s1CTagL",   lambda x : x.subJetCTagL[0], float),
     NTupleVariable("s2CTagL",   lambda x : x.subJetCTagL[1], float),
     NTupleVariable("s1CTagB",   lambda x : x.subJetCTagB[0], float),
@@ -48,6 +48,7 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("nTightBTags",   lambda x : x.nTightBTags, int),
   NTupleVariable("nOtherLeptons",   lambda x : x.nOtherLeptons, int),
   NTupleVariable("highestOtherBTag",   lambda x : x.highestEventBTag, float),
+  NTupleVariable("triggerWeight",   lambda x : x.triggerWeight, float),
 
 ])
 

@@ -4,7 +4,7 @@ from math import hypot, sqrt
 
 import ROOT
 ROOT.gROOT.SetBatch(True)
-ROOT.gROOT.ProcessLine(".x ~/cpp/tdrstyle.cc")
+ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
 ROOT.gStyle.SetOptStat(0)
 
 

@@ -19,15 +19,15 @@ def fineSplitVals(vals,split):
         ret += [ lo + j*dx for j in xrange(split) ]
     ret.append( vals[-1] )
     return ( len(ret)-1, ret )
-    
-    
+
+
 
 def modelsNeedsMC(options):
     for model in [ options.sigModel, options.bkgModel ] + options.altSigModel + options.altBkgModel:
         if model in ("MCT","MCTG","MCTCB","MCTDCB"):
             return True
     return False
-   
+
 def makeSignalModel(w, model, refhpass, refhfail, options):
     if model == None: model = getattr(options, "sigModel", "voigt")
     if model == "voigt":
@@ -74,14 +74,14 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
             print "ERROR: Not enough data to fill the templates (%d, %d)" % (refhfail.Integral() , refhpass.Integral())
             return None
         print "Creating %s templates with %.2f pass, %.2f fail" % (model, refhpass.Integral(), refhfail.Integral())
-        if options.fineBinning > 1: 
+        if options.fineBinning > 1:
             refrpass = refhpass.Clone().Rebin(options.fineBinning, refhpass.GetName()+"_rebinned")
             refrfail = refhfail.Clone().Rebin(options.fineBinning, refhfail.GetName()+"_rebinned")
             refrpass.SetDirectory(None); refrfail.SetDirectory(None)
             for (hin,hout) in (refhfail,refrfail), (refhpass,refrpass):
                 if hin.Integral() > 10000: continue
                 print "Using kernel method smoothing"
-                if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries(): 
+                if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries():
                     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/TH1Keys.cc+" % os.environ['CMSSW_BASE']);
                 #c1 = ROOT.TCanvas("c1","c1")
                 #hin.Draw(); c1.Print("~/public_html/drop/h1.png");
@@ -139,7 +139,7 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
     elif model == "JCB":
         w.factory("CBShape::signal(mass, mean[3.1,3.0,3.2], sigma[0.05,0.01,0.1], alpha[3., 0.5, 8], n[1,0.1,25])")
         return ("signal","signal")
- 
+
 
     raise RuntimeError, "Unknown signal model %s" % model
 
@@ -148,14 +148,14 @@ def makeBackgroundModel(w, model, options):
     if model == "expo":
         w.factory("Exponential::backgroundPass(mass, lp[0,-5,5])")
         w.factory("Exponential::backgroundFail(mass, lf[0,-5,5])")
-        return ("backgroundPass", "backgroundFail") 
+        return ("backgroundPass", "backgroundFail")
     elif model in ("bern1","bern2","bern3","bern4","bern5"):
         order = int(model.replace("bern",""))
         cpass = ",".join(("prod::c2_pass%d(c_pass%d[0.2,-1,1],c_pass%d)"%(i,i,i)) for i in xrange(order))
         cfail = ",".join(("prod::c2_fail%d(c_fail%d[0.2,-1,1],c_fail%d)"%(i,i,i)) for i in xrange(order))
         w.factory("Bernstein::backgroundPass(mass, {%s})" % cpass)
         w.factory("Bernstein::backgroundFail(mass, {%s})" % cfail)
-        return ("backgroundPass", "backgroundFail") 
+        return ("backgroundPass", "backgroundFail")
     raise RuntimeError, "Unknown background model %s" % model
 
 def cpeff(hpass,hfail):
@@ -177,7 +177,7 @@ def makeTGraph(effs):
     return ret
 
 def chi2(hist, xvar, pdf, norm):
-    hpdf = pdf.createHistogram("hpdf", xvar); 
+    hpdf = pdf.createHistogram("hpdf", xvar);
     hpdf.SetDirectory(None)
     if hpdf.Integral():
         hpdf.Scale(norm / hpdf.Integral())
@@ -190,7 +190,7 @@ def chi2(hist, xvar, pdf, norm):
         # Saturated model has ei == oi, so
         #    - log ( oi^oi exp(-oi) / oi! )
         # Poisson / Saturated gives
-        #   - oi * (log(ei) - log(oi)) + (ei - oi) 
+        #   - oi * (log(ei) - log(oi)) + (ei - oi)
         if oi > 0.1:
             if ei > 0.1:
                 sum += -2 * ( oi * log(ei/oi)  - (oi-ei) )
@@ -242,17 +242,17 @@ def manualMinos(pdf,data,var,options):
                 print     ( "%2d init: x1 %+.5f x2 %+.5f  dx %.5f    y1 %+7.5f y2 %+7.5f " % (it, x1,x2,x2-x0,y1,y2) )
             while firstLoop:
                 overstep = False
-                var.setVal(x2); it2 = 0 
+                var.setVal(x2); it2 = 0
                 while nll.getVal() - nll0 > cautious and it2 < 10:
                     overstep = True
                     log.append( "%2d firstLoop %2d: x1 %+.5f x2 %+.5f y2 unprof %+7.5f, caution %.0f " % (it,it2, x1,x2,nll.getVal() - nll0,cautious) )
                     print     ( "%2d firstLoop %2d: x1 %+.5f x2 %+.5f y2 unprof %+7.5f, caution %.0f " % (it,it2, x1,x2,nll.getVal() - nll0,cautious) )
                     x2 = 0.5*(x2+x1)
-                    var.setVal(x2); 
+                    var.setVal(x2);
                     it2 += 1
                 if overstep:
                     x2 = x1 + 2*(x2-x1)
-                    var.setVal(x2) 
+                    var.setVal(x2)
                 for s in (1,0,2,1):
                     minim.setStrategy(s);
                     if minim.minimize("Minuit2","migrad") != -1:
@@ -269,12 +269,12 @@ def manualMinos(pdf,data,var,options):
                         break
                     cautious *= 5;
                     x2 = bound
-                else: 
+                else:
                     firstLoop = False
             # ok, now y1 < 0.5, y2 > 0.5 but reasonable
             if firstLoop: break
             xc = 0.5*(x2+x1)
-            var.setVal(xc); 
+            var.setVal(xc);
             for s in (1,0,2,1):
                 minim.setStrategy(s);
                 if minim.minimize("Minuit2","migrad") != -1:
@@ -285,7 +285,7 @@ def manualMinos(pdf,data,var,options):
             if yc < -0.01: raise MinosException
             if yc < 0.5:
                 x1,y1 = xc,yc
-            else:  
+            else:
                 x2,y2 = xc,yc
                 for s in (1,0,2,1):
                     minim.setStrategy(s);
@@ -293,7 +293,7 @@ def manualMinos(pdf,data,var,options):
                         break
             log.append( "%2d post: x1 %+.5f x2 %+.5f  dx1 %+.5f  dx2 %+.5f   y1 %+7.5f y2 %+7.5f " % (it, x1,x2,x1-x0,x2-x0,y1,y2) )
             print     ( "%2d post: x1 %+.5f x2 %+.5f  dx1 %+.5f  dx2 %+.5f   y1 %+7.5f y2 %+7.5f " % (it, x1,x2,x1-x0,x2-x0,y1,y2) )
-            if abs(x1-x2)<1e-5: 
+            if abs(x1-x2)<1e-5:
                 log.append( " --- completed: dx = %.5f\n" % (x2-x0) )
                 print     ( " --- completed: dx = %.5f\n" % (x2-x0) )
                 errs.append(x2-x0)
@@ -354,7 +354,7 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     w.factory('expr::bkgFail("@0*(1-@1)", Nbkg         , effbkg         )')
     w.factory('SUM::pdfPass(sigPass*{sigPdfPass}, bkgPass*{bkgPdfPass})'.format(sigPdfPass = signals[0], bkgPdfPass = backgrounds[0]))
     w.factory('SUM::pdfFail(sigFail*{sigPdfFail}, bkgFail*{bkgPdfFail})'.format(sigPdfFail = signals[1], bkgPdfFail = backgrounds[1]))
-    w.factory('SIMUL::pdf(passing, yes=pdfPass, no=pdfFail)')   
+    w.factory('SIMUL::pdf(passing, yes=pdfPass, no=pdfFail)')
     #pdf = ROOT.RooSimultaneousOpt(w.pdf("pdf0"), "pdf")
     #getattr(w,'import')(pdf, ROOT.RooFit.RecycleConflictNodes(True), ROOT.RooFit.Silence())
 
@@ -379,9 +379,9 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     go = True; niter = 0; minoslog = []; efferr = None
     while go:
         niter += 1
-        if niter == 5: 
+        if niter == 5:
             minim.minimize("Minuit2","scan");
-        if niter == 7: 
+        if niter == 7:
             minim.minimize("Minuit","minimize");
         if niter >= 10:
             minoslog += [ "STOP AFTER %d ITERATIONS" % niter ]
@@ -406,7 +406,7 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
                 print         "Negative value in Minos, restarting"
                 minoslog += [ "Negative value in Minos, restarting everything", '------' ]
                 w.var("efficiency").setConstant(False)
-                
+
     #print "MANUAL MINOS: ",efferr,"\n\t","\n\t".join(minoslog)
     # plot
     c1 = ROOT.TCanvas("c1","c1"); c1.SetCanvasSize(900,500);
@@ -452,7 +452,7 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     chi2pass = chi2(hpass, w.var("mass"), w.pdf("pdfPass"), w.function("sigPass").getVal() + w.function("bkgPass").getVal())
     chi2fail = chi2(hfail, w.var("mass"), w.pdf("pdfFail"), w.function("sigFail").getVal() + w.function("bkgFail").getVal())
     log.write("\nChi2: pass %.2f, fail %.2f, total %.2f, ndof: %d - %d = %d \n" % (
-        chi2pass, chi2fail, chi2pass + chi2fail, 
+        chi2pass, chi2fail, chi2pass + chi2fail,
         hpass.GetNbinsX()*2, fpf.getSize(),  hpass.GetNbinsX()*2 - fpf.getSize()+1))
 
     log.write("\n"+options.textBlob+"\n")
@@ -466,7 +466,7 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
         tfout.Close()
 
     # report result
-    if efferr: 
+    if efferr:
         return effval, efferr[0], efferr[1]
     else:
         return None
@@ -548,7 +548,7 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None,cacheRef
         x  = num2d.GetXaxis().GetBinCenter(i)
         xl = num2d.GetXaxis().GetBinLowEdge(i)-x
         xh = num2d.GetXaxis().GetBinUpEdge(i)-x
-        if num1d.Integral() + den1d.Integral() == 0: 
+        if num1d.Integral() + den1d.Integral() == 0:
             continue
         tofit.append( ( (x,xl,xh), (options.name+"_bin%d%s"%(i,post), num1d, den1d, rnum1d, rden1d, options) ) )
         #eff = fitEfficiency(options.name+"_bin%d%s"%(i,post), num1d, den1d, rnum1d, rden1d, options)
@@ -596,7 +596,7 @@ def makeRatio(numeff,deneff):
     for i in xrange(numeff.GetN()):
         found = False
         for i2 in xrange(deneff.GetN()):
-            if abs(xn[i]-xd[i2]) < 1e-4: 
+            if abs(xn[i]-xd[i2]) < 1e-4:
                 found = True; break
         if yd[i2] <= 0 or not found:
             unity.SetPoint(i , xn[i ], -99)
@@ -618,24 +618,24 @@ def makeRatio(numeff,deneff):
             unitysyst.SetPointError(i , deneff.GetErrorXlow(i2), deneff.GetErrorXhigh(i2), densyst.GetErrorYlow(i2)/yd[i2], densyst.GetErrorYhigh(i2)/yd[i2])
             if numsyst != numeff or densyst != deneff:
                 text.append( "at bin %3d: x = %8.2f, num = %.4f -%.4f/+%.4f -%.4f/+%.4f   den = %.4f -%.4f/+%.4f -%.4f/+%.4f  ratio = %.4f -%.4f/+%.4f -%.4f/+%.4f = %.4f -%.4f/+%.4f " % (i +1, xn[i ],
-                                    yn[i ], numeff.GetErrorYlow(i ), numeff.GetErrorYhigh(i ), 
+                                    yn[i ], numeff.GetErrorYlow(i ), numeff.GetErrorYhigh(i ),
                                            hypsub(numsyst.GetErrorYlow(i ),numeff.GetErrorYlow(i )), hypsub(numsyst.GetErrorYhigh(i ),numeff.GetErrorYhigh(i )),
                                     yd[i2], deneff.GetErrorYlow(i2), deneff.GetErrorYhigh(i2),
                                            hypsub(densyst.GetErrorYlow(i2),deneff.GetErrorYlow(i2)), hypsub(densyst.GetErrorYhigh(i2),deneff.GetErrorYhigh(i2)),
-                                    yn[i ]/yd[i2], 
-                                    hypot(numeff.GetErrorYlow(i ), deneff.GetErrorYhigh(i2))/yd[i2], 
+                                    yn[i ]/yd[i2],
+                                    hypot(numeff.GetErrorYlow(i ), deneff.GetErrorYhigh(i2))/yd[i2],
                                     hypot(numeff.GetErrorYhigh(i ), deneff.GetErrorYlow(i2))/yd[i2],
-                                    hypot(hypsub(numsyst.GetErrorYlow(i ), numeff.GetErrorYlow(i )), hypsub(densyst.GetErrorYhigh(i2),deneff.GetErrorYhigh(i2)))/yd[i2], 
+                                    hypot(hypsub(numsyst.GetErrorYlow(i ), numeff.GetErrorYlow(i )), hypsub(densyst.GetErrorYhigh(i2),deneff.GetErrorYhigh(i2)))/yd[i2],
                                     hypot(hypsub(numsyst.GetErrorYhigh(i ),numeff.GetErrorYhigh(i )),hypsub(densyst.GetErrorYlow(i2), deneff.GetErrorYlow(i2)))/yd[i2],
-                                    yn[i ]/yd[i2], 
-                                    hypot(numsyst.GetErrorYlow(i ), densyst.GetErrorYhigh(i2))/yd[i2], 
+                                    yn[i ]/yd[i2],
+                                    hypot(numsyst.GetErrorYlow(i ), densyst.GetErrorYhigh(i2))/yd[i2],
                                     hypot(numsyst.GetErrorYhigh(i ), densyst.GetErrorYlow(i2))/yd[i2] ))
             else:
                 text.append( "at bin %3d: x = %8.2f, num = %.4f -%.4f/+%.4f  den = %.4f -%.4f/+%.4f  ratio = %.4f -%.4f/+%.4f " % (i +1, xn[i ],
                                     yn[i ], numeff.GetErrorYlow(i ), numeff.GetErrorYhigh(i ),
                                     yd[i2], deneff.GetErrorYlow(i2), deneff.GetErrorYhigh(i2),
-                                    yn[i ]/yd[i2], 
-                                    hypot(numeff.GetErrorYlow(i ), deneff.GetErrorYhigh(i2))/yd[i2], 
+                                    yn[i ]/yd[i2],
+                                    hypot(numeff.GetErrorYlow(i ), deneff.GetErrorYhigh(i2))/yd[i2],
                                     hypot(numeff.GetErrorYhigh(i ), deneff.GetErrorYlow(i2))/yd[i2] ))
     if numsyst != numeff: ratio.syst = ratiosyst
     if densyst != deneff: unity.syst = unitysyst
@@ -710,7 +710,7 @@ def plotRatios(effs,ratios,options):
     unitysyst = getattr(unity, 'syst', None)
     styleAsData(ratio,options)
     styleAsRef(unity,options)
-    if ratiosyst: 
+    if ratiosyst:
         allratios += [ratiosyst]
         ymax = max(ratiosyst.GetY()[i]+ratiosyst.GetErrorYhigh(i) for i in xrange(ratiosyst.GetN()))
         ymin = min(ratiosyst.GetY()[i]-ratiosyst.GetErrorYlow(i)  for i in xrange(ratiosyst.GetN()))
@@ -728,7 +728,7 @@ def plotRatios(effs,ratios,options):
         r.GetYaxis().SetTitle("ratio")
         r.GetYaxis().SetTitleOffset(0.52);
     unity.Draw("AE2")
-    if options.rrange: 
+    if options.rrange:
         unity.GetYaxis().SetRangeUser(options.rrange[0],options.rrange[1]);
     if unitysyst:
         unitysyst.Draw("E2 SAME")
@@ -741,7 +741,7 @@ def plotRatios(effs,ratios,options):
     if ratiosyst:
         ratiosyst.Draw("PZ SAME")
     ratio.Draw("PZ SAME")
-       
+
 
 def plotEffs(name,effs,options,printDir):
     c1 = ROOT.TCanvas("c1", "c1", 600, (750 if options.doRatio else 600))
@@ -796,7 +796,7 @@ def plotEffs(name,effs,options,printDir):
                 vratios, vtext = (effs[0].alls[k], v)
                 fout.WriteTObject(vratios[0], name+"_ratio_sig_%s_bkg_%s" % k)
     fout.Close()
-    
+
 
 def addTnPEfficiencyOptions(parser):
     parser.add_option("-t", "--tree",    dest="tree", default='tree', help="Pattern for tree name");
@@ -857,12 +857,12 @@ if __name__ == "__main__":
     ])
     options.textBlob = textBlob
     dump = open("%s/%s.info" % (options.printDir, options.name), "w"); dump.write(textBlob+"\n"); dump.close()
-    if options.pretend: 
+    if options.pretend:
         print textBlob; exit()
     ROOT.gROOT.SetBatch(True)
-    ROOT.gROOT.ProcessLine(".x ~/cpp/tdrstyle.cc")
+    ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
     ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
-    if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
         ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
     for L in options.loadLibs:
         ROOT.gROOT.ProcessLine(".L %s+" % L);

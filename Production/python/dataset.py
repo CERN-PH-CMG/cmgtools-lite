@@ -246,7 +246,12 @@ class CMSDataset( BaseDataset ):
         if dbsInstance != None:
             query += "  instance=prod/%s" % dbsInstance
         dbs='dasgoclient --query="summary %s=%s" --format=json'%(qwhat,query)
-        jdata = json.load(_dasPopen(dbs))['data']
+        try:
+            jdata = json.load(_dasPopen(dbs))['data']
+        except ValueError as err:
+            err=['cannot decode json obtained from das']
+            err.append(_dasPopen(dbs).read())
+            raise ValueError('\n'.join(err))
         events = []
         files = []
         lumis = []
