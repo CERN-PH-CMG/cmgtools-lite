@@ -166,11 +166,14 @@ class CMSDataset( BaseDataset ):
         dbsOut = json.load(_dasPopen(dbs))
         files = []
         if dbsOut:
-            dbsFiles = dbsOut[0]['file']
-            for fileDict in dbsFiles:
-                if 'name' not in fileDict:
+            for dbsEntry in dbsOut:
+                if 'file' not in dbsEntry:
                     continue
-                files.append(fileDict['name'])
+                dbsFiles = dbsEntry['file']
+                for fileDict in dbsFiles:
+                    if 'name' not in fileDict:
+                        continue
+                    files.append(fileDict['name'])
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
@@ -402,11 +405,14 @@ class PrivateDataset ( BaseDataset ):
         dbs = 'dasgoclient --json --query="file dataset=%s instance=prod/%s" --limit=%s' % (name, dbsInstance, entries)
         dbsOut = json.load(_dasPopen(dbs))
         if dbsOut:
-            dbsFiles = dbsOut[0]['file']
-            for fileDict in dbsFiles:
-                if 'name' not in fileDict:
+            for dbsEntry in dbsOut:
+                if 'file' not in dbsEntry:
                     continue
-                files.append(fileDict['name'])
+                dbsFiles = dbsEntry['file']
+                for fileDict in dbsFiles:
+                    if 'name' not in fileDict:
+                        continue
+                    files.append(fileDict['name'])
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
