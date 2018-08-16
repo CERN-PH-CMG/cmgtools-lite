@@ -174,6 +174,8 @@ class CMSDataset( BaseDataset ):
                     if 'name' not in fileDict:
                         continue
                     files.append(fileDict['name'])
+        if not files:
+            raise RuntimeError("No files for query \'%s\'" % query)
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
@@ -413,6 +415,8 @@ class PrivateDataset ( BaseDataset ):
                     if 'name' not in fileDict:
                         continue
                     files.append(fileDict['name'])
+        if not files:
+            raise RuntimeError("Dataset %s is empty!" % name)
         return files
 
     def buildListOfFiles(self, pattern='.*root'):
