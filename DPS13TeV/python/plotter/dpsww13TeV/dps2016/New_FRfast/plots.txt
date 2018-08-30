@@ -1,0 +1,67 @@
+etal1    : LepGood1_eta  : 50,-2.5,2.5; XTitle="#eta^{#mu}"
+ptl1     : LepGood1_pt   : 50,20.,70.; XTitle="p_{T}^{#mu}"
+tkmet    : met_trkPt      : 50,0.,100; XTitle="tk ME_{T}"
+tkmetcoarse    : met_trkPt      : 30,0.,150; XTitle="tk ME_{T}"
+pfmet    : met_pt      : 50,0.,100; XTitle="pf ME_{T}"
+mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 70,50.,120; XTitle="m_{T} mu tkmet"
+mtl1tkcoarse   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 15,50.,125; XTitle="m_{T} mu tkmet"
+mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)      : 70,50.,120; XTitle="m_{T} mu pfmet"
+##foob     : LepGood1_pt : 50,0.,150; XTitle="p_{T}^{#mu 1}", Legend="TL"
+
+mu_nVert : nVert  : 50,0,50; XTitle="n_{vertices}"
+mu_nVert_nopuwt : nVert  : 50,0,50; XTitle="n_{vertices}"
+mu_met_nopuwt: met_pt      : 50,0.,100; XTitle="pf ME_{T}"
+mu_rho_nopuwt: rho         : 70,0,70; XTitle="#rho"
+
+mu_nVert_puwtfrmtree: nVert  : 50,0,50; XTitle="n_{vertices}"
+mu_met_puwtfrmtree: met_pt      : 50,0.,100; XTitle="pf ME_{T}"
+mu_rho_puwtfrmtree: rho         : 70,0,70; XTitle="#rho"
+
+mu_nJetAll : nJet_Clean : 6,-0.5,5.5 ; XTitle="n_{jets}"
+mu_nJet40  : Sum$(Jet_Clean_pt > 40) : 6,-0.5,5.5 ; XTitle="n_{jets}^{40}"
+mu_nJet30  : Sum$(Jet_Clean_pt > 30) : 6,-0.5,5.5 ; XTitle="n_{jets}^{30}"
+mu_nJet25  : Sum$(Jet_Clean_pt > 25) : 6,-0.5,5.5 ; XTitle="n_{jets}^{25}"
+mu_lep_jet_dphi : abs(deltaPhi(LepGood1_phi,Jet_Clean_phi)) : 20,0,3.15; XTitle="#Delta#phi_{ljet}"
+l1mvaTTH : LepGood1_mvaTTH : 20,-1.0,1.0; XTitle="Lep1 (MVA-TTH)"
+mu_l1mvaTTH : LepGood1_mvaTTH : 20,-1.0,1.0; XTitle="Lep1 (MVA-TTH)"
+mu_mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)      : 40,0.,80; XTitle="m_{T} mu pfmet"
+mu_ptl1     : LepGood1_pt   : 50,20.,70.; XTitle="p_{T}^{#mu}"
+mu_etal1    : LepGood1_eta  : 50,-2.5,2.5; XTitle="#eta^{#mu}"
+mu_pfmet    : met_pt      : 50,0.,100; XTitle="pf ME_{T}"
+mu_rho	    : rho	  : 70,0,70; XTitle="#rho"
+
+el_l1mvaTTH : LepGood1_mvaTTH : 20,-1.0,1.0; XTitle="Lep1 (MVA-TTH)"
+el_mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)      : 40,0.,80; XTitle="m_{T} el pfmet"
+el_ptl1     : LepGood1_pt   : 50,20.,70.; XTitle="p_{T}^{el}"
+el_etal1    : LepGood1_eta  : 50,-2.5,2.5; XTitle="#eta^{el}"
+el_pfmet    : met_pt      : 50,0.,100; XTitle="pf ME_{T}"
+el_rho	    : rho	  : 70,0,70; XTitle="#rho"
+el_nVert : nVert  : 50,0,50; XTitle="n_{vertices}"
+
+l1reliso04        : LepGood1_relIso04 : 100,0.,1. ; XTitle="relIso04 #mu"
+l1reliso04_scaled : LepGood1_relIso04 : 100,0.,1. ; XTitle="relIso04 #mu"
+
+l1reliso03        : LepGood1_relIso03 : 100,0.,1.2 ; XTitle="relIso03 #mu", Logy
+l1reliso03_scaled : LepGood1_relIso03 : 100,0.,1.2 ; XTitle="relIso03 #mu", Logy
+
+l1chreliso04 : LepGood1_chargedHadRelIso04 : 50,0.,1. ; XTitle="charged relIso04 #mu"
+l1chreliso04_scaled : LepGood1_chargedHadRelIso04 : 50,0.,1. ; XTitle="charged relIso04 #mu"
+
+mu_barrel_mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 60,0.,120; XTitle="m_{T} mu tkmet barrel"
+mu_endcap_mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 60,0.,120; XTitle="m_{T} mu tkmet endcap"
+
+mu_barrel_mtl1tk_scaled   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 60,0.,120; XTitle="m_{T} mu tkmet barrel scaled"
+mu_endcap_mtl1tk_scaled   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 60,0.,120; XTitle="m_{T} mu tkmet endcap scaled"
+
+mu_barrel_mtl1tk_noMETnoMT   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 60,0.,120; XTitle="m_{T} mu tkmet barrel scaled noMET noMT"
+mu_endcap_mtl1tk_noMETnoMT   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 60,0.,120; XTitle="m_{T} mu tkmet endcap scaled noMET noMT"
+
+mu_barrel_reliso03   : LepGood1_relIso03  : 50,0.,1.; XTitle="mu reliso03 barrel"
+mu_endcap_reliso03   : LepGood1_relIso03  : 50,0.,1.; XTitle="mu reliso03 endcap"
+
+mu_barrel_reliso03_scaled   : LepGood1_relIso03  : 50,0.,1.; XTitle="mu reliso03 barrel scaled"
+mu_endcap_reliso03_scaled   : LepGood1_relIso03  : 50,0.,1.; XTitle="mu reliso03 endcap scaled"
+
+mu_barrel_reliso03_noMETnoMT   : LepGood1_relIso03  : 50,0.,1.; XTitle="mu reliso03 barrel scaled noMET noMT"
+mu_endcap_reliso03_noMETnoMT   : LepGood1_relIso03  : 50,0.,1.; XTitle="mu reliso03 endcap scaled noMET noMT"
+

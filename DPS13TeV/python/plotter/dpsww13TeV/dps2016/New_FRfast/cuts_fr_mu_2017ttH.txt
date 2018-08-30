@@ -1,0 +1,36 @@
+alwaystrue : 1
+## trigger selection
+## =============================================
+#trigger1mu    : HLT_SingleMu > 0
+#trigger1mu    : (HLT_BIT_HLT_Mu17_TrkIsoVVL_v >0 )
+trigger1mu : (HLT_BIT_HLT_Mu17_v >0 )
+## muon selection
+## =============================================
+1l            : nLepGood == 1
+muon          : abs(LepGood1_pdgId) == 13 && abs(LepGood1_eta) < 2.4
+#muonLooseId  : LepGood1_mvaTTH > -1.0 
+muonTightMVA  : LepGood1_mvaTTH > 0.9 && LepGood1_mediumMuonId > 0 && LepGood_jetBTagCSV < 0.4941
+#sigcomp       : LepGood_segmentCompatibility > 0.3
+#lepjetptratio : LepGood_jetPtRatiov2 > 0.6
+#jetbtagcsv   : LepGood_jetBTagCSV < 0.07
+FO       : LepGood1_mvaTTH > 0.9 || (LepGood_segmentCompatibility > 0.3 && LepGood_jetBTagCSV < 0.3 && LepGood_jetPtRatiov2 > 0.5)
+
+## kinematic selection
+## =============================================
+lpt25         : LepGood1_pt > 20.
+
+#awayJet40 : Sum$(Jet_Clean_pt > 30. && abs(deltaPhi(LepGood1_phi,Jet_Clean_phi)) > 0.7 ) >= 1
+#awayJet40 : Sum$(Jet_pt > 30. && abs(deltaPhi(LepGood1_phi,Jet_phi)) > 0.7 ) >= 1
+awayJet40 : Sum$(Jet_Clean_against_LL_pt > 30. && abs(deltaPhi(LepGood1_phi,Jet_Clean_against_LL_phi)) > 0.7 ) >= 1
+
+tkmet15max   : met_trkPt < 15.                                          ; Disable=True
+#mtl1tk40max : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi) < 40. ; Disable=True
+pfmet15max   : met_pt < 40.                                             ; Disable=False
+mtl1pf40max : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)  < 40.      ; Disable=True
+
+barrel      : abs(LepGood1_eta) <=1.2                                   ; Disable=True
+endcap      : abs(LepGood1_eta) > 1.2                                   ; Disable=True
+##
+middle      : abs(LepGood1_eta) > 0.8 && abs(LepGood1_eta) < 1.4        ; Disable=True
+
+

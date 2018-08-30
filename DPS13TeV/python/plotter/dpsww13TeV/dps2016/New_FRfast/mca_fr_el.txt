@@ -1,0 +1,28 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerSusyMultilepton"
+
+
+WandZ	 : WJetsToLNu_LO	            : 3.*20508.9        : 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+WandZ  	 : DYJetsToLL_M50_LO_ext  	    : 6024.0            : 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+WandZ  	 : DYJetsToLL_M10to50_LO	    : 18610		: 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+WandZ    : TBar_tWch_noFullyHad		    : 19.55		: 1 ; FillColor=ROOT.kGreen+1	  , Label="WandZ"
+WandZ    : TTJets_DiLepton		    : 831.76*((3*0.108)**2): 1 ; FillColor=ROOT.kGreen+1     , Label="WandZ"
+WandZ    : TTJets_SingleLeptonFromTbar	    : 831.76*(3*0.108)*(1-3*0.108) : 1 ; FillColor=ROOT.kGreen+1     , Label="WandZ"
+WandZ    : T_tch_powheg			    : 136.02			   : 1 ; FillColor=ROOT.kGreen+1     , Label="WandZ"
+WandZ    : TBar_tch_powheg		    : 80.95			   : 1 ; FillColor=ROOT.kGreen+1     , Label="WandZ"
+WandZ    : TTJets_SingleLeptonFromT	    : 831.76*(3*0.108)*(1-3*0.108) : 1 ; FillColor=ROOT.kGreen+1     , Label="WandZ"
+WandZ    : T_tWch_noFullyHad		    : 19.55			   : 1 ; FillColor=ROOT.kGreen+1     , Label="WandZ"
+QCD    : QCD_Pt20to30_EMEnriched       	    : 557600000*0.0096  : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt30to50_EMEnriched	    : 136000000*0.073   : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt50to80_EMEnriched            : 19800000*0.146    : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt80to120_EMEnriched	    : 2800000*0.125	: 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt120to170_EMEnriched	    : 477000*0.132      : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt170to300_EMEnriched	    : 114000*0.165      : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt_20to30_bcToE		    : 557627000*0.00059 : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt_30to80_bcToE     	    : 159068000*0.00255	: 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt_80to170_bcToE		    : 3221000*0.01183	: 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+QCD    : QCD_Pt_170to250_bcToE		    : 105771*0.02492	: 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+
+data: DoubleEG_2016*
+
+data_sub  : -                                                  ; FillColor=ROOT.kOrange+8 , FillStyle=3005, Label="Data - EWK"

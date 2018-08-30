@@ -1,0 +1,44 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerSusyMultilepton"
+DPSWW+       : WWDoubleTo2L             : 0.1729 : 1 ; FillColor=ROOT.kRed+1   , Label="DPS"
+DPSWW_alt    : WW_DPS_herwig            : 0.1729 : 1 ; FillColor=ROOT.kGreen+1   , Label="DPS herwig" , SkipMe=True
+
+data: DoubleMuon_2016*
+data: SingleMuon_2016*
+
+rares    : WpWpJJ      : 0.0539 : 1                                                   ; FillColor=ROOT.kSpring-2 , Label="rare MC" , NormSystematic=0.50
+rares    : WWW         : xsec   : 1                                                   ; FillColor=ROOT.kSpring-2 , Label="rare MC" , NormSystematic=0.50
+rares    : TTZ_LO      : xsec   : 1                                                   ; FillColor=ROOT.kSpring-2 , Label="rare MC" , NormSystematic=0.50
+rares    : ZGTo2LG_ext : xsec   : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0  ; FillColor=ROOT.kSpring-2 , Label="rare MC" , NormSystematic=0.50
+
+ZZ         : ZZTo4L            : xsec : 1  ; FillColor=ROOT.kYellow+2 , Label="ZZ"      , NormSystematic=0.30
+WZ         : WZTo3LNu          : xsec : 1  ; FillColor=ROOT.kAzure+1 , Label="WZ"  , NormSystematic=0.16
+
+WG_wg     : WZTo3LNu_mll01+WZTo3LNu_mll01_ext_part1+WZTo3LNu_mll01_ext_part2+WZTo3LNu_mll01_ext_part3 : 0.7*58.59 : (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 && Sum$(abs(GenPart_pdgId)==23 && GenPart_mass < 4.) == 1 ) ; FillColor=ROOT.kOrange-5 , Label="W\#gamma^{*}", NormSystematic=0.50
+
+
+fakes_data : DoubleMuon_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data.txt', Label="Fakes", NormSystematic=0.35
+
+
+fakes_data : SingleMuon_2016* : 1 ; FillColor=ROOT.kGray, FillStyle=3005, FakeRate='dpsww13TeV/dps2016/fakerates/fakeRate_dps_data.txt', Label="Fakes", NormSystematic=0.35
+
+W1JetsToLNuLO: W1JetsToLNu_LO : 9644.5 ;FillColor=ROOT.kMagenta-4,  FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="W+njets-LO"
+W2JetsToLNuLO: W2JetsToLNu_LO : 3144.5 ;FillColor=ROOT.kMagenta-4,  FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="W+njets-LO"
+W3JetsToLNuLO: W3JetsToLNu_LO : 954.8  ;FillColor=ROOT.kMagenta-4,  FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="W+njets-LO"
+W4JetsToLNuLO: W4JetsToLNu_LO : 485.6  ;FillColor=ROOT.kMagenta-4,  FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="W+njets-LO"
+
+dataTL: DoubleMuon_2016* : 1 ; FillColor=ROOT.kGreen-4, FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="DoubleMu-TL"
+
+
+dataLL: DoubleMuon_2016* : 1 ; FillColor=ROOT.kGreen-4, FakeRate="dpsww13TeV/dps2016/simple/reweighting_LL.txt", Label="DoubleMu-LL"
+WJ    : WJetsToLNu_LO    : xsec ;FillColor=ROOT.kCyan,  FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="W+jets-LO"
+
+
+WZfxfx         : WZTo3LNu_fxfx_part*          : xsec : 1; FillColor=ROOT.kOrange , FakeRate="dpsww13TeV/dps2016/simple/reweighting_TT.txt" , Label="WZTo3LNu-fxfx"      , NormSystematic=0.16
+
+
+WZamcatnlo : WZTo3LNu_amcatnlo : xsec : 1  ; FillColor=ROOT.kCyan  , FakeRate="dpsww13TeV/dps2016/simple/reweighting_TT.txt", Label="WZ-amcatnlo"     , NormSystematic=0.16, SkipMe=False
+
+#DPSWW+    : WW_DPS_herwig    : 0.1729 : 1 ; FillColor=ROOT.kRed+1 , FakeRate="dpsww13TeV/dps2016/simple/reweighting_TT.txt"  , Label="DPS"
+
+#*; TreeName="treeProducerWMass"

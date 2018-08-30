@@ -1,0 +1,1 @@
+elTightId : LepGood1_mvaTTH >0.9 : 10,0.9,1.0; XTitle="MVA5"

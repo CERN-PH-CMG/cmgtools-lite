@@ -1,0 +1,1 @@
+muTightId : LepGood1_mvaTTH >0.9 && LepGood1_mediumMuonId > 0 && LepGood_jetBTagCSV < 0.4941: [0.5,1.0,1.5]; XTitle="MVA"

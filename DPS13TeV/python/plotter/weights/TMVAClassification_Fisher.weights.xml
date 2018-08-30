@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<MethodSetup Method="Fisher::Fisher">
+  <GeneralInfo>
+    <Info name="TMVA Release" value="4.2.1 [262657]"/>
+    <Info name="ROOT Release" value="6.06/01 [394753]"/>
+    <Info name="Creator" value="mdunser"/>
+    <Info name="Date" value="Thu Apr  5 14:33:41 2018"/>
+    <Info name="Host" value="Linux vocms0301.cern.ch 2.6.32-642.11.1.el6.x86_64 #1 SMP Wed Nov 16 09:40:09 CET 2016 x86_64 x86_64 x86_64 GNU/Linux"/>
+    <Info name="Dir" value="/afs/cern.ch/work/m/mdunser/public/cmssw/dpsww2018/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/plotter"/>
+    <Info name="Training events" value="171955"/>
+    <Info name="TrainingTime" value="2.48873949e-01"/>
+    <Info name="AnalysisType" value="Classification"/>
+  </GeneralInfo>
+  <Options>
+    <Option name="V" modified="Yes">False</Option>
+    <Option name="VerbosityLevel" modified="No">Default</Option>
+    <Option name="VarTransform" modified="No">None</Option>
+    <Option name="H" modified="Yes">True</Option>
+    <Option name="CreateMVAPdfs" modified="Yes">True</Option>
+    <Option name="IgnoreNegWeightsInTraining" modified="No">False</Option>
+    <Option name="Method" modified="Yes">Fisher</Option>
+  </Options>
+  <Variables NVar="11">
+    <Variable VarIndex="0" Expression="LepGood_pt[0]" Label="LepGood_pt[0]" Title="p_{T1}" Unit="F" Internal="LepGood_pt_0_" Type="F" Min="2.50011578e+01" Max="1.24596619e+03"/>
+    <Variable VarIndex="1" Expression="LepGood_pt[1]" Label="LepGood_pt[1]" Title="p_{T2}" Unit="F" Internal="LepGood_pt_1_" Type="F" Min="2.00000229e+01" Max="8.70709473e+02"/>
+    <Variable VarIndex="2" Expression="met_pt" Label="met_pt" Title="met_pt" Unit="" Internal="met_pt" Type="F" Min="1.50004263e+01" Max="1.13022449e+03"/>
+    <Variable VarIndex="3" Expression="mt2davis(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],met_pt,met_phi)" Label="mt2davis(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],met_pt,met_phi)" Title="MT2_{ll}" Unit="F" Internal="mt2davis_LepGood_pt_0_,LepGood_eta_0_,LepGood_phi_0_,LepGood_pt_1_,LepGood_eta_1_,LepGood_phi_1_,met_pt,met_phi_" Type="F" Min="0.00000000e+00" Max="8.95459534e+02"/>
+    <Variable VarIndex="4" Expression="mt_2(LepGood_pt[0],LepGood_phi[0],LepGood_pt[1],LepGood_phi[1])" Label="mt_2(LepGood_pt[0],LepGood_phi[0],LepGood_pt[1],LepGood_phi[1])" Title="MT l1 l2" Unit="F" Internal="mt_2_LepGood_pt_0_,LepGood_phi_0_,LepGood_pt_1_,LepGood_phi_1__" Type="F" Min="0.00000000e+00" Max="1.83548022e+03"/>
+    <Variable VarIndex="5" Expression="mt_2(LepGood_pt[0],LepGood_phi[0],met_pt,met_phi)" Label="mt_2(LepGood_pt[0],LepGood_phi[0],met_pt,met_phi)" Title="MT l1 met" Unit="F" Internal="mt_2_LepGood_pt_0_,LepGood_phi_0_,met_pt,met_phi_" Type="F" Min="0.00000000e+00" Max="2.18557007e+03"/>
+    <Variable VarIndex="6" Expression="abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))" Label="abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))" Title="#Delta #phi l1 l2" Unit="F" Internal="abs_deltaPhi_LepGood_phi_0_,LepGood_phi_1___" Type="F" Min="1.40070915e-06" Max="3.14159060e+00"/>
+    <Variable VarIndex="7" Expression="abs(deltaPhi(LepGood_phi[1],met_phi))" Label="abs(deltaPhi(LepGood_phi[1],met_phi))" Title="#Delta #phi l2 met" Unit="F" Internal="abs_deltaPhi_LepGood_phi_1_,met_phi__" Type="F" Min="1.37090683e-05" Max="3.14155507e+00"/>
+    <Variable VarIndex="8" Expression="abs(deltaPhi(phi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1]),LepGood_phi[1]))" Label="abs(deltaPhi(phi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1]),LepGood_phi[1]))" Title="d#phi(ll,l2)" Unit="F" Internal="abs_deltaPhi_phi_2_LepGood_pt_0_,LepGood_eta_0_,LepGood_phi_0_,LepGood_mass_0_,LepGood_pt_1_,LepGood_eta_1_,LepGood_phi_1_,LepGood_mass_1__,LepGood_phi_1___" Type="F" Min="1.40070915e-06" Max="3.14159060e+00"/>
+    <Variable VarIndex="9" Expression="LepGood_eta[0]*LepGood_eta[1]" Label="LepGood_eta[0]*LepGood_eta[1]" Title="#eta_{1}*#eta_{2}" Unit="F" Internal="LepGood_eta_0__T_LepGood_eta_1_" Type="F" Min="-5.96885729e+00" Max="6.21743298e+00"/>
+    <Variable VarIndex="10" Expression="abs(LepGood_eta[0]+LepGood_eta[1])" Label="abs(LepGood_eta[0]+LepGood_eta[1])" Title="abs(#eta_{1}+#eta_{2})" Unit="F" Internal="abs_LepGood_eta_0__P_LepGood_eta_1__" Type="F" Min="3.96370888e-06" Max="4.98696899e+00"/>
+  </Variables>
+  <Spectators NSpec="0"/>
+  <Classes NClass="2">
+    <Class Name="Signal" Index="0"/>
+    <Class Name="Background" Index="1"/>
+  </Classes>
+  <Transformations NTransformations="0"/>
+  <MVAPdfs>
+    <PDF Name="Fisher_PDFSig" MinNSmooth="10" MaxNSmooth="10" InterpolMethod="2" KDE_type="1" KDE_iter="1" KDE_border="1" KDE_finefactor="1.0000000000000000e+00">
+      <Histogram Name="Fisher_tr_S_original" NBins="50" XMin="-1.2536441796034560e+15" XMax="1.0341652438712320e+15" HasEquidistantBins="1">
+        4.27331762e-16 4.21976727e-16 4.42325859e-16 4.61603983e-16 5.17296343e-16 4.35899817e-16 4.45538879e-16 4.72314052e-16 4.85166135e-16 4.68030025e-16 5.01231239e-16 4.42325859e-16 4.61603983e-16 4.41254852e-16 4.40183845e-16 4.73385059e-16 3.96272561e-16 4.58390962e-16 4.66959018e-16 4.46609886e-16 4.42325859e-16 4.18763706e-16 4.46609886e-16 4.54106935e-16 4.10195651e-16 4.36970824e-16 4.45538879e-16 4.23047734e-16 4.48751900e-16 4.47680893e-16 4.35899817e-16 4.46609886e-16 4.48751900e-16 4.47680893e-16 3.93059540e-16 4.17692699e-16 4.21976727e-16 4.23047734e-16 4.71243045e-16 4.48751900e-16 3.88775512e-16 4.26260755e-16 4.34828810e-16 4.10195651e-16 3.90917526e-16 4.08053637e-16 3.81278464e-16 3.67355374e-16 4.08053637e-16 4.04840616e-16 
+      </Histogram>
+    </PDF>
+    <PDF Name="Fisher_PDFBkg" MinNSmooth="10" MaxNSmooth="10" InterpolMethod="2" KDE_type="1" KDE_iter="1" KDE_border="1" KDE_finefactor="1.0000000000000000e+00">
+      <Histogram Name="Fisher_tr_B_original" NBins="50" XMin="-1.2536441796034560e+15" XMax="1.0341652438712320e+15" HasEquidistantBins="1">
+        2.54470766e-16 2.35385458e-16 2.77118664e-16 2.84243845e-16 2.51417116e-16 2.38439107e-16 2.61595947e-16 2.66176421e-16 2.68466658e-16 2.63631713e-16 2.91369027e-16 2.68721129e-16 2.55743120e-16 2.67957716e-16 2.84498316e-16 2.92386910e-16 3.08164097e-16 3.20378694e-16 2.87551965e-16 3.25468109e-16 3.50151774e-16 3.52950952e-16 3.47352595e-16 3.46843654e-16 3.72290730e-16 3.73563084e-16 4.04354047e-16 4.05626400e-16 4.35653951e-16 4.38453129e-16 4.84766809e-16 4.87820458e-16 5.14285417e-16 5.42531672e-16 5.33879666e-16 5.57290977e-16 5.70777927e-16 5.96225004e-16 6.25489142e-16 6.64677640e-16 6.28033850e-16 6.36685856e-16 6.94196249e-16 6.78673532e-16 6.89615775e-16 7.28549802e-16 7.48144051e-16 7.26514036e-16 6.99794606e-16 7.16589676e-16 
+      </Histogram>
+    </PDF>
+  </MVAPdfs>
+  <Weights NCoeff="12">
+    <Coefficient Index="0" Value="-1.2536451628409590e+15"/>
+    <Coefficient Index="1" Value="-2.8916531701741457e-03"/>
+    <Coefficient Index="2" Value="-2.4559979408391506e-03"/>
+    <Coefficient Index="3" Value="-8.0496404466013694e-04"/>
+    <Coefficient Index="4" Value="1.6758682763485424e-04"/>
+    <Coefficient Index="5" Value="-2.5053262817236245e-03"/>
+    <Coefficient Index="6" Value="-1.3078441758565982e-03"/>
+    <Coefficient Index="7" Value="-7.1428921576563138e+14"/>
+    <Coefficient Index="8" Value="-3.1736125410392925e-03"/>
+    <Coefficient Index="9" Value="1.4425223731685250e+15"/>
+    <Coefficient Index="10" Value="-9.7500793311346839e-02"/>
+    <Coefficient Index="11" Value="6.8477487652129840e-02"/>
+  </Weights>
+</MethodSetup>

@@ -1,0 +1,81 @@
+<<<<<<< HEAD
+ptl1     : LepGood1_pt   : 50,20.,100.; XTitle="p_{T}^{#mu1}"
+ptl2     : LepGood2_pt   : 50,20.,100.; XTitle="p_{T}^{#mu2}"
+etal1    : LepGood1_eta  : 48,-2.4,2.4; XTitle="#eta^{#mu1}"
+etal2    : LepGood2_eta  : 48,-2.4,2.4; XTitle="#eta^{#mu2}"
+tkmet    : met_trkPt      : 25,0.,100; XTitle="tk ME_{T}"
+pfmet    : met_pt      : 25,0.,100; XTitle="pf ME_{T}"
+eta12    : abs(LepGood1_eta + LepGood2_eta):100,0,5;XTitle="|#eta^{#mu1}+#eta^{#mu2}|"
+eta1m2   :(LepGood1_eta * LepGood2_eta):100,-6.3,6.3;XTitle="|#eta^{#mu1}x#eta^{#mu2}|"
+mtll     : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)        : 25,0.,100; XTitle="m_{T}(#mu1#mu2)"
+
+mll      :mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 25,0.,100; XTitle="m_{#mu1#mu2}"
+
+BDT_fakes     : BDT_DPS_fakes : 20,0,1.0  ; XTitle = "BDT_fakes"
+BDT_WZ     : BDT_DPS_WZ : 20,0,1.0  ; XTitle = "BDT_WZ"
+BDT_WZXBDT_fakes:BDT_DPS_WZ*BDT_DPS_fakes : 20,0,1.0  ; XTitle = "BDT_prod"
+BDT_WZSBDT_fakes:BDT_DPS_WZ+BDT_DPS_fakes : 20,0,2.0  ; XTitle = "BDT_sum"
+
+BDTfakes_BDTWZ   : BDT_DPS_WZ\:BDT_DPS_fakes  : 20,0,1.0,20,0.,1. ; XTitle="BDT_fakes", YTitle="BDT_WZ"
+
+dphill    :abs(deltaPhi(LepGood1_phi,LepGood2_phi))                       : 60,0.,3.2; XTitle="#Delta#phi(#mu1 #mu2)"
+dphil2met :abs(deltaPhi(LepGood2_phi,met_phi))         			  : 60,0.,3.2; XTitle="#Delta#phi(#mu2 pfmet)"
+dphilll2  :abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),LepGood2_phi)): 60,0.,3.2; XTitle="#Delta #phi(#mu1#mu2 pfmet)"
+
+
+mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 25,0.,100; XTitle="m_{T} #mu1 tkmet", Legend="TL"
+mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)        : 25,0.,100; XTitle="m_{T} #mu1 pfmet"
+
+mtl2tk   : mt_2(LepGood2_pt,LepGood2_phi,met_trkPt,met_trkPhi)  : 25,0.,100; XTitle="m_{T} #mu2 tkmet", Legend="TL"
+mtl2pf   : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)        : 25,0.,100; XTitle="m_{T} #mu2 pfmet"
+##foob     : LepGood1_pt : 50,0.,150; XTitle="p_{T}^{#mu 1}", Legend="TL"
+nVert   : nVert  : 50,0,50; XTitle="n_{vertices}"
+nJetAll : nJet : 6,-0.5,5.5 ; XTitle="n_{jets}"
+nJet40  : Sum$(Jet_pt > 40) : 6,-0.5,5.5 ; XTitle="n_{jets}^{40}"
+nJet35  : Sum$(Jet_pt > 35) : 6,-0.5,5.5 ; XTitle="n_{jets}^{35}"
+
+=======
+ptl1     : LepGood1_pt   : 25,20.,70.; XTitle="p_{T}^{lept}"
+etal1    : LepGood1_eta  : 20,-2.4,2.4; XTitle="#eta^{lept}"
+ptl2     : LepGood2_pt   : 30,20.,90.; XTitle="p_{T}^{lept}"
+etal2    : LepGood2_eta  : 20,-2.4,2.4; XTitle="#eta^{lept}"
+phil1    : LepGood1_phi  : 20, -4, 4; XTitle="#phi^{lept}"
+phil2    : LepGood2_phi  : 20, -4, 4; XTitle="#phi^{lept}"
+pfmet    : met_pt      : 30,10.,150; XTitle="pf MET"
+ml1l2    : mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, 0.1056583745, LepGood2_pt, LepGood2_eta, LepGood2_phi, 0.1056583745)  : 50,0.,400; XTitle="m^{(lept1 lept2)}"
+etaprod  : LepGood1_eta*LepGood2_eta : 30, -6, 6; XTitle="#eta^{lept_{1}} x #eta^{lept_{2}}"
+etasum   : LepGood1_eta+LepGood2_eta : 20, -5, 5; XTitle="#eta^{lept_{1}} + #eta^{lept_{2}}"
+mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)        : 40,0.,200; XTitle="m_{T}^{(lept pfmet)}"
+mtl1l2   : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)        : 30,0.,150; XTitle="m_{T}^{(lept1 lept2)}"
+mt2davis : mt2davis(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood2_pt, LepGood2_eta, LepGood2_phi, met_pt, met_phi)     : 30,0.,150; XTitle="strans mass"
+dphil1l2 : deltaPhi(LepGood1_phi, LepGood2_phi) : 20, -4, 4; XTitle="#Delta#phi^{(lept1 lept2)}"
+dphil2pf : deltaPhi(LepGood2_phi, met_phi)  : 20, -4, 4; XTitle="#Delta#phi^{(lept pfmet)}"
+dphilll2 : deltaPhi(phi_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, 0.1056583745, LepGood2_pt, LepGood2_eta, LepGood2_phi, 0.1056583745), LepGood2_phi)  : 20, -4, 4; XTitle="#Delta#phi^{(lept1lept2 lept2)}"
+
+tkmet    : met_trkPt      : 25,0.,100; XTitle="tk ME_{T}"
+mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 25,0.,100; XTitle="m_{T} mu tkmet", Legend="TL"
+##foob     : LepGood1_pt : 50,0.,150; XTitle="p_{T}^{#mu 1}", Legend="TL"
+nVert : nVert  : 80,0,80; XTitle="n_{vertices}"
+nJetAll : nJet : 6,-0.5,5.5 ; XTitle="n_{jets}"
+nJet40  : Sum$(Jet_pt > 40) : 6,-0.5,5.5 ; XTitle="n_{jets}^{40}"
+nJet30  : Sum$(Jet_pt > 30) : 6,-0.5,5.5 ; XTitle="n_{jets}^{30}"
+BDT_WZ     : BDT_DPS_WZ  :  20, 0, 1; XTitle="BDT_WZ"
+BDT_fakes  : BDT_DPS_fakes : 20, 0, 1 ; XTitle="BDT_fakes"
+BDT_WZ_times_fakes : BDT_DPS_WZ*BDT_DPS_fakes  :  20, 0, 1; XTitle="BDT_WZ_times_BDT_fakes"
+BDT_WZ_fakes_2D : BDT_DPS_WZ\:BDT_DPS_fakes : 20, 0, 1,20, 0, 1 ; XTitle ="BDT_DPS_fakes", YTitle ="BDT_DPS_WZ"
+>>>>>>> dpsww13tev/80X
+etaPt   : LepGood1_pt\:LepGood1_eta  : 48,-2.4,2.4,25,25.,50. ; XTitle="#eta^{#mu}", YTitle="p_{T}^{#mu}"
+
+l1reliso04        : LepGood1_relIso04 : 100,0.,1. ; XTitle="relIso04 #mu1"
+l1reliso03        : LepGood1_relIso03 : 100,0.,1. ; XTitle="relIso03 #mu1"
+
+l2reliso04        : LepGood2_relIso04 : 100,0.,1. ; XTitle="relIso04 #mu2"
+l2reliso03        : LepGood2_relIso03 : 100,0.,1. ; XTitle="relIso03 #mu2"
+
+<<<<<<< HEAD
+mt2 : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi): 60,0,120;  XTitle="M_{T2}^{#mu#mu}"
+
+lep1_PtIso    : LepGood1_relIso03\:LepGood1_pt                      : 50,20.,100.,100,0.,1. ; XTitle="p_{T}^{#mu1}", YTitle="Iso^{#mu1}"
+lep2_PtIso    : LepGood2_relIso03\:LepGood2_pt                      : 50,20.,100.,100,0.,1. ; XTitle="p_{T}^{#mu2}", YTitle="Iso^{#mu2}"
+=======
+>>>>>>> dpsww13tev/80X
