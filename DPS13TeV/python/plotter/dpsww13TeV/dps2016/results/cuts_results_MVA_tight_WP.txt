@@ -1,14 +1,14 @@
 event-filters : $DATA{Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonMoriond2017>=1 && Flag_badCloneMuonMoriond2017>=1} $MC{1}
 SameSign     : LepGood_charge[0] * LepGood_charge[1] > 0
 25/20        : LepGood1_pt > 25 && LepGood2_pt > 20
-#bump         :  LepGood1_pt > 80 && LepGood1_pt < 90
+#bump        :  LepGood1_pt > 80 && LepGood1_pt < 90
 metpt        : met_pt > 15
 met20        : met_pt > 20 ; Disable=True
 2l           : nLepGood == 2
 ## noother      : nLepFO_Recl == 2
-noTau        : nTauGoodHad_Clean == 0
-bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
-01jets       : Sum$(Jet_Clean_pt > 30) < 2
+#noTau        : nTauGoodHad_Clean == 0
+#bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
+#01jets       : Sum$(Jet_Clean_pt > 30) < 2
 lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.9
 tightCharge  : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
 chargecon    : (LepGood1_chargeConsistency >= 3 || abs(LepGood1_pdgId)==11) && (LepGood2_chargeConsistency >= 3 || abs(LepGood2_pdgId)==11)

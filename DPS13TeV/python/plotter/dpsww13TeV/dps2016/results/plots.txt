@@ -1,6 +1,11 @@
 #new frnds
-#njets : Sum$(Jet_Clean_pt > 30): [0,1,2,3,4,5,6] ; XTitle='njetsclean'
-#nbjets : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426): [0,1,2,3,4,5,6] ; XTitle='njetsclean'
+jetnLeptons_mumu:Jet_nLeptons:[0,1,2,3,4,5,6] ; XTitle='jet_nleptons'
+#njets_mumu : Sum$(JetSel_Recl_pt > 30): [0,1,2,3,4,5,6] ; XTitle='njets'
+nbjets_clean_mumu : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426): [0,1,2,3,4,5,6] ; XTitle='nbjets_clean'
+njets_clean_mumu : Sum$(Jet_Clean_pt > 30): [0,1,2,3,4,5,6] ; XTitle='njets_clean'
+nbjets_mumu : Sum$(Jet_pt > 25 && Jet_btagCSV > 0.5426): [0,1,2,3,4,5,6] ; XTitle='nbjets'
+njets_mumu : Sum$(Jet_pt > 30): [0,1,2,3,4,5,6] ; XTitle='njets'
+
 delRL1  : if3(LepGood1_mvaTTH < 0.9, deltaR(LepGood1_eta,LepGood1_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delR_Llep1'
 delRT1  : if3(LepGood1_mvaTTH > 0.9, deltaR(LepGood1_eta,LepGood1_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delRL_Tlep1'
 delRL2  : if3(LepGood2_mvaTTH < 0.9, deltaR(LepGood2_eta,LepGood2_phi,Jet_Clean_eta,Jet_Clean_phi),-999):10,-1,1; XTitle='delR_Llep2'
@@ -123,7 +128,8 @@ dphil2met     : abs(deltaPhi(LepGood2_phi,met_phi)) : 20,0.,3.15; XTitle="#Delta
 #dphilll2       : abs(dphi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],2)) : 20,0,5; XTitle="#Delta#phi_{ll l2}" 
 rho_mumu :rho: 70,0,70; XTitle="#rho"
 
-lepMVA1       : LepGood1_mvaTTH : 20,0.85,1; XTitle="LepMVA1" 
+
+
 mcMatchId1_mumu	   :LepGood1_mcMatchId:[0,1,23,24,25,26];XTitle="Lep1MCMatchId"
 mcMatchId2_mumu    :LepGood2_mcMatchId:[0,1,23,24,25,26];XTitle="Lep2MCMatchId"
 
@@ -140,8 +146,8 @@ eta1_mumu          : LepGood1_eta    : 10,-2.5,2.5; XTitle="#eta lead."
 eta2_mumu          : LepGood2_eta    : 10,-2.5,2.5; XTitle="#eta trail."
 phi1_mumu          : LepGood1_phi    : 10,-3.2,3.2; XTitle="#phi lead."
 phi2_mumu          : LepGood2_phi    : 10,-3.2,3.2; XTitle="#phi trail."
-lepMVA1_mumu       : LepGood1_mvaTTH : 20,0,1; XTitle="LepMVA1" 
-lepMVA2_mumu       : LepGood2_mvaTTH : 20,0,1; XTitle="LepMVA2"
+lepMVA1_mumu       : LepGood1_mvaTTH : 20,-1,1; XTitle="LepMVA1" 
+lepMVA2_mumu       : LepGood2_mvaTTH : 20,-1,1; XTitle="LepMVA2"
 lepMVA2       : LepGood2_mvaTTH : 20,0.75,1; XTitle="LepMVA2"
 lepMVA3       : LepGood3_mvaTTH : 20,0.75,1; XTitle="LepMVA3"
 lepMVA4       : LepGood4_mvaTTH : 20,0.75,1; XTitle="LepMVA4"

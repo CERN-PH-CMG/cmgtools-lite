@@ -77,9 +77,19 @@ class DPSCleaner(Module):
                 return True
         else:
             return False
-        
+    
+       
+    def lepFOttH2017(self,lep):
+        lep.conept =0.
+        if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): lep.conept = lep.pt
+        elif (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.90: lep.conept = lep.pt
+        else: lep.conept= 0.90 * lep.pt / lep.jetPtRatiov2
+
+        return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or lep.idEmuTTH) and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagDeepCSV<0.1522 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3) and (abs(lep.pdgId)!=11 or lep.mvaIdSpring16HZZ > (0.0 if abs(lep.eta)<1.479 else 0.7)) ) )
+
     def hadtau(self,tau):
         return (tau.pt > 20.0 and abs(tau.eta) < 2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAdR03 >=2 and tau.idDecayMode)
+
     def jetsel(self,jet):
         return (jet.pt > 25.0 and abs(jet.eta) < 2.4)
     def analyze(self, event):
@@ -87,7 +97,7 @@ class DPSCleaner(Module):
  
         hadtaus = filter(self.hadtau,Collection(event,"TauGood"))
         leptight = filter(self.lepTight,Collection(event,"LepGood"))
-        leploose = filter(self.lepF0,Collection(event,"LepGood"))
+        leploose = filter(self.lepFOttH2017,Collection(event,"LepGood"))
         lep=Collection(event,"LepGood")
         jets= filter(self.jetsel,Collection(event,"Jet")) # jets are selected with a cut on pT and eta
 
