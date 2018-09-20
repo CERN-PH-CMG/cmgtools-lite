@@ -730,6 +730,8 @@ else:
             QCD_HT1000to1500,
             QCD_HT1500to2000,
             QCD_HT2000toInf,
+            QCD_Mu5s,
+            QCD_EMs,
             TTGJets, 
             TTWToLNu_fxfx, 
             TTW_LO, 
