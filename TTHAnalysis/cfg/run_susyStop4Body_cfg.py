@@ -749,8 +749,7 @@ else:
             TTHH, 
             TTTJ, 
             TTTW,
-        ]
-        selectedComponents = selectedComponents + QCD_Mu5s + QCD_EMs
+        ] + QCD_Mu5s + QCD_EMs
     if runSMS:
         selectedComponents = []
     if runFullSimSignal:
