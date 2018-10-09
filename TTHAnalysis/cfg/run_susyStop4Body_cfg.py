@@ -422,7 +422,7 @@ jsonAna.useLumiBlocks = True
 #    #treeProducer.globalVariables.append(NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"))
 
 #-------- SAMPLES AND TRIGGERS -----------
-
+#TODO: TRIGGERS FOR 2017 
 #from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 from CMGTools.RootTools.samples.triggers_13TeV_Spring16_degStop import *
 triggerFlagsAna.triggerBits = {}
@@ -712,7 +712,7 @@ else:
             DYJetsToLL_M50_HT400to600,
             DYJetsToLL_M50_HT600to800,
             DYJetsToLL_M50_HT800to1200,
-            #DYJetsToLL_M50_HT1200to2500,
+            DYJetsToLL_M50_HT1200to2500,
             DYJetsToLL_M50_HT2500toInf,
         ]
     if runOtherMC2:

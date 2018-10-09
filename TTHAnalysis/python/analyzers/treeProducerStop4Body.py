@@ -76,7 +76,7 @@ susyStop4Body_globalVariables = susyCore_globalVariables + [
 
 susyStop4Body_globalObjects = susyCore_globalObjects.copy()
 susyStop4Body_globalObjects.update({
-            # put more here
+            #"jetID" : NTupleObject("jetID", jetTypeID, help="PF Jet specifics for ID ")
 })
 
 susyStop4Body_collections = susyCore_collections.copy()
