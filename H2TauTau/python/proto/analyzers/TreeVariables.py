@@ -145,16 +145,16 @@ electron_vars = [
     Variable('eid_tight', lambda ele : ele.cutBasedId('POG_SPRING15_25ns_v1_Tight')),
     Variable('nhits_missing', lambda ele : ele.physObj.gsfTrack().hitPattern().numberOfHits(1), int),
     Variable('pass_conv_veto', lambda ele : ele.passConversionVeto()),
-    Variable('reliso05', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05', lambda lep : lep.relIso(0.3, dbeta_factor=0.5, all_charged=0)),
+    Variable('reliso05_04', lambda lep : lep.relIso(0.4, dbeta_factor=0.5, all_charged=0)),
+    Variable('reliso05_04', lambda lep : lep.relIso(0.4, dbeta_factor=0.5, all_charged=0)),
     Variable('weight_tracking', lambda lep : getattr(lep, 'weight_tracking', 1.)),
 ]
 
 # muon
 muon_vars = [
-    Variable('reliso05', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso05_03', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05', lambda lep : lep.relIso(0.4, dbeta_factor=0.5, all_charged=0)),
+    Variable('reliso05_03', lambda lep : lep.relIso(0.3, dbeta_factor=0.5, all_charged=0)),
     Variable('muonid_loose', lambda muon : muon.muonID('POG_ID_Loose')),
     Variable('muonid_medium', lambda muon : muon.muonID('POG_ID_Medium_ICHEP')),
     Variable('muonid_tight', lambda muon : muon.muonID('POG_ID_Tight')),
