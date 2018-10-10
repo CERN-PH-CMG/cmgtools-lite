@@ -26,9 +26,24 @@ genParticleWithMotherIndex = NTupleObjectType("genParticleWithMotherIndex", base
 ##------------------------------------------
 
 leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ leptonTypeSusy ], variables = [
+    # TO DO: Muon ID
+    # ID variables
+    # ----------------------
+    NTupleVariable("SOSTightID2017",             lambda x : (x.electronID("MVA_ID_nonIso_Fall17_wp90") if x.pt()<10 else x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")) if abs(x.pdgId())==11 else 0, int, help="SOS tight electron MVA noIso ID 2017 (WP: POG wp90 below 10 GeV, SUSYTight above)"),
+    NTupleVariable("SUSYVLooseFOFall17",         lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYVLooseFO")       if abs(x.pdgId())==11 and x.pt()> 5 else 1, int, help="SUSYVLooseFOFall17"),
+    NTupleVariable("SUSYVLooseFall17",           lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYVLoose")         if abs(x.pdgId())==11 and x.pt()> 5 else 1, int, help="SUSYVLooseFall17"),
+    NTupleVariable("SUSYTightFall17",            lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")          if abs(x.pdgId())==11 and x.pt()>10 else 1, int, help="SUSYTightFall17"),
+    NTupleVariable("trkIso03", lambda x : (x.dr03TkSumPt() if abs(x.pdgId())==11 else x.isolationR03().sumPt)/x.pt(), help="TrkIso R=0.3"),
+    NTupleVariable("trkIso045", lambda x : (x.dr04TkSumPt() if abs(x.pdgId())==11 else x.isolationR05().sumPt)/x.pt(), help="TrkIso R=0.4 (e), 0.5 (mu)"),
+    
+    #MUON ID
+    NTupleVariable("softMuonId",   lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==13 else 1,  int, help="Muon POG Soft id"),
+    NTupleVariable("looseMuonId",  lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==13 else 1, int, help="Muon POG Loose id"),
+    NTupleVariable("mediumMuonId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==13 else 1, int, help="Muon POG Medium id"),
+    NTupleVariable("tightMuonId",  lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==13 else 1, int, help="Muon POG Tight id"),
+
     #NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
 
-    # ID variables
     #NTupleVariable("SPRING15_25ns_v1", lambda x : (1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto") + 1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Loose") + 1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Medium") + 1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight")) if abs(x.pdgId()) == 11 else -1, int, help="Electron cut-based id (POG_SPRING15_25ns_v1_ConvVetoDxyDy): 0=none, 1=veto, 2=loose, 3=medium, 4=tight"),
 
     #NTupleVariable("eleCBID_SPRING15_25ns_ConvVeto", lambda x : (1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVeto_Veto") + 1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVeto_Loose") + 1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVeto_Medium") + 1*x.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVeto_Tight")) if abs(x.pdgId()) == 11 else -1, int, help="Electron cut-based id (POG_SPRING15_25ns_v1_ConvVeto): 0=none, 1=veto, 2=loose, 3=medium, 4=tight"),
@@ -43,7 +58,6 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     #NTupleVariable("chargedHadRelIso04",  lambda x : x.chargedHadronIsoR(0.4)/x.pt(), help="PF Rel Iso, R=0.4, charged hadrons only"),
     # Extra muon ID working points
     #NTupleVariable("softMuonId",   lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==13 else 1,  int, help="Muon POG Soft id"),
-    #NTupleVariable("looseMuonId",  lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==13 else 1, int, help="Muon POG Loose id"),
     #
     NTupleVariable("absIso03",     lambda x : x.absIso03, help="PF Abs Iso, R=0.3, pile-up corrected"),
     NTupleVariable("absIso",       lambda x : x.absIso04, help="PF Rel Iso, R=0.4, pile-up corrected"),

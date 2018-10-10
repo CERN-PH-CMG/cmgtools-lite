@@ -423,6 +423,7 @@ jsonAna.useLumiBlocks = True
 
 #-------- SAMPLES AND TRIGGERS -----------
 #TODO: TRIGGERS FOR 2017 
+#example: https://github.com/diogodebastos/cmgtools-lite/blob/2e70cfcb301f608cf89b6fb27bd3795051024b32/TTHAnalysis/cfg/run_ttH_cfg.py#L184
 #from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 from CMGTools.RootTools.samples.triggers_13TeV_Spring16_degStop import *
 triggerFlagsAna.triggerBits = {}
