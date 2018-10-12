@@ -83,10 +83,10 @@ susyStop4Body_collections = susyCore_collections.copy()
 susyStop4Body_collections.update({
             ## ---------------------------------------------
             "selectedTaus"     : NTupleCollection("TauGood",   tauTypeSusy,                8,              help="Taus after the preselection"),
-            "selectedLeptons"  : NTupleCollection("LepGood",   leptonTypeStop4Body,          8,              help="Leptons after the preselection"),
-            "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeStop4Body,          8,              help="Leptons after the preselection"),
+            "selectedLeptons"  : NTupleCollection("LepGood",   leptonTypeStop4Body,        8,              help="Leptons after the preselection"),
+            "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeStop4Body,        8,              help="Leptons after the preselection"),
             ## ---------------------------------------------
-            "cleanJetsAll"     : NTupleCollection("Jet",       jetTypeSusy,               30,              help="Cental jets after full selection and cleaning, sorted by pt"),
+            "cleanJetsAll"     : NTupleCollection("Jet",       jetTypeStop4Body,          30,              help="Cental jets after full selection and cleaning, sorted by pt"),
             "jets"             : NTupleCollection("JetDirty",  genJetType,                25,              help="Cental jets after full selection but before cleaning, sorted by pt"),
             "cleanGenJets"     : NTupleCollection("GenJet",    genJetType,                30,              help="Clean Gen Jets, sorted by pt"),
             ## ---------------------------------------------

@@ -29,6 +29,7 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     # TO DO: Muon ID
     # ID variables
     # ----------------------
+    # Has to be tested
     NTupleVariable("SOSTightID2017",             lambda x : (x.electronID("MVA_ID_nonIso_Fall17_wp90") if x.pt()<10 else x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")) if abs(x.pdgId())==11 else 0, int, help="SOS tight electron MVA noIso ID 2017 (WP: POG wp90 below 10 GeV, SUSYTight above)"),
     NTupleVariable("SUSYVLooseFOFall17",         lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYVLooseFO")       if abs(x.pdgId())==11 and x.pt()> 5 else 1, int, help="SUSYVLooseFOFall17"),
     NTupleVariable("SUSYVLooseFall17",           lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYVLoose")         if abs(x.pdgId())==11 and x.pt()> 5 else 1, int, help="SUSYVLooseFall17"),
@@ -39,8 +40,14 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     #MUON ID
     NTupleVariable("softMuonId",   lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==13 else 1,  int, help="Muon POG Soft id"),
     NTupleVariable("looseMuonId",  lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==13 else 1, int, help="Muon POG Loose id"),
-    NTupleVariable("mediumMuonId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==13 else 1, int, help="Muon POG Medium id"),
+    #NTupleVariable("mediumMuonId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==13 else 1, int, help="Muon POG Medium id"),
     NTupleVariable("tightMuonId",  lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==13 else 1, int, help="Muon POG Tight id"),
+
+    #ELECTRON ID
+    NTupleVariable("softElectronId",   lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==11 else 1,  int, help="Electron POG Soft id"),
+    NTupleVariable("looseElectronId",  lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==11 else 1, int, help="Electron POG Loose id"),
+    NTupleVariable("mediumElectronId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==11 else 1, int, help="Electron POG Medium id"),
+    NTupleVariable("tightElectronId",  lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==11 else 1, int, help="Electron POG Tight id"),
 
     #NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
 
@@ -76,4 +83,11 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     #new version used by EGM in Spring15, 7_4_14:
     NTupleVariable("eInvMinusPInv_tkMom", lambda x: ((1.0/x.ecalEnergy()) - (1.0 / x.trackMomentumAtVtx().R() ) if (x.ecalEnergy()>0. and x.trackMomentumAtVtx().R()>0.) else 9e9) if abs(x.pdgId())==11 else 0, help="Electron 1/E - 1/p_tk_vtx  (without absolute value!)"),
     NTupleVariable("etaSc",               lambda x : x.superCluster().eta() if abs(x.pdgId())==11 else -100,                                                                                                     help="Electron supercluster pseudorapidity"),
+])
+
+##------------------------------------------
+## JET
+##------------------------------------------
+
+jetTypeStop4Body = NTupleObjectType("jetStop4Body", baseObjectTypes = [ jetTypeSusy ], variables = [
 ])
