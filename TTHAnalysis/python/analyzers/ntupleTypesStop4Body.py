@@ -30,7 +30,7 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     # ID variables
     # ----------------------
     # ELECTRON POG ID - test this!
-    NTupleVariable("vetoElId_POG2017",   lambda x : x.electronID("POG_FALL17_94X_v1_Veto") if abs(x.pdgId())==11 else 1,  int, help="Electron POG 2017 Veto id"),
+    NTupleVariable("vetoElId_POG2017",   lambda x : x.electronID("POG_Cuts_ID_FALL17_94X_v1_Veto") if abs(x.pdgId())==11 else 1,  int, help="Electron POG 2017 Veto id"),
     #NTupleVariable("looseElectronId",  lambda x : x.electronID("POG_ID_Loose") if abs(x.pdgId())==11 else 1, int, help="Electron POG Loose id"),
     #NTupleVariable("mediumElectronId",  lambda x : x.electronID("POG_ID_Medium") if abs(x.pdgId())==11 else 1, int, help="Electron POG Medium id"),
     #NTupleVariable("tightElectronId",  lambda x : x.electronID("POG_ID_Tight") if abs(x.pdgId())==11 else 1, int, help="Electron POG Tight id"),
@@ -50,11 +50,11 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     #NTupleVariable("mediumMuonId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==13 else 1, int, help="Muon POG Medium id"),
     NTupleVariable("tightMuonId",  lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==13 else 1, int, help="Muon POG Tight id"),
 
-    #ELECTRON ID
-    NTupleVariable("softElectronId",   lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==11 else 1,  int, help="Electron POG Soft id"),
-    NTupleVariable("looseElectronId",  lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==11 else 1, int, help="Electron POG Loose id"),
-    NTupleVariable("mediumElectronId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==11 else 1, int, help="Electron POG Medium id"),
-    NTupleVariable("tightElectronId",  lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==11 else 1, int, help="Electron POG Tight id"),
+    #ELECTRON ID - TO DO: Fix this "muonID"
+    #NTupleVariable("softElectronId",   lambda x : x.muonID("POG_ID_Soft") if abs(x.pdgId())==11 else 1,  int, help="Electron POG Soft id"),
+    #NTupleVariable("looseElectronId",  lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==11 else 1, int, help="Electron POG Loose id"),
+    #NTupleVariable("mediumElectronId",  lambda x : x.muonID("POG_ID_Medium") if abs(x.pdgId())==11 else 1, int, help="Electron POG Medium id"),
+    #NTupleVariable("tightElectronId",  lambda x : x.muonID("POG_ID_Tight") if abs(x.pdgId())==11 else 1, int, help="Electron POG Tight id"),
 
     #NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
 
