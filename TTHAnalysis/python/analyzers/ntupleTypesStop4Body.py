@@ -37,7 +37,9 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
     NTupleVariable("eleCutIdPog2017",     lambda x : (1*x.electronID("POG_Cuts_ID_FALL17_94X_v1_Veto") + 1*x.electronID("POG_Cuts_ID_FALL17_94X_v1_Loose") + 1*x.electronID("POG_Cuts_ID_FALL17_94X_v1_Medium") + 1*x.electronID("POG_Cuts_ID_FALL17_94X_v1_Tight")) if abs(x.pdgId()) == 11 else -1, int, help="Electron cut-based id (POG 2017): 0=none, 1=veto, 2=loose, 3=medium, 4=tight"),
 
     # ELECTRON SUSY ID
-    NTupleVariable("SOSTightID2017",             lambda x : (x.electronID("MVA_ID_nonIso_Fall17_wp90") if x.pt()<10 else x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")) if abs(x.pdgId())==11 else 0, int, help="SOS tight electron MVA noIso ID 2017 (WP: POG wp90 below 10 GeV, SUSYTight above)"),
+    NTupleVariable("eleMVAId2017",     lambda x : (1*x.electronID("MVA_ID_nonIso_Fall17_wp90") + 1*x.electronID("MVA_ID_nonIso_Fall17_wp80") + 1*x.electronID("") + 1*x.electronID("")) if abs(x.pdgId()) == 11 else -1, int, help="Electron MVA-based id (POG 2017): 0=none, 1=wp90, 2=wp80"),
+    NTupleVariable("SOSTightID2017_wp90",        lambda x : (x.electronID("MVA_ID_nonIso_Fall17_wp90") if x.pt()<10 else x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")) if abs(x.pdgId())==11 else 0, int, help="SOS tight electron MVA noIso ID 2017 (WP: POG wp90 below 10 GeV, SUSYTight above)"),
+    NTupleVariable("SOSTightID2017_wp80",        lambda x : (x.electronID("MVA_ID_nonIso_Fall17_wp80") if x.pt()<10 else x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")) if abs(x.pdgId())==11 else 0, int, help="SOS tight electron MVA noIso ID 2017 (WP: POG wp80 below 10 GeV, SUSYTight above)"),
     NTupleVariable("SUSYVLooseFOFall17",         lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYVLooseFO")       if abs(x.pdgId())==11 and x.pt()> 5 else 0, int, help="SUSYVLooseFOFall17"),
     NTupleVariable("SUSYVLooseFall17",           lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYVLoose")         if abs(x.pdgId())==11 and x.pt()> 5 else 0, int, help="SUSYVLooseFall17"),
     NTupleVariable("SUSYTightFall17",            lambda x : x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")          if abs(x.pdgId())==11 and x.pt()>10 else 0, int, help="SUSYTightFall17"),
@@ -92,4 +94,5 @@ leptonTypeStop4Body = NTupleObjectType("leptonStop4Body", baseObjectTypes = [ le
 ##------------------------------------------
 
 jetTypeStop4Body = NTupleObjectType("jetStop4Body", baseObjectTypes = [ jetTypeSusy ], variables = [
+    #NTupleVariable("fixEE2017",      lambda x : ... if x.isData else -1, help="..."),
 ])
