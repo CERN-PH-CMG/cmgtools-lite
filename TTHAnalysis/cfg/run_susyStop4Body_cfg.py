@@ -679,8 +679,8 @@ else:
     if runWJets:
         selectedComponents = [
             #WJetsToLNu_LO,     #status=PRODUCTION
-            #W1JetsToLNu_LO,    #status=PRODUCTION
-            #W2JetsToLNu_LO,    #status=PRODUCTION
+            W1JetsToLNu_LO,    #status=PRODUCTION
+            W2JetsToLNu_LO,    #status=PRODUCTION
             W3JetsToLNu_LO,
             W4JetsToLNu_LO,
         ]
