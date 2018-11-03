@@ -351,63 +351,63 @@ MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMS
 MODULES.append( ('noTTMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", useTT_2lss='', useMEM_3l = False)) )
 MODULES.append( ('kinMEMMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", useTT_2lss='v8,rTT,httTT', useMEM_3l = True)) )
 
-#from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
-#MODULES.append( ('oldcode_BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-#                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-#                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
-#                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
-#                                                      selection = [
-#                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
-#                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-#                ]
-#                                                      )) )
-#
-#from CMGTools.TTHAnalysis.tools.BDT_eventReco_cpp import BDT_eventReco
-#MODULES.append( ('BDTv8_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-#                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-#                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
-#                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
-#                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
-#                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
-#                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
-#                                                    algostring = 'k_BDTv8_Hj',
-#                                                    csv_looseWP = 0.5426,
-#                                                    csv_mediumWP = 0.8484,
-#                                                    selection = [
-#                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
-#                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-#                ]
-#                                                            )) )
-#MODULES.append( ('BDTrTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
-#                                                     algostring = 'k_rTT_Hj',
-#                                                     csv_looseWP = 0.5426,
-#                                                     csv_mediumWP = 0.8484,
-#                                                      selection = [
-#                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
-#                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-#                ]
-#                                                     )) )
-#MODULES.append( ('BDThttTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
-#                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
-#                                                     algostring = 'k_httTT_Hj',
-#                                                     csv_looseWP = 0.5426,
-#                                                     csv_mediumWP = 0.8484,
-#                                                      selection = [
-#                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
-#                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-#                ]
-#                                                     )) )
+from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
+MODULES.append( ('oldcode_BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                      selection = [
+                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
+                ]
+                                                      )) )
+
+from CMGTools.TTHAnalysis.tools.BDT_eventReco_cpp import BDT_eventReco
+MODULES.append( ('BDTv8_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
+                                                    os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
+                                                    algostring = 'k_BDTv8_Hj',
+                                                    csv_looseWP = 0.5426,
+                                                    csv_mediumWP = 0.8484,
+                                                    selection = [
+                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
+                ]
+                                                            )) )
+MODULES.append( ('BDTrTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
+                                                     algostring = 'k_rTT_Hj',
+                                                     csv_looseWP = 0.5426,
+                                                     csv_mediumWP = 0.8484,
+                                                      selection = [
+                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
+                ]
+                                                     )) )
+MODULES.append( ('BDThttTT_Hj', lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_2017_configA_dcsv_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
+                                                     os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
+                                                     algostring = 'k_httTT_Hj',
+                                                     csv_looseWP = 0.5426,
+                                                     csv_mediumWP = 0.8484,
+                                                      selection = [
+                lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
+                ]
+                                                     )) )
 
 from CMGTools.TTHAnalysis.tools.evtTagger import EvtTagger
 
@@ -454,18 +454,18 @@ from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWei
 MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V2_B_F.csv",
                                                                    discrname="btagDeepCSV")))
 
-#from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
-#MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
-#                                                       cut_BDT_rTT_score = 0.0,
-#                                                       cuts_mW_had = (60.,100.),
-#                                                       cuts_mH_vis = (80.,140.),
-#                                                       btagDeepCSVveto = 0.1522) ))
-#
-#from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
-#MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
-#
-#from CMGTools.TTHAnalysis.tools.matchRecoToPartonsTTH import MatchRecoToPartonsTTH
-#MODULES.append( ('matchPartons', lambda : MatchRecoToPartonsTTH(label="_Recl")) )
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
+                                                       cut_BDT_rTT_score = 0.0,
+                                                       cuts_mW_had = (60.,100.),
+                                                       cuts_mH_vis = (80.,140.),
+                                                       btagDeepCSVveto = 0.1522) ))
+
+from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
+MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
+
+from CMGTools.TTHAnalysis.tools.matchRecoToPartonsTTH import MatchRecoToPartonsTTH
+MODULES.append( ('matchPartons', lambda : MatchRecoToPartonsTTH(label="_Recl")) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
 # run on a big number of events, ideally one job per file using -N big_number, and not on skimmed trees when auto-reweighthing the pileup to avoid loss of statistical power!
@@ -473,5 +473,5 @@ MODULES.append( ('vtxWeight', lambda : VertexWeightFriend(myfile=None, targetfil
                                                           myhist=None,targethist="pileup",name="vtxWeight2017",
                                                           verbose=False,vtx_coll_to_reweight="nTrueInt",autoPU=True)) )
 
-#from CMGTools.TTHAnalysis.tools.bestHmmFriend import BestHmm
-#MODULES.append( ('bestHmm', lambda : BestHmm(label="_Recl")) )
+from CMGTools.TTHAnalysis.tools.bestHmmFriend import BestHmm
+MODULES.append( ('bestHmm', lambda : BestHmm(label="_Recl")) )

@@ -71,58 +71,58 @@ class tHqEventVariableFriend:
                 self.branches.append(("dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst), -99.9)) # delta eta: max fwd jet and second hardest bjet
                 self.branches.append(("dEtaBJet2BJet%s%s"%(ptcutlabel,jecsyst), -99.9)) # delta eta: hardest bjet and second hardest bjet
 
-#        # Signal MVA
-#        self.mvavars = {}
-#        for ptcut, ptcutlabel in self.fwdjetptcuts:
-#            for jecsyst in self.jecsysts:
-#                self.mvavars['3l%s%s'%(ptcutlabel,jecsyst)] = [
-#                    MVAVar(name="nJet25%s_Recl"%jecsyst),
-#                    MVAVar(name="nJetEta1%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="maxEtaJet25%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="dEtaFwdJetBJet%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="dEtaFwdJetClosestLep%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="dPhiHighestPtSSPair"),
-#                    MVAVar(name="LepGood_conePt[iLepFO_Recl[2]]"),
-#                    MVAVar(name="minDRll"),
-#                    MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]+LepGood_charge[iLepFO_Recl[2]]"),
-#                    MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
-#                ]
-#                self.mvavars['2lss%s%s'%(ptcutlabel,jecsyst)] = [
-#                    MVAVar(name="nJet25%s_Recl"%jecsyst),
-#                    MVAVar(name="nJetEta1%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="maxEtaJet25%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="dEtaFwdJetBJet%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="dEtaFwdJetClosestLep%s%s"%(ptcutlabel,jecsyst)),
-#                    MVAVar(name="dPhiHighestPtSSPair"),
-#                    MVAVar(name="LepGood_conePt[iLepFO_Recl[1]]"),
-#                    MVAVar(name="minDRll"),
-#                    MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]"),
-#                    MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
-#                ]
-#
-#        self.mvaspectators = [
-#            MVAVar(name="iLepFO_Recl[0]"),
-#            MVAVar(name="iLepFO_Recl[1]"),
-#            MVAVar(name="iLepFO_Recl[2]"),
-#        ]
-#
-#        self.tmvaReaders = {}
-#        for channel in ['2lss', '3l']:
-#            self.tmvaReaders[channel] = ROOT.TMVA.Reader("Silent")
-#            self.tmvaReaders[channel].SetVerbose(True)
-#            for mvavar in self.mvavars[channel]:
-#                self.tmvaReaders[channel].AddVariable(mvavar.name, mvavar.var)
-#            for mvaspec in self.mvaspectators:
-#                self.tmvaReaders[channel].AddSpectator(mvaspec.name, mvaspec.var)
-#
-#            for backgr in ['tt', 'ttv']:
-#                wfile = os.path.join(os.environ['CMSSW_BASE'],
-#                                     "src/CMGTools/TTHAnalysis/data/kinMVA/thq/",
-#                                     "thq_vs_%s_%s_BDTG.weights.xml"%(backgr,channel))
-#                self.tmvaReaders[channel].BookMVA("BDTG_"+backgr, wfile)
-#                for ptcut, ptcutlabel in self.fwdjetptcuts:
-#                    for jecsyst in self.jecsysts:
-#                        self.branches.append(("thqMVA_%s_%s%s%s"%(backgr,channel,ptcutlabel,jecsyst), -99.9))
+        # Signal MVA
+        self.mvavars = {}
+        for ptcut, ptcutlabel in self.fwdjetptcuts:
+            for jecsyst in self.jecsysts:
+                self.mvavars['3l%s%s'%(ptcutlabel,jecsyst)] = [
+                    MVAVar(name="nJet25%s_Recl"%jecsyst),
+                    MVAVar(name="nJetEta1%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="maxEtaJet25%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="dEtaFwdJetBJet%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="dEtaFwdJetClosestLep%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="dPhiHighestPtSSPair"),
+                    MVAVar(name="LepGood_conePt[iLepFO_Recl[2]]"),
+                    MVAVar(name="minDRll"),
+                    MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]+LepGood_charge[iLepFO_Recl[2]]"),
+                    MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
+                ]
+                self.mvavars['2lss%s%s'%(ptcutlabel,jecsyst)] = [
+                    MVAVar(name="nJet25%s_Recl"%jecsyst),
+                    MVAVar(name="nJetEta1%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="maxEtaJet25%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="dEtaFwdJetBJet%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="dEtaFwdJetClosestLep%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="dPhiHighestPtSSPair"),
+                    MVAVar(name="LepGood_conePt[iLepFO_Recl[1]]"),
+                    MVAVar(name="minDRll"),
+                    MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]"),
+                    MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
+                ]
+
+        self.mvaspectators = [
+            MVAVar(name="iLepFO_Recl[0]"),
+            MVAVar(name="iLepFO_Recl[1]"),
+            MVAVar(name="iLepFO_Recl[2]"),
+        ]
+
+        self.tmvaReaders = {}
+        for channel in ['2lss', '3l']:
+            self.tmvaReaders[channel] = ROOT.TMVA.Reader("Silent")
+            self.tmvaReaders[channel].SetVerbose(True)
+            for mvavar in self.mvavars[channel]:
+                self.tmvaReaders[channel].AddVariable(mvavar.name, mvavar.var)
+            for mvaspec in self.mvaspectators:
+                self.tmvaReaders[channel].AddSpectator(mvaspec.name, mvaspec.var)
+
+            for backgr in ['tt', 'ttv']:
+                wfile = os.path.join(os.environ['CMSSW_BASE'],
+                                     "src/CMGTools/TTHAnalysis/data/kinMVA/thq/",
+                                     "thq_vs_%s_%s_BDTG.weights.xml"%(backgr,channel))
+                self.tmvaReaders[channel].BookMVA("BDTG_"+backgr, wfile)
+                for ptcut, ptcutlabel in self.fwdjetptcuts:
+                    for jecsyst in self.jecsysts:
+                        self.branches.append(("thqMVA_%s_%s%s%s"%(backgr,channel,ptcutlabel,jecsyst), -99.9))
 
     def listBranches(self):
         """Return a list of branch names that are added"""
@@ -225,37 +225,37 @@ class tHqEventVariableFriend:
                         ret['maxEta2BJet%s%s'%(ptcutlabel,jecsyst)] = -1.0
                         ret['dEtaBJet2BJet%s%s'%(ptcutlabel,jecsyst)] = -1.0
 
-#        # Fix total charge for non-same sign events (for charge flips)
-#        br_lepcharge = "LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]" 
-#        if event.eval(br_lepcharge) == 0:
-#            ret[br_lepcharge] = event.eval("LepGood_charge[iLepFO_Recl[0]]")
-#            # Now mvavar.set should read this instead
-#
-#        # Signal MVA
-#        for channel in ['2lss', '3l']:
-#            for mvavar in self.mvavars[channel]:
-#                mvavar.set(event, ret)
-#
-#            for backgr in ['tt', 'ttv']:
-#                ret["thqMVA_%s_%s"%(backgr,channel)] = self.tmvaReaders[channel].EvaluateMVA("BDTG_"+backgr)
-#
-#                # Systematics and other fwd jet pt cuts
-#                for ptcut,ptcutlabel in self.fwdjetptcuts:
-#                    for jecsyst in self.jecsysts:
-#                        # skip 25 GeV pt and central value (already filled)
-#                        if ptcut == 25. and jecsyst == "": continue
-#                        inputVec = ROOT.vector('double')()
-#                        for mvavar in self.mvavars[channel+ptcutlabel+jecsyst]:
-#                            mvavar.set(event, ret)
-#                            inputVec.push_back(mvavar.var[0])
-#        
-#                        ret["thqMVA_%s_%s%s%s"%(backgr,channel,ptcutlabel,jecsyst)] = self.tmvaReaders[channel].EvaluateMVA(inputVec,"BDTG_"+backgr)
-#                        
-#                        # print ret["thqMVA_%s_%s"%(backgr,channel)]
-#                        # print self.tmvaReaders[channel].EvaluateMVA(inputVec, "BDTG_"+backgr)
-#
-#            # Need to remove br_lepcharge from ret again?
-#            ret.pop(br_lepcharge, None)
+        # Fix total charge for non-same sign events (for charge flips)
+        br_lepcharge = "LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]" 
+        if event.eval(br_lepcharge) == 0:
+            ret[br_lepcharge] = event.eval("LepGood_charge[iLepFO_Recl[0]]")
+            # Now mvavar.set should read this instead
+
+        # Signal MVA
+        for channel in ['2lss', '3l']:
+            for mvavar in self.mvavars[channel]:
+                mvavar.set(event, ret)
+
+            for backgr in ['tt', 'ttv']:
+                ret["thqMVA_%s_%s"%(backgr,channel)] = self.tmvaReaders[channel].EvaluateMVA("BDTG_"+backgr)
+
+                # Systematics and other fwd jet pt cuts
+                for ptcut,ptcutlabel in self.fwdjetptcuts:
+                    for jecsyst in self.jecsysts:
+                        # skip 25 GeV pt and central value (already filled)
+                        if ptcut == 25. and jecsyst == "": continue
+                        inputVec = ROOT.vector('double')()
+                        for mvavar in self.mvavars[channel+ptcutlabel+jecsyst]:
+                            mvavar.set(event, ret)
+                            inputVec.push_back(mvavar.var[0])
+        
+                        ret["thqMVA_%s_%s%s%s"%(backgr,channel,ptcutlabel,jecsyst)] = self.tmvaReaders[channel].EvaluateMVA(inputVec,"BDTG_"+backgr)
+                        
+                        # print ret["thqMVA_%s_%s"%(backgr,channel)]
+                        # print self.tmvaReaders[channel].EvaluateMVA(inputVec, "BDTG_"+backgr)
+
+            # Need to remove br_lepcharge from ret again?
+            ret.pop(br_lepcharge, None)
 
         return ret
 
@@ -291,8 +291,8 @@ if __name__ == '__main__':
             print "Adding these branches:", self.thqf.listBranches()
 
         def analyze(self,ev):
-#            print ("\nrun %6d lumi %4d event %d: jets %d, fwdJets %d, leps %d, isdata=%d" %
-#                      (ev.run, ev.lumi, ev.evt, ev.nJet25, ev.nJetFwd, ev.nLepGood, int(ev.isData)))
+            print ("\nrun %6d lumi %4d event %d: jets %d, fwdJets %d, leps %d, isdata=%d" %
+                      (ev.run, ev.lumi, ev.evt, ev.nJet25, ev.nJetFwd, ev.nLepGood, int(ev.isData)))
             ret = self.thqf(ev)
 
             print 'maxEtaJet25:', ret['maxEtaJet25'], ret['maxEtaJet25_jecUp']
@@ -301,8 +301,8 @@ if __name__ == '__main__':
             print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep'],ret['dEtaFwdJetClosestLep_jecUp']
             print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
             print 'minDRll', ret['minDRll']
-#            print 'thqMVA_ttv_2lss      ', ret['thqMVA_ttv_2lss']
-#            print 'thqMVA_ttv_2lss_jecUp', ret['thqMVA_ttv_2lss_jecUp']
+            print 'thqMVA_ttv_2lss      ', ret['thqMVA_ttv_2lss']
+            print 'thqMVA_ttv_2lss_jecUp', ret['thqMVA_ttv_2lss_jecUp']
             # print 'thqMVA_tt_2lss', ret['thqMVA_tt_2lss']
             # print 'thqMVA_ttv_3l', ret['thqMVA_ttv_3l']
             # print 'thqMVA_tt_3l', ret['thqMVA_tt_3l']

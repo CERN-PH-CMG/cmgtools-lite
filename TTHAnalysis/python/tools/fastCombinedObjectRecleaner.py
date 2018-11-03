@@ -13,8 +13,8 @@ class fastCombinedObjectRecleaner:
         self.vars_leptons = ["pdgId"]
         self.vars_taus = ["mvaId2017"]
         self.vars_taus_int = ["idMVAdR03"]
-        #self.vars_jets = ["btagCSV","btagDeepCSV","qgl","btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
-        self.vars_jets = ["btagCSV","btagDeepCSV","corr","corr_JECUp","corr_JECDown"]
+        self.vars_jets = ["btagCSV","btagDeepCSV","qgl","btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
+        self.vars_jets_fwd = ["btagCSV","btagDeepCSV","corr","corr_JECUp","corr_JECDown"]
         self.vars_jets_int = ["mult"]+(["hadronFlavour"] if isMC else [])
         self.vars_jets_nooutput = []
         #self.jc = jetCollection
@@ -46,7 +46,7 @@ class fastCombinedObjectRecleaner:
         #self._helper_jets = CollectionSkimmer("%sSel"%self.jc+self.label, self.jc, floats=self.vars+self.vars_jets, ints=self.vars_jets_int, maxSize=20)
         #self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
         self._helper_jets = CollectionSkimmer("JetSel"+self.label, "Jet", floats=self.vars+self.vars_jets, ints=self.vars_jets_int, maxSize=20)
-        self._helper_fwdjets = CollectionSkimmer("JetFwdSel"+self.label, "JetFwd", floats=self.vars+self.vars_jets, maxSize=20)
+        self._helper_fwdjets = CollectionSkimmer("JetFwdSel"+self.label, "JetFwd", floats=self.vars+self.vars_jets_fwd, maxSize=20)
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets,self._helper_fwdjets]
 
 
@@ -86,7 +86,7 @@ class fastCombinedObjectRecleaner:
             if coll=='TauGood': _vars.extend(self.vars_taus+self.vars_taus_int)
             #if coll==self.jc: _vars.extend(self.vars_jets+self.vars_jets_int+self.vars_jets_nooutput)
             if coll=='Jet':    _vars.extend(self.vars_jets+self.vars_jets_int+self.vars_jets_nooutput)
-            if coll=='JetFwd': _vars.extend(self.vars_jets+self.vars_jets_nooutput)
+            if coll=='JetFwd': _vars.extend(self.vars_jets_fwd+self.vars_jets_nooutput)
             for B in _vars:
                 setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
 
