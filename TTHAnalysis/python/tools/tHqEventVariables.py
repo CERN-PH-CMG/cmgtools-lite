@@ -9,7 +9,7 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection
 from itertools import combinations
 from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR, deltaR2
 
-
+#BTAGWP = 0.1522 # 0.4941 is for medium tags, using DeepCSV
 BTAGWP = 0.5426 # 0.8484 is for medium tags
 # BTAGWP = 0.460 # 0.80 is for medium tags
 
@@ -177,12 +177,12 @@ class tHqEventVariableFriend:
                 # Get jet collections
                 jets  = self.getJetCollection(event, jec_syst=jecsyst, coll="JetSel")
                 fjets = self.getJetCollection(event, jec_syst=jecsyst, coll="JetFwdSel", ptcut=ptcut)
-                bjets = [j for j in jets if j.btagCSV > BTAGWP]
+                bjets = [j for j in jets if j.btagDeepCSV > BTAGWP]
                 bjets.sort(key=lambda x:x.pt, reverse=True)
 
                 # All non-btagged jets with pt > 25 GeV
-                light_jets =  [j for j in jets  if j.btagCSV < BTAGWP]
-                light_jets += [j for j in fjets if j.btagCSV < BTAGWP]
+                light_jets =  [j for j in jets  if j.btagDeepCSV < BTAGWP]
+                light_jets += [j for j in fjets if j.btagDeepCSV < BTAGWP]
                 # Note that some fwd jets have btag values > 0 up to eta 3.05 or so
                 light_jets.sort(key=lambda x:x.pt, reverse=True)
 
