@@ -864,7 +864,7 @@ if getHeppyOption("nofetch") or getHeppyOption("isCrab"):
 import subprocess
 args = ['python',
         os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
-        #'--GT='+GT,
+        '--GT='+'null',
         '--outputFile='+preprocessorFile,
         '--fixMetEE2017'
         ] + extraArgs

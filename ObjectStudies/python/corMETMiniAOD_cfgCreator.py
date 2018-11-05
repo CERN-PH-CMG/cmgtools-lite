@@ -62,7 +62,8 @@ process.maxEvents = cms.untracked.PSet(
 ### =====================================================================================================
 
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag.globaltag = options.GT
+if options.GT !='null':
+    process.GlobalTag.globaltag = options.GT
 
 usePrivateSQlite = options.jecDBFile!=''
 if usePrivateSQlite:
