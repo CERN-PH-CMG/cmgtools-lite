@@ -66,7 +66,8 @@ process.GlobalTag.globaltag = options.GT
 
 usePrivateSQlite = options.jecDBFile!=''
 if usePrivateSQlite:
-    from CondCore.DBCommon.CondDBSetup_cfi import *
+    #from CondCore.DBCommon.CondDBSetup_cfi import *
+    from CondCore.CondDB.CondDB_cfi import *
     process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
                                connect = cms.string('sqlite_file:'+os.path.expandvars(options.jecDBFile)),
                                toGet =  cms.VPSet(
@@ -90,7 +91,8 @@ if usePrivateSQlite:
 
 ### =====================================================================================================
 #process.load("JetMETCorrections.Modules.JetResolutionESProducer_cfi")
-from CondCore.DBCommon.CondDBSetup_cfi import *
+#from CondCore.DBCommon.CondDBSetup_cfi import *
+from CondCore.CondDB.CondDB_cfi import *
 
 ##___________________________External JER file________________________________||
 ##https://github.com/cms-jet/JRDatabase/tree/master/SQLiteFiles
