@@ -674,16 +674,19 @@ else:
             TTSemi_pow,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 2000
+            comp.splitFactor = 2500
         
     if runWJets:
         selectedComponents = [
-            #WJetsToLNu_LO,     #status=PRODUCTION
-            #W1JetsToLNu_LO,    #status=PRODUCTION
-            #W2JetsToLNu_LO,    #status=PRODUCTION
+            WJetsToLNu_LO,     #status=PRODUCTION
+            W1JetsToLNu_LO,    #status=PRODUCTION
+            W2JetsToLNu_LO,    #status=PRODUCTION
             W3JetsToLNu_LO,
             W4JetsToLNu_LO,
         ]
+        for comp in selectedComponents:
+            comp.splitFactor = 200
+
     if runZInv:
         selectedComponents = [
             ZJetsToNuNu_HT100to200,
@@ -694,6 +697,9 @@ else:
             ZJetsToNuNu_HT1200to2500,
             ZJetsToNuNu_HT2500toInf,
         ]
+        for comp in selectedComponents:
+            comp.splitFactor = 200
+            
     if runOtherMC1:
         selectedComponents = [
             WW,
@@ -716,6 +722,9 @@ else:
             DYJetsToLL_M50_HT1200to2500,
             DYJetsToLL_M50_HT2500toInf,
         ]
+        for comp in selectedComponents:
+            comp.splitFactor = 200
+            
     if runOtherMC2:
         selectedComponents = [
             T_sch_lep, #TODO: Look for TBar. Hasn't been created until date.
@@ -838,6 +847,29 @@ EOSEventsWithDownload.aggressive = 2 # always fetch if running on Wigner
 if getHeppyOption("nofetch") or getHeppyOption("isCrab"):
     event_class = Events
     if preprocessor: preprocessor.prefetch = False
+
+# -------------------- Running pre-processor
+import subprocess
+extraArgs=[]
+if comp.isData:
+    extraArgs.append('--isData')
+    GT = myDataGlobalTag
+else:
+    GT = myMCGlobalTag
+    
+preprocessorFile = "$CMSSW_BASE/tmp/MetType1_fixEE2017_%s.py"%(GT)
+args = ['python',
+        os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
+        '--GT='+GT,
+        '--outputFile='+preprocessorFile,
+        '--fixMetEE2017'
+        ] + extraArgs
+
+subprocess.call(args)
+
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+preprocessor = CmsswPreprocessor(preprocessorFile)
+
 config = cfg.Config( components = selectedComponents,
                      sequence = sequence,
                      services = outputService,

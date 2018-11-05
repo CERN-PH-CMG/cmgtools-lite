@@ -18,6 +18,7 @@ parser.add_option("--jerEra", dest="jerEra", default='', type="string", action="
 parser.add_option("--maxEvents", dest="maxEvents", default=-1, type="int", action="store", help="maxEvents")
 parser.add_option("--removeResiduals", dest="removeResiduals", action="store_true", default=False, help="remove residual JEC?")
 parser.add_option("--isData", dest="isData", action="store_true", default=False, help="is data?")
+parser.add_option("--fixMetEE2017", dest="fixMetEE2017", action="store_true", default=False, help="MET EE noise mitigation in 2017 data")
 parser.add_option("--redoPuppi", dest="redoPuppi", action="store_true", default=True, help="re-run puppi")
 parser.add_option("--addReclusterTrackJetsAK4", dest="reclusterTrackJets", action="store_true", default=False, help="recluster AK4 track jets")
 (options, args) = parser.parse_args()
@@ -175,6 +176,19 @@ runMetCorAndUncFromMiniAOD(process,
                            isData=options.isData,
                            )
 
+##https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription#Instructions_for_9_4_X_X_9_for_2
+if options.fixMetEE2017:
+    from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+    runMetCorAndUncFromMiniAOD (
+            process,
+            isData = options.isData #True for Data, false for MC
+            fixEE2017 = True,
+            fixEE2017Params = {'userawPt': True, 'PtThreshold':50.0, 'MinEtaThreshold':2.65, 'MaxEtaThreshold': 3.139} ,
+            postfix = "ModifiedMET"
+    )
+
+    # if running in schedule mode add this to your path
+    #process.fullPatMetSequenceModifiedMET *
 
 ##https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#MET_Recipes
 if options.isData:
