@@ -674,18 +674,18 @@ else:
             TTSemi_pow,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 2500
+            comp.splitFactor = 3000
         
     if runWJets:
         selectedComponents = [
-            WJetsToLNu_LO,     #status=PRODUCTION
-#            W1JetsToLNu_LO,    #status=PRODUCTION
- #           W2JetsToLNu_LO,    #status=PRODUCTION
-  #          W3JetsToLNu_LO,
-   #         W4JetsToLNu_LO,
+#            WJetsToLNu_LO,     #status=PRODUCTION
+            W1JetsToLNu_LO,    #status=PRODUCTION
+            W2JetsToLNu_LO,    #status=PRODUCTION
+            W3JetsToLNu_LO,
+            W4JetsToLNu_LO,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 200
+            comp.splitFactor = 500
 
     if runZInv:
         selectedComponents = [
@@ -698,7 +698,7 @@ else:
             ZJetsToNuNu_HT2500toInf,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 200
+            comp.splitFactor = 450
             
     if runOtherMC1:
         selectedComponents = [
@@ -723,7 +723,7 @@ else:
             DYJetsToLL_M50_HT2500toInf,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 200
+            comp.splitFactor = 2800
             
     if runOtherMC2:
         selectedComponents = [
@@ -760,6 +760,9 @@ else:
             TTTJ, 
             TTTW,
         ] + QCD_Mu5s + QCD_EMs
+        for comp in selectedComponents:
+            comp.splitFactor = 1100
+            
     if runSMS:
         selectedComponents = []
     if runFullSimSignal:
@@ -789,7 +792,7 @@ else:
         ]
         for comp in selectedComponents:
             comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
-            comp.splitFactor = 500
+            comp.splitFactor = 2800
             
 #ISR jet counting
 from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
