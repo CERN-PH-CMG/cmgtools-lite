@@ -484,12 +484,12 @@ triggerFlagsAna.checkL1prescale = False
 
 selectedComponents = []
 
+from CMGTools.RootTools.samples.samples_Stop4Body import *
 if not run2017:
     from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
     #from CMGTools.RootTools.samples.samples_13TeV_signals import *
     #from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
     from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-    from CMGTools.RootTools.samples.samples_Stop4Body import *
 
     selectedComponents = [
         TTJets,
@@ -674,16 +674,19 @@ else:
             TTSemi_pow,
         ]
         for comp in selectedComponents:
-            comp.splitFactor = 2000
+            comp.splitFactor = 3000
         
     if runWJets:
         selectedComponents = [
-            #WJetsToLNu_LO,     #status=PRODUCTION
+#            WJetsToLNu_LO,     #status=PRODUCTION
             W1JetsToLNu_LO,    #status=PRODUCTION
             W2JetsToLNu_LO,    #status=PRODUCTION
             W3JetsToLNu_LO,
             W4JetsToLNu_LO,
         ]
+        for comp in selectedComponents:
+            comp.splitFactor = 500
+
     if runZInv:
         selectedComponents = [
             ZJetsToNuNu_HT100to200,
@@ -694,6 +697,9 @@ else:
             ZJetsToNuNu_HT1200to2500,
             ZJetsToNuNu_HT2500toInf,
         ]
+        for comp in selectedComponents:
+            comp.splitFactor = 450
+            
     if runOtherMC1:
         selectedComponents = [
             WW,
@@ -716,6 +722,9 @@ else:
             DYJetsToLL_M50_HT1200to2500,
             DYJetsToLL_M50_HT2500toInf,
         ]
+        for comp in selectedComponents:
+            comp.splitFactor = 2800
+            
     if runOtherMC2:
         selectedComponents = [
             T_sch_lep, #TODO: Look for TBar. Hasn't been created until date.
@@ -745,16 +754,23 @@ else:
             TZQToLL,
             TTTT, 
             TTWH, 
-            TTZH, 
-            TTWW, 
-            TTHH, 
-            TTTJ, 
+            #TTZH, 
+            #TTWW, 
+            #TTHH, 
+            #TTTJ, 
             TTTW,
         ] + QCD_Mu5s + QCD_EMs
+        for comp in selectedComponents:
+            comp.splitFactor = 1100
+            
     if runSMS:
         selectedComponents = []
+    
     if runFullSimSignal:
-        selectedComponents = []
+        selectedComponents = signalFullSim2017
+        for comp in selectedComponents:
+            comp.splitFactor = 500
+            
     if runData:
         selectedComponents = [
             JetHT_Run2017B_17Nov2017,
@@ -780,7 +796,7 @@ else:
         ]
         for comp in selectedComponents:
             comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
-            comp.splitFactor = 500
+            comp.splitFactor = 2800
             
 #ISR jet counting
 from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
@@ -831,13 +847,37 @@ outputService.append(output_service)
 from CMGTools.HToZZ4L.tools.configTools import printSummary
 printSummary(selectedComponents)
 
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+extraArgs=[]
+if comp.isData:
+    extraArgs.append('--isData')
+    GT = myDataGlobalTag
+else:
+    GT = myMCGlobalTag
+    
+preprocessorFile = "$CMSSW_BASE/tmp/MetType1_fixEE2017_%s.py"%(GT)
+preprocessor = CmsswPreprocessor(preprocessorFile)
+
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 from CMGTools.TTHAnalysis.tools.EOSEventsWithDownload import EOSEventsWithDownload
 event_class = EOSEventsWithDownload if not preprocessor else Events
 EOSEventsWithDownload.aggressive = 2 # always fetch if running on Wigner
+
 if getHeppyOption("nofetch") or getHeppyOption("isCrab"):
     event_class = Events
     if preprocessor: preprocessor.prefetch = False
+
+# -------------------- Running pre-processor
+import subprocess
+args = ['python',
+        os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
+        '--GT='+'null',
+        '--outputFile='+preprocessorFile,
+        '--fixMetEE2017'
+        ] + extraArgs
+
+subprocess.call(args)
+
 config = cfg.Config( components = selectedComponents,
                      sequence = sequence,
                      services = outputService,

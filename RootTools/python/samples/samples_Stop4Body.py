@@ -45,11 +45,19 @@ SMS_T2tt_dM_10to80_genHT_160_genMET_80_mWMin_0p1,
 SMS_T2bW_X05_dM_10to80_genHT_160_genMET_80_mWMin_0p1,
 ]
 
+### -----2017
+## FullSIM ###
+SMS_T2_4bd_genMET_80_mStop_500_mLSP_420 = kreator.makeMCComponent("SMS_T2_4bd_genMET_80_mStop_500_mLSP_420","/SMS-T2-4bd_genMET-80_mStop-500_mLSP-420_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root")
+SMS_T2_4bd_genMET_80_mStop_500_mLSP_490 = kreator.makeMCComponent("SMS_T2_4bd_genMET_80_mStop_500_mLSP_490","/SMS-T2-4bd_genMET-80_mStop-500_mLSP-490_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root")
+
+signalFullSim2017 = [
+SMS_T2_4bd_genMET_80_mStop_500_mLSP_420,
+SMS_T2_4bd_genMET_80_mStop_500_mLSP_490
+]
+
 ### ----------------------------- summary ----------------------------------------
 
-
 signalSamples = SignalSUSY
-
 samples = signalSamples + signalFullSim
 
 ### ---------------------------------------------------------------------
@@ -75,6 +83,11 @@ for comp in signalFullSim:
     comp.puFileMC=dataDir+"/puProfile_Summer12_53X.root"
     comp.puFileData=dataDir+"/puProfile_Data12.root"
     comp.efficiency = eff2012
+
+for comp in signalFullSim2017:
+    comp.isMC = True
+    comp.isData = False
+    comp.isFastSim = False
 
 if __name__ == "__main__":
    import sys
