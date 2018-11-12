@@ -58,7 +58,7 @@ SMS_T2_4bd_genMET_80_mStop_500_mLSP_490
 ### ----------------------------- summary ----------------------------------------
 
 signalSamples = SignalSUSY
-samples = signalSamples + signalFullSim
+samples = signalSamples + signalFullSim + signalFullSim2017
 
 ### ---------------------------------------------------------------------
 
@@ -71,18 +71,12 @@ for comp in signalSamples:
     comp.isData = False
     comp.isFastSim = True
     comp.splitFactor = 250 #  if comp.name in [ "WJets", "DY3JetsM50", "DY4JetsM50","W1Jets","W2Jets","W3Jets","W4Jets","TTJetsHad" ] else 100
-    comp.puFileMC=dataDir+"/puProfile_Summer12_53X.root"
-    comp.puFileData=dataDir+"/puProfile_Data12.root"
-    comp.efficiency = eff2012#Define splitting
 
 for comp in signalFullSim:
     comp.isMC = True
     comp.isData = False
     comp.isFastSim = False
     comp.splitFactor = 250 #  if comp.name in [ "WJets", "DY3JetsM50", "DY4JetsM50","W1Jets","W2Jets","W3Jets","W4Jets","TTJetsHad" ] else 100
-    comp.puFileMC=dataDir+"/puProfile_Summer12_53X.root"
-    comp.puFileData=dataDir+"/puProfile_Data12.root"
-    comp.efficiency = eff2012
 
 for comp in signalFullSim2017:
     comp.isMC = True
@@ -90,7 +84,9 @@ for comp in signalFullSim2017:
     comp.isFastSim = False
 
 if __name__ == "__main__":
-   import sys
-   if "test" in sys.argv:
-       from CMGTools.RootTools.samples.ComponentCreator import testSamples
-       testSamples(samples)
+    from CMGTools.RootTools.samples.tools import runMain
+    runMain(samples, localobjs=locals())
+    import sys
+    if "test" in sys.argv:
+        from CMGTools.RootTools.samples.ComponentCreator import testSamples
+        testSamples(samples)
