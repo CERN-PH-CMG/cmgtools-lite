@@ -484,12 +484,12 @@ triggerFlagsAna.checkL1prescale = False
 
 selectedComponents = []
 
+from CMGTools.RootTools.samples.samples_Stop4Body import *
 if not run2017:
     from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
     #from CMGTools.RootTools.samples.samples_13TeV_signals import *
     #from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
     from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-    from CMGTools.RootTools.samples.samples_Stop4Body import *
 
     selectedComponents = [
         TTJets,
@@ -754,10 +754,10 @@ else:
             TZQToLL,
             TTTT, 
             TTWH, 
-            TTZH, 
-            TTWW, 
-            TTHH, 
-            TTTJ, 
+            #TTZH, 
+            #TTWW, 
+            #TTHH, 
+            #TTTJ, 
             TTTW,
         ] + QCD_Mu5s + QCD_EMs
         for comp in selectedComponents:
@@ -765,8 +765,12 @@ else:
             
     if runSMS:
         selectedComponents = []
+    
     if runFullSimSignal:
-        selectedComponents = []
+        selectedComponents = signalFullSim2017
+        for comp in selectedComponents:
+            comp.splitFactor = 500
+            
     if runData:
         selectedComponents = [
             JetHT_Run2017B_17Nov2017,
