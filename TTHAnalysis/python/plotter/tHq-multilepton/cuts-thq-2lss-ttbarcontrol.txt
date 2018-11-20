@@ -1,0 +1,30 @@
+# Format (use '#' to comment lines):
+# name of cut : formula using branch names as in tree
+alwaystrue    : 1
+
+trigger       : Trigger_2lss
+
+# two good same-sign leptons
+dilep         : nLepFO>=2 && nLepTight < 3
+cleanup       : minMllAFAS > 12
+pt2515        : LepGood1_conePt>25 && LepGood2_conePt>15
+TT            : LepGood1_isLepTight && LepGood2_isLepTight
+samesign      : LepGood1_charge*LepGood2_charge > 0
+
+mm_chan       : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 ; Disable=True
+em_chan       : abs(LepGood1_pdgId*LepGood2_pdgId) == 143 ; Disable=True
+ee_chan       : abs(LepGood1_pdgId*LepGood2_pdgId) == 121 ; Disable=True
+
+Zveto_ee      : abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-91.2) > 10
+muTightCharge : (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepGood2_pdgId)!=13 || LepGood2_tightCharge>=1)
+eleID         : (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
+
+
+# tHq with H -> WW has only one hard b-jet while
+# most backgrounds (ttbar, ttW, ttZ, ttH) have two.
+# In addition we expect one forward jet
+#2j            : nJet25>=2 && nJet25<4
+2j            : nJet25<4
+fwdjet        : maxEtaJet25_40 >= 0 && maxEtaJet25_40 < 2
+1bm           : nBJetMedium25 >= 1
+2bl           : nBJetLoose25 >= 2; Disable=True

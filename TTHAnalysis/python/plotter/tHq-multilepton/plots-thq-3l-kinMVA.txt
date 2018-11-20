@@ -1,0 +1,22 @@
+# kinMVA input and output plots (3l)
+
+nJet25                  : nJet25                  : [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25\, |#eta|<2.4)'
+nJetEta1_40             : nJetEta1_40             : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle='N(jet\,|#eta|>1.0) non CSV medium'
+nBJetLoose25            : nBJetLoose25_Recl       : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 25\, CSV loose)'
+maxEtaJet25_40          : maxEtaJet25_40          : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 25 GeV)"
+dEtaFwdJetBJet_40       : dEtaFwdJetBJet_40       : 18,0,6;   XTitle="#Delta#eta max fwd jet and leading bjet"
+dEtaFwdJet2BJet_40      : dEtaFwdJet2BJet_40      : 18,0,6;   XTitle="#Delta#eta max fwd jet and sub-leading bjet"
+dEtaFwdJetClosestLep_40 : dEtaFwdJetClosestLep_40 : 18,0,6 ;  XTitle="#Delta#eta max fwd jet and closest lepton"
+dPhiHighestPtSSPair     : dPhiHighestPtSSPair     : 18,0,3.2; XTitle="#Delta#phi highest pt same-sign lepton pair", Legend='TL'
+Lep1Pt                  : LepGood1_conePt         : 18,0,200; XTitle="Leading lepton p_{T} [GeV]"
+Lep2Pt                  : LepGood2_conePt         : 18,0,200; XTitle="Sub-leading lepton p_{T} [GeV]"
+Lep3Pt                  : LepGood3_conePt         : 18,0,80;  XTitle="Third lepton p_{T} [GeV]"
+minDRll                 : minDRll                 : 18,0,4;   XTitle="Minimum #DeltaR between any two leptons"
+totCharge               : LepGood1_charge+LepGood2_charge+LepGood3_charge : [-1.5,-0.5,0.5,1.5]; XTitle="Total lepton charge", Legend='TL'
+
+thqMVA_tt_3l_40     : thqMVA_tt_3l_40    : 16,-1.,1.0; XTitle="kinMVA (tHq vs t#bar{t})", Legend='TR'
+thqMVA_ttv_3l_40    : thqMVA_ttv_3l_40   : 16,-1.,1.0; XTitle="kinMVA (tHq vs t#bar{t}V)", Legend='TR'
+
+#finalBins_40        : tHq_MVAto1D_3l_10(thqMVA_tt_3l_40, thqMVA_ttv_3l_40) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle='BDT bin'
+#finalBins_log_40    : tHq_MVAto1D_3l_10(thqMVA_tt_3l_40, thqMVA_ttv_3l_40) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle='BDT bin',Legend='TR',Logy,LegendCutoff=0.01,YMin=0.05,YMax=80
+# finalBins_40        : tHq_MVAto1D_2lss_sbratio(thqMVA_tt_3l_40, thqMVA_ttv_3l_40) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle='BDT bin', Legend='TL'

@@ -1,0 +1,19 @@
+# kinMVA input and output plots (2lss)
+
+nJet25               : nJet25               : [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25\, |#eta|<2.4)'
+nJetEta1             : nJetEta1             : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle='N(jet\,|#eta|>1.0) non CSV medium'
+maxEtaJet25          : maxEtaJet25          : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 25 GeV)"
+maxEtaJet25_30       : maxEtaJet25_30       : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 30 GeV)"
+maxEtaJet25_40       : maxEtaJet25_40       : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 40 GeV)"
+fwdJetPt25           : fwdJetPt25           : 18,20,200; XTitle="p_{T} of forward jet [GeV]"
+dEtaFwdJetBJet       : dEtaFwdJetBJet       : 18,0,6;   XTitle="#Delta#eta max fwd jet and leading bjet"
+dEtaFwdJet2BJet      : dEtaFwdJet2BJet      : 18,0,6;   XTitle="#Delta#eta max fwd jet and sub-leading bjet"
+dEtaFwdJetClosestLep : dEtaFwdJetClosestLep : 18,0,6 ;  XTitle="#Delta#eta max fwd jet and closest lepton"
+Jet1pt               : Jet_pt[0]          : 18,20,300; XTitle="Leading jet p_{T} [GeV]"
+Jet1eta              : Jet_eta[0]         : 18,-5,5;  XTitle="Leading jet #eta"
+JetFwd1pt            : JetFwd_pt[0]       : 18,20,200; XTitle="Leading forward jet p_{T} [GeV]"
+JetFwd1eta           : abs(JetFwd_eta[0]) : 18,2.4,5; XTitle="Leading forward jet #eta"
+# JetFwd2pt            : JetFwd_pt[1]       : 18,20,100; XTitle="Sub-leading forward jet p_{T} [GeV]"
+# JetFwd2eta           : abs(JetFwd_eta[1]) : 18,2.4,5; XTitle="Sub-leading forward jet #eta"
+# Jet2pt               : Jet_pt[1]          : 18,20,200; XTitle="Sub-leading jet p_{T} [GeV]"
+# Jet2eta              : Jet_eta[1]         : 18,-5,5;  XTitle="Sub-leading jet #eta"
