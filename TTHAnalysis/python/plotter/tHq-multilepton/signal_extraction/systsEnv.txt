@@ -1,0 +1,216 @@
+# Luminosity
+lumi_13TeV  : tH[qW].*|ttH.*|tt[WZ]|WZ|Rares|Gstar|WWss|Convs : .* : 1.025
+
+# Lepton efficiencies
+CMS_ttHl_lepEff_muloose : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_mm.* : 1.04
+CMS_ttHl_lepEff_muloose : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_em.*|.*2lss_me.* : 1.02
+CMS_ttHl_lepEff_muloose : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*3l.* : 1.03
+CMS_ttHl_lepEff_elloose : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : elLooseUnc : templates
+
+CMS_ttHl_lepEff_mutight   : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_mm* : 1.06
+CMS_ttHl_lepEff_mutight   : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_em* : 1.03
+CMS_ttHl_lepEff_mutight   : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*3l.* : 1.04
+
+CMS_ttHl_lepEff_eltight   : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_ee.* : 1.06
+CMS_ttHl_lepEff_eltight   : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_em.* : 1.03
+CMS_ttHl_lepEff_eltight   : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*3l.* : 1.04
+
+# Trigger efficiencies
+CMS_ttHl_trigger_ee     : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_ee.* : 1.02
+CMS_ttHl_trigger_em     : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_em.*|.*2lss_me.* : 1.01
+CMS_ttHl_trigger_mm     : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*2lss_mm.* : 1.01
+CMS_ttHl_trigger_3l     : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .*3l.* : 1.03
+
+# JES
+CMS_tHql_JES    : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : jec    : templates
+CMS_tHql_fwdJet : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : fwdJet : alternateShapeOnly
+
+# btag
+CMS_ttHl_btag_LF       : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_LF       : templates
+CMS_ttHl_btag_HF       : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_HF       : templates
+CMS_ttHl_btag_HFStats1 : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_HFStats1 : templates
+CMS_ttHl_btag_HFStats2 : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_HFStats2 : templates 
+CMS_ttHl_btag_LFStats1 : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_LFStats1 : templates
+CMS_ttHl_btag_LFStats2 : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_LFStats2 : templates
+CMS_ttHl_btag_cErr1    : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_cErr1    : templates
+CMS_ttHl_btag_cErr2    : tH[qW].*|ttH.*|tt[WZ]|Rares|WZ|Gstar|WWss|Convs : .* : bTag_cErr2    : templates
+
+## Statistical fluctuations of all templates
+#CMS_ttHl_templstat : .* : .* : 1.0 : stat_foreach_shape_bins : .*
+
+# Diboson background 
+CMS_ttHl_WZ_stat : WZ : .*3l.*    : 1.1
+CMS_ttHl_WZ_bkgs : WZ : .*3l.*    : 1.2
+CMS_ttHl_WZ_btag : WZ : .*3l_bl.* : 1.1
+CMS_ttHl_WZ_btag : WZ : .*3l_bt.* : 1.4
+CMS_ttHl_WZ_theo : WZ : .*3l.*    : 1.07
+CMS_tHql_WZ_2j   : WZ : .*2lss.*  : 1.5
+
+# Other normalizations
+CMS_ttHl_Rares  : Rares|Gstar|WWss : .* : 1.5
+CMS_ttHl_Convs  : Convs : .* : 1.3
+
+# Common theoretical uncertainties (fully correlated everywhere)
+# Note: pdf_gg is entered as 1/kappa since it has to be anti-correlated with Hgg
+# See below for QCDscale_tHq and QCDscale_tHW
+QCDscale_ttH   : ttH.*  : .* : 0.915/1.058
+QCDscale_ttW   : ttW    : .* : 1.12
+QCDscale_ttZ   : ttZ    : .* : 1.11
+pdf_Higgs_ttH  : ttH.*  : .* : 1.036
+pdf_gg         : ttZ    : .* : 0.966
+pdf_qqbar      : ttW    : .* : 1.04
+pdf_Higgs_qg   : tHq.*  : .* : 1.037 # from 13 TeV Hbb
+pdf_Higgs_qg   : tHW.*  : .* : 1.040 # from 13 TeV Hbb
+
+# Flavor scheme uncertainty introduced for 8 TeV result, nothing quoted in 13 TeV Hbb, though
+# CMS_tHql_FlavourScheme : tH[qW].* : .* : 1.10 # from 8 TeV
+
+## Higgs branching fractions (from 8 TeV)
+#param_alphaS           : tH[qW].*    : .* : 1.012
+#param_mB               : tH[qW].*    : .* : 0.981
+#HiggsDecayWidthTHU_hqq : tH[qW].*    : .* : 0.988
+#HiggsDecayWidthTHU_hvv : tH[qW].*_WW : .* : 1.004 # Need to fix this?
+#HiggsDecayWidthTHU_hll : tH[qW].*_tt : .* : 1.019 # Need to fix this?
+
+# shape theoretical uncertainties (private to this channel, FIXME need to be updated for tHq)
+CMS_ttHl_thu_shape_tHq_x : tHQ.* : .* : 1.0 : shapeOnly2D_1.03X_1Y
+CMS_ttHl_thu_shape_tHq_y : tHQ.* : .* : 1.0 : shapeOnly2D_1X_1.02Y
+CMS_ttHl_thu_shape_ttH_x : ttH.* : .* : 1.0 : shapeOnly2D_1.03X_1Y
+CMS_ttHl_thu_shape_ttH_y : ttH.* : .* : 1.0 : shapeOnly2D_1X_1.02Y
+CMS_ttHl_thu_shape_ttW_x : ttW   : .* : 1.0 : shapeOnly2D_1.04X_1Y
+CMS_ttHl_thu_shape_ttW_y : ttW   : .* : 1.0 : shapeOnly2D_1X_1.01Y
+CMS_ttHl_thu_shape_ttZ_x : ttZ   : .* : 1.0 : shapeOnly2D_1.02X_1Y
+CMS_ttHl_thu_shape_ttZ_y : ttZ   : .* : 1.0 : shapeOnly2D_1X_1.02Y
+
+# Fake rate uncertainties
+# 1+2) Measurement of the fake rate: normalization and shapes
+CMS_ttHl_FRe_norm : data_fakes  : .* : FRe_norm : templates
+CMS_ttHl_FRe_pt   : data_fakes  : .* : FRe_pt   : templatesShapeOnly
+CMS_ttHl_FRe_be   : data_fakes  : .* : FRe_be   : templatesShapeOnly
+CMS_ttHl_FRm_norm : data_fakes  : .* : FRm_norm : templates
+CMS_ttHl_FRm_pt   : data_fakes  : .* : FRm_pt   : templatesShapeOnly
+CMS_ttHl_FRm_be   : data_fakes  : .* : FRm_be   : templatesShapeOnly
+# 3) Closure, QCD vs. TT fake rate, normalization
+CMS_tHql_Clos_e_norm  : data_fakes : .*2lss_ee.*             : 1.05
+CMS_tHql_Clos_e_norm  : data_fakes : .*2lss_em.*|.*2lss_me.* : 0.94
+CMS_tHql_Clos_e_norm  : data_fakes : .*3l.*                  : 1.4
+CMS_tHql_Clos_m_norm  : data_fakes : .*2lss_mm.*             : 1.07
+CMS_tHql_Clos_m_norm  : data_fakes : .*2lss_em.*|.*2lss_me.* : 1.09
+CMS_tHql_Clos_m_norm  : data_fakes : .*3l.*                  : 1.09
+# 4) Closure, QCD vs. TT fake rate, shape
+CMS_tHql_Clos_e_shape : data_fakes : .*2lss_ee.*             : 1.0 : shapeOnly2D_0.99X_1.06Y
+CMS_tHql_Clos_e_shape : data_fakes : .*2lss_em.*|.*2lss_me.* : 1.0 : shapeOnly2D_0.98X_1.07Y
+CMS_tHql_Clos_e_shape : data_fakes : .*3l.*                  : 1.0 : shapeOnly2D_1.09X_1.05Y
+CMS_tHql_Clos_m_shape : data_fakes : .*2lss_mm.*             : 1.0 : shapeOnly2D_0.97X_0.91Y
+CMS_tHql_Clos_m_shape : data_fakes : .*2lss_em.*|.*2lss_me.* : 1.0 : shapeOnly2D_1.06X_1.03Y
+CMS_tHql_Clos_m_shape : data_fakes : .*3l.*                  : 1.0 : shapeOnly2D_0.95X_0.83Y
+
+# Charge flip uncertainty
+CMS_ttHl_QF : data_flips  : .* : 1.3
+
+# Note2: tHq/tHW uncertainties from SingleTopHiggsGeneration13TeV TWiki
+# QCDscale_tHq   : tHq.*  : .* : 0.961/1.027
+# QCDscale_tHW   : tHW.*  : .* : 0.982/1.020
+QCDscale_tHq   : tHq_.*_1_m3      : .* : 0.969/1.021
+QCDscale_tHq   : tHq_.*_1_m2      : .* : 0.968/1.026
+QCDscale_tHq   : tHq_.*_1_m1p5    : .* : 0.964/1.025
+QCDscale_tHq   : tHq_.*_1_m1p25   : .* : 0.966/1.026
+QCDscale_tHq   : tHq_.*_1_m1      : .* : 0.961/1.027
+QCDscale_tHq   : tHq_.*_1_m0p75   : .* : 0.959/1.029
+QCDscale_tHq   : tHq_.*_1_m0p5    : .* : 0.956/1.032
+QCDscale_tHq   : tHq_.*_1_m0p25   : .* : 0.950/1.035
+QCDscale_tHq   : tHq_.*_1_m0      : .* : 0.945/1.039
+QCDscale_tHq   : tHq_.*_1_0p25    : .* : 0.938/1.044
+QCDscale_tHq   : tHq_.*_1_0p5     : .* : 0.929/1.050
+QCDscale_tHq   : tHq_.*_1_0p75    : .* : 0.924/1.057
+QCDscale_tHq   : tHq_.*_1_1       : .* : 0.933/1.041
+QCDscale_tHq   : tHq_.*_1_1p25    : .* : 0.954/1.023
+QCDscale_tHq   : tHq_.*_1_1p5     : .* : 0.971/1.012
+QCDscale_tHq   : tHq_.*_1_2       : .* : 0.964/1.010
+QCDscale_tHq   : tHq_.*_1_3       : .* : 0.963/1.008
+QCDscale_tHq   : tHq_.*_1p5_m3    : .* : 0.968/1.026
+QCDscale_tHq   : tHq_.*_1p5_m2    : .* : 0.964/1.025
+QCDscale_tHq   : tHq_.*_1p5_m1p5  : .* : 0.961/1.027
+QCDscale_tHq   : tHq_.*_1p5_m1p25 : .* : 0.961/1.028
+QCDscale_tHq   : tHq_.*_1p5_m1    : .* : 0.957/1.030
+QCDscale_tHq   : tHq_.*_1p5_m0p75 : .* : 0.956/1.031
+QCDscale_tHq   : tHq_.*_1p5_m0p5  : .* : 0.953/1.034
+QCDscale_tHq   : tHq_.*_1p5_m0p25 : .* : 0.950/1.036
+QCDscale_tHq   : tHq_.*_1p5_m0    : .* : 0.946/1.038
+QCDscale_tHq   : tHq_.*_1p5_0p25  : .* : 0.939/1.042
+QCDscale_tHq   : tHq_.*_1p5_0p5   : .* : 0.935/1.046
+QCDscale_tHq   : tHq_.*_1p5_0p75  : .* : 0.928/1.052
+QCDscale_tHq   : tHq_.*_1p5_1     : .* : 0.924/1.057
+QCDscale_tHq   : tHq_.*_1p5_1p25  : .* : 0.925/1.055
+QCDscale_tHq   : tHq_.*_1p5_1p5   : .* : 0.933/1.041
+QCDscale_tHq   : tHq_.*_1p5_2     : .* : 0.961/1.020
+QCDscale_tHq   : tHq_.*_1p5_3     : .* : 0.963/1.009
+QCDscale_tHq   : tHq_.*_0p5_m3    : .* : 0.973/1.019
+QCDscale_tHq   : tHq_.*_0p5_m2    : .* : 0.971/1.020
+QCDscale_tHq   : tHq_.*_0p5_m1p5  : .* : 0.969/1.021
+QCDscale_tHq   : tHq_.*_0p5_m1p25 : .* : 0.970/1.021
+QCDscale_tHq   : tHq_.*_0p5_m1    : .* : 0.967/1.023
+QCDscale_tHq   : tHq_.*_0p5_m0p75 : .* : 0.965/1.025
+QCDscale_tHq   : tHq_.*_0p5_m0p5  : .* : 0.961/1.028
+QCDscale_tHq   : tHq_.*_0p5_m0p25 : .* : 0.954/1.031
+QCDscale_tHq   : tHq_.*_0p5_m0    : .* : 0.944/1.038
+QCDscale_tHq   : tHq_.*_0p5_0p25  : .* : 0.929/1.050
+QCDscale_tHq   : tHq_.*_0p5_0p5   : .* : 0.933/1.042
+QCDscale_tHq   : tHq_.*_0p5_0p75  : .* : 0.971/1.014
+QCDscale_tHq   : tHq_.*_0p5_1     : .* : 0.964/1.010
+QCDscale_tHq   : tHq_.*_0p5_1p25  : .* : 0.963/1.009
+QCDscale_tHq   : tHq_.*_0p5_1p5   : .* : 0.963/1.008
+QCDscale_tHq   : tHq_.*_0p5_2     : .* : 0.964/1.010
+QCDscale_tHq   : tHq_.*_0p5_3     : .* : 0.968/1.012
+
+QCDscale_tHW   : tHW_.*_1_m3      : .* : 0.973/1.023
+QCDscale_tHW   : tHW_.*_1_m2      : .* : 0.975/1.022
+QCDscale_tHW   : tHW_.*_1_m1p5    : .* : 0.978/1.021
+QCDscale_tHW   : tHW_.*_1_m1p25   : .* : 0.980/1.020
+QCDscale_tHW   : tHW_.*_1_m1      : .* : 0.982/1.020
+QCDscale_tHW   : tHW_.*_1_m0p75   : .* : 0.983/1.020
+QCDscale_tHW   : tHW_.*_1_m0p5    : .* : 0.986/1.017
+QCDscale_tHW   : tHW_.*_1_m0p25   : .* : 0.989/1.016
+QCDscale_tHW   : tHW_.*_1_m0      : .* : 0.988/1.015
+QCDscale_tHW   : tHW_.*_1_0p25    : .* : 0.985/1.016
+QCDscale_tHW   : tHW_.*_1_0p5     : .* : 0.980/1.021
+QCDscale_tHW   : tHW_.*_1_0p75    : .* : 0.961/1.032
+QCDscale_tHW   : tHW_.*_1_1       : .* : 0.939/1.046
+QCDscale_tHW   : tHW_.*_1_1p25    : .* : 0.946/1.048
+QCDscale_tHW   : tHW_.*_1_1p5     : .* : 0.937/1.046
+QCDscale_tHW   : tHW_.*_1_2       : .* : 0.945/1.040
+QCDscale_tHW   : tHW_.*_1_3       : .* : 0.954/1.033
+QCDscale_tHW   : tHW_.*_1p5_m3    : .* : 0.977/1.021
+QCDscale_tHW   : tHW_.*_1p5_m2    : .* : 0.979/1.021
+QCDscale_tHW   : tHW_.*_1p5_m1p5  : .* : 0.982/1.019
+QCDscale_tHW   : tHW_.*_1p5_m1p25 : .* : 0.984/1.019
+QCDscale_tHW   : tHW_.*_1p5_m1    : .* : 0.985/1.019
+QCDscale_tHW   : tHW_.*_1p5_m0p75 : .* : 0.987/1.018
+QCDscale_tHW   : tHW_.*_1p5_m0p5  : .* : 0.988/1.016
+QCDscale_tHW   : tHW_.*_1p5_m0p25 : .* : 0.988/1.016
+QCDscale_tHW   : tHW_.*_1p5_m0    : .* : 0.988/1.015
+QCDscale_tHW   : tHW_.*_1p5_0p25  : .* : 0.986/1.015
+QCDscale_tHW   : tHW_.*_1p5_0p5   : .* : 0.983/1.018
+QCDscale_tHW   : tHW_.*_1p5_0p75  : .* : 0.980/1.021
+QCDscale_tHW   : tHW_.*_1p5_1     : .* : 0.970/1.028
+QCDscale_tHW   : tHW_.*_1p5_1p25  : .* : 0.953/1.036
+QCDscale_tHW   : tHW_.*_1p5_1p5   : .* : 0.940/1.046
+QCDscale_tHW   : tHW_.*_1p5_2     : .* : 0.935/1.048
+QCDscale_tHW   : tHW_.*_1p5_3     : .* : 0.944/1.040
+QCDscale_tHW   : tHW_.*_0p5_m3    : .* : 0.970/1.023
+QCDscale_tHW   : tHW_.*_0p5_m2    : .* : 0.972/1.023
+QCDscale_tHW   : tHW_.*_0p5_m1p5  : .* : 0.972/1.023
+QCDscale_tHW   : tHW_.*_0p5_m1p25 : .* : 0.975/1.022
+QCDscale_tHW   : tHW_.*_0p5_m1    : .* : 0.977/1.021
+QCDscale_tHW   : tHW_.*_0p5_m0p75 : .* : 0.979/1.020
+QCDscale_tHW   : tHW_.*_0p5_m0p5  : .* : 0.982/1.019
+QCDscale_tHW   : tHW_.*_0p5_m0p25 : .* : 0.987/1.018
+QCDscale_tHW   : tHW_.*_0p5_m0    : .* : 0.987/1.016
+QCDscale_tHW   : tHW_.*_0p5_0p25  : .* : 0.980/1.021
+QCDscale_tHW   : tHW_.*_0p5_0p5   : .* : 0.939/1.046
+QCDscale_tHW   : tHW_.*_0p5_0p75  : .* : 0.937/1.047
+QCDscale_tHW   : tHW_.*_0p5_1     : .* : 0.945/1.040
+QCDscale_tHW   : tHW_.*_0p5_1p25  : .* : 0.948/1.037
+QCDscale_tHW   : tHW_.*_0p5_1p5   : .* : 0.951/1.035
+QCDscale_tHW   : tHW_.*_0p5_2     : .* : 0.957/1.030
+QCDscale_tHW   : tHW_.*_0p5_3     : .* : 0.960/1.028
