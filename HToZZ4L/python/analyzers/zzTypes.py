@@ -7,16 +7,16 @@ leptonTypeHZZ = NTupleObjectType("leptonHZZ", baseObjectTypes = [ leptonTypeExtr
     # ----------------------
     # Extra isolation variables
     NTupleVariable("relIsoAfterFSR",    lambda x : x.relIsoAfterFSR,   help="RelIso after FSR"),
-    NTupleVariable("chargedHadIso04",   lambda x : x.chargedHadronIsoR(0.4),   help="PF Abs Iso, R=0.4, charged hadrons only"),
-    NTupleVariable("neutralHadIso04",   lambda x : x.neutralHadronIsoR(0.4),   help="PF Abs Iso, R=0.4, neutral hadrons only"),
-    NTupleVariable("photonIso04",       lambda x : x.photonIsoR(0.4),          help="PF Abs Iso, R=0.4, photons only"),
-    NTupleVariable("puChargedHadIso04", lambda x : x.puChargedHadronIsoR(0.4), help="PF Abs Iso, R=0.4, pileup charged hadrons only"),
+    NTupleVariable("chargedHadIso04",   lambda x : x.chargedHadronIso(0.4),   help="PF Abs Iso, R=0.4, charged hadrons only"),
+    NTupleVariable("neutralHadIso04",   lambda x : x.neutralHadronIso(0.4),   help="PF Abs Iso, R=0.4, neutral hadrons only"),
+    NTupleVariable("photonIso04",       lambda x : x.photonIso(0.4),          help="PF Abs Iso, R=0.4, photons only"),
+    NTupleVariable("puChargedHadIso04", lambda x : x.puChargedHadronIso(0.4), help="PF Abs Iso, R=0.4, pileup charged hadrons only"),
     NTupleVariable("rho",               lambda x : x.rho,                             help="rho for isolation"),
     NTupleVariable("EffectiveArea04",   lambda x : x.EffectiveArea04,                 help="EA for isolation"),
-    NTupleVariable("chargedHadIso03",   lambda x : x.chargedHadronIsoR(0.3),   help="PF Abs Iso, R=0.3, charged hadrons only"),
-    NTupleVariable("neutralHadIso03",   lambda x : x.neutralHadronIsoR(0.3),   help="PF Abs Iso, R=0.3, neutral hadrons only"),
-    NTupleVariable("photonIso03",       lambda x : x.photonIsoR(0.3),          help="PF Abs Iso, R=0.3, photons only"),
-    NTupleVariable("puChargedHadIso03", lambda x : x.puChargedHadronIsoR(0.3), help="PF Abs Iso, R=0.3, pileup charged hadrons only"),
+    NTupleVariable("chargedHadIso03",   lambda x : x.chargedHadronIso(0.3),   help="PF Abs Iso, R=0.3, charged hadrons only"),
+    NTupleVariable("neutralHadIso03",   lambda x : x.neutralHadronIso(0.3),   help="PF Abs Iso, R=0.3, neutral hadrons only"),
+    NTupleVariable("photonIso03",       lambda x : x.photonIso(0.3),          help="PF Abs Iso, R=0.3, photons only"),
+    NTupleVariable("puChargedHadIso03", lambda x : x.puChargedHadronIso(0.3), help="PF Abs Iso, R=0.3, pileup charged hadrons only"),
     NTupleVariable("EffectiveArea03",   lambda x : x.EffectiveArea03,                 help="EA for isolation"),
     # ----------------------
     NTupleVariable("hasFSR",     lambda x : len(x.fsrPhotons), int),
@@ -67,7 +67,7 @@ leptonTypeHZZLite = NTupleObjectType("leptonHZZLite", baseObjectTypes = [ partic
     NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
     # ----------------------
     NTupleVariable("relIsoAfterFSR",    lambda x : x.relIsoAfterFSR,   help="RelIso after FSR"),
-    NTupleVariable("chargedHadIso03",   lambda x : x.chargedHadronIsoR(0.3),   help="PF Abs Iso, R=0.3, charged hadrons only"),
+    NTupleVariable("chargedHadIso03",   lambda x : x.chargedHadronIso(0.3),   help="PF Abs Iso, R=0.3, charged hadrons only"),
     # ----------------------
     NTupleVariable("hasOwnFSR",  lambda x : len(x.ownFsrPhotons), int),
     NTupleSubObject("p4WithFSR", lambda x : x.p4WithFSR(), fourVectorType),

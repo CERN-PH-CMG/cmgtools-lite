@@ -11,7 +11,7 @@ class VectorBosonToolBox(object):
     def WMuNuPFIsolation(self,z):#does nothing / for common interface
        footPrintLeg1=0.0
        cleanedChargedIso = max(z.leg1.pfIsolationR04().sumChargedHadronPt,0.0)
-       cleanedNeutralIsoDB=max( z.leg1.neutralHadronIsoR(0.4)+z.leg1.photonIsoR(0.4)-z.leg1.puChargedHadronIsoR(0.4)/2, 0.0)
+       cleanedNeutralIsoDB=max( z.leg1.neutralHadronIso(0.4)+z.leg1.photonIso(0.4)-z.leg1.puChargedHadronIso(0.4)/2, 0.0)
        return (cleanedChargedIso+cleanedNeutralIsoDB)/z.leg1.pt()<0.2
 
 
@@ -27,8 +27,8 @@ class VectorBosonToolBox(object):
 
         cleanedChargedIso1 = max(z.leg1.pfIsolationR04().sumChargedHadronPt-footPrintLeg1,0.0)
         cleanedChargedIso2 = max(z.leg2.pfIsolationR04().sumChargedHadronPt-footPrintLeg2,0.0)
-        cleanedNeutralIsoDB1=max( z.leg1.neutralHadronIsoR(0.4)+z.leg1.photonIsoR(0.4)-z.leg1.puChargedHadronIsoR(0.4)/2, 0.0)
-        cleanedNeutralIsoDB2=max( z.leg2.neutralHadronIsoR(0.4)+z.leg2.photonIsoR(0.4)-z.leg2.puChargedHadronIsoR(0.4)/2, 0.0)
+        cleanedNeutralIsoDB1=max( z.leg1.neutralHadronIso(0.4)+z.leg1.photonIso(0.4)-z.leg1.puChargedHadronIso(0.4)/2, 0.0)
+        cleanedNeutralIsoDB2=max( z.leg2.neutralHadronIso(0.4)+z.leg2.photonIso(0.4)-z.leg2.puChargedHadronIso(0.4)/2, 0.0)
 
         return (cleanedChargedIso1+cleanedNeutralIsoDB1)/z.leg1.pt()<0.4 and (cleanedChargedIso2+cleanedNeutralIsoDB2)/z.leg2.pt()<0.4
 
@@ -48,8 +48,8 @@ class VectorBosonToolBox(object):
                     else:
                         footPrintNeutralLeg1=footPrintNeutralLeg1+c.pt()
 
-        cleanedChargedIso = max(z.leg1.chargedHadronIsoR(0.4)-footPrintChargedLeg1,0.0)
-        cleanedNeutralIsoRho=max(z.leg1.neutralHadronIsoR(0.4)+z.leg1.photonIsoR(0.4)-footPrintNeutralLeg1-z.leg1.rho*z.leg1.EffectiveArea04,0)
+        cleanedChargedIso = max(z.leg1.chargedHadronIso(0.4)-footPrintChargedLeg1,0.0)
+        cleanedNeutralIsoRho=max(z.leg1.neutralHadronIso(0.4)+z.leg1.photonIso(0.4)-footPrintNeutralLeg1-z.leg1.rho*z.leg1.EffectiveArea04,0)
         return (cleanedChargedIso + cleanedNeutralIsoRho)/z.leg1.pt()<0.2
 
 
@@ -94,10 +94,10 @@ class VectorBosonToolBox(object):
                         footPrintNeutralLeg1=footPrintNeutralLeg1+c.pt()
 
 
-        cleanedChargedIso1 = max(z.leg1.chargedHadronIsoR(0.4)-footPrintChargedLeg1,0.0)
-        cleanedChargedIso2 = max(z.leg1.chargedHadronIsoR(0.4)-footPrintChargedLeg2,0.0)
-        cleanedNeutralIsoRho1=max(z.leg1.neutralHadronIsoR(0.4)+z.leg1.photonIsoR(0.4)-footPrintNeutralLeg1-z.leg1.rho*z.leg1.EffectiveArea04,0)
-        cleanedNeutralIsoRho2=max(z.leg2.neutralHadronIsoR(0.4)+z.leg2.photonIsoR(0.4)--footPrintNeutralLeg2-z.leg2.rho*z.leg2.EffectiveArea04,0)
+        cleanedChargedIso1 = max(z.leg1.chargedHadronIso(0.4)-footPrintChargedLeg1,0.0)
+        cleanedChargedIso2 = max(z.leg1.chargedHadronIso(0.4)-footPrintChargedLeg2,0.0)
+        cleanedNeutralIsoRho1=max(z.leg1.neutralHadronIso(0.4)+z.leg1.photonIso(0.4)-footPrintNeutralLeg1-z.leg1.rho*z.leg1.EffectiveArea04,0)
+        cleanedNeutralIsoRho2=max(z.leg2.neutralHadronIso(0.4)+z.leg2.photonIso(0.4)--footPrintNeutralLeg2-z.leg2.rho*z.leg2.EffectiveArea04,0)
 
         return (cleanedChargedIso1+cleanedNeutralIsoRho1)/z.leg1.pt()<0.4 and (cleanedChargedIso2+cleanedNeutralIsoRho2)/z.leg2.pt()<0.4
 

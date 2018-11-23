@@ -187,7 +187,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         if isocut is None:
             isocut = self.cfg_ana.iso2
 
-        return muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=False) < isocut
+        return muon.relIso(0.4, dbeta_factor=0.5, all_charged=False) < isocut
 
     def thirdLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count tight muons
@@ -215,7 +215,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
                          self.testElectronID(electron) and
                          electron.passConversionVeto() and
                          electron.physObj.gsfTrack().hitPattern().numberOfHits(ROOT.reco.HitPattern.MISSING_INNER_HITS) <= 1 and
-                         electron.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3]
+                         electron.relIso(0.3, dbeta_factor=0.5, all_charged=0) < 0.3]
 
         if len(vOtherLeptons) > 0:
             return False
@@ -259,7 +259,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBoldDMwLTraw"), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIso(0.4, dbeta_factor=0.5, all_charged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBoldDMwLTraw"), -dl.leg2().pt())
 
         return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 
