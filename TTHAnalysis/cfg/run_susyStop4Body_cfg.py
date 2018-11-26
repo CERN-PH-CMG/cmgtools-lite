@@ -672,6 +672,7 @@ else:
             TTHad_pow,
             TTLep_pow,
             TTSemi_pow,
+            TTJets_madgraph,
         ]
         for comp in selectedComponents:
             comp.splitFactor = 3000
@@ -683,6 +684,14 @@ else:
             W2JetsToLNu_LO,    #status=PRODUCTION
             W3JetsToLNu_LO,
             W4JetsToLNu_LO,
+            #WJetsToLNu_HT70To100,
+            WJetsToLNu_HT100To200,
+            WJetsToLNu_HT200To400,
+            WJetsToLNu_HT400To600,
+            WJetsToLNu_HT600To800,
+            WJetsToLNu_HT800To1200,
+            WJetsToLNu_HT1200To2500,
+            WJetsToLNu_HT2500ToInf,
         ]
         for comp in selectedComponents:
             comp.splitFactor = 500
