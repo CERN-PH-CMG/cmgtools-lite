@@ -263,7 +263,7 @@ metAna = cfg.Analyzer(
 
 jetAna = cfg.Analyzer(
     JetAnalyzer, name='jetAnalyzer',
-    jetCol = 'slimmedJetsPuppi',
+    jetCol = 'slimmedJets',
     copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
     genJetCol = 'slimmedGenJets',
     rho = ('fixedGridRhoFastjetAll','',''),
@@ -278,7 +278,7 @@ jetAna = cfg.Analyzer(
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
-    recalibrationType = "AK4PFPuppi",
+    recalibrationType = "AK4PFchs",
     mcGT     = "Fall17_17Nov2017_V6_MC",
     dataGT   = [(1,"Fall17_17Nov2017B_V6_DATA"), (299337,"Fall17_17Nov2017C_V6_DATA"), (302030,"Fall17_17Nov2017D_V6_DATA"), (303435,"Fall17_17Nov2017E_V6_DATA"), (304911,"Fall17_17Nov2017F_V6_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",

@@ -33,6 +33,14 @@ class VVBuilder(Analyzer):
         # btag reweighting
         self.btagSF = BTagEventWeights(
             'btagsf', os.path.expandvars(self.cfg_ana.btagCSVFile))
+        puppiJecCorrWeightFile = os.path.expandvars(
+            self.cfg_ana.puppiJecCorrFile)
+        self.puppiJecCorr = ROOT.TFile.Open(puppiJecCorrWeightFile)
+        self.puppisd_corrGEN = self.puppiJecCorr.Get("puppiJECcorr_gen")
+        self.puppisd_corrRECO_cen = self.puppiJecCorr.Get(
+            "puppiJECcorr_reco_0eta1v3")
+        self.puppisd_corrRECO_for = self.puppiJecCorr.Get(
+            "puppiJECcorr_reco_1v3eta2v5")
 
     def declareHandles(self):
         super(VVBuilder, self).declareHandles()
@@ -53,6 +61,16 @@ class VVBuilder(Analyzer):
 
 
     def substructure(self, jet):
+        if hasattr(jet,'softDropMassCor'):
+            return
+
+        jet.softDropMassCor = self.getPUPPIMassWeight(jet)*jet.userFloat('ak8PFJetsPuppiSoftDropMass')
+        jet.softDropMassBare =jet.userFloat('ak8PFJetsPuppiSoftDropMass')
+
+
+
+
+
         jet.subJetTags = [-99.0] * 2
         jet.subJetCTagL = [-99.0] * 2
         jet.subJetCTagB = [-99.0] * 2

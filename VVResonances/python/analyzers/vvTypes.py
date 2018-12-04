@@ -77,7 +77,8 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
 VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2",  lambda x : x.leg2,FatJetType),
     # NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType),
-    NTupleVariable("l2_softDrop_mass", lambda x: x.leg2.userFloat('ak8PFJetsPuppiSoftDropMass'), float),
+    NTupleVariable("l2_softDrop_mass", lambda x: x.leg2.softDropMassCor, float),
+    NTupleVariable("l2_softDrop_massBare", lambda x: x.leg2.softDropMassBare, float),
     NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
     NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass, float,"",-99,True),
     ## GEN LEVEL STUFF

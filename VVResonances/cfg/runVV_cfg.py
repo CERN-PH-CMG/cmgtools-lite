@@ -66,7 +66,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 from CMGTools.VVResonances.samples.loadSamples import *
 
 #selectedComponents = mcSamples+dataSamplesLNUJ
-selectedComponents =mcSamples+dataSamples
+selectedComponents =mcSamples+dataSamplesLNUJ
 
 
 
@@ -115,7 +115,7 @@ else:
     # full scale production
     # split samples in a smarter way
     from CMGTools.RootTools.samples.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 50, 3)  # means 40 ms per event, job to last 3h
+    configureSplittingFromTime(selectedComponents, 10, 3)  # means 40 ms per event, job to last 3h
     # print summary of components to process
     printSummary(selectedComponents)
 
