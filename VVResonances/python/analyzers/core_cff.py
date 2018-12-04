@@ -318,7 +318,7 @@ jetAnaAK8 = cfg.Analyzer(
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
-    recalibrationType = "AK8PFPuppi",
+    recalibrationType = "AK8PFchs",
     mcGT     = "Fall17_17Nov2017_V6_MC",
     dataGT   = [(1,"Fall17_17Nov2017B_V6_DATA"), (299337,"Fall17_17Nov2017C_V6_DATA"), (302030,"Fall17_17Nov2017D_V6_DATA"), (303435,"Fall17_17Nov2017E_V6_DATA"), (304911,"Fall17_17Nov2017F_V6_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
@@ -350,7 +350,6 @@ mergedTruthAna = cfg.Analyzer(TopMergingAnalyzer,name='mergeTruthAna')
 vvAna = cfg.Analyzer(
     VVBuilder,name='vvAna',
     suffix = '',
-    doPUPPI=True,
     fDiscriminatorB = "pfDeepCSVJetTags:probb",
     fDiscriminatorBB = "pfDeepCSVJetTags:probbb",
     fDiscriminatorC = "pfDeepCSVJetTags:probc",
@@ -401,21 +400,6 @@ vTauAna = cfg.Analyzer(
 
 
 
-
-def doPruning():
-    print "Switching to pruning"
-    jetAna.jetCol = 'slimmedJets'
-#    jetAna.mcGT     = "76X_mcRun2_asymptotic_v12"
-#    jetAna.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
-    jetAna.recalibrationType = "AK4PFchs"
-
-#    jetAnaAK8.mcGT     = "Fall15_25nsV2_MC"
-
-#    jetAnaAK8.mcGT     = "76X_mcRun2_asymptotic_v12"
-#    jetAnaAK8.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
-    jetAnaAK8.recalibrationType = "AK8PFchs"
-    vvAna.doPUPPI=False
-    ttAna.doPUPPI=False
 
 
 

@@ -99,7 +99,8 @@ if test==1:
     selectedComponents = [WJetsToLNu_HT2500ToInf]
 #    selectedComponents = [BulkGravToZZToZhadZinv_narrow_1400]
     for c in selectedComponents:
-        c.files = c.files[:1]
+#        c.files = c.files[:1]
+        c.files = ['file:/tmp/bachtis/file.root']
         c.splitFactor = 1
 
 elif test==2:
