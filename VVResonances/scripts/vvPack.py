@@ -41,7 +41,7 @@ if __name__ == '__main__':
         f.close()
 
         #next copy the main tree
-        shutil.copyfile(directory+'/'+rootFile,directory+'.root')
+        shutil.move(directory+'/'+rootFile,directory+'.root')
         if os.path.exists(directory+'/'+puFile):
           shutil.copyfile(directory+'/'+puFile,directory+'_rawPUMC.root')
     

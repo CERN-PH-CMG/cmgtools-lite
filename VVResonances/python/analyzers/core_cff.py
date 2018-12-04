@@ -209,10 +209,11 @@ lepWeightAna = cfg.Analyzer(
         #Muons from histograms
         {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonIDScaleFactors.root','histoname':"NUM_TrkHighPtID_DEN_genTracks_pair_newTuneP_probe_pt_abseta",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
         {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonIsoScaleFactors.root','histoname':"NUM_TightRelTkIso_DEN_TrkHighPtID_pair_newTuneP_probe_pt_abseta",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
-        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'myTriggerScaleFactors.root','histoname':"MU_MC",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_MC'},
-        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'myTriggerScaleFactors.root','histoname':"MU_DATA",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_DATA'},
-        {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'myTriggerScaleFactors.root','histoname':"ELE_MC",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_MC'},
-        {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'myTriggerScaleFactors.root','histoname':"ELE_DATA",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_DATA'},
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'myTriggerScaleFactors_2017.root','histoname':"MU_MC",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_MC'},
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'myTriggerScaleFactors_2017.root','histoname':"MU_DATA",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_DATA'},
+        #eLECTRONS
+        {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'myTriggerScaleFactors_2017.root','histoname':"ELE_MC",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_MC'},
+        {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'myTriggerScaleFactors_2017.root','histoname':"ELE_DATA",'x':lambda x:x.pt(),'y':lambda x: (x.eta()),'tag':'eff_HLT_DATA'},
         # electron RECO SFs
         {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'ElectronIDScaleFactors.root','histoname':"EGamma_SF2D",'x':lambda x:x.superCluster().eta(),'y':lambda x: (x.pt()),'tag':'sfWV'},
         # HEEP electrons flat
@@ -382,11 +383,11 @@ metWeightAna = cfg.Analyzer(
     collection = "LNuJJ",
     weights = [
         #Trigger privately calculated different for electrons and muons
-        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"MET_ELE_MC",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_MC'},
-        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"MET_ELE_DATA",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_DATA'},
-        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"MET_MU_MC",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_MC'},
-        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"MET_MU_DATA",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_DATA'},
-        ]
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors_2017.root','histoname':"MET_ELE_MC",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_MC'},
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors_2017.root','histoname':"MET_ELE_DATA",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_DATA'},
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors_2017.root','histoname':"MET_MU_MC",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_MC'},
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors_2017.root','histoname':"MET_MU_DATA",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_DATA'},
+    ]
 )
 
 

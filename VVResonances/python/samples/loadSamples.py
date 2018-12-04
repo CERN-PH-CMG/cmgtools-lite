@@ -2,35 +2,14 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
 # Load backgrounds from common place
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *\
-
-####
-####
-
-
-# TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
-
-#background = TTs+Ts+DYJetsToLLM50HT+WJetsToLNuHT+QCDHT+DiBosons+Ws
-W=[WJetsToLNu_LO]
-background = TTs+Ts+DYJetsToLLM50HT+QCDHT+DiBosons+W
-
-# Load signal from here
-mcSamples = background
-
+from CMGTools.VVResonances.samples.background_13TeV_94X_Fall17  import *
 # load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
-
-#change things we do not like - e.g keep onlly isolated mu27
-triggers_1mu_iso = ['HLT_IsoMu27_v*']
-
-
-
-
-
-
 # Load Data samples
 from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 
+
+mcSamples=backgroundSamples
 
 SingleMuon = [SingleMuon_Run2017B_17Nov2017,SingleMuon_Run2017C_17Nov2017,SingleMuon_Run2017D_17Nov2017,SingleMuon_Run2017E_17Nov2017,SingleMuon_Run2017F_17Nov2017]
 SingleElectron = [SingleElectron_Run2017B_17Nov2017,SingleElectron_Run2017C_17Nov2017,SingleElectron_Run2017D_17Nov2017,SingleElectron_Run2017E_17Nov2017,SingleElectron_Run2017F_17Nov2017]
