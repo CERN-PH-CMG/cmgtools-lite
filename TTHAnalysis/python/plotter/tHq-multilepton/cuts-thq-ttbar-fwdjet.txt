@@ -24,3 +24,6 @@ fwdjetpt25  : (maxEtaJet25 >= 0) ; Disable=True
 fwdjetpt30  : (maxEtaJet25_30>=0) ; Disable=True
 fwdjetpt40  : (maxEtaJet25_40>=0) ; Disable=True
 fwdjetpt50  : (maxEtaJet25<2.4 || fwdJetPt25>50) ; Disable=True
+
+option2 : !(maxEtaJet25 >= 2.7 && maxEtaJet25 <= 3.0) ; Disable=True
+option3 : (maxEtaJet25 <= 2.7 || maxEtaJet25 >= 3.0) ||  (fwdJetPt25 > 60.) ; Disable=True
