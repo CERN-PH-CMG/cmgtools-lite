@@ -299,7 +299,7 @@ Forward jet pt cut of 25 GeV
 
 float fwdjet_eventWeight_30(float eta){
 /*
-Return an event weight based on the data/MC ratio of the maxJetEta25
+Return an event weight based on the data/MC ratio of the maxJetEta25_30
 distribution in OS emu events.
 Forward jet pt cut of 30 GeV
 */
@@ -327,7 +327,7 @@ Forward jet pt cut of 30 GeV
 
 float fwdjet_eventWeight_40(float eta){
 /*
-Return an event weight based on the data/MC ratio of the maxJetEta25
+Return an event weight based on the data/MC ratio of the maxJetEta25_40
 distribution in OS emu events.
 Forward jet pt cut of 40 GeV
 */
@@ -355,7 +355,7 @@ Forward jet pt cut of 40 GeV
 
 float fwdjet_eventWeight_50(float eta){
 /*
-Return an event weight based on the data/MC ratio of the maxJetEta25
+Return an event weight based on the data/MC ratio of the maxJetEta25_50
 distribution in OS emu events.
 Forward jet pt cut of 50 GeV
 */
@@ -377,6 +377,90 @@ Forward jet pt cut of 50 GeV
   if(eta < 4.167) return 1.0626;
   if(eta < 4.444) return 0.8832;
   if(eta < 4.722) return 0.5845;
+  if(eta < 5.000) return 1.0000;
+  return 1.0;
+}
+
+float fwdjet_eventWeight_2017_option1(float eta){
+/*
+Return an event weight based on the data/MC ratio of the maxJetEta25_40
+distribution in OS emu events.
+Central jet pt cut 25 GeV, forward jet pt cut 40 GeV.
+*/
+  eta = fabs(eta);
+  if(eta < 0.278) return 0.9706;
+  if(eta < 0.556) return 0.9826;
+  if(eta < 0.833) return 0.9850;
+  if(eta < 1.111) return 0.9640;
+  if(eta < 1.389) return 0.9966;
+  if(eta < 1.667) return 1.0085;
+  if(eta < 1.944) return 1.0021;
+  if(eta < 2.222) return 1.0216;
+  if(eta < 2.500) return 0.9476;
+  if(eta < 2.778) return 0.9431;
+  if(eta < 3.056) return 1.3540;
+  if(eta < 3.333) return 0.9914;
+  if(eta < 3.611) return 1.1128;
+  if(eta < 3.889) return 1.0137;
+  if(eta < 4.167) return 1.0254;
+  if(eta < 4.444) return 0.8998;
+  if(eta < 4.722) return 0.5936;
+  if(eta < 5.000) return 1.0000;
+  return 1.0;
+}
+
+float fwdjet_eventWeight_2017_option2(float eta){
+/*
+Return an event weight based on the data/MC ratio of the maxJetEta25
+distribution in OS emu events.
+All jet pt cut 25 GeV. Events where 2.7 < maxJetEta25 < 3.0 are rejected.
+*/
+  eta = fabs(eta);
+  if(eta < 0.278) return 0.9636;
+  if(eta < 0.556) return 0.9742;
+  if(eta < 0.833) return 0.9828;
+  if(eta < 1.111) return 0.9605;
+  if(eta < 1.389) return 0.9864;
+  if(eta < 1.667) return 1.0093;
+  if(eta < 1.944) return 0.9917;
+  if(eta < 2.222) return 1.0144;
+  if(eta < 2.500) return 0.9596;
+  if(eta < 2.778) return 0.9891;
+  if(eta < 3.056) return 1.3903;
+  if(eta < 3.333) return 0.9907;
+  if(eta < 3.611) return 1.1499;
+  if(eta < 3.889) return 1.0943;
+  if(eta < 4.167) return 1.0793;
+  if(eta < 4.444) return 0.8731;
+  if(eta < 4.722) return 0.6258;
+  if(eta < 5.000) return 1.0000;
+  return 1.0;
+}
+
+float fwdjet_eventWeight_2017_option3(float eta){
+/*
+Return an event weight based on the data/MC ratio of the maxJetEta25
+distribution in OS emu events.
+All jet pt cut 25 GeV, except if 2.7 < maxJetEta25 < 3.0, fwdJetPt25 > 60.
+*/
+  eta = fabs(eta);
+  if(eta < 0.278) return 0.9636; 
+  if(eta < 0.556) return 0.9742;
+  if(eta < 0.833) return 0.9828;
+  if(eta < 1.111) return 0.9605;
+  if(eta < 1.389) return 0.9864;
+  if(eta < 1.667) return 1.0093;
+  if(eta < 1.944) return 0.9917;
+  if(eta < 2.222) return 1.0144;
+  if(eta < 2.500) return 0.9596;
+  if(eta < 2.778) return 0.9779;
+  if(eta < 3.056) return 1.2160;
+  if(eta < 3.333) return 0.9907;
+  if(eta < 3.611) return 1.1499;
+  if(eta < 3.889) return 1.0943;
+  if(eta < 4.167) return 1.0792;
+  if(eta < 4.444) return 0.8731;
+  if(eta < 4.722) return 0.6258;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
