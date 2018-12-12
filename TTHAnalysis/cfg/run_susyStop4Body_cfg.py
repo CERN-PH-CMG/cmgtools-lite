@@ -460,7 +460,7 @@ else:
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
-    'JetHTPD':triggers_pfht1050,
+    'JetHTPD':triggers_pfht,
     }
     triggerFlagsAna.unrollbits = True
     triggerFlagsAna.saveIsUnprescaled = True
