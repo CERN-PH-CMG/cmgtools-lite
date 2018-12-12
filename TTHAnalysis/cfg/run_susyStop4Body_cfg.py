@@ -425,13 +425,47 @@ jsonAna.useLumiBlocks = True
 #TODO: TRIGGERS FOR 2017 
 #example: https://github.com/diogodebastos/cmgtools-lite/blob/2e70cfcb301f608cf89b6fb27bd3795051024b32/TTHAnalysis/cfg/run_ttH_cfg.py#L184
 #from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
-from CMGTools.RootTools.samples.triggers_13TeV_Spring16_degStop import *
-triggerFlagsAna.triggerBits = {}
-for trigger in  triggers:
-  trigger_name = "trigger_{trig}".format(trig=trigger.replace("_v*","") )
-  HLT_name = "{trig}".format(trig=trigger.replace("_v*","").replace("HLT_","") )
-  triggerFlagsAna.triggerBits[HLT_name] = eval( trigger_name )
-
+if not run2017:
+    from CMGTools.RootTools.samples.triggers_13TeV_Spring16_degStop import *
+    triggerFlagsAna.triggerBits = {}
+    for trigger in  triggers:
+        trigger_name = "trigger_{trig}".format(trig=trigger.replace("_v*","") )
+        HLT_name = "{trig}".format(trig=trigger.replace("_v*","").replace("HLT_","") )
+        triggerFlagsAna.triggerBits[HLT_name] = eval( trigger_name )
+        triggerFlagsAna.unrollbits = False
+        triggerFlagsAna.saveIsUnprescaled = False
+        triggerFlagsAna.checkL1prescale = False
+else:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
+    triggerFlagsAna.triggerBits = {
+    'DoubleMu' : triggers_mumu_iso,
+    'DoubleMuSS' : triggers_mumu_ss,
+    'DoubleMuNoIso' : triggers_mumu_noniso,
+    'DoubleEl' : triggers_ee,
+    'MuEG'     : triggers_mue,
+    'DoubleMuHT' : triggers_mumu_ht,
+    'DoubleElHT' : triggers_ee_ht,
+    'MuEGHT' : triggers_mue_ht,
+    'TripleEl' : triggers_3e,
+    'TripleMu' : triggers_3mu,
+    'DoubleMuEl' : triggers_2mu1e,
+    'DoubleElMu' : triggers_2e1mu,
+    'SingleMu' : triggers_1mu_iso,
+    'SingleEl'     : triggers_1e_iso,
+#    'SOSHighMET' : triggers_SOS_highMET,
+#    'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
+#    'SOSTripleMu' : triggers_SOS_tripleMu,
+#    'LepTau' : triggers_leptau,
+#    'MET' : triggers_metNoMu90_mhtNoMu90,
+    #'MonoJet80MET90' : triggers_Jet80MET90,
+    #'MonoJet80MET120' : triggers_Jet80MET120,
+    #'METMu5' : triggers_MET120Mu5,
+    'JetHTPD':triggers_pfht1050,
+    }
+    triggerFlagsAna.unrollbits = True
+    triggerFlagsAna.saveIsUnprescaled = True
+    triggerFlagsAna.checkL1Prescale = True
+    
 #triggerFlagsAna.triggerBits = {
 #  'HT2000': ['HLT_HT2000_v*'],
 #  'Ele25_eta2p1_WPTight_Gsf': ['HLT_Ele25_eta2p1_WPTight_Gsf_v*'],
@@ -473,9 +507,7 @@ for trigger in  triggers:
 #  'PFMETNoMu110_PFMHTNoMu110_IDTight': ['HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v*'],
 #  'PFMETNoMu120_PFMHTNoMu120_IDTight': ['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*']
 #}
-triggerFlagsAna.unrollbits = False
-triggerFlagsAna.saveIsUnprescaled = False
-triggerFlagsAna.checkL1prescale = False
+
 
 #if runSMS:
 #    susyCoreSequence.remove(triggerFlagsAna)
