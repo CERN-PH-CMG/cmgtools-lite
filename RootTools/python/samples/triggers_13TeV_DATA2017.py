@@ -58,7 +58,7 @@ triggers_pfht = ["HLT_PFHT780_v*",   # Rate: about 1 Hz with HLT prescale of 128
                  "HLT_PFHT1050_v*"]  # Pure HT path (unprescaled)
 
 triggers_met = [#"HLT_PFMET90_PFMHT90_IDTight_v*",
-                "HLT_PFMET100_PFMHT100_IDTight_PFHT60*",
+                "HLT_PFMET100_PFMHT100_IDTight_PFHT60_v*",
                 "HLT_PFMET110_PFMHT110_IDTight_v*",
                 "HLT_PFMET120_PFMHT120_IDTight_v"]
 
