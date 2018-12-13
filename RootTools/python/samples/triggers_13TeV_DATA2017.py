@@ -57,6 +57,11 @@ triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for 
 triggers_pfht = ["HLT_PFHT780_v*",   # Rate: about 1 Hz with HLT prescale of 128 (from MC)
                  "HLT_PFHT1050_v*"]  # Pure HT path (unprescaled)
 
+triggers_met = [#"HLT_PFMET90_PFMHT90_IDTight_v*",
+                "HLT_PFMET100_PFMHT100_IDTight_PFHT60*",
+                "HLT_PFMET110_PFMHT110_IDTight_v*",
+                "HLT_PFMET120_PFMHT120_IDTight_v"]
+
 # AK8 HT: not in 2017B, lower thresholds are prescaled
 triggers_ak8pfht_mass50 = ['HLT_AK8PFHT%d_TrimMass50_v*' % ht for ht in (750, 800)]
 

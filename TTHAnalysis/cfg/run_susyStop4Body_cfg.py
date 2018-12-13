@@ -422,10 +422,8 @@ jsonAna.useLumiBlocks = True
 #    #treeProducer.globalVariables.append(NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"))
 
 #-------- SAMPLES AND TRIGGERS -----------
-#TODO: TRIGGERS FOR 2017 
-#example: https://github.com/diogodebastos/cmgtools-lite/blob/2e70cfcb301f608cf89b6fb27bd3795051024b32/TTHAnalysis/cfg/run_ttH_cfg.py#L184
-#from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 if not run2017:
+    #from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
     from CMGTools.RootTools.samples.triggers_13TeV_Spring16_degStop import *
     triggerFlagsAna.triggerBits = {}
     for trigger in  triggers:
@@ -436,6 +434,7 @@ if not run2017:
         triggerFlagsAna.saveIsUnprescaled = False
         triggerFlagsAna.checkL1prescale = False
 else:
+    #example: https://github.com/diogodebastos/cmgtools-lite/blob/2e70cfcb301f608cf89b6fb27bd3795051024b32/TTHAnalysis/cfg/run_ttH_cfg.py#L184
     from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
     triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
@@ -460,7 +459,8 @@ else:
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
-    'JetHTPD':triggers_pfht,
+    'JetHTPD': triggers_pfht,
+    'MET': triggers_met,
     }
     triggerFlagsAna.unrollbits = True
     triggerFlagsAna.saveIsUnprescaled = True
