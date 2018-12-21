@@ -21,9 +21,11 @@ muTightCharge : (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(Lep
 2bl           : nBJetLoose25 >= 2 ; Disable=True
 
 fwdjetpt25  : (maxEtaJet25 >= 0) ; Disable=True
-fwdjetpt30  : (maxEtaJet25_30>=0) ; Disable=True
-fwdjetpt40  : (maxEtaJet25_40>=0) ; Disable=True
-fwdjetpt50  : (maxEtaJet25<2.4 || fwdJetPt25>50) ; Disable=True
+fwdjetpt30  : (maxEtaJet25_30 >= 0) ; Disable=True
+fwdjetpt40  : (maxEtaJet25_40 >= 0) ; Disable=True
+fwdjetpt50  : (maxEtaJet25 < 2.4 || fwdJetPt25 > 50) ; Disable=True
 
 option2 : !(maxEtaJet25 >= 2.7 && maxEtaJet25 <= 3.0) ; Disable=True
 option3 : (maxEtaJet25 <= 2.7 || maxEtaJet25 >= 3.0) ||  (fwdJetPt25 > 60.) ; Disable=True
+modified2 : !(abs(JetFwdSel_Recl_eta) >= 2.7 && abs(JetFwdSel_Recl_eta) <= 3.0) ; Disable=True
+modified3 : (maxEtaJet25_60 >=0) ; Disable=True

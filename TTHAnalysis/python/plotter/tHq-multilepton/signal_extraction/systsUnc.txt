@@ -48,7 +48,9 @@ CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
         AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
 
-CMS_tHql_fwdJet : $PromptFromMC : .* : templateSymm; AddWeight='fwdjet_eventWeight_40(maxEtaJet25_40)'
+#CMS_tHql_fwdJet : $PromptFromMC : .* : templateSymm; AddWeight='fwdjet_eventWeight_40(maxEtaJet25_40)' # 2016 weights
+#CMS_tHql_fwdJet : $PromptFromMC : .* : templateSymm; AddWeight='fwdjet_eventWeight_2017_option1(maxEtaJet25_40)' # 2017 option1
+#CMS_tHql_fwdJet : $PromptFromMC : .* : templateSymm; AddWeight='fwdjet_eventWeight_2017_option0(maxEtaJet25)' # 2017 option0,2,3
 
 CMS_ttHl16_btag_LF    : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
 CMS_ttHl16_btag_HF    : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']

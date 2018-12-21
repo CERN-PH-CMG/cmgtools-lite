@@ -5,6 +5,7 @@ nJetEta1             : nJetEta1             : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5];
 maxEtaJet25          : maxEtaJet25          : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 25 GeV)"
 maxEtaJet25_30       : maxEtaJet25_30       : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 30 GeV)"
 maxEtaJet25_40       : maxEtaJet25_40       : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 40 GeV)"
+maxEtaJet25_60       : maxEtaJet25_60       : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 60 GeV if 2.7<|#eta|<3)"
 fwdJetPt25           : fwdJetPt25           : 18,20,200; XTitle="p_{T} of forward jet [GeV]"
 dEtaFwdJetBJet       : dEtaFwdJetBJet       : 18,0,6;   XTitle="#Delta#eta max fwd jet and leading bjet"
 dEtaFwdJet2BJet      : dEtaFwdJet2BJet      : 18,0,6;   XTitle="#Delta#eta max fwd jet and sub-leading bjet"
