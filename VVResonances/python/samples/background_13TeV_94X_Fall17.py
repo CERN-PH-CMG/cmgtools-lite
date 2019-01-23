@@ -69,9 +69,13 @@ WZTo1L1Nu2Q=kreator.makeMCComponent("WZTo1L1Nu2Q", "/WZTo1L1Nu2Q_13TeV_amcatnloF
 backgroundSamples.append(WZTo1L1Nu2Q)
 TTSemileptonic=kreator.makeMCComponent("TTSemileptonic", "/TTToSemiLeptonic_WspTgt150_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM", "CMS", ".*root",1.87514)
 backgroundSamples.append(TTSemileptonic)
-TTLep_pow=kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root",87.31448)
+TTLep_pow=kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root",87.31448)
 backgroundSamples.append(TTLep_pow)
-TTHad_pow=kreator.makeMCComponent("TTHad_pow", "/TTToHadronic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root",380.094)
+TTHad_pow=kreator.makeMCComponent("TTHad_pow", "/TTToHadronic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root",380.094)
 backgroundSamples.append(TTHad_pow)
-TTSemi_pow=kreator.makeMCComponent("TTSemi_pow", "/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root",364.3508)
+TTSemi_pow=kreator.makeMCComponent("TTSemi_pow", "/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM", "CMS", ".*root",364.3508)
 backgroundSamples.append(TTSemi_pow)
+#TT_Mtt700to1000=kreator.makeMCComponent("TT_Mtt700to1000", "/TT_Mtt-700to1000_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root",1.) ## to be updated (incorrect PU scheme) ## add x-section
+#backgroundSamples.append(TT_Mtt700to1000)
+#TT_Mtt1000toInf=kreator.makeMCComponent("TT_Mtt1000toInf", "/TT_Mtt-1000toInf_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root",1.) ## add x-section
+#backgroundSamples.append(TT_Mtt1000toInf)

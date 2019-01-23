@@ -3,13 +3,15 @@ import os
 
 # Load backgrounds from common place
 from CMGTools.VVResonances.samples.background_13TeV_94X_Fall17  import *
+# Load signals
+from CMGTools.VVResonances.samples.signal_13TeV_94X_Fall17_LNuJ import *
 # load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
 # Load Data samples
 from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 
 
-mcSamples=backgroundSamples
+mcSamples=backgroundSamples+signalSamples
 
 SingleMuon = [SingleMuon_Run2017B_17Nov2017,SingleMuon_Run2017C_17Nov2017,SingleMuon_Run2017D_17Nov2017,SingleMuon_Run2017E_17Nov2017,SingleMuon_Run2017F_17Nov2017]
 SingleElectron = [SingleElectron_Run2017B_17Nov2017,SingleElectron_Run2017C_17Nov2017,SingleElectron_Run2017D_17Nov2017,SingleElectron_Run2017E_17Nov2017,SingleElectron_Run2017F_17Nov2017]
