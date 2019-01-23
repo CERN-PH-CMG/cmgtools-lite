@@ -393,8 +393,8 @@ class VVBuilder(Analyzer):
 
 
         LNuJJ = self.makeWV(event)
-        LLJJ = self.makeZV(event)
-        JJNuNu = self.makeMETV(event)
+        LLJJ = [] #self.makeZV(event)
+        JJNuNu = [] #self.makeMETV(event)
         TruthType = self.makeTruthType(event)
 
         setattr(event, 'LNuJJ' + self.cfg_ana.suffix, LNuJJ)
