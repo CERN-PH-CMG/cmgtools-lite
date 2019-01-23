@@ -65,7 +65,10 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples+dataSamples
+#selectedComponents = mcSamples+dataSamplesLNUJ
+selectedComponents =mcSamples+dataSamplesLNUJ
+
+
 
 #import pdb;pdb.set_trace()
 
@@ -81,12 +84,9 @@ from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 triggerFlagsAna.triggerBits ={
     "ISOMU":triggers_1mu_iso,
     "MU":triggers_1mu_noniso,
-    "ISOELE":triggers_1e,
+    "ISOELE":triggers_1e_iso,
     "ELE":triggers_1e_noniso,
-    "HT800":triggers_HT800,
-    "HT900":triggers_HT900,
-    "JJ":triggers_dijet_fat+triggers_jet_recoverHT,
-    "MET120":triggers_metNoMu120_mhtNoMu120
+    "MET120":triggers_metNoMu120_mhtNoMu120+triggers_met120_mht120
 }
 
 
@@ -95,10 +95,12 @@ test = 1
 if test==1:
     # test a single component, using a single thread.
 #    selectedComponents = [BulkGravToWWToWlepWhad_narrow_2000]
-    selectedComponents = [WprimeToWZToWhadZlep_narrow_2000]
+#    selectedComponents = [TTJets]
+    selectedComponents = [WJetsToLNu_HT2500ToInf]
 #    selectedComponents = [BulkGravToZZToZhadZinv_narrow_1400]
     for c in selectedComponents:
-        c.files = c.files[:1]
+#        c.files = c.files[:1]
+        c.files = ['file:/tmp/bachtis/file.root']
         c.splitFactor = 1
 
 elif test==2:
@@ -113,7 +115,7 @@ else:
     # full scale production
     # split samples in a smarter way
     from CMGTools.RootTools.samples.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 51, 6)  # means 40 ms per event, job to last 3h
+    configureSplittingFromTime(selectedComponents, 10, 3)  # means 40 ms per event, job to last 3h
     # print summary of components to process
     printSummary(selectedComponents)
 

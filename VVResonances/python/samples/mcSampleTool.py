@@ -32,3 +32,18 @@ def convertSignalWithWidth(filein,fileout):
         ff.write('signalSamples.append({name})\n'.format(name=name))
     f.close()
     ff.close()
+
+
+def convertBackground(filein,fileout):
+    f = open(filein)
+    ff=open(fileout,'w')
+
+    ff.write("from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator\n")
+    ff.write("kreator = ComponentCreator()\n")  
+    ff.write('backgroundSamples=[] \n')
+    for line in f:
+        items= line.split(' ')
+        ff.write('{name}=kreator.makeMCComponent("{name}", "{sample}", "CMS", ".*root",{sigma})\n'.format(name=items[0],sample=items[1],sigma=items[2].split('\n')[0]))
+        ff.write('backgroundSamples.append({name})\n'.format(name=items[0]))
+    f.close()
+    ff.close()

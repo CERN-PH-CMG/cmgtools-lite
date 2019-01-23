@@ -2,66 +2,46 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
 # Load backgrounds from common place
-from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
-
-####
-####
-
-
-# TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
-TTs = [TTJets, TT_pow, TT_pow_ext3]
-background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons+WJetsToLNuPT+ZJetsToNuNuHT
-
-# Load signal from here
-from CMGTools.VVResonances.samples.signal_13TeV_80X_Summer16 import *
-from CMGTools.VVResonances.samples.signal_13TeV_80X_ZPTT import *
-
-
-mcSamples = background+signalSamples+zprimeSamples
+from CMGTools.VVResonances.samples.background_13TeV_94X_Fall17  import *
+# Load signals
+from CMGTools.VVResonances.samples.signal_13TeV_94X_Fall17_LNuJ import *
 # load triggers
-from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
+from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
 # Load Data samples
-from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 
 
-# Load JSON
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+mcSamples=backgroundSamples+signalSamples
+
+SingleMuon = [SingleMuon_Run2017B_17Nov2017,SingleMuon_Run2017C_17Nov2017,SingleMuon_Run2017D_17Nov2017,SingleMuon_Run2017E_17Nov2017,SingleMuon_Run2017F_17Nov2017]
+SingleElectron = [SingleElectron_Run2017B_17Nov2017,SingleElectron_Run2017C_17Nov2017,SingleElectron_Run2017D_17Nov2017,SingleElectron_Run2017E_17Nov2017,SingleElectron_Run2017F_17Nov2017]
+JetHT = [JetHT_Run2017B_17Nov2017,JetHT_Run2017C_17Nov2017,JetHT_Run2017D_17Nov2017,JetHT_Run2017E_17Nov2017,JetHT_Run2017F_17Nov2017]
+MET = [MET_Run2017B_17Nov2017,MET_Run2017C_17Nov2017,MET_Run2017D_17Nov2017,MET_Run2017E_17Nov2017,MET_Run2017F_17Nov2017]
 
 
-SingleMuon = [SingleMuon_Run2016B_03Feb2017_v2, SingleMuon_Run2016C_03Feb2017, SingleMuon_Run2016D_03Feb2017, SingleMuon_Run2016E_03Feb2017, SingleMuon_Run2016F_03Feb2017, SingleMuon_Run2016G_03Feb2017, SingleMuon_Run2016H_03Feb2017_v2, SingleMuon_Run2016H_03Feb2017_v3]
-SingleElectron = [SingleElectron_Run2016B_03Feb2017_v2, SingleElectron_Run2016C_03Feb2017, SingleElectron_Run2016D_03Feb2017, SingleElectron_Run2016E_03Feb2017, SingleElectron_Run2016F_03Feb2017, SingleElectron_Run2016G_03Feb2017, SingleElectron_Run2016H_03Feb2017_v2, SingleElectron_Run2016H_03Feb2017_v3]
-JetHT = [JetHT_Run2016B_03Feb2017_v2, JetHT_Run2016C_03Feb2017, JetHT_Run2016D_03Feb2017, JetHT_Run2016E_03Feb2017, JetHT_Run2016F_03Feb2017, JetHT_Run2016G_03Feb2017, JetHT_Run2016H_03Feb2017_v2, JetHT_Run2016H_03Feb2017_v3]
-MET = [MET_Run2016B_03Feb2017_v2, MET_Run2016C_03Feb2017, MET_Run2016D_03Feb2017, MET_Run2016E_03Feb2017, MET_Run2016F_03Feb2017, MET_Run2016G_03Feb2017, MET_Run2016H_03Feb2017_v2, MET_Run2016H_03Feb2017_v3]
-
+triggers_met = triggers_met120_mht120+triggers_metNoMu120_mhtNoMu120
 
 # Single electron or muon to be used for lnu+J and ll+J (silver)
 for s in SingleMuon:
     s.triggers = triggers_1mu_noniso+triggers_1mu_iso
     s.vetoTriggers = []
-    s.json = json
+
 for s in SingleElectron:
-    s.triggers = triggers_1e_noniso+triggers_1e
+    s.triggers = triggers_1e_noniso+triggers_1e_iso
     s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso
-    s.json = json
-
-
 # MET to be used for jj +MET but also to recover trigger efficiency for leptons
 for s in MET:
-    s.triggers = triggers_metNoMu120_mhtNoMu120
-    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e
-    s.json = json
-
-
-
+    s.triggers = triggers_met
+    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e_iso
 # Jet HT to be used for jj (silver)
 for s in JetHT:
-    s.triggers = triggers_HT800+triggers_HT900+triggers_dijet_fat+triggers_jet_recoverHT
-    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e+triggers_metNoMu120_mhtNoMu120
-    s.json = json
+    s.triggers = triggers_pfht1050+triggers_ak8pfht_mass50+triggers_ak8pfjet+triggers_ak8pfjet_mass30
+    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e_iso+triggers_met
+
 
 
 dataSamples = SingleMuon+SingleElectron+JetHT+MET
-
+dataSamplesLNUJ = SingleMuon+SingleElectron+MET
 
 from CMGTools.TTHAnalysis.setup.Efficiencies import *
 dataDir = "$CMSSW_BASE/src/CMGTools/VVResonances/data"
@@ -77,10 +57,10 @@ for comp in mcSamples:
     comp.puFileData=dataDir+"/pileup_DATA.root"
     comp.efficiency = eff2012
     comp.triggers=[]
-#    comp.globalTag = "Summer15_25nsV6_MC"
+
 
 for comp in dataSamples:
     comp.splitFactor = 500
     comp.isMC = False
     comp.isData = True
-#    comp.globalTag = "Summer15_25nsV6_DATA"
+
