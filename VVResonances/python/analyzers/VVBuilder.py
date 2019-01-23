@@ -107,6 +107,8 @@ class VVBuilder(Analyzer):
         if len(outputJets) == 0:
             return
 
+        jet.genJetP4 = ROOT.Candidate.LorentzVector(outputJets[0].px(),outputJets[0].py(),outputJets[0].pz(),outputJets[0].energy())
+
         # OK!Now save the area
         interface.softDrop(True, 0, 0.0, 0.1, 0.8)
         jet.genSoftDrop = self.copyLV(interface.get(False))[0]
@@ -211,12 +213,15 @@ class VVBuilder(Analyzer):
 
         if self.cfg_comp.isMC:
             self.softDropGen(bestJet,event)
-            newMET = event.met.p4() + VV.leg2.p4() - VV.leg2.genJet().p4()
-            newMET.SetPz(0.0)
-            newW = Pair(VV.leg1.leg1, Singlet(newMET))
-            self.vbTool.defaultWKinematicFit(newW)
-            VV.genPartialMass = (
-                VV.leg1.p4() + VV.leg2.genJet().p4()).M()
+
+            if not hasattr(bestJet,'genJetP4'):
+                VV.genPartialMass = -1
+            else:
+                newMET = event.met.p4() + VV.leg2.p4() - VV.leg2.genJetP4
+                newMET.SetPz(0.0)
+                newW = Pair(VV.leg1.leg1, Singlet(newMET))
+                self.vbTool.defaultWKinematicFit(newW)
+                VV.genPartialMass = ( VV.leg1.p4() + VV.leg2.genJetP4 ).M()
         else:
             VV.genPartialMass = -1
 
