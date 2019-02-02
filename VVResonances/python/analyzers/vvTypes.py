@@ -82,6 +82,7 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
     NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass, float,"",-99,True),
     ## GEN LEVEL STUFF
+    NTupleSubObject("l2_gen",  lambda x : x.leg2.genJetP4 if hasattr(x.leg2,'genJetP4') else dummyLV,fourVectorType,True),
     NTupleVariable("l2_gen_softDrop_mass",  lambda x : x.leg2.genSoftDrop.mass(), float, mcOnly=True),
 ])
 
