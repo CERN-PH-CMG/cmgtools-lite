@@ -54,7 +54,7 @@ def myBestMatch( object, matchCollection):
 class tHqEventVariableFriend:
     def __init__(self):
         self.jecsysts = ["", "_jecUp", "_jecDown"]
-        self.fwdjetptcuts = [(25., ""), (60.,"_60")] # forward jet pt cut
+        self.fwdjetptcuts = [(25., ""), (30.,"_30"), (40.,"_40"), (60.,"_60")] # forward jet pt cut
         self.branches = [] # (branchname, default value)
         self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
         self.branches.append(("minDRll", -99.9)) # minimum deltaR between all leptons
@@ -182,7 +182,8 @@ class tHqEventVariableFriend:
 
                 # All non-btagged jets with pt > 25 GeV, for 2.7 < abs(eta) < 3.0  pt > 60 GeV
                 light_jets =  [j for j in jets  if j.btagCSV < BTAGWP]
-                light_jets += [j for j in fjets if j.btagCSV < BTAGWP and (abs(j.eta) <= 2.7 or abs(j.eta) >= 3.0 or j.pt > ptcut)]
+                if (ptcut == 60) : light_jets += [j for j in fjets if j.btagCSV < BTAGWP and (abs(j.eta) <= 2.7 or abs(j.eta) >= 3.0 or j.pt > ptcut)]
+                else : light_jets += [j for j in fjets if j.btagCSV < BTAGWP and j.pt > ptcut]
                 # Note that some fwd jets have btag values > 0 up to eta 3.05 or so
                 light_jets.sort(key=lambda x:x.pt, reverse=True)
 
