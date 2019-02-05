@@ -178,13 +178,13 @@ W3JetsToLNu_LO = kreator.makeMCComponent("W3JetsToLNu_LO","/W3JetsToLNu_TuneCP5_
 W4JetsToLNu_LO = kreator.makeMCComponent("W4JetsToLNu_LO","/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 542.4*1.17)
 
 #WJetsToLNu_HT70To100 = kreator.makeMCComponent("WJetsToLNu_HT70To100", "", "CMS", ".*root")
-WJetsToLNu_HT100To200 = kreator.makeMCComponent("WJetsToLNu_HT100To200","/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM", "CMS", ".*root", 1395*0.000716846)
-WJetsToLNu_HT200To400 = kreator.makeMCComponent("WJetsToLNu_HT200To400","/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 408.7*0.00244678)
-WJetsToLNu_HT400To600 = kreator.makeMCComponent("WJetsToLNu_HT400To600","/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 57.52*0.0173853)
-WJetsToLNu_HT600To800 = kreator.makeMCComponent("WJetsToLNu_HT600To800","/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 12.78*0.0782473)
-WJetsToLNu_HT800To1200 = kreator.makeMCComponent("WJetsToLNu_HT800To1200","/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 5.246*0.190621)
-WJetsToLNu_HT1200To2500 = kreator.makeMCComponent("WJetsToLNu_HT1200To2500","/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 1.071*0.933707)
-WJetsToLNu_HT2500ToInf = kreator.makeMCComponent("WJetsToLNu_HT2500ToInf","/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM", "CMS", ".*root", 0.00819*122.1)
+WJetsToLNu_HT100To200 = kreator.makeMCComponent("WJetsToLNu_HT100To200","/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM", "CMS", ".*root", 1395)
+WJetsToLNu_HT200To400 = kreator.makeMCComponent("WJetsToLNu_HT200To400","/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 407.9)
+WJetsToLNu_HT400To600 = kreator.makeMCComponent("WJetsToLNu_HT400To600","/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 57.48)
+WJetsToLNu_HT600To800 = kreator.makeMCComponent("WJetsToLNu_HT600To800","/WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 12.87)
+WJetsToLNu_HT800To1200 = kreator.makeMCComponent("WJetsToLNu_HT800To1200","/WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 5.366)
+WJetsToLNu_HT1200To2500 = kreator.makeMCComponent("WJetsToLNu_HT1200To2500","/WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 1.074)
+WJetsToLNu_HT2500ToInf = kreator.makeMCComponent("WJetsToLNu_HT2500ToInf","/WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v3/MINIAODSIM", "CMS", ".*root", 0.008001)
 
 Ws = [ 
     WJetsToLNu_LO,
