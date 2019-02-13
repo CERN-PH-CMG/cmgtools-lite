@@ -451,7 +451,7 @@ else:
     'DoubleElMu' : triggers_2e1mu,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl'     : triggers_1e_iso,
-#    'SOSHighMET' : triggers_SOS_highMET,
+    'SOSHighMET' : triggers_SOS_highMET,
 #    'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
 #    'SOSTripleMu' : triggers_SOS_tripleMu,
 #    'LepTau' : triggers_leptau,
