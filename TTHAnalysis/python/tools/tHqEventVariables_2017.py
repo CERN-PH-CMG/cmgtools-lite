@@ -86,6 +86,7 @@ class tHqEventVariableFriend:
                     MVAVar(name="minDRll"),
                     MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]+LepGood_charge[iLepFO_Recl[2]]"),
                     MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="fwdJetPt25%s%s"%(ptcutlabel,jecsyst)),
                 ]
                 self.mvavars['2lss%s%s'%(ptcutlabel,jecsyst)] = [
                     MVAVar(name="nJet25%s_Recl"%jecsyst),
@@ -98,6 +99,7 @@ class tHqEventVariableFriend:
                     MVAVar(name="minDRll"),
                     MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]"),
                     MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="fwdJetPt25%s%s"%(ptcutlabel,jecsyst)),
                 ]
 
         self.mvaspectators = [
@@ -117,7 +119,7 @@ class tHqEventVariableFriend:
 
             for backgr in ['tt', 'ttv']:
                 wfile = os.path.join(os.environ['CMSSW_BASE'],
-                                     "src/CMGTools/TTHAnalysis/data/kinMVA/thq/",
+                                     "src/CMGTools/TTHAnalysis/python/plotter/tHq-multilepton/signal_mva/dataset/weights/",
                                      "thq_vs_%s_%s_BDTG.weights.xml"%(backgr,channel))
                 self.tmvaReaders[channel].BookMVA("BDTG_"+backgr, wfile)
                 for ptcut, ptcutlabel in self.fwdjetptcuts:
