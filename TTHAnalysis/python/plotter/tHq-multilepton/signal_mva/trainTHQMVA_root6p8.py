@@ -86,6 +86,9 @@ CUTS['3l'] += "LepGood_conePt[iLepFO_Recl[2]]>10"
 #CUTS['3l'] += "nJet25_Recl >= 2"
 CUTS['3l'] += "nBJetLoose25_Recl >= 1"
 CUTS['3l'] += "maxEtaJet25 >= 0"
+CUTS['3l'] += "LepGood_mcMatchId[iLepFO_Recl[0]]!=0"
+CUTS['3l'] += "LepGood_mcMatchId[iLepFO_Recl[1]]!=0"
+CUTS['3l'] += "LepGood_mcMatchId[iLepFO_Recl[2]]!=0"
 
 CUTS['2lss'] = ROOT.TCut('1')
 CUTS['2lss'] += "nLepFO_Recl>=2"
@@ -96,6 +99,8 @@ CUTS['2lss'] += "LepGood_conePt[iLepFO_Recl[1]]>10"
 #CUTS['2lss'] += "nJet25_Recl >= 2"
 CUTS['2lss'] += "nBJetLoose25_Recl >= 1"
 CUTS['2lss'] += "maxEtaJet25 >= 0"
+CUTS['2lss'] += "LepGood_mcMatchId[iLepFO_Recl[0]]!=0&&LepGood_pdgId[iLepFO_Recl[0]]==LepGood_mcMatchPdgId[iLepFO_Recl[0]]"
+CUTS['2lss'] += "LepGood_mcMatchId[iLepFO_Recl[1]]!=0&&LepGood_pdgId[iLepFO_Recl[1]]==LepGood_mcMatchPdgId[iLepFO_Recl[1]]"
 
 # Define the variables to be used:
 VARIABLES = {}
@@ -182,42 +187,62 @@ def train(cuts, variables, dsets, options):
                                # 'VarTransform=G,D',
                                ]))
 
-    layoutString = ROOT.TString("Layout=TANH|128,TANH|128,TANH|128,LINEAR")
+    ## Cross validation
+    # crossval = ROOT.TMVA.CrossValidation(dataloader)
+    # crossval.SetNumFolds(3)
+    # crossval.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+    #                            ':'.join([
+    #                            '!H', # print help
+    #                            '!V', # verbose
+    #                            'NTrees=200', # default is 200
+    #                            'BoostType=Grad',
+    #                            #'AdaBoostBeta=0.50',
+    #                            'Shrinkage=0.10', # for gradient boosting
+    #                            #'!UseBaggedGrad',
+    #                            'nCuts=40', # scanning steps
+    #                            'MaxDepth=4', # maximum decision tree depth
+    #                            'NegWeightTreatment=PairNegWeightsGlobal',
+    #                            'CreateMVAPdfs',
+    #                            # 'VarTransform=G,D',
+    #                            ]))
+    # crossval.Evaluate()
+    # results = crossval.GetResults()
+    # results.Print()
 
-     # Training strategies.
-    training0 = ROOT.TString("LearningRate=1e-1,Momentum=0.9,Repetitions=1,"
-                       "ConvergenceSteps=20,BatchSize=256,TestRepetitions=10,"
-                       "WeightDecay=1e-4,Regularization=L2,"
-                       "DropConfig=0.0+0.5+0.5+0.5, Multithreading=True")
-    training1 = ROOT.TString("LearningRate=1e-2,Momentum=0.9,Repetitions=1,"
-                       "ConvergenceSteps=20,BatchSize=256,TestRepetitions=10,"
-                       "WeightDecay=1e-4,Regularization=L2,"
-                       "DropConfig=0.0+0.0+0.0+0.0, Multithreading=True")
-    training2 = ROOT.TString("LearningRate=1e-3,Momentum=0.0,Repetitions=1,"
-                       "ConvergenceSteps=20,BatchSize=256,TestRepetitions=10,"
-                       "WeightDecay=1e-4,Regularization=L2,"
-                       "DropConfig=0.0+0.0+0.0+0.0, Multithreading=True")
-    trainingStrategyString = ROOT.TString("TrainingStrategy=")
-    #trainingStrategyString = ""
-    vertical = ROOT.TString("|")
-    #trainingStrategyString += training0 + "|" + training1 + "|" + training2
-    trainingStrategyString += training0 + vertical + training1 + vertical + training2
+    #  # Training strategies.
+    # training0 = ROOT.TString("LearningRate=1e-1,Momentum=0.9,Repetitions=1,"
+    #                    "ConvergenceSteps=20,BatchSize=256,TestRepetitions=10,"
+    #                    "WeightDecay=1e-4,Regularization=L2,"
+    #                    "DropConfig=0.0+0.5+0.5+0.5, Multithreading=True")
+    # training1 = ROOT.TString("LearningRate=1e-2,Momentum=0.9,Repetitions=1,"
+    #                    "ConvergenceSteps=20,BatchSize=256,TestRepetitions=10,"
+    #                    "WeightDecay=1e-4,Regularization=L2,"
+    #                    "DropConfig=0.0+0.0+0.0+0.0, Multithreading=True")
+    # training2 = ROOT.TString("LearningRate=1e-3,Momentum=0.0,Repetitions=1,"
+    #                    "ConvergenceSteps=20,BatchSize=256,TestRepetitions=10,"
+    #                    "WeightDecay=1e-4,Regularization=L2,"
+    #                    "DropConfig=0.0+0.0+0.0+0.0, Multithreading=True")
+    # trainingStrategyString = ROOT.TString("TrainingStrategy=")
+    # #trainingStrategyString = ""
+    # vertical = ROOT.TString("|")
+    # #trainingStrategyString += training0 + "|" + training1 + "|" + training2
+    # trainingStrategyString += training0 + vertical + training1 + vertical + training2
 
-     # General Options.
-    dnnOptions = ROOT.TString("!H:V:ErrorStrategy=CROSSENTROPY:VarTransform=N:"
-                         "WeightInitialization=XAVIERUNIFORM")
-    dnnOptions.Append(":")
-    dnnOptions.Append(layoutString)
-    dnnOptions.Append(":") 
-    dnnOptions.Append(trainingStrategyString)
+    #  # General Options.
+    # layoutString = ROOT.TString("Layout=TANH|128,TANH|128,TANH|128,LINEAR")
+    # dnnOptions = ROOT.TString("!H:V:ErrorStrategy=CROSSENTROPY:VarTransform=N:"
+    #                      "WeightInitialization=XAVIERUNIFORM")
+    # dnnOptions.Append(":")
+    # dnnOptions.Append(layoutString)
+    # dnnOptions.Append(":") 
+    # dnnOptions.Append(trainingStrategyString)
 
-    #cpuOptions = ROOT.TString(dnnOptions + ":Architecture=CPU")
-    cpuOptions = ""
-    arc = ROOT.TString(":Architecture=CPU")
-    cpuOptions = dnnOptions + arc
+    # #cpuOptions = ROOT.TString(dnnOptions + ":Architecture=CPU")
+    # cpuOptions = ""
+    # arc = ROOT.TString(":Architecture=CPU")
+    # cpuOptions = dnnOptions + arc
 
-    #factory.BookMethod(dataloader, ROOT.TMVA.Types.kDNN, 'DNN_CPU', cpuOptions)
-
+    # #factory.BookMethod(dataloader, ROOT.TMVA.Types.kDNN, 'DNN_CPU', cpuOptions)
 
 
     factory.TrainAllMethods()
@@ -231,7 +256,8 @@ def main(args, options):
 
     # Define the signal and background datasets
     dsets = []
-    dsets.append(('THQ',    'Signal', 1.))
+    dsets.append(('THQ_ctcvcp',    'Signal', 1.))
+    # dsets.append(('THQ',    'Signal', 1.))
     if options.training == 'ttv':
         dsets.append(('TTW_LO', 'Background', 1.))
         dsets.append(('TTZ_LO', 'Background', 1.))
