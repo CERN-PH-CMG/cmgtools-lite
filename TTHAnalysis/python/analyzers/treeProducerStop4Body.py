@@ -71,7 +71,19 @@ susyStop4Body_globalVariables = susyCore_globalVariables + [
             #NTupleVariable("Flag_HBHEIsoNoiseFilter_fix", lambda ev: getattr(ev, "ev.hbheFilterIso", 0), help="HBEHE isolation temporary filter decision"),
             NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
             NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
-
+            ##-------- Eneregy Sums ------------------------------------------
+            NTupleVariable("htJet25", lambda ev : ev.htJet25, help="H_{T} computed from leptons and jets (with |eta|<2.4, pt > 25 GeV)"),
+            NTupleVariable("mhtJet25", lambda ev : ev.mhtJet25, help="H_{T}^{miss} computed from leptons and jets (with |eta|<2.4, pt > 25 GeV)"),
+            NTupleVariable("htJet40j", lambda ev : ev.htJet40j, help="H_{T} computed from only jets (with |eta|<2.4, pt > 40 GeV)"),
+            NTupleVariable("htJet40", lambda ev : ev.htJet40, help="H_{T} computed from leptons and jets (with |eta|<2.4, pt > 40 GeV)"),
+            NTupleVariable("mhtJet40", lambda ev : ev.mhtJet40, help="H_{T}^{miss} computed from leptons and jets (with |eta|<2.4, pt > 40 GeV)"),
+            NTupleVariable("deltaPhiMin",  lambda ev : ev.deltaPhiMin_had, help="minimal deltaPhi between the MET and the four leading jets with pt>40 and eta<2.4"),
+            NTupleVariable("diffMetMht",   lambda ev : ev.diffMetMht_had,   help="abs( vec(mht) - vec(met) )"),
+            NTupleVariable("mht40j_pt",       lambda ev : ev.mhtJet40j,    help="H_{T}^{miss} computed from only jets (with |eta|<3.0, pt > 40 GeV)"),
+            NTupleVariable("mht40j_phi",      lambda ev : ev.mhtPhiJet40j, help="H_{T}^{miss} #phi computed from onlyy jets (with |eta|<3.0, pt > 40 GeV)"),
+            NTupleVariable("mht50j_pt",       lambda ev : ev.mhtJet50j,    help="H_{T}^{miss} computed from only jets (with |eta|<3.0, pt > 50 GeV)"),
+            NTupleVariable("mht50j_phi",      lambda ev : ev.mhtPhiJet50j, help="H_{T}^{miss} #phi computed from onlyy jets (with |eta|<3.0, pt > 50 GeV)"),
+            ##--------------------------------------------------
 ]
 
 susyStop4Body_globalObjects = susyCore_globalObjects.copy()
