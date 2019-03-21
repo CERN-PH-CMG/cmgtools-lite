@@ -119,7 +119,8 @@ class tHqEventVariableFriend:
 
             for backgr in ['tt', 'ttv']:
                 wfile = os.path.join(os.environ['CMSSW_BASE'],
-                                     "src/CMGTools/TTHAnalysis/python/plotter/tHq-multilepton/signal_mva/dataset/weights/",
+                                     #"src/CMGTools/TTHAnalysis/python/plotter/tHq-multilepton/signal_mva/dataset/weights/",
+                                     "src/CMGTools/TTHAnalysis/data/kinMVA/thq/",
                                      "thq_vs_%s_%s_BDTG.weights.xml"%(backgr,channel))
                 self.tmvaReaders[channel].BookMVA("BDTG_"+backgr, wfile)
                 for ptcut, ptcutlabel in self.fwdjetptcuts:
