@@ -22,8 +22,9 @@ if [[ "X$1" == "X" ]]; then echo "Please Provide plottag (e.g. 2lss-mm): [makepl
 PLOTTAG=$1; shift;
 
 # Note: tthtrees is a symlink to /afs/cern.ch/work/p/peruzzi/tthtrees/
-#       thqtrees is a symlink to /afs/cern.ch/work/p/pdas/tth/TTHTrees/2017/
-#       fulltrees is a symlink to /eos/user/p/pdas/
+#       thqtrees is a symlink to /eos/user/p/pdas/skimmedFriends/
+#       fulltrees is a symlink to /eos/user/s/stiegerb/TTHTrees/13TeV/TREES_TTH_190418_Fall17/
+#       fullfriendtrees is a symlink to /eos/user/p/pdas/fullFriends/
 
 LUMI=41.5
 BASEOPTIONS=" -f -j 8 -l ${LUMI} --s2v"\
@@ -31,13 +32,13 @@ BASEOPTIONS=" -f -j 8 -l ${LUMI} --s2v"\
 " -L tHq-multilepton/functionsTHQ.cc"\
 " --tree treeProducerSusyMultilepton"\
 " --mcc ttH-multilepton/lepchoice-ttH-FO.txt"
-TREEINPUTS="-P tthtrees/TREES_TTH_190418_Fall17_skim2lss3l/"
-FRIENDTREES=" -F sf/t thqtrees/1_thq_recleaner_071118/evVarFriend_{cname}.root"\
-" -F sf/t thqtrees/2_thq_eventvars_071118/evVarFriend_{cname}.root"\
-" -F sf/t tthtrees/TREES_TTH_190418_Fall17_skim2lss3l/5_triggerDecision_230418_v1/evVarFriend_{cname}.root"\
-" --FMC sf/t tthtrees/TREES_TTH_190418_Fall17_skim2lss3l/6_bTagSF_v2/evVarFriend_{cname}.root"\
-" -F sf/t tthtrees/TREES_TTH_190418_Fall17_skim2lss3l/7_tauTightSel_v2/evVarFriend_{cname}.root"\
-" --FMC sf/t tthtrees/TREES_TTH_190418_Fall17_skim2lss3l/8_vtxWeight2017_v1/evVarFriend_{cname}.root"
+TREEINPUTS="-P fulltrees/"
+FRIENDTREES=" -F sf/t fullfriendtrees/1_thq_recleaner_FULL_041218/evVarFriend_{cname}.root"\
+" -F sf/t fullfriendtrees/2_thq_eventvars_FULL_150319/evVarFriend_{cname}.root"\
+" -F sf/t fulltrees/5_triggerDecision_230418_v1/evVarFriend_{cname}.root"\
+" --FMC sf/t fulltrees/6_bTagSF_v2/evVarFriend_{cname}.root"\
+" -F sf/t fulltrees/7_tauTightSel_v2/evVarFriend_{cname}.root"\
+" --FMC sf/t fulltrees/8_vtxWeight2017_v1/evVarFriend_{cname}.root"
 DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99 --ratioYNDiv 505"\
 " --showRatio --attachRatioPanel --fixRatioRange --showMCError"\
 " --legendColumns 3 --legendWidth 0.42  --legendFontSize 0.042"\
@@ -65,7 +66,7 @@ OPT3L="-W vtxWeight2017*eventBTagSF*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*"\
 "triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
 
-OPTIONS="--pdir ${OUTDIR}"
+OPTIONS="--pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}"
 MCA=""
 CUTS=""
 PLOTS=""
@@ -138,22 +139,12 @@ case "$PLOTTAG" in
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2los-em-ttcontrol" )
-        TREEINPUTS="-P fulltrees/TREES_TTH_190418_Fall17/"
-	#FRIENDTREES=" -F sf/t fulltrees/1_thq_recleaner_FULL_041218/evVarFriend_{cname}.root -F sf/t fulltrees/2_thq_eventvars_FULL_081218/evVarFriend_{cname}.root -F sf/t fulltrees/TREES_TTH_190418_Fall17/5_triggerDecision_230418_v1/evVarFriend_{cname}.root --FMC sf/t fulltrees/TREES_TTH_190418_Fall17/6_bTagSF_v2/evVarFriend_{cname}.root -F sf/t fulltrees/TREES_TTH_190418_Fall17/7_tauTightSel_v2/evVarFriend_{cname}.root --FMC sf/t fulltrees/TREES_TTH_190418_Fall17/8_vtxWeight2017_v1/evVarFriend_{cname}.root"
-        FRIENDTREES=" -F sf/t fulltrees/1_thq_recleaner_FULL_041218/evVarFriend_{cname}.root"
-        FRIENDTREES="${FRIENDTREES} -F sf/t fulltrees/2_thq_eventvars_FULL_081218/evVarFriend_{cname}.root"
-        FRIENDTREES="${FRIENDTREES} -F sf/t fulltrees/TREES_TTH_190418_Fall17/5_triggerDecision_230418_v1/evVarFriend_{cname}.root" 
-        FRIENDTREES="${FRIENDTREES} --FMC sf/t fulltrees/TREES_TTH_190418_Fall17/6_bTagSF_v2/evVarFriend_{cname}.root" 
-        FRIENDTREES="${FRIENDTREES} -F sf/t fulltrees/TREES_TTH_190418_Fall17/7_tauTightSel_v2/evVarFriend_{cname}.root" 
-        FRIENDTREES="${FRIENDTREES} --FMC sf/t fulltrees/TREES_TTH_190418_Fall17/8_vtxWeight2017_v1/evVarFriend_{cname}.root"
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L}"
         OPTIONS="${OPTIONS} --scaleBkgToData TT --scaleBkgToData DY --scaleBkgToData WJets --scaleBkgToData SingleTop --scaleBkgToData WW"
 	OPTIONS="${OPTIONS} -E fwdjetpt40 --sP maxEtaJet25_40"
         MCA="tHq-multilepton/mca-2los-mcdata.txt"
         CUTS="tHq-multilepton/cuts-thq-ttbar-fwdjet.txt"
         PLOTS="tHq-multilepton/plots-thq-ttbar-fwdjet.txt"
-        #python mcPlots.py ${MCA} ${CUTS} ${PLOTS} ${OPTIONS} -E fwdjetpt25 --select_plot maxEtaJet25
-        #DONE
         ;;
     *)
         echo "${USAGE}"
