@@ -39,3 +39,5 @@ modified3     : maxEtaJet25_60 >= 0; Disable=True
 
 mufake        : (abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0); Disable=True
 elfake        : (abs(LepGood1_pdgId)==11 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==11 && LepGood2_mcMatchId==0); Disable=True
+
+thqcat        : (nJet25_Recl+nJetFwd25_Recl) < 4; Disable=True
