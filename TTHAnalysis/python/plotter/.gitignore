@@ -4,3 +4,24 @@
 *_ACLiC_dict_rdict.pcm
 cards/cards_*
 susy-interface/tmp/
+
+# local folders
+cards/*
+tHq-multilepton/test/*
+../../macros/submit_data.sh
+../../macros/submit_data_condor.sh
+../../macros/submit_mc.sh
+../../macros/submit_mc_condor.sh
+/afs/cern.ch/work/p/pdas/tth/CMG/CMSSW_9_4_9/src/CMGTools/TTHAnalysis/macros/submit_data.sh
+fullfriendtrees
+fulltrees
+thqtrees
+tthtrees
+tHq-multilepton/signal_mva/dataset/
+tHq-multilepton/signal_mva/plots/
+tHq-multilepton/signal_mva/weights/
+tHq-multilepton/signal_mva/test_*
+tHq-multilepton/signal_mva/*.root
+tHq-multilepton/signal_mva/trees
+tHq-multilepton/signal_mva/thq_friends
+tHq-multilepton/signal_mva/thq_recleaner
