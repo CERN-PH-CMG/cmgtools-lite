@@ -10,8 +10,7 @@ from itertools import combinations
 from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR, deltaR2
 
 
-BTAGWP = 0.5426 # 0.8484 is for medium tags
-# BTAGWP = 0.460 # 0.80 is for medium tags
+BTAGWP = 0.1522 # 0.4921 is for medium tags (deepCSV)
 
 class MVAVar:
     def __init__(self,name, form=None):
@@ -180,13 +179,13 @@ class tHqEventVariableFriend:
                 # Get jet collections
                 jets  = self.getJetCollection(event, jec_syst=jecsyst, coll="JetSel")
                 fjets = self.getJetCollection(event, jec_syst=jecsyst, coll="JetFwdSel")
-                bjets = [j for j in jets if j.btagCSV > BTAGWP]
+                bjets = [j for j in jets if j.btagDeepCSV > BTAGWP]
                 bjets.sort(key=lambda x:x.pt, reverse=True)
 
                 # All non-btagged jets with pt > 25 GeV, for 2.7 < abs(eta) < 3.0  pt > 60 GeV
-                light_jets =  [j for j in jets  if j.btagCSV < BTAGWP]
-                if (ptcut == 60) : light_jets += [j for j in fjets if j.btagCSV < BTAGWP and (abs(j.eta) <= 2.7 or abs(j.eta) >= 3.0 or j.pt > ptcut)]
-                else : light_jets += [j for j in fjets if j.btagCSV < BTAGWP and j.pt > ptcut]
+                light_jets =  [j for j in jets  if j.btagDeepCSV < BTAGWP]
+                if (ptcut == 60) : light_jets += [j for j in fjets if j.btagDeepCSV < BTAGWP and (abs(j.eta) <= 2.7 or abs(j.eta) >= 3.0 or j.pt > ptcut)]
+                else : light_jets += [j for j in fjets if j.btagDeepCSV < BTAGWP and j.pt > ptcut]
                 # Note that some fwd jets have btag values > 0 up to eta 3.05 or so
                 light_jets.sort(key=lambda x:x.pt, reverse=True)
 
