@@ -46,12 +46,12 @@ public:
   void setTaus(rint *nTau, rfloats *tauPt, rfloats *tauEta, rfloats *tauPhi) {
     nTau_ = nTau; Tau_pt_ = tauPt; Tau_eta_ = tauEta; Tau_phi_ = tauPhi;
   }
-  void setJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagCSV, rfloats *jetcorr, rfloats *jetcorr_JECUp, rfloats *jetcorr_JECDown) {
-    nJet_ = nJet; Jet_pt_ = jetPt; Jet_eta_ = jetEta; Jet_phi_ = jetPhi; Jet_btagCSV_ = jetbtagCSV; Jet_corr_ = jetcorr; Jet_corr_JECUp_ = jetcorr_JECUp; Jet_corr_JECDown_ = jetcorr_JECDown;
+  void setJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagDeepCSV, rfloats *jetcorr, rfloats *jetcorr_JECUp, rfloats *jetcorr_JECDown) {
+    nJet_ = nJet; Jet_pt_ = jetPt; Jet_eta_ = jetEta; Jet_phi_ = jetPhi; Jet_btagDeepCSV_ = jetbtagDeepCSV; Jet_corr_ = jetcorr; Jet_corr_JECUp_ = jetcorr_JECUp; Jet_corr_JECDown_ = jetcorr_JECDown;
   }
 
-  void setFwdJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagCSV, rfloats *jetcorr, rfloats *jetcorr_JECUp, rfloats *jetcorr_JECDown) {
-    nFwdJet_ = nJet; FwdJet_pt_ = jetPt; FwdJet_eta_ = jetEta; FwdJet_phi_ = jetPhi; FwdJet_btagCSV_ = jetbtagCSV; FwdJet_corr_ = jetcorr; FwdJet_corr_JECUp_ = jetcorr_JECUp; FwdJet_corr_JECDown_ = jetcorr_JECDown;
+  void setFwdJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagDeepCSV, rfloats *jetcorr, rfloats *jetcorr_JECUp, rfloats *jetcorr_JECDown) {
+    nFwdJet_ = nJet; FwdJet_pt_ = jetPt; FwdJet_eta_ = jetEta; FwdJet_phi_ = jetPhi; FwdJet_btagDeepCSV_ = jetbtagDeepCSV; FwdJet_corr_ = jetcorr; FwdJet_corr_JECUp_ = jetcorr_JECUp; FwdJet_corr_JECDown_ = jetcorr_JECDown;
   }
 
 
@@ -95,7 +95,7 @@ public:
 	if (variation==-1) pt *= (*Jet_corr_JECDown_)[j] / (*Jet_corr_)[j];
 	if (pt<=thr) continue;
 	float phi = (*Jet_phi_)[j];
-	float csv = (*Jet_btagCSV_)[j];
+	float csv = (*Jet_btagDeepCSV_)[j];
 	sums.htJetj += pt;
 	crvec jp4(ptvec(pt,0,phi,0));
 	mht = mht - jp4;
@@ -218,8 +218,8 @@ private:
   rint *nLep_, *nTau_, *nJet_, *nFwdJet_;
   rfloats *Lep_pt_, *Lep_eta_, *Lep_phi_;
   rfloats *Tau_pt_, *Tau_eta_, *Tau_phi_;
-  rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagCSV_, *Jet_corr_, *Jet_corr_JECUp_, *Jet_corr_JECDown_;
-  rfloats *FwdJet_pt_, *FwdJet_phi_, *FwdJet_eta_, *FwdJet_btagCSV_, *FwdJet_corr_, *FwdJet_corr_JECUp_, *FwdJet_corr_JECDown_;
+  rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagDeepCSV_, *Jet_corr_, *Jet_corr_JECUp_, *Jet_corr_JECDown_;
+  rfloats *FwdJet_pt_, *FwdJet_phi_, *FwdJet_eta_, *FwdJet_btagDeepCSV_, *FwdJet_corr_, *FwdJet_corr_JECUp_, *FwdJet_corr_JECDown_;
   float deltaR2cut;
   std::set<int> _jetptcuts;
   std::unique_ptr<std::vector<int> > _ct;

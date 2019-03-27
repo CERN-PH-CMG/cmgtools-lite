@@ -22,8 +22,8 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2_mc',lambda : fastCombinedObjec
                                                                                            doVetoLMf=False,
                                                                                            doVetoLMt=False,
                                                                                            jetPts=[25,40],
-                                                                                           btagL_thr=0.5426,
-                                                                                           btagM_thr=0.8484,
+                                                                                           btagL_thr=0.1522,
+                                                                                           btagM_thr=0.4941,
                                                                                            doFwdJets=True,
                                                                                            isMC = True) ))
 MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObjectRecleaner(label="Recl",
@@ -34,7 +34,7 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObj
                                                                                              doVetoLMf=False,
                                                                                              doVetoLMt=False,
                                                                                              jetPts=[25,40],
-                                                                                             btagL_thr=0.5426,
-                                                                                             btagM_thr=0.8484,
+                                                                                             btagL_thr=0.1522,
+                                                                                             btagM_thr=0.4941,
                                                                                              doFwdJets=True,
                                                                                              isMC = False) ))
