@@ -27,7 +27,7 @@ eleID         : (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostH
 # In addition we expect one forward jet
 # 2j            : nJet25>=2
 
-fwdjet        : maxEtaJet25 >= 0
+fwdjet        : maxEtaJet25_60 >= 0
 option1       : maxEtaJet25_40 >= 0; Disable=True
 option2       : !(maxEtaJet25 >= 2.7 && maxEtaJet25 <= 3.0); Disable=True
 option3       : (maxEtaJet25 <= 2.7 || maxEtaJet25 >= 3.0) || (fwdJetPt25 > 60.); Disable=True
