@@ -26,3 +26,10 @@ tHq-multilepton/signal_mva/*.root
 tHq-multilepton/signal_mva/trees
 tHq-multilepton/signal_mva/thq_friends
 tHq-multilepton/signal_mva/thq_recleaner
+tHq-multilepton/plots-thq-2lss-kinMVA_25.txt
+tHq-multilepton/plots-thq-2lss-kinMVA_60.txt
+tHq-multilepton/plots-thq-3l-kinMVA_25.txt
+tHq-multilepton/plots-thq-3l-kinMVA_60.txt
+nJet25_new.pdf
+nJet25_old.pdf
+nJet25_old_LHE.pdf
