@@ -11,7 +11,7 @@ case $HOSTNAME in
         test -d /tmp/$USER/TREES_TTH_190418_Fall17_skim2lss3l && ORIGIN=/tmp/$USER;;
 esac;
 
-T2L=" -P $ORIGIN/ --Fs fullfriendtrees/1_thq_recleaner_FULL_041218 --Fs fullfriendtrees/2_thq_eventvars_FULL_150319 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2"
+T2L=" -P skimtrees --Fs {P}/1_recleaner_290319 --Fs {P}/2_thq_eventvars_290319 --Fs {P}/5_triggerDecision --Fs {P}/7_tauTightSel --FMCs {P}/8_vtxWeight2017 --FMCs {P}/6_bTagSF"
 T3L=${T2L}
 T4L=${T2L}
 #if test -d $ORIGIN/TREES_TTH_190418_Fall17_skim4l ; then
@@ -181,8 +181,8 @@ fi
 if [[ "$1" == "all" || "$1" == "2lss_mm" ]]; then
     OPT_2L="${T2L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
 
-    echo python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E mm_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_mm --asimov signal -E modified3
-    python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E mm_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_mm --asimov signal -E modified3;
+    echo python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E mm_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_mm -E modified3
+    python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E mm_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_mm -E modified3;
 
     echo "Done at $(date)"
 
@@ -191,8 +191,8 @@ fi
 if [[ "$1" == "all" || "$1" == "2lss_em" ]]; then
     OPT_2L="${T2L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
 
-    echo python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E em_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_em --asimov signal -E modified3
-    python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E em_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_em --asimov signal -E modified3;
+    echo python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E em_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_em -E modified3
+    python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-2lss-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-2lss.txt -E em_chan ${FUNCTION_2L} $SYSTS $OPT_2L --binname tHq_2lss_em -E modified3;
 
     echo "Done at $(date)"
 
@@ -211,8 +211,8 @@ fi
 if [[ "$1" == "all" || "$1" == "3l" ]]; then
     OPT_3L="${T3L} ${OPTIONS} -W vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
 
-    echo python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-3l-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-3l.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname tHq_3l  --asimov signal -E modified3
-    python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-3l-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-3l.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname tHq_3l  --asimov signal -E modified3;
+    echo python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-3l-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-3l.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname tHq_3l  -E modified3
+    python makeShapeCardsNewTHQ.py ${DOFILE} tHq-multilepton/signal_extraction/mca-thq-3l-mcdata-frdata_limits_new.txt tHq-multilepton/cuts-thq-3l.txt ${FUNCTION_3L} $SYSTS $OPT_3L --binname tHq_3l  -E modified3;
 
     echo "Done at $(date)"
 
