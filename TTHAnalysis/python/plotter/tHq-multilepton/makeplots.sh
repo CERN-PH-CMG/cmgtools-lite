@@ -25,6 +25,7 @@ PLOTTAG=$1; shift;
 #       thqtrees is a symlink to /eos/user/p/pdas/skimmedFriends/
 #       fulltrees is a symlink to /eos/user/s/stiegerb/TTHTrees/13TeV/TREES_TTH_190418_Fall17/
 #       fullfriendtrees is a symlink to /eos/user/p/pdas/fullFriends/
+#       skimtrees is a symlink to /afs/cern.ch/work/p/pdas/tth/TTHTrees/2017/skimTrees/
 
 LUMI=41.5
 BASEOPTIONS=" -f -j 8 -l ${LUMI} --s2v"\
@@ -32,19 +33,19 @@ BASEOPTIONS=" -f -j 8 -l ${LUMI} --s2v"\
 " -L tHq-multilepton/functionsTHQ.cc"\
 " --tree treeProducerSusyMultilepton"\
 " --mcc ttH-multilepton/lepchoice-ttH-FO.txt"
-TREEINPUTS="-P fulltrees/"
-FRIENDTREES=" -F sf/t fullfriendtrees/1_thq_recleaner_FULL_041218/evVarFriend_{cname}.root"\
-" -F sf/t fullfriendtrees/2_thq_eventvars_FULL_150319/evVarFriend_{cname}.root"\
-" -F sf/t fulltrees/5_triggerDecision_230418_v1/evVarFriend_{cname}.root"\
-" --FMC sf/t fulltrees/6_bTagSF_v2/evVarFriend_{cname}.root"\
-" -F sf/t fulltrees/7_tauTightSel_v2/evVarFriend_{cname}.root"\
-" --FMC sf/t fulltrees/8_vtxWeight2017_v1/evVarFriend_{cname}.root"
+TREEINPUTS="-P skimtrees/"
+FRIENDTREES=" -F sf/t skimtrees/1_recleaner_290319/evVarFriend_{cname}.root"\
+" -F sf/t skimtrees/2_thq_eventvars_290319/evVarFriend_{cname}.root"\
+" -F sf/t skimtrees/5_triggerDecision/evVarFriend_{cname}.root"\
+" --FMC sf/t skimtrees/6_bTagSF/evVarFriend_{cname}.root"\
+" -F sf/t skimtrees/7_tauTightSel/evVarFriend_{cname}.root"\
+" --FMC sf/t skimtrees/8_vtxWeight2017/evVarFriend_{cname}.root"
 DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99 --ratioYNDiv 505"\
 " --showRatio --attachRatioPanel --fixRatioRange --showMCError"\
-" --legendColumns 3 --legendWidth 0.42  --legendFontSize 0.042"\
+" --unc tHq-multilepton/signal_extraction/systsUnc.txt"\
+" --legendColumns 3 --legendWidth 0.6  --legendFontSize 0.042"\
 " --noCms --topSpamSize 1.1 --lspam #scale[1.1]{#bf{CMS}}#scale[1.0]{#it{Preliminary}}"\
 " --plotgroup data_fakes+='.*_promptsub' --neglist '.*_promptsub.*'"
-
 
 # Pileup weight, btag SFs, trigger SFs, lepton Eff SFs:
 #OPT2L="-W vtxWeight2017*eventBTagSF*"\
@@ -56,11 +57,11 @@ DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99
 #"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*"\
 #"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*"\
 #"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)"
-OPT2L="-W vtxWeight2017*eventBTagSF*"\
+OPT2L="-W vtxWeight2017*eventBTagSF*NonPrefiringProb*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*"\
 "triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)"
-OPT3L="-W vtxWeight2017*eventBTagSF*"\
+OPT3L="-W vtxWeight2017*eventBTagSF*NonPrefiringProb*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*"\
@@ -71,70 +72,86 @@ MCA=""
 CUTS=""
 PLOTS=""
 case "$PLOTTAG" in
+    "syst_test" )
+        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
+        MCA="tHq-multilepton/test/mca-syst-test.txt"
+        CUTS="tHq-multilepton/cuts-thq-3l.txt -E modified3"
+        PLOTS="tHq-multilepton/test/plots-syst-test.txt --plotmode nostack"
+        ;;
     "3l" )
-        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L} --xp data"
-        MCA="tHq-multilepton/mca-3l-mcdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-3l.txt"
+        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
+        MCA="tHq-multilepton/mca-3l-mcdata.txt --xp data"
+        #MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
+        CUTS="tHq-multilepton/cuts-thq-3l.txt -E modified3"
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
         ;;
     "3l-zcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
         MCA="tHq-multilepton/mca-3l-mcdata.txt"
+	#MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-3l-Zcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-zcontrol.txt"
         ;;
     "3l-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
         MCA="tHq-multilepton/mca-3l-mcdata.txt"
+	#MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-3l-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
         ;;
     "2lss-mm" )
-        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan --xp Flips --xp data"
-        OPTIONS="${OPTIONS} --xP finalBins_log_em_40 --xP finalBins_log_ee_40"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-2lss.txt"
+        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan"
+        OPTIONS="${OPTIONS} --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
+        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips --xp data"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        CUTS="tHq-multilepton/cuts-thq-2lss.txt -E modified3"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-em" )
-        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E em_chan --xp data"
-        OPTIONS="${OPTIONS} --xP finalBins_log_mm_40 --xP finalBins_log_ee_40"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-2lss.txt"
+        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E em_chan"
+        OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_ee_60"
+        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        CUTS="tHq-multilepton/cuts-thq-2lss.txt -E modified3"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ee" )
-        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E ee_chan --xp data"
-        OPTIONS="${OPTIONS} --xP finalBins_log_mm_40 --xP finalBins_log_em_40"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-2lss.txt"
+        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E ee_chan"
+        OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60"
+        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        CUTS="tHq-multilepton/cuts-thq-2lss.txt -E modified3"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L}"
-        OPTIONS="${OPTIONS} --xP finalBins_log_mm_40 --xP finalBins_log_em_40 --xP finalBins_log_ee_40"
+        OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
         MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-mm-ttcontrol" )
-        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan --xp Flips"
-        OPTIONS="${OPTIONS} --xP finalBins_log_em_40 --xP finalBins_log_ee_40"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+        OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan"
+        OPTIONS="${OPTIONS} --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
+        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-em-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E em_chan"
-        OPTIONS="${OPTIONS} --xP finalBins_log_mm_40 --xP finalBins_log_ee_40"
+        OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_ee_60"
         MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ee-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E ee_chan"
-        OPTIONS="${OPTIONS} --xP finalBins_log_mm_40 --xP finalBins_log_em_40"
+        OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60"
         MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
