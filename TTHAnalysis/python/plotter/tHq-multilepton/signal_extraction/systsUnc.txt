@@ -52,6 +52,8 @@ CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
 #CMS_tHql_fwdJet : $PromptFromMC : .* : templateSymm; AddWeight='fwdjet_eventWeight_2017_option1(maxEtaJet25_40)' # 2017 option1
 CMS_tHql_fwdJet : $PromptFromMC : .* : templateSymm; AddWeight='fwdjet_eventWeight_2017_option3_modified(maxEtaJet25_60)' # 2017 modified option3
 
+CMS_tHql_prefiring : $PromptFromMC : .* : templateAsymm; AddWeights=['NonPrefiringProbUp/NonPrefiringProb'\,'NonPrefiringProbDown/NonPrefiringProb']
+
 CMS_ttHl16_btag_LF    : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
 CMS_ttHl16_btag_HF    : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
 CMS_ttHl17_btag_LFStats1   : $PromptFromMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']
