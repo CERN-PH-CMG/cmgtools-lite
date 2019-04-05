@@ -388,23 +388,23 @@ distribution in OS emu events.
 All jet cut at 25 GeV.
 */
   eta = fabs(eta);
-  if(eta < 0.278) return 0.9044;
-  if(eta < 0.556) return 0.9144;
-  if(eta < 0.833) return 0.9225;
-  if(eta < 1.111) return 0.9016;
-  if(eta < 1.389) return 0.9259;
-  if(eta < 1.667) return 0.9474;
-  if(eta < 1.944) return 0.9309;
-  if(eta < 2.222) return 0.9521;
-  if(eta < 2.500) return 0.9007;
-  if(eta < 2.778) return 1.0198;
-  if(eta < 3.056) return 1.9493;
-  if(eta < 3.333) return 0.9299;
-  if(eta < 3.611) return 1.0794;
-  if(eta < 3.889) return 1.0271;
-  if(eta < 4.167) return 1.0130;
-  if(eta < 4.444) return 0.8195;
-  if(eta < 4.722) return 0.5874;
+  if(eta < 0.278) return 0.8977;
+  if(eta < 0.556) return 0.8941;
+  if(eta < 0.833) return 0.8945;
+  if(eta < 1.111) return 0.8892;
+  if(eta < 1.389) return 0.9196;
+  if(eta < 1.667) return 0.9354;
+  if(eta < 1.944) return 0.9124;
+  if(eta < 2.222) return 0.9398;
+  if(eta < 2.500) return 0.9209;
+  if(eta < 2.778) return 1.0760;
+  if(eta < 3.056) return 2.0274;
+  if(eta < 3.333) return 0.9222;
+  if(eta < 3.611) return 1.0762;
+  if(eta < 3.889) return 1.0260;
+  if(eta < 4.167) return 1.0072;
+  if(eta < 4.444) return 0.8151;
+  if(eta < 4.722) return 0.5812;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
@@ -416,23 +416,23 @@ distribution in OS emu events.
 Central jet pt cut 25 GeV, forward jet pt cut 40 GeV.
 */
   eta = fabs(eta);
-  if(eta < 0.278) return 0.9706;
-  if(eta < 0.556) return 0.9826;
-  if(eta < 0.833) return 0.9850;
-  if(eta < 1.111) return 0.9640;
-  if(eta < 1.389) return 0.9966;
-  if(eta < 1.667) return 1.0085;
-  if(eta < 1.944) return 1.0021;
-  if(eta < 2.222) return 1.0216;
-  if(eta < 2.500) return 0.9476;
-  if(eta < 2.778) return 0.9431;
-  if(eta < 3.056) return 1.3540;
-  if(eta < 3.333) return 0.9914;
-  if(eta < 3.611) return 1.1128;
-  if(eta < 3.889) return 1.0137;
-  if(eta < 4.167) return 1.0254;
-  if(eta < 4.444) return 0.8998;
-  if(eta < 4.722) return 0.5936;
+  if(eta < 0.278) return 0.9611;
+  if(eta < 0.556) return 0.9640;
+  if(eta < 0.833) return 0.9577;
+  if(eta < 1.111) return 0.9542;
+  if(eta < 1.389) return 0.9911;
+  if(eta < 1.667) return 1.0006;
+  if(eta < 1.944) return 0.9819;
+  if(eta < 2.222) return 1.0121;
+  if(eta < 2.500) return 0.9777;
+  if(eta < 2.778) return 1.0535;
+  if(eta < 3.056) return 1.5341;
+  if(eta < 3.333) return 0.9819;
+  if(eta < 3.611) return 1.1121;
+  if(eta < 3.889) return 1.0106;
+  if(eta < 4.167) return 1.0200;
+  if(eta < 4.444) return 0.8863;
+  if(eta < 4.722) return 0.5865;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
@@ -444,23 +444,23 @@ distribution in OS emu events.
 All jet pt cut 25 GeV. Events where 2.7 < maxJetEta25 < 3.0 are rejected.
 */
   eta = fabs(eta);
-  if(eta < 0.278) return 0.9636;
-  if(eta < 0.556) return 0.9742;
-  if(eta < 0.833) return 0.9828;
-  if(eta < 1.111) return 0.9605;
-  if(eta < 1.389) return 0.9864;
-  if(eta < 1.667) return 1.0093;
-  if(eta < 1.944) return 0.9917;
-  if(eta < 2.222) return 1.0144;
-  if(eta < 2.500) return 0.9596;
-  if(eta < 2.778) return 0.9891;
-  if(eta < 3.056) return 1.3903;
-  if(eta < 3.333) return 0.9907;
-  if(eta < 3.611) return 1.1499;
-  if(eta < 3.889) return 1.0943;
-  if(eta < 4.167) return 1.0793;
-  if(eta < 4.444) return 0.8731;
-  if(eta < 4.722) return 0.6258;
+  if(eta < 0.278) return 1.0019;
+  if(eta < 0.556) return 0.9567;
+  if(eta < 0.833) return 0.9572;
+  if(eta < 1.111) return 0.9515;
+  if(eta < 1.389) return 0.9840;
+  if(eta < 1.667) return 1.0010;
+  if(eta < 1.944) return 0.9763;
+  if(eta < 2.222) return 1.0057;
+  if(eta < 2.500) return 0.9854;
+  if(eta < 2.778) return 1.0255;
+  if(eta < 3.056) return 1.3829;
+  if(eta < 3.333) return 0.9868;
+  if(eta < 3.611) return 1.1516;
+  if(eta < 3.889) return 1.0979;
+  if(eta < 4.167) return 1.0778;
+  if(eta < 4.444) return 0.8723;
+  if(eta < 4.722) return 0.6219;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
@@ -472,23 +472,23 @@ distribution in OS emu events.
 All jet pt cut 25 GeV. Events where any fwd jet abs(eta) is between 2.7 and 3.0 are rejected.
 */
   eta = fabs(eta);
-  if(eta < 0.278) return 0.8227;
-  if(eta < 0.556) return 0.8392;
-  if(eta < 0.833) return 0.8691;
-  if(eta < 1.111) return 0.8439;
-  if(eta < 1.389) return 0.8368;
-  if(eta < 1.667) return 0.8939;
-  if(eta < 1.944) return 0.8828;
-  if(eta < 2.222) return 0.8828;
-  if(eta < 2.500) return 0.8742;
-  if(eta < 2.778) return 0.9755;
-  if(eta < 3.056) return 1.8506;
-  if(eta < 3.333) return 0.9569;
-  if(eta < 3.611) return 1.1159;
-  if(eta < 3.889) return 1.0596;
+  if(eta < 0.278) return 0.8753;
+  if(eta < 0.556) return 0.8291;
+  if(eta < 0.833) return 0.8532;
+  if(eta < 1.111) return 0.8459;
+  if(eta < 1.389) return 0.8430;
+  if(eta < 1.667) return 0.8991;
+  if(eta < 1.944) return 0.8606;
+  if(eta < 2.222) return 0.8822;
+  if(eta < 2.500) return 0.8928;
+  if(eta < 2.778) return 1.0142;
+  if(eta < 3.056) return 1.9104;
+  if(eta < 3.333) return 0.9536;
+  if(eta < 3.611) return 1.1167;
+  if(eta < 3.889) return 1.0627;
   if(eta < 4.167) return 1.0594;
-  if(eta < 4.444) return 0.8321;
-  if(eta < 4.722) return 0.6019;
+  if(eta < 4.444) return 0.8327;
+  if(eta < 4.722) return 0.5950;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
@@ -500,23 +500,23 @@ distribution in OS emu events.
 All jet pt cut 25 GeV, except if 2.7 < maxJetEta25 < 3.0, fwdJetPt25 > 60.
 */
   eta = fabs(eta);
-  if(eta < 0.278) return 0.9636; 
-  if(eta < 0.556) return 0.9742;
-  if(eta < 0.833) return 0.9828;
-  if(eta < 1.111) return 0.9605;
-  if(eta < 1.389) return 0.9864;
-  if(eta < 1.667) return 1.0093;
-  if(eta < 1.944) return 0.9917;
-  if(eta < 2.222) return 1.0144;
-  if(eta < 2.500) return 0.9596;
-  if(eta < 2.778) return 0.9779;
-  if(eta < 3.056) return 1.2160;
-  if(eta < 3.333) return 0.9907;
-  if(eta < 3.611) return 1.1499;
-  if(eta < 3.889) return 1.0943;
-  if(eta < 4.167) return 1.0792;
-  if(eta < 4.444) return 0.8731;
-  if(eta < 4.722) return 0.6258;
+  if(eta < 0.278) return 0.9997; 
+  if(eta < 0.556) return 0.9546;
+  if(eta < 0.833) return 0.9551;
+  if(eta < 1.111) return 0.9494;
+  if(eta < 1.389) return 0.9818;
+  if(eta < 1.667) return 0.9988;
+  if(eta < 1.944) return 0.9741;
+  if(eta < 2.222) return 1.0035;
+  if(eta < 2.500) return 0.9832;
+  if(eta < 2.778) return 1.0279;
+  if(eta < 3.056) return 1.3393;
+  if(eta < 3.333) return 0.9846;
+  if(eta < 3.611) return 1.1491;
+  if(eta < 3.889) return 1.0955;
+  if(eta < 4.167) return 1.0754;
+  if(eta < 4.444) return 0.8703;
+  if(eta < 4.722) return 0.6205;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
@@ -528,23 +528,23 @@ distribution in OS emu events.
 All jet pt cut 25 GeV, except if 2.7 < ans(eta) < 3.0, pt > 60.
 */
   eta = fabs(eta);
-  if(eta < 0.278) return 0.9859;
-  if(eta < 0.556) return 0.9950;
-  if(eta < 0.833) return 1.0024;
-  if(eta < 1.111) return 0.9767;
-  if(eta < 1.389) return 1.0043;
-  if(eta < 1.667) return 1.0241;
-  if(eta < 1.944) return 1.0124;
-  if(eta < 2.222) return 1.0259;
-  if(eta < 2.500) return 0.9812;
-  if(eta < 2.778) return 1.0031;
-  if(eta < 3.056) return 1.1804;
-  if(eta < 3.333) return 0.9461;
-  if(eta < 3.611) return 1.0981;
-  if(eta < 3.889) return 1.0450;
-  if(eta < 4.167) return 1.0306;
-  if(eta < 4.444) return 0.8338;
-  if(eta < 4.722) return 0.5976;
+  if(eta < 0.278) return 0.9826;
+  if(eta < 0.556) return 0.9742;
+  if(eta < 0.833) return 0.9744;
+  if(eta < 1.111) return 0.9685;
+  if(eta < 1.389) return 1.0055;
+  if(eta < 1.667) return 1.0185;
+  if(eta < 1.944) return 0.9973;
+  if(eta < 2.222) return 1.0175;
+  if(eta < 2.500) return 1.0065;
+  if(eta < 2.778) return 1.0715;
+  if(eta < 3.056) return 1.2978;
+  if(eta < 3.333) return 0.9388;
+  if(eta < 3.611) return 1.0956;
+  if(eta < 3.889) return 1.0444;
+  if(eta < 4.167) return 1.0253;
+  if(eta < 4.444) return 0.8298;
+  if(eta < 4.722) return 0.5916;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
