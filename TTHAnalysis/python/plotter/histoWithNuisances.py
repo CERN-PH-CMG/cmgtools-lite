@@ -386,7 +386,8 @@ class HistoWithNuisances:
         points = []; errors = []
         for i in xrange(h.GetNbinsX()):
             N = h.GetBinContent(i+1);
-            dN = h.GetBinError(i+1) if len(self.variations) == 0 else 0 #FIXME
+            #dN = h.GetBinError(i+1) if len(self.variations) == 0 else 0 #FIXME
+            dN = h.GetBinError(i+1)
             if N == 0 and (dN == 0 or relative): continue
             x = xaxis.GetBinCenter(i+1);
             EYlow = hypot(N-hdn.GetBinContent(i+1),dN)
