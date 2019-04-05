@@ -925,6 +925,7 @@ class PlotMaker:
                         stack.Draw("SAME HIST NOSTACK")
                 if pspec.getOption('MoreY',1.0) > 1.0:
                     total.SetMaximum(pspec.getOption('MoreY',1.0)*total.GetMaximum())
+                total.SetMaximum(1.8*total.GetMaximum())
                 totalError=None
                 if options.showMCError:
                     totalError = doShadedUncertainty(total)
