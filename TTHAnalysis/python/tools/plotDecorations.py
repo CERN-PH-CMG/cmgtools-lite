@@ -60,6 +60,7 @@ def fitTGraph(graph, order=1, nToys=1000, nPoints=1000):
     poly = ROOT.TF1("poly", "pol%d" % order, xmin, xmax)
     resultptr = graph.Fit(poly, "QN0S EX0")
     result = resultptr.Get()
+    resultptr.Print("V")
     ## now comes the fun: doing the bars
     cov = result.GetCovarianceMatrix()
     xvars, xlist, xset = [], ROOT.RooArgList(), ROOT.RooArgSet()
