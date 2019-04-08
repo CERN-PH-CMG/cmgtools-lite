@@ -47,16 +47,7 @@ DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99
 " --noCms --topSpamSize 1.1 --lspam #scale[1.1]{#bf{CMS}}#scale[1.0]{#it{Preliminary}}"\
 " --plotgroup data_fakes+='.*_promptsub' --neglist '.*_promptsub.*'"
 
-# Pileup weight, btag SFs, trigger SFs, lepton Eff SFs:
-#OPT2L="-W vtxWeight2017*eventBTagSF*"\
-#"triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)*"\
-#"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*"\
-#"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)"
-#OPT3L="-W vtxWeight2017*eventBTagSF*"\
-#"triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)*"\
-#"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*"\
-#"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*"\
-#"leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)"
+# Pileup weight, btag SFs, trigger SFs, lepton Eff SFs, L1 prefiring SFs:
 OPT2L="-W vtxWeight2017*eventBTagSF*NonPrefiringProb*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*"\
 "leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*"\
@@ -98,6 +89,22 @@ case "$PLOTTAG" in
 	#MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-3l-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
+        ;;
+    "3l-frclosure" )
+	DRAWOPTIONS="${DRAWOPTIONS} --ratioDen TT_FR_QCD --errors --AP --rebin 2 --ratioNums TT_fake"
+	SELECTPLOT="--sP thqMVA_tt_3l_60 --sP thqMVA_ttv_3l_60"
+	#SELECTPROCESS="-p incl_TT_FR_QCD -p incl_TT_FR_TT -p incl_TT_fake"
+	OPTIONS="${TREEINPUTS} ${FRIENDTREES} ${BASEOPTIONS} ${DRAWOPTIONS} ${OPT3L} ${SELECTPROCESS} ${SELECTPLOT}"
+	MCA="tHq-multilepton/mca-3l-mc-closuretest.txt"
+	CUTS="tHq-multilepton/cuts-thq-3l.txt"
+	PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
+	ARGOPTS="${MCA} ${CUTS} ${PLOTS} ${OPTIONS}"
+	
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/3l_mufake_norm/  -E mufake --plotmode nostack --fitRatio 0
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/3l_mufake_shape/ -E mufake --plotmode norm --fitRatio 1
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/3l_elfake_norm/  -E elfake --plotmode nostack --fitRatio 0
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/3l_elfake_shape/ -E elfake --plotmode norm --fitRatio 1
+	DONE
         ;;
     "2lss-mm" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan"
@@ -156,13 +163,39 @@ case "$PLOTTAG" in
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2los-em-ttcontrol" )
+	TREEINPUTS="-P fulltrees/"
+	FRIENDTREES=" -F sf/t fullfriendtrees/1_thq_recleaner_FULL_050419/evVarFriend_{cname}.root"
+	FRIENDTREES="${FRIENDTREES} -F sf/t fullfriendtrees/2_thq_eventvars_FULL_050419/evVarFriend_{cname}.root"
+	FRIENDTREES="${FRIENDTREES} -F sf/t fullfriendtrees/5_triggerDecision_FULL_050419/evVarFriend_{cname}.root"
+	FRIENDTREES="${FRIENDTREES} --FMC sf/t fullfriendtrees/6_bTagSF_FULL_050419/evVarFriend_{cname}.root"
+	FRIENDTREES="${FRIENDTREES} -F sf/t fullfriendtrees/7_tauTightSel_FULL_050419/evVarFriend_{cname}.root"
+	FRIENDTREES="${FRIENDTREES} --FMC sf/t 8_vtxWeight2017_FULL_050419/evVarFriend_{cname}.root"
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L}"
         OPTIONS="${OPTIONS} --scaleBkgToData TT --scaleBkgToData DY --scaleBkgToData WJets --scaleBkgToData SingleTop --scaleBkgToData WW"
-	OPTIONS="${OPTIONS} -E fwdjetpt40 --sP maxEtaJet25_40"
         MCA="tHq-multilepton/mca-2los-mcdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-ttbar-fwdjet.txt"
-        PLOTS="tHq-multilepton/plots-thq-ttbar-fwdjet.txt"
+        CUTS="tHq-multilepton/cuts-thq-ttbar-fwdjet.txt -E modified3"
+        PLOTS="tHq-multilepton/plots-thq-ttbar-fwdjet.txt --sP maxEtaJet25_60"
         ;;
+    "2lss-frclosure" )
+	DRAWOPTIONS="${DRAWOPTIONS} --ratioDen TT_FR_QCD --errors --AP --rebin 2 --ratioNums TT_fake"
+	SELECTPLOT="--sP thqMVA_tt_2lss_60 --sP thqMVA_ttv_2lss_60"
+	SELECTPROCESS="-p incl_FR_QCD_elonly -p incl_FR_QCD_muonly -p TT_FR_QCD -p TT_FR_TT -p TT_fake"
+	OPTIONS="${TREEINPUTS} ${FRIENDTREES} ${BASEOPTIONS} ${DRAWOPTIONS} ${OPT3L} ${SELECTPROCESS} ${SELECTPLOT}"
+	MCA="tHq-multilepton/mca-2lss-mc-closuretest.txt"
+	CUTS="tHq-multilepton/cuts-thq-2lss.txt"
+	PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
+	ARGOPTS="${MCA} ${CUTS} ${PLOTS} ${OPTIONS}"
+	
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_mm_norm/  -E mm_chan --plotmode nostack --fitRatio 0
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_mm_shape/ -E mm_chan --plotmode norm --fitRatio 1
+	#python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_ee_norm/  -E ee_chan --plotmode nostack --fitRatio 0
+	#python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_ee_shape/ -E ee_chan --plotmode norm --fitRatio 1
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_em_mufake_norm/  -E em_chan -E mufake --plotmode nostack --fitRatio 0
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_em_mufake_shape/ -E em_chan -E mufake --plotmode norm --fitRatio 1
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_em_elfake_norm/  -E em_chan -E elfake --plotmode nostack --fitRatio 0
+	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_em_elfake_shape/ -E em_chan -E elfake --plotmode norm --fitRatio 1
+	DONE
+	;;
     *)
         echo "${USAGE}"
         echo -e "\e[31mUnknown plottag\e[0m"
