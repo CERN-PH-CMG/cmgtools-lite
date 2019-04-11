@@ -45,7 +45,7 @@ DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99
 " --unc tHq-multilepton/signal_extraction/systsUnc.txt"\
 " --legendColumns 3 --legendWidth 0.6  --legendFontSize 0.042"\
 " --noCms --topSpamSize 1.1 --lspam #scale[1.1]{#bf{CMS}}#scale[1.0]{#it{Preliminary}}"\
-" --plotgroup data_fakes+='.*_promptsub' --neglist '.*_promptsub.*'"
+" --plotgroup data_fakes+=.*_promptsub --neglist .*_promptsub.*"
 
 # Pileup weight, btag SFs, trigger SFs, lepton Eff SFs, L1 prefiring SFs:
 OPT2L="-W vtxWeight2017*eventBTagSF*NonPrefiringProb*"\
@@ -66,14 +66,14 @@ case "$PLOTTAG" in
     "syst_test" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
         MCA="tHq-multilepton/test/mca-syst-test.txt"
-        CUTS="tHq-multilepton/cuts-thq-3l.txt -E modified3"
+        CUTS="tHq-multilepton/cuts-thq-3l.txt"
         PLOTS="tHq-multilepton/test/plots-syst-test.txt --plotmode nostack"
         ;;
     "3l" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
-        MCA="tHq-multilepton/mca-3l-mcdata.txt --xp data"
-        #MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-3l.txt -E modified3"
+        #MCA="tHq-multilepton/mca-3l-mcdata.txt --xp data"
+        MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt --xp data"
+        CUTS="tHq-multilepton/cuts-thq-3l.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
         ;;
     "3l-zcontrol" )
@@ -109,17 +109,17 @@ case "$PLOTTAG" in
     "2lss-mm" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips --xp data"
-	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-2lss.txt -E modified3"
+        #MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips --xp data"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt --xp Flips --xp data"
+        CUTS="tHq-multilepton/cuts-thq-2lss.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-em" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E em_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_ee_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
-	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-2lss.txt -E modified3"
+        #MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt --xp data"
+        CUTS="tHq-multilepton/cuts-thq-2lss.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ee" )
@@ -127,7 +127,7 @@ case "$PLOTTAG" in
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60"
         MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
 	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
-        CUTS="tHq-multilepton/cuts-thq-2lss.txt -E modified3"
+        CUTS="tHq-multilepton/cuts-thq-2lss.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ttcontrol" )
