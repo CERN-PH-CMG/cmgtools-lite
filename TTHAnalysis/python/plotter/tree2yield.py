@@ -19,7 +19,7 @@ from CMGTools.TTHAnalysis.plotter.cutsFile import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.uncertaintyFile import *
-from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances, cropNegativeBins
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
@@ -68,6 +68,20 @@ def stylePlot(plot,spec,getOption):
             plot.GetXaxis().SetNdivisions(spec.getOption('XNDiv',510))
             plot.GetXaxis().SetMoreLogLabels(True)
 
+def makeBinningProductString(xbins,ybins):
+    if xbins[0] == "[":
+        if ybins[0] != "[":
+            (nbins,ymin,ymax) = map(float, ybins.split(','))
+            ybins = "[" + ",".join(map(str, [ymin+i*(ymax-ymin)/nbins for i in xrange(0,int(nbins+1))])) + "]"
+        return xbins+"*"+ybins
+    elif ybins[0] == "[":
+        if xbins[0] != "[":
+            (nbins,xmin,xmax) = map(float, xbins.split(','))
+            xbins = "[" + ",".join(map(str, [xmin+i*(xmax-xmin)/nbins for i in xrange(0,int(nbins+1))])) + "]"
+        return xbins+"*"+ybins
+    else:
+        return xbins+","+ybins
+    
 def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
         profile1D      = plotspec.getOption('Profile1D',False) if plotspec != None else False
         profile2D      = plotspec.getOption('Profile2D',False) if plotspec != None else False
@@ -118,20 +132,6 @@ def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
             raise RuntimeError, "Can't make a plot with %d dimensions" % nvars
         histo.Sumw2()
         return histo
-
-def cropNegativeBins(histo):
-            if "TH1" in histo.ClassName():
-                for b in xrange(0,histo.GetNbinsX()+2):
-                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
-            elif "TH2" in histo.ClassName():
-                for bx in xrange(0,histo.GetNbinsX()+2):
-                    for by in xrange(0,histo.GetNbinsY()+2):
-                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
-            elif "TH3" in histo.ClassName():
-                for bx in xrange(0,histo.GetNbinsX()+2):
-                    for by in xrange(0,histo.GetNbinsY()+2):
-                        for bz in xrange(0,histo.GetNbinsZ()+2):
-                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
 
 
 class TreeToYield:

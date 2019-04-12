@@ -49,11 +49,11 @@ def file2map(x):
             fields = [ float(i) for i in cols ]
             ret[fields[0]] = dict(zip(headers,fields[1:]))
     return ret
-#YRpath = os.environ['CMSSW_RELEASE_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
-YRpath = '/afs/cern.ch/user/p/peruzzi/work/cmgtools/combine/CMSSW_7_4_14/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/'
+YRpath = os.environ['CMSSW_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
+#YRpath = '/afs/cern.ch/user/p/peruzzi/work/cmgtools/combine/CMSSW_7_4_14/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/'
 #XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
-BRhvv = file2map(YRpath+"br/BR2bosons.txt")
-BRhff = file2map(YRpath+"br/BR2fermions.txt")
+#BRhvv = file2map(YRpath+"br/BR2bosons.txt")
+#BRhff = file2map(YRpath+"br/BR2fermions.txt")
 def mkspline(table,column,sf=1.0):
     pairs = [ (x,c[column]/sf) for (x,c) in table.iteritems() ]
     pairs.sort()
@@ -117,7 +117,8 @@ def rebin2Dto1D(h,funcstring):
             newh.SetBinError(bin,math.hypot(newh.GetBinError(bin),h.GetBinError(i+1,j+1)))
     for bin in range(1,nbins+1):
         if newh.GetBinContent(bin)<0:
-            print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
+            if "promptsub" not in str(newh.GetName()):
+                print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
             newh.SetBinContent(bin,0)
     newh.SetLineWidth(h.GetLineWidth())
     newh.SetLineStyle(h.GetLineStyle())
@@ -540,23 +541,27 @@ for mass in masses:
     klen = max([7, len(binname)]+[len(p) for p in procs])
     kpatt = " %%%ds "  % klen
     fpatt = " %%%d.%df " % (klen,3)
+    npatt = "%%-%ds " % (1+max([len('process')]+map(len,systs.keys())+map(len,systsEnv.keys())))
     datacard.write('##----------------------------------\n')
-    datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-    datacard.write('rate            '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
+    datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
+    datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p        for p in procs]))+"\n")
+    datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+    datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
     datacard.write('##----------------------------------\n')
-    for name,effmap in systs.iteritems():
-        datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
-    for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
+    for name in sorted(systs.keys() + systsEnv.keys()):
+      if name in systs:  
+        effmap = systs[name]
+        datacard.write(('%s   lnN' % (npatt%name)) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
+      else:
+        (effmap0,effmap12,mode) = systsEnv[name]
         if re.match('templates.*',mode):
-            datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
+            datacard.write(('%s shape' % (npatt%name)) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
         if re.match('envelop.*',mode):
-            datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
+            datacard.write(('%s shape' % (npatt%(name+"0"))) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
         if any([re.match(x+'.*',mode) for x in ["envelop", "shapeOnly"]]):
-            datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
+            datacard.write(('%s shape' % (npatt%(name+"1"))) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
             if "shapeOnly2D" not in mode:
-                datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
+                datacard.write(('%-10s shape' % (npatt%(name+"2"))) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
 if len(masses) > 1:
     myout = outdir
     myyields = dict([(k,-1 if "ttH" in k else v) for (k,v) in allyields.iteritems()]) 

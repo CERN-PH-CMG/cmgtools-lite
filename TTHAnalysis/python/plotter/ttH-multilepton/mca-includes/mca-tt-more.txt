@@ -1,0 +1,5 @@
+TT : TTJets_DiLepton_part1+TTJets_DiLepton_part2 : xsec*0.27
+TT : TTLep_pow_part1+TTLep_pow_part2+TTLep_pow_part3+TTLep_pow_part4+TTLep_pow_part5 : xsec*0.73
+TT : TTJets_SingleLeptonFromT : xsec*0.5
+TT : TTJets_SingleLeptonFromTbar : xsec*0.5
+TT : TTSemi_pow : xsec*0.5

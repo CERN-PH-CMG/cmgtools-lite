@@ -17,11 +17,25 @@ def fillSliceY(th2,plot1d,yvalue,xslice):
     for xbin in xrange(1,th2.GetNbinsX()+1):
         xval = th2.GetXaxis().GetBinCenter(xbin)
         if xslice[0] <= xval and xval <= xslice[1]:
-            for i in xrange(plot1d.GetN()):
-                x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
-                if x-xm <= xval and xval <= x+xp:
-                    th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
-                    th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
+            msg = "trying to fill %s bin %2d x %5.1f from %s: " % (th2.GetName(), xbin, xval, plot1d.GetName())
+            found = "Not found!!"
+            if "TGraph" in plot1d.ClassName():
+                for i in xrange(plot1d.GetN()):
+                    x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
+                    if x-xm <= xval and xval <= x+xp:
+                        th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
+                        th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
+                        found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, x-xm,x+xp, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
+            elif "TH1" in plot1d.ClassName():
+                for i in xrange(1,plot1d.GetNbinsX()+1):
+                    x,xh,xl = plot1d.GetXaxis().GetBinCenter(i), plot1d.GetXaxis().GetBinUpEdge(i), plot1d.GetXaxis().GetBinLowEdge(i)
+                    if xl <= xval and xval <= xh:
+                        th2.SetBinContent(xbin,ybin,plot1d.GetBinContent(i))
+                        th2.SetBinError(xbin,ybin,plot1d.GetBinError(i))
+                        found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, xl, xh, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
+            else: raise RuntimeError()
+            if "Not" in found:
+                print msg, found
 def readSliceY(th2,filename,plotname,yvalue,xslice):
     slicefile = ROOT.TFile.Open(filename)
     if not slicefile: raise RuntimeError, "Cannot open "+filename
@@ -42,7 +56,7 @@ def make2D(out,name,xedges,yedges):
     th2 = makeH2D(name,xedges,yedges)
     return th2
 
-def makeVariants(h,altsrc=None):
+def makeVariants(h,altsrc=None,norm=None):
     lptmin = log(h.GetXaxis().GetBinCenter(1))
     lptmax = log(h.GetXaxis().GetBinCenter(h.GetNbinsX()))
     lptc     = 0.5*(lptmax+lptmin)
@@ -68,11 +82,40 @@ def makeVariants(h,altsrc=None):
                 else:
                     err = fr0 * altsrc.GetBinError(bx,by)/altsrc.GetBinContent(bx,by)
                 fr = func(x,y,fr0,err)
-                print "Variation %-15s: pt %4.1f, eta %3.1f: nominal %.3f +- %.3f --> shifted %.3f "  % (hsyst.GetName(), x, y, fr0, err, fr)
+                #print "Variation %-15s: pt %4.1f, eta %3.1f: nominal %.3f +- %.3f --> shifted %.3f "  % (hsyst.GetName(), x, y, fr0, err, fr)
                 hsyst.SetBinContent(bx, by, fr)
                 hsyst.SetBinError(bx, by, 0)
+        if norm and s not in ("up","down"):
+            sum0, sums = 0, 0
+            for bx in xrange(1,h.GetNbinsX()+1):
+                x = h.GetXaxis().GetBinCenter(bx) 
+                binw = h.GetXaxis().GetBinWidth(bx)
+                #if x <= 15: continue
+                for by in xrange(1,h.GetNbinsY()+1):
+                    f0, f = h.GetBinContent(bx,by), hsyst.GetBinContent(bx,by)
+                    sum0 += norm.GetBinContent(bx,by) * binw * f0/(1-f0)
+                    sums += norm.GetBinContent(bx,by) * binw * f /(1-f) 
+                    #print "     at bx %2d by %2d pt %5.1f abseta %5.2f    N = %9.2f  fr0 = %.3f   fr = %.3f" % (bx,by,x,h.GetYaxis().GetBinCenter(by), norm.GetBinContent(bx,by), f0, f)
+            print "   pre-normalization for %s: sum0 %9.2f   sum %9.2f    ratio %.3f " % (hsyst.GetName(), sums, sum0, sums/sum0)
+            hsyst.Scale(sum0/sums)
         ret.append(hsyst)
+     
     return ret
+
+def fixLastBin(ibin, hdata, hmc=None, blowup=2.0):
+    isrc = hdata.GetNbinsX()+ibin
+    idst = isrc+1
+    for iy in xrange(1,hdata.GetNbinsY()+1):
+        fr0 = hdata.GetBinContent(isrc, iy)
+        er0 = hdata.GetBinError(isrc, iy)
+        if hmc:
+            sf = hmc.GetBinContent(idst, iy)/hmc.GetBinContent(isrc, iy)
+            print "extrapolate %s from pt %.1f to pt %.1f with SF %.3f from %s" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc), hdata.GetXaxis().GetBinCenter(idst), sf, hmc.GetName())
+            fr0 *= sf; er0 *= sf
+        else:
+            print "extrapolate %s from pt %.1f to pt %.1f" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc))
+        hdata.SetBinContent(idst, iy, fr0)
+        hdata.SetBinError(idst, iy, er0 * blowup)
 
 def styles(hs):
     colors = [ ('Data',ROOT.kBlack), ('MC tt',ROOT.kRed+1), ('QCD',ROOT.kAzure+1 ),
@@ -101,12 +144,14 @@ if __name__ == "__main__":
     parser.add_option("--ytitle", dest="ytitle", default="Fake rate", type='string', help="Y axis title");
     parser.add_option("--fontsize", dest="fontsize", default=0.05, type='float', help="Legend font size");
     parser.add_option("--legendWidth", dest="legendWidth", type="float", default=0.35, help="Width of the legend")
+    parser.add_option("--norm", dest="norm", action="store_true", default=False, help="Normalize variations")
     parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
     parser.add_option("--legend",  dest="legend",  default="TL",  type="string", help="Legend position (BR, TR)")
     parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=True, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(0,2.9), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+    parser.add_option("--fix-last-bin", dest="fixLastBin", action="store_true", default=False, help="Fudge last bin")
     (options, args) = parser.parse_args()
     (outname) = args[0]
     print outname
@@ -118,8 +163,8 @@ if __name__ == "__main__":
         ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
         ROOT.gStyle.SetOptStat(0)
     if True:
-       ptbins_el = [ 15,20,30,45,65,100 ]
-       ptbins_mu = [ 15,20,30,45,65,100 ]
+       ptbins_el = [ 15,25,35,45,65,100 ]
+       ptbins_mu = [ 10,15,20,32,45,65,100 ]
        etabins_el = [0, 1.479, 2.5]
        etabins_mu = [0, 1.2,   2.4]
        etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]
@@ -129,39 +174,44 @@ if __name__ == "__main__":
        Xnices = [ "MC QCD", "Data, comb." ]
 
 
-       an = args[1]
+       an = args[1].lower()
 
-       if an=='tth':
+       if an == 'tth':
+           mva="090"
+           if len(args)>2: mva=args[2]
            # TTH
 
-           h2d_el = [ make2D(outfile,"FR_mva090_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
-           h2d_mu = [ make2D(outfile,"FR_mva090_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-           h2d_el_tt = [ make2D(outfile,"FR_mva090_el_TT", ptbins_el, etabins_el) ]
-           h2d_mu_tt = [ make2D(outfile,"FR_mva090_mu_TT", ptbins_mu, etabins_mu) ]
+           h2d_el = [ make2D(outfile,"FR_mva"+mva+"_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
+           h2d_mu = [ make2D(outfile,"FR_mva"+mva+"_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
+           h2d_el_tt = [ make2D(outfile,"FR_mva"+mva+"_el_TT", ptbins_el, etabins_el) ]
+           h2d_mu_tt = [ make2D(outfile,"FR_mva"+mva+"_mu_TT", ptbins_mu, etabins_mu) ]
+           h2d_el_tt_norm = [ make2D(outfile,"norm_el_TT", ptbins_el, etabins_el) ]
+           h2d_mu_tt_norm = [ make2D(outfile,"norm_mu_TT", ptbins_mu, etabins_mu) ]
 
-           Plots="plots/80X/ttH_Moriond17/lepMVA/v3.0/fr-meas"
+           Plots="plots/94X/ttH/lepMVA/v2.0-dev/fr-meas"
            Z3l="z3l"
            QCD="qcd1l"
-           #### Electrons: 
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele8_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,20) )
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (20,30) )
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele17_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (30,999) )
+           prefix=("loose_" if mva == "075" else "")
+           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, prefix+"el/HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,999) )
+           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, prefix+"mu/HLT_MuX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
 
-           #### Muons: 
-           # 10-30 from Mu3_PFJet40 + Mu8
-           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_CombLow/fakerates-mtW1R/oneLoose/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (15,30) )
-           # 30-inf from Mu8+Mu17+Mu27:
-           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_CombHigh/fakerates-mtW1R/splitbin/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (30,999) )
+           if options.fixLastBin:
+               fixLastBin(-1, h2d_el[1], h2d_el[0])
+               fixLastBin(-1, h2d_mu[1], h2d_mu[0])
 
            #### TT MC-truth
-           MCPlots="plots/80X/ttH_Moriond17/lepMVA/v3.0/fr-mc"; ID="wp090iv30f50E2";
-           XVar="mvaPt_090i_ptJI90_mvaPt090"
-           readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_mu, (15,999) )
-           readMany2D(["TT_redNC"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_el, (15,999) )
+           MCPlots="plots/94X/ttH/lepMVA/v2.0-dev/fr-mc"; ID="wp"+mva+"iv01f60E3";
+           XX="ptJI90_mvaPt"+mva
+           XVar="mvaPt_"+mva+"i_"+XX
+           readMany2D(["TT_SS_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarsecomb_%s",   etaslices_mu, (15,999) )
+           readMany2D(["TT_SS_redNC"], h2d_el_tt, "/".join([MCPlots, "el_bnbNC_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,999) )
+           readMany2D(["TT_SS_red"], h2d_mu_tt_norm, "/".join([MCPlots, "mu_ttnorm_"+ID+"_recJet30_eta_%s.root"]), XX+"_coarsecomb_%s",   etaslices_mu, (15,999) ) #NOTA BENE: we skip the 10-15 bin when normalizing
+           readMany2D(["TT_SS_red"], h2d_el_tt_norm, "/".join([MCPlots, "el_ttnorm_"+ID+"_recJet30_eta_%s.root"]), XX+"_coarseelcomb_%s",   etaslices_el, (15,999) )
 
-           h2d_el_mc4cc = [ make2D(outfile,"FR_mva090_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
-           readMany2D(["QCDEl_red_El8","QCDEl_redNC_El8"], h2d_el_mc4cc, "/".join([MCPlots, "el_lbin_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_el, (15,999) )
-           h2d_el_cc = [ make2D(outfile,"FR_mva090_el_"+X+"_NC", ptbins_el, etabins_el) for X in XsQ ]
+           h2d_el_mc4cc = [ make2D(outfile,"FR_mva"+mva+"_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
+           readMany2D(["QCDEl_red_El8", "QCDEl_redNC_El8"],  h2d_el_mc4cc, "/".join([MCPlots, "el_hltid8_" +ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,32) )
+           readMany2D(["QCDEl_red_El17","QCDEl_redNC_El17"], h2d_el_mc4cc, "/".join([MCPlots, "el_hltid17_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (32,999) )
+           h2d_el_cc = [ make2D(outfile,"FR_mva"+mva+"_el_"+X+"_NC", ptbins_el, etabins_el) for X in XsQ ]
            for hu,hc in zip(h2d_el,h2d_el_cc):
               for ie in xrange(1,len(etabins_el)):
                 for ip in xrange(1,len(ptbins_el)):
@@ -218,17 +268,20 @@ if __name__ == "__main__":
        # Serialize
        for h in h2d_el    + h2d_mu:    outfile.WriteTObject(h)
        for h in h2d_el_tt + h2d_mu_tt: outfile.WriteTObject(h)
+       for h in h2d_el_tt_norm + h2d_mu_tt_norm: outfile.WriteTObject(h)
 
        # Plot
        if options.outdir:
-           for lep,h2d,h2dtt,xcuts in (("el",h2d_el,h2d_el_tt,[30]),("mu",h2d_mu,h2d_mu_tt,[20,45])):
+           for lep,h2d,h2dtt,h2tt_norm,xcuts in (("el",h2d_el,h2d_el_tt,h2d_el_tt_norm,[30]),("mu",h2d_mu,h2d_mu_tt,h2d_mu_tt_norm,[20,45])):
               for ieta,eta in enumerate(["barrel","endcap"]):
                   effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(["MC ttbar"],h2dtt) ]
                   effs += [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
                   styles(effs)
                   options.xlines = xcuts
+                  savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
                   stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
-              variants = makeVariants(h2d[-1])
+                  ROOT.gErrorIgnoreLevel = savErrorLevel;
+              variants = makeVariants(h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
               for v in variants: outfile.WriteTObject(v, v.GetName())
               for ieta,eta in enumerate(["barrel","endcap"]):
                   effs = [ ('nominal', graphFromXSlice(h2d[-1],ieta+1)) ]
@@ -237,9 +290,11 @@ if __name__ == "__main__":
                     effs.append( (label, graphFromXSlice(v,ieta+1) ) )
                   styles(effs)
                   options.xlines = xcuts
+                  savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
                   stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
-              mcttvariants = makeVariants(h2dtt[0],h2d[-1])
+                  ROOT.gErrorIgnoreLevel = savErrorLevel;
+              mcttvariants = makeVariants(h2dtt[0],h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
               for v in mcttvariants: outfile.WriteTObject(v, v.GetName())
-              mcvariants = makeVariants(h2d[-2],h2d[-1])
+              mcvariants = makeVariants(h2d[-2],h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
               for v in mcvariants: outfile.WriteTObject(v, v.GetName())
-    outfile.ls()
+    #outfile.ls()

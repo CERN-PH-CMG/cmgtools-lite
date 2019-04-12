@@ -1,2 +1,3 @@
-TT : TTLep_pow : xsec
-TT : TTSemi_pow : xsec
+TT : TTJets_DiLepton_part1+TTJets_DiLepton_part2 : xsec
+TT : TTJets_SingleLeptonFromT : xsec
+TT : TTJets_SingleLeptonFromTbar : xsec

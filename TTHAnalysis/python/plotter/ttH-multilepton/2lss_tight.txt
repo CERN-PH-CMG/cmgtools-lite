@@ -1,5 +1,5 @@
 alwaystrue: 1
-trigger: Trigger_2l
+trigger: Trigger_2lss
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
 pt2515: LepGood1_conePt>25 && LepGood2_conePt>15
@@ -8,7 +8,7 @@ TT: LepGood1_isLepTight && LepGood2_isLepTight
 exclusive: nLepTight<=2
 same-sign: LepGood1_charge*LepGood2_charge > 0
 Zee_veto: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-91.2) > 10
-metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || met_pt*0.00397 + mhtJet25*0.00265 > 0.2
+metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || met_pt*0.6 + mhtJet25*0.4 > 30
 
 eleID: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
 muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepGood2_pdgId)!=13 || LepGood2_tightCharge>=1)
@@ -31,6 +31,7 @@ BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 2j: nJet25>=2 ; Disable=True
 x3j: nJet25==3 ; Disable=True
+6j: nJet25>=6 ; Disable=True
 
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True

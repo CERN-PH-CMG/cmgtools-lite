@@ -68,7 +68,7 @@ def cropToLumi(selectedComponents, maxLumi):
 
 def mergeExtensions(selectedComponents, verbose=False):
     compMap = {}
-    for comp in selectedComponents:
+    for comp in sorted(selectedComponents, key = lambda c : c.name):
         if "_ext" in comp.name:
             basename = comp.name.split("_ext",1)[0]
         else:

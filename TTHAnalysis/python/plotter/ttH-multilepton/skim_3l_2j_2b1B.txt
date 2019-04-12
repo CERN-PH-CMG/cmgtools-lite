@@ -3,3 +3,5 @@ trilep: nLepFO>=3
 pt251515: LepGood1_conePt>25 && LepGood2_conePt>15 && LepGood3_conePt>15
 2j_wvars: nJetSel_Recl>=2
 2b1B_wvars: nBJetLoose25_Recl>=2 || nBJetMedium25_Recl>=1 || nBJetLoose25_jecUp_Recl>=2 || nBJetMedium25_jecUp_Recl>=1 || nBJetLoose25_jecDown_Recl>=2 || nBJetMedium25_jecDown_Recl>=1
+no2b1B_wvars: !(nBJetLoose25_Recl>=2 && nBJetMedium25_Recl>=1 && nBJetLoose25_jecUp_Recl>=2 && nBJetMedium25_jecUp_Recl>=1 && nBJetLoose25_jecDown_Recl>=2 && nBJetMedium25_jecDown_Recl>=1); Disable=True
+Zveto: abs(mZ1-91.2) > 10; Disable=True

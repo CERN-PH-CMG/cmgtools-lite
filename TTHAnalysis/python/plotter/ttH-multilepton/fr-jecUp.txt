@@ -13,9 +13,14 @@ change: nBJetMedium40_Recl\b: nBJetMedium40_jecUp_Recl
 change: nBJetTight40_Recl\b: nBJetTight40_jecUp_Recl
 change: kinMVA_2lss_ttbar\b : kinMVA_2lss_ttbar_jecUp
 change: kinMVA_2lss_ttbar_withBDTv8\b : kinMVA_2lss_ttbar_withBDTv8_jecUp
+change: kinMVA_2lss_ttbar_withBDTrTT\b : kinMVA_2lss_ttbar_withBDTrTT_jecUp
+change: kinMVA_2lss_ttbar_withBDThttTT\b : kinMVA_2lss_ttbar_withBDThttTT_jecUp
 change: kinMVA_2lss_ttV\b : kinMVA_2lss_ttV_jecUp
-change: kinMVA_2lss_ttV_withHj\b : kinMVA_2lss_ttV_withHj_jecUp
+change: kinMVA_2lss_ttV_withHj_v8\b : kinMVA_2lss_ttV_withHj_v8_jecUp
+change: kinMVA_2lss_ttV_withHj_rTT\b : kinMVA_2lss_ttV_withHj_rTT_jecUp
+change: kinMVA_2lss_ttV_withHj_httTT\b : kinMVA_2lss_ttV_withHj_httTT_jecUp
 change: kinMVA_3l_ttbar\b : kinMVA_3l_ttbar_jecUp
+change: kinMVA_3l_ttbar_withMEM\b : kinMVA_3l_ttbar_withMEM_jecUp
 change: kinMVA_3l_ttV\b : kinMVA_3l_ttV_jecUp
 change: kinMVA_3l_ttV_withMEM\b : kinMVA_3l_ttV_withMEM_jecUp
 change: kinMVA_2lss_MultiClass_ttH\b : kinMVA_2lss_MultiClass_jecUp_ttH

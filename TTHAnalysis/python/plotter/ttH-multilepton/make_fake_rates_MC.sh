@@ -5,10 +5,10 @@
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
 ttH) 
-    T=/afs/cern.ch/work/g/gpetrucc/TREES_TTH_120218_Fall17_JECV4_1L;
-    hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_TTH_120218_Fall17_JECV4_1L
-    #hostname | grep -q cmsphys10 && T=/data1/g/gpetrucc/TREES_80X_ttH_300117_1L
-    PBASE="plots/94X/${ANALYSIS}/lepMVA/v1.0/fr-mc/"
+    T=/afs/cern.ch/work/g/gpetrucc/TREES_94X_FR_240518;
+    hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_94X_FR_240518
+    hostname | grep -q cmsphys10 && T=/data/g/gpetrucc/TREES_94X_FR_240518
+    PBASE="plots/94X/${ANALYSIS}/lepMVA/v2.0-dev/fr-mc/"
     ;;
 susy) 
     echo "NOT UP TO DATE"; exit 1; 
@@ -102,7 +102,8 @@ for WP in $WPs; do
 	    *ptJ90*)    ptJI="ptJI90";;
 	    *ptJ95*)    ptJI="ptJI95";;
 	    090*)    ptJI="ptJI90";;
-	    075*)    ptJI="ptJI80";;
+	    075*)    ptJI="ptJI90";;
+	    #075*)    ptJI="ptJI80";;
 	    RA*)  ptJI="conePt";;
 	    sViX0*)    ptJI="ptJI85";;
 	    sMiX0*)    ptJI="ptJI85";;
@@ -110,10 +111,12 @@ for WP in $WPs; do
 	    sMi*)    ptJI="ptJIMIX4";;
 	esac
         B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
+        B0="$B0 --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
         B0="$B0 --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         #B0="$B0 --legend=TR --showRatio --ratioRange 0.41 1.59   --yrange 0 0.20 " 
         B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99   --yrange 0 0.25 " 
 	B1="${PLOTTER} -P $T ttH-multilepton/make_fake_rates_plots.txt"
+        B1="$B1 --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
 	B1="${B1} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
         JetDen="-A pt20 mll 'nLepGood == 1'"
@@ -145,8 +148,8 @@ for WP in $WPs; do
             BDen="-A pt20 jet '${RECOIL_VALUE}'"
         fi
 
-        MuFakeVsPt="$MuDen ${BDen} --sP '${ptJI}_${XVar}_coarse' --sp TT_SS_red --xcut 10 999 --xline 15 " 
-        ElFakeVsPt="$ElDen ${BDen} --sP '${ptJI}_${XVar}_coarse' --sp TT_SS_redNC --xcut 10 999 --xline 15 --xline 30 " 
+        MuFakeVsPt="$MuDen ${BDen} --sP '${ptJI}_${XVar}_coarsecomb' --sp TT_SS_red --xcut 10 999 --xline 15 " 
+        ElFakeVsPt="$ElDen ${BDen} --sP '${ptJI}_${XVar}_coarseelcomb' --sp TT_SS_redNC --xcut 10 999 --xline 15 --xline 30 " 
 
 #        echo "( $B1 $MuDen ${BDen} --ratioDen TT_bjets --ratioNums QCDMu_bjets -p TT_ljets,TT_bjets,QCDMu_ljets,QCDMu_bjets --pdir $PBASE/$what/mu_convs_${Me}_eta_00_12/ -A pt20 conv 'LepGood_mcPromptGamma==1' -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
 #        echo "( $B1 $MuDen ${BDen} --ratioDen TT_bjets --ratioNums QCDMu_bjets -p TT_ljets,TT_bjets,QCDMu_ljets,QCDMu_bjets --pdir $PBASE/$what/mu_convs_${Me}_eta_12_24/ -A pt20 conv 'LepGood_mcPromptGamma==1' -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
@@ -227,7 +230,16 @@ for WP in $WPs; do
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC,QCDEl_bjets -o $PBASE/$what/el_bnbNC_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
-        
+     
+        PlotX="${B1/--plotmode=norm/}"; 
+        PlotX="${PlotX/make_fake_rates_plots.txt/make_fake_rates_xvars.txt}"
+        MuNormPlot="$PlotX $MuDen ${BDen} --sP '${ptJI}_${XVar}_coarsecomb'" 
+        ElNormPlot="$PlotX $ElDen ${BDen} --sP '${ptJI}_${XVar}_coarseelcomb'" 
+        echo "( $MuNormPlot -p TT_SS_red --pdir $PBASE/$what   -o {O}/mu_ttnorm_${Me}_eta_00_12.root  -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
+        echo "( $MuNormPlot -p TT_SS_red --pdir $PBASE/$what   -o {O}/mu_ttnorm_${Me}_eta_12_24.root  -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
+        echo "( $ElNormPlot -p TT_SS_red --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_00_15.root   -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $ElNormPlot -p TT_SS_red --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_15_25.root   -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+
         CElFakeVsPt="$ElDen ${BDen} --sP '${ptJI}_${XVar}_coarse' --sp TT_conv --xcut 10 999"; BC="${B0/--yrange 0 0.??/--yrange 0 1.0}"
         echo "( $BC $CElFakeVsPt -p TT_conv,QCDEl_conv_El12 -o $PBASE/$what/el_conv_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $BC $CElFakeVsPt -p TT_conv,QCDEl_conv_El12 -o $PBASE/$what/el_conv_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
@@ -251,8 +263,8 @@ for WP in $WPs; do
         done
 
        ##AwayJet pt variations
-       MuFakeVsPt0J="$MuDen --sP '${ptJI}_${XVar}_coarse' --sp TT_red --xcut 10 999 --xline 15" 
-       ElFakeVsPt0J="$ElDen --sP '${ptJI}_${XVar}_coarse' --sp TT_red --xcut 10 999 --xline 15" 
+       MuFakeVsPt0J="$MuDen --sP '${ptJI}_${XVar}_coarsecomb' --sp TT_red --xcut 10 999 --xline 15" 
+       ElFakeVsPt0J="$ElDen --sP '${ptJI}_${XVar}_coarseelcomb' --sp TT_red --xcut 10 999 --xline 15" 
        #echo "( $B0 $MuFakeVsPt0J -p 'TT_red,QCDMu_red_aj[2-6].*' -o $PBASE/$what/mu_ajpt_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
        #echo "( $B0 $MuFakeVsPt0J -p 'TT_red,QCDMu_red_aj[2-6].*' -o $PBASE/$what/mu_ajpt_${Me}_eta_12_24.root -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
        #echo "( $B0 $ElFakeVsPt0J -p 'TT_red,QCDEl_red_aj[2-6].*' -o $PBASE/$what/el_ajpt_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479'   ${BG} )"
@@ -263,8 +275,8 @@ for WP in $WPs; do
        #echo "( $B0 $ElFakeVsPt0J -p 'QCDEl_red,QCDEl_red_aj[2-6].*' -o $PBASE/$what/el_qajpt_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479'   ${BG} )"
 
        ##AwayJet b-tag
-       MuFakeVsPtB="$MuDen --sP '${ptJI}_${XVar}_coarse' --sp TT_red,TT_SSbt_black ${BDen} --xcut 10 999 --xline 15" 
-       ElFakeVsPtB="$ElDen --sP '${ptJI}_${XVar}_coarse' --sp TT_red,TT_SSbt_black ${BDen} --xcut 10 999 --xline 15" 
+       MuFakeVsPtB="$MuDen --sP '${ptJI}_${XVar}_coarsecomb' --sp TT_red,TT_SSbt_black ${BDen} --xcut 10 999 --xline 15" 
+       ElFakeVsPtB="$ElDen --sP '${ptJI}_${XVar}_coarseelcomb' --sp TT_red,TT_SSbt_black ${BDen} --xcut 10 999 --xline 15" 
        #echo "( $B0 $MuFakeVsPtB -p 'TT_red,QCDMu_red_ajb.*' -o $PBASE/$what/mu_ajb_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
        #echo "( $B0 $MuFakeVsPtB -p 'TT_red,QCDMu_red_ajb.*' -o $PBASE/$what/mu_ajb_${Me}_eta_12_24.root -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
        #echo "( $B0 $ElFakeVsPtB -p 'TT_red,QCDEl_red_ajb.*' -o $PBASE/$what/el_ajb_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
@@ -309,10 +321,10 @@ for WP in $WPs; do
         echo "( $B0 $MuFakeVsPtH -p QCDMu_red,QCDMu_red_pt[0-9]+,QCDMu_red_Mu[0-9]+ -o $PBASE/$what/mu_hltpt_${Me}_eta_12_24.root -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
         #echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt8,QCDEl_red_pt8,QCDEl_redNC_El8,QCDEl_red_El8 -o $PBASE/$what/el_hltid_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         #echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt8,QCDEl_red_pt8,QCDEl_redNC_El8,QCDEl_red_El8 -o $PBASE/$what/el_hltid_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
-        ElFakeVsPtH="$ElDen ${BDen} --sP '${ptJI}_${XVar}_fine' --sp QCDEl_redNC_pt17 --xcut 20 999 --xline 30 " 
+        ElFakeVsPtH="$ElDen ${BDen} --sP '${ptJI}_${XVar}_fine,${ptJI}_${XVar}_coarseelcomb' --sp QCDEl_redNC_pt17 --xcut 20 999 --xline 30 " 
         echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt17,QCDEl_red_pt17,QCDEl_redNC_El17,QCDEl_red_El17 -o $PBASE/$what/el_hltid17_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt17,QCDEl_red_pt17,QCDEl_redNC_El17,QCDEl_red_El17 -o $PBASE/$what/el_hltid17_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
-        ElFakeVsPtH="$ElDen ${BDen} --sP '${ptJI}_${XVar}_fine' --sp QCDEl_redNC_pt8 --xcut 10 999 --xline 15 --xline 30 " 
+        ElFakeVsPtH="$ElDen ${BDen} --sP '${ptJI}_${XVar}_fine,${ptJI}_${XVar}_coarseelcomb' --sp QCDEl_redNC_pt8 --xcut 10 999 --xline 15 --xline 30 " 
         echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt8,QCDEl_red_pt8,QCDEl_redNC_El8,QCDEl_red_El8 -o $PBASE/$what/el_hltid8_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt8,QCDEl_red_pt8,QCDEl_redNC_El8,QCDEl_red_El8 -o $PBASE/$what/el_hltid8_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
         for C in 30_50 45_999; do

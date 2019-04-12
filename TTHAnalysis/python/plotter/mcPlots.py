@@ -304,10 +304,13 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     nuisanceList = ROOT.RooArgList()
     constraints = ROOT.RooArgList()
     for nuisance in nuisances:
-        x = w.factory("Gaussian::%sPdf(%s[0,-7,7],0,1)" % (nuisance, nuisance));
+        if nuisance.endswith("_lnU"):
+            x = w.factory("%s[0,-1,1]" % nuisance);
+        else:
+            x = w.factory("Gaussian::%sPdf(%s[0,-7,7],0,1)" % (nuisance, nuisance));
+            constraints.add(x)
         w.nodelete.append(x)
         nuisanceList.add(w.var(nuisance))
-        constraints.add(x)
     # roofitize templates 
     roofit = roofitizeReport(pmap, w, xvarName=pspec.name, density=pspec.getOption('Density',False))
     # create the data
@@ -316,19 +319,12 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pdfs   = ROOT.RooArgList()
     coeffs = ROOT.RooArgList()
     procNormMap = {}
-    pois = set()
+    pois = addMyPOIs(roofit, pmap, mca)
     for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
         if p not in pmap: continue
         if pmap[p].Integral() <= 0: continue
         (pdf,norm) = pmap[p].rooFitPdfAndNorm()
-        if mca.getProcessOption(p,'FreeFloat',False):
-            normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
-            print "%s scale as %s" % (p, normTermName)
-            poi = w.factory('r_%s[1,%g,%g]' % (normTermName, 0.0, 5)); w.nodelete.append(poi)
-            pois.add('r_%s' % normTermName)
-            norm.addOtherFactor(poi)
-            procNormMap[p] = norm.getVal()
-        elif pmap[p].hasVariations():
+        if mca.getProcessOption(p,'FreeFloat',False) or pmap[p].hasVariations():
             procNormMap[p] = norm.getVal()
         pdfs.add(pdf)
         coeffs.add(norm)
@@ -372,7 +368,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
 def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",yndiv=505,doWide=False,showStatTotLegend=False,textSize=0.035):
     numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) >= 4 and ratioDen in pmap:
+        if len(pmap) >= 2 and ratioDen in pmap:
             numkeys = []
             for p in pmap.iterkeys():
                 for s in ratioNums.split(","):
@@ -745,9 +741,13 @@ class PlotMaker:
                 if getattr(mca,'_altPostFits',None):
                     roofit = roofitizeReport(pmap)
                     if self._options.processesToPeg == []:
-                        addDefaultPOI(roofit,pmap,mca,"r")
+                        hasR = False
+                        for pfs in mca._altPostFits.itervalues():
+                            if pfs.fitResult.floatParsFinal().find("r"):
+                                hasR = True
+                        if hasR: addExternalDefaultPOI(roofit,pmap,mca,"r")
                     else:
-                        addPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
+                        addExternalPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
                     for key,pfs in mca._altPostFits.iteritems():
                         for k,h in pmap.iteritems():
                             if k != "data":
@@ -770,11 +770,10 @@ class PlotMaker:
                         postfix = "_"+(pspec.getOption("SlicesY") % (h0.GetYaxis().GetBinLowEdge(iy), h0.GetYaxis().GetBinUpEdge(iy)))
                         bins_slice = pspec.bins.split("*",1) if "[" == pspec.bins[0] else ",".join(pspec.bins.split(",")[:3])
                         pspec_slice = PlotSpec(pspec.name+postfix, pspec.expr, bins_slice, pspec.opts)
-                        pmap_slice = dict( (k,HistoWithNuisances(h.ProjectionX(h.GetName()+postfix,iy,iy))) for (k,h) in pmap.iteritems() )
+                        pmap_slice = dict( (k,h.projectionX(h.GetName()+postfix,iy,iy)) for (k,h) in pmap.iteritems() )
                         allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+["data"]
                         for k,h in pmap_slice.iteritems():
                             if k in allprocs:
-                                print "%s goes in style for %s" % (k, h.GetName())
                                 stylePlot(h,pspec_slice, lambda opt, deft: mca.getProcessOption(k, opt, deft))
                         self.printOnePlot(mca,pspec_slice,pmap_slice,
                                           xblind=xblind, makeCanvas=makeCanvas, outputDir=dir,
@@ -1079,7 +1078,7 @@ class PlotMaker:
                                 syst = plot.integralSystError(symmetrize=True)
                                 if p == "signal": dump.write(("-"*(maxlen+45))+"\n");
                                 dump.write(fmt % (_unTLatex(mca.getProcessOption(p,'Label',p) if p not in ["signal", "background","total"] else p.upper()), norm, stat))
-                                if syst: dump.write(" +/- %9.2f (syst)"  % syst)
+                                if syst: dump.write(" +/- %9.2f (syst) = +/- %9.2f (all)"  % (syst, math.hypot(stat,syst)))
                                 dump.write("\n")
                             if 'data' in pmap: 
                                 dump.write(("-"*(maxlen+45))+"\n");
@@ -1201,8 +1200,11 @@ if __name__ == "__main__":
     cuts = CutsFile(args[1],options)
     plots = PlotFile(args[2],options)
     outname  = options.out if options.out else (args[2].replace(".txt","")+".root")
-    if (not options.out) and options.printDir:
-        outname = options.printDir + "/"+os.path.basename(args[2].replace(".txt","")+".root")
+    if options.printDir:
+        if not options.out:
+            outname = options.printDir + "/"+os.path.basename(args[2].replace(".txt","")+".root")
+        else:
+            outname = outname.replace("{O}",options.printDir)
     if os.path.dirname(outname) and not os.path.exists(os.path.dirname(outname)):
         os.system("mkdir -p "+os.path.dirname(outname))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))

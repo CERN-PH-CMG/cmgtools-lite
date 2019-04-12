@@ -9,11 +9,12 @@ fi
 
 Z=0
 if [[ "$1" == "-z" ]]; then
-    echo "# Will also check if rootfiles $F are zombies or not"
+    echo "# Will also check if rootfiles are zombies or not"
     Z=1; shift;
 fi;
 
-what=$1
+what=evVarFriend
+if [[ "$1" != "" ]]; then what=$1; fi
 for F in $(ls ${what}_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | uniq); do
     FILES=$(ls ${F/.root/.chunk*.root} | \
             perl -npe 's/\.chunk(\d+)\./sprintf(".%06d.",$1)/e' | \

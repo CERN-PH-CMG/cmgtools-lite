@@ -15,13 +15,39 @@ idEmuCut: LepGood_idEmu3
 #cvslDen:  LepGood_mvaTTH > 0.75 || (abs(LepGood_pdgId)==13 && LepGood_jetBTagCSV < 0.5426) || (abs(LepGood_pdgId)==11 && (LepGood_mvaIdSpring16GP > -0.5 || abs(LepGood_eta)<1.479))
 dcvsvlDen:  LepGood_mvaTTH > 0.90 ||  ( LepGood_jetBTagDeepCSV < 0.07 && (abs(LepGood_pdgId)==13 && LepGood_segmentCompatibility > 0.3 || abs(LepGood_pdgId)==11 && LepGood_mvaIdFall17noIso > +0.5)) 
 num : LepGood_mediumMuonId > 0 && LepGood_mvaTTH > 0.90 ; Disable=True
+wSel : mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) > 50; Disable=True
 pt10 : LepGood_pt > 10; Disable=True
+conePt10 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 10; Disable=True
+mva075_conePt10 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 10; Disable=True
 conePt15 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15; Disable=True
 conePt20 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 20; Disable=True
 conePt30 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 30; Disable=True
 conePt45 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 45; Disable=True
 conePt65 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 65; Disable=True
 conePt81 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 81; Disable=True
+notConePt100 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) < 100 ; Disable=True
+mva075_notConePt100 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) < 100 ; Disable=True
+trigMu   : ( HLT_FR_Mu3_PFJet40 && LepGood_awayJet_pt > 45 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) < 32  ) || \
+             ( HLT_FR_Mu8  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15  ) || \
+             ( HLT_FR_Mu17 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 32  ) || \
+             ( HLT_FR_Mu20 && LepGood_pt > 20 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 32 ) || \
+             ( HLT_FR_Mu27 && LepGood_pt > 27 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 45 ); Disable=True
+mva075_trigMu   : ( HLT_FR_Mu3_PFJet40 && LepGood_awayJet_pt > 45 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) < 32  ) || \
+             ( HLT_FR_Mu8  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15  ) || \
+             ( HLT_FR_Mu17 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 32  ) || \
+             ( HLT_FR_Mu20 && LepGood_pt > 20 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 32 ) || \
+             ( HLT_FR_Mu27 && LepGood_pt > 27 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 45 ); Disable=True
+trigEl   : ( HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) < 45  ) || \
+           ( HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 25 ) || \
+           ( HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 23 && LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 32 ); Disable=True
+
+mva075_trigEl   : ( HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) < 45  ) || \
+           ( HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 25 ) || \
+           ( HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 23 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 32 ); Disable=True
+
+metFilters : Flag_goodVertices && Flag_globalTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadChargedCandidateFilter $DATA{&& Flag_eeBadScFilter} && Flag_ecalBadCalibFilter; Disable=True
+
+
 awayBMedium : LepGood_awayJet_btagDeepCSV > 0.4941; Disable=True
 awayBTight : LepGood_awayJet_btagDeepCSV > 0.8001; Disable=True
 topVeto : met_pt < 60 && LepGood_awayJet_pt < 100; Disable=True

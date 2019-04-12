@@ -64,7 +64,7 @@ def attrs(filename,process):
         if "QCD"      in process: return { 'Label':'QCD MC, cut',     'Color':ROOT.kPink-5,  '#':1, 'key':'QCD_cut'  }
         if "DY"       in process: return { 'Label':'DY MC, cut',      'Color':ROOT.kPink-5,  '#':1, 'key':'DY_cut'  }
         if "data_sub" in process: return { 'Label':'Data, cut & sub', 'Color':ROOT.kAzure+1, '#':2, 'key':'data_sub' }
-    elif "fitSimND" in filename:
+    elif "fitSimND" in filename or "fitGlobalSimND" in filename:
         if "QCD"      in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2,  '#':0, 'key':'QCD'       }
         if "DY"       in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,    '#':0, 'key':'DY'       }
         if "data_fit" in process: return { 'Label':'Data, sim. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }

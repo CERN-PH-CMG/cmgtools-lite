@@ -25,6 +25,9 @@ class Uncertainty:
         self.normUnc=[None,None]
         self._postProcess = None
         self._nontrivialSelectionChange = False
+        lnU_byname = name.endswith("_lnU")
+        lnU_byextra = extra != None and ('lnU' in extra) and bool(extra['lnU'])
+        if lnU_byname != lnU_byextra: raise RuntimeError("Inconsistent declaration of %s: is it a lnU or not? by name %r, by options %r" % (name,lnU_byname,lnU_byextra))
         self.prepFR()
 
     def prepFR(self):
@@ -66,11 +69,11 @@ class Uncertainty:
         elif self.unc_type=='none':
             pass
         else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
-        if 'RemoveFakeRate' in self.extra:
+        if 'RemoveFakeRate' in self.extra and self.extra['RemoveFakeRate']:
             self._nontrivialSelectionChange = True
             self.removeFR = self.extra['RemoveFakeRate']
-        if 'Normalize' in self.extra:
-            self._postProcess = "Normalize"
+        if 'Normalize' in self.extra and self.extra['Normalize']:
+                self._postProcess = "Normalize"
         if 'DoesNotChangeEventSelection' in self.extra and self.extra['DoesNotChangeEventSelection']:
             self._nontrivialSelectionChange = False
     def isDummy(self):
@@ -92,12 +95,12 @@ class Uncertainty:
             if h0 != 0:
                 if up.Integral(): 
                     up.Scale(h0/up.Integral())
-                else:             
-                    for b in xrange(1,up.GetNbinsX()+1): up.SetBinContent(b, central.GetBinContent(b))
+                else:   
+                    up.Reset(); up.Add(h0) 
                 if down.Integral(): 
                     down.Scale(h0/down.Integral())
                 else:             
-                    for b in xrange(1,up.GetNbinsX()+1): up.SetBinContent(b, central.GetBinContent(b))
+                    down.Reset(); down.Add(h0) 
             else:
                 up.Scale(0); down.Scale(0);
     def isNorm(self):
@@ -148,6 +151,7 @@ class UncertaintyFile:
             self._uncertainty = []
             file = open(txtfileOrUncertainty, "r")
             if not file: raise RuntimeError, "Cannot open "+txtfileOrUncertainty+"\n"
+            aliases={}
             for line in file:
               try:
                 line = line.strip()
@@ -167,12 +171,26 @@ class UncertaintyFile:
                             (key,val) = [f.strip() for f in setting.split("=",1)]
                             extra[key] = eval(val)
                         else: extra[setting] = True
+                l0 = line
+                line = re.sub(r"\$(\w+)", (lambda m : aliases[m.group(1)] if m.group(1) in aliases else m.group(0)), line)
+                #if line != l0: print "After aliases: [%s] -> [%s]" % (l0.strip(), line.strip())
                 field = [f.strip() for f in line.split(':')]
-                if options and getattr(options,'uncertaintiesToExclude',[]):
+                if field[0] == "$alias":
+                    if field[1] in aliases: raise RuntimeError("Duplicate definition of alias $"+field[1])
+                    aliases[field[1]] = "("+field[2]+")"
+                    #print "took alias $%s for (%s)" % (field[1], field[2])
+                    continue
+                if options and getattr(options,'uncertaintiesToSelect',[]):
                     skipme = True
+                    for p0 in options.uncertaintiesToSelect:
+                        for p in p0.split(","):
+                            if re.match(p+"$", field[0]): skipme = False
+                    if skipme: continue
+                if options and getattr(options,'uncertaintiesToExclude',[]):
+                    skipme = False
                     for p0 in options.uncertaintiesToExclude:
                         for p in p0.split(","):
-                            if re.match(p+"$", field[0]): skipMe = True
+                            if re.match(p+"$", field[0]): skipme = True
                     if skipme: continue
                 (name, procmatch, binmatch, unc_type) = field[:4]
                 more_args = field[4:]

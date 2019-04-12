@@ -708,7 +708,7 @@ float fakeRateWeight_3l(float l1fr, int l1pass, float l2fr, int l2pass, float l3
     float ret = -1.0f;
     if (!l1pass) ret *=  -l1fr/(1.0f-l1fr);
     if (!l2pass) ret *=  -l2fr/(1.0f-l2fr);
-    if (!l3pass) ret *=  -l2fr/(1.0f-l2fr);
+    if (!l3pass) ret *=  -l3fr/(1.0f-l3fr);
     if (ret == -1.0f) ret = 0.0f;
     return ret;
 }

@@ -1,3 +1,4 @@
+# vim: syntax=sh
 incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-2lss-sigprompt.txt"
 incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-2lss-convs.txt"
 incl_datafakes  : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Non-prompt", FillColor=ROOT.kBlack, FillStyle=3005, PostFix='_fakes'

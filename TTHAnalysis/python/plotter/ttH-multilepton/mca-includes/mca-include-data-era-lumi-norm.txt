@@ -1,8 +1,8 @@
 eraB_data : DoubleMuon_2017B ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kGreen+2, HideInLegend
-eraC_data : DoubleMuon_2017C_part1+DoubleMuon_2017C_part2 ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend
+eraC_data : DoubleMuon_2017C ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend
 eraD_data : DoubleMuon_2017D ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend
-eraE_data : DoubleMuon_2017E_part1+DoubleMuon_2017E_part2 ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend
-eraF_data : DoubleMuon_2017F_part1+DoubleMuon_2017F_part2+DoubleMuon_2017F_part3 ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kOrange, HideInLegend
+eraE_data : DoubleMuon_2017E ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend
+eraF_data : DoubleMuon_2017F ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kOrange, HideInLegend
 eraB_data : DoubleEG_2017B ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kGreen+2, HideInLegend
 eraC_data : DoubleEG_2017C ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend
 eraD_data : DoubleEG_2017D ; FakeRate="ttH-multilepton/fr-era-lumi-norm.txt", FillColor=ROOT.kCyan, HideInLegend

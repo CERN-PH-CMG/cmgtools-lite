@@ -1,5 +1,5 @@
 #!/bin/bash
-what=lepMVAFriend
+what=evVarFriend
 if [[ "$1" != "" ]]; then what=$1; fi
 for F in $(ls ${what}_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | uniq); do
     if test -f $F; then echo "Merged file $F already exists. skipping."; continue; fi

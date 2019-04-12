@@ -47,10 +47,19 @@ class Data_pull(object):
         self.B_min = B_min
     def __call__(self, mca, report, row=-1):
         tots = _make_totals(mca, report, row)
-        return (data - Ws*tots['S'][0] - self.Wb*tots['B'][0])/sqrt(
+        return (tots['D'] - Ws*tots['S'][0] - self.Wb*tots['B'][0])/sqrt(
             self.Wb * (max(tots['B'][0], self.B_min) + self.Wsyst*(tots['B'][1]**2 + tots['B'][2]**2) ) +
             self.Ws * (    tots['S'][0]              + self.Wsyst*(tots['S'][1]**2 + tots['S'][2]**2) )  
         )
+
+class Data_sf(object):
+    def __init__(self, Ws=1, Wb=1):
+        self.Ws = Ws
+        self.Wb = Wb
+    def __call__(self, mca, report, row=-1):
+        tots = _make_totals(mca, report, row)
+        totmc = self.Ws*tots['S'][0] + self.Wb*tots['B'][0]
+        return (tots['D'] / totmc) if totmc > 0 else 1 
 
 
 FOM_BY_NAME = {
@@ -62,4 +71,5 @@ FOM_BY_NAME = {
     'pull_B':  Data_pull(0,1,1),
     'pull_S':  Data_pull(1,0,1),
     'pull_SB': Data_pull(1,1,1),
+    'sf': Data_sf(1,1),
 }

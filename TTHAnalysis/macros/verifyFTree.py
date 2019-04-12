@@ -43,4 +43,8 @@ for dset in dsets:
     tot_ev += n_f
     tot_comp += 1
 
-if allok: print '--- ALL OK --- (%d components, %d events)'%(tot_comp,tot_ev)
+if allok:
+    print '--- ALL OK --- (%d components, %d events)'%(tot_comp,tot_ev)
+    sys.exit(0)
+else:
+    sys.exit(1)

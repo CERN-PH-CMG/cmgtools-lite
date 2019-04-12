@@ -1,24 +1,25 @@
 # vim: syntax=sh
 # * ; LegendCutoff=1e-5
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+era: hashBasedRunPeriod2017(isData,run,lumi,evt) : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle = "2017 data taking era", Legend='TR', MoreY=2.0,  xBinLabels="B\,C\,D\,E\,F"
 
-debug_era : dTakingEra : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle = "2016 data taking era", IncludeOverflows=False, MoreY=1.5, xBinLabels="B\,C\,D\,E\,F\,G\,H"
-debug_runNr : if3(isData,run,-1) : 395,273150,275125; XTitle = "Run number (2015D only)", IncludeOverflows=False
+debug_nL1PrefiringCandidate : Sum$(abs(genLep_pdgId)==11 && genLep_pt>25 && abs(genLep_eta)>2.4 && abs(genLep_eta)<3.0) + Sum$(abs(genLepFromTau_pdgId)==11 && genLepFromTau_pt>25 && abs(genLepFromTau_eta)>2.4 && abs(genLepFromTau_eta)<3.0) : [-0.5,0.5,1.5,2.5]; XTitle = "nL1PrefiringCandidate", Legend='TR', Logy
+debug_higgsDecayMode : GenHiggsDecayMode : 30,-0.5,29.5 ; XTitle="Decay mode", Logy, MoreY=20
 
-debug_triggerFired_1e : HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
-debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
-debug_triggerFired_3e : HLT_TripleEl : 2,-0.5,1.5; XTitle = "Fired 3e trigger"
-debug_triggerFired_em : HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired em trigger"
-debug_triggerFired_1m : HLT_BIT_HLT_IsoMu24_v || HLT_BIT_HLT_IsoTkMu24_v || HLT_BIT_HLT_IsoMu22_eta2p1_v || HLT_BIT_HLT_IsoTkMu22_eta2p1_v : 2,-0.5,1.5; XTitle = "Fired 1m trigger"
-debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
-debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
-debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
-debug_scaleFactor_lepton_2l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2) : 120,0.6,1.4; XTitle="lepSF 2l"
-debug_scaleFactor_lepton_3l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3) : 120,0.6,1.4; XTitle="lepSF 3l"
-debug_scaleFactor_trigger_2l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],2) : 120,0.88,1.12; XTitle="triggerSF 2l"
-debug_scaleFactor_trigger_3l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3) : 120,0.88,1.12; XTitle="triggerSF 3l"
-debug_scaleFactor_btag : (nTrueInt>-1)*eventBTagSF : 120,0.6,1.4; XTitle="btagSF"
-debug_scaleFactor_PU : puw2016_nTrueInt_36fb(nTrueInt) : 120,0.6,1.4; XTitle="PU weight"
+#debug_triggerFired_1e : HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
+#debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
+#debug_triggerFired_3e : HLT_TripleEl : 2,-0.5,1.5; XTitle = "Fired 3e trigger"
+#debug_triggerFired_em : HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired em trigger"
+#debug_triggerFired_1m : HLT_BIT_HLT_IsoMu24_v || HLT_BIT_HLT_IsoTkMu24_v || HLT_BIT_HLT_IsoMu22_eta2p1_v || HLT_BIT_HLT_IsoTkMu22_eta2p1_v : 2,-0.5,1.5; XTitle = "Fired 1m trigger"
+#debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
+#debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
+#debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
+#debug_scaleFactor_lepton_2l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2) : 120,0.6,1.4; XTitle="lepSF 2l"
+#debug_scaleFactor_lepton_3l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3) : 120,0.6,1.4; XTitle="lepSF 3l"
+#debug_scaleFactor_trigger_2l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],2) : 120,0.88,1.12; XTitle="triggerSF 2l"
+#debug_scaleFactor_trigger_3l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3) : 120,0.88,1.12; XTitle="triggerSF 3l"
+#debug_scaleFactor_btag : (nTrueInt>-1)*eventBTagSF : 120,0.6,1.4; XTitle="btagSF"
+#debug_scaleFactor_PU : puw2016_nTrueInt_36fb(nTrueInt) : 120,0.6,1.4; XTitle="PU weight"
 
 debug_badMuonFilter : Flag_badMuonMoriond2017 || Flag_badCloneMuonMoriond2017 : 2,-0.5,1.5; XTitle = "Bad muon event", Logy
 
@@ -65,7 +66,7 @@ nT_3lep_miniIso: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood
 3lep_worseIso:	max(LepGood1_miniRelIso,max(LepGood2_miniRelIso,LepGood3_miniRelIso))				: 40,0,0.2; XTitle="Worse miniIso in 3l"
 3lep_worseSip:	max(LepGood1_sip3d,max(LepGood2_sip3d,LepGood3_sip3d))				                : 40,0,8; XTitle="Worse sip3d in 3l"
 3lep_worseMVA:	min(LepGood1_mvaTTH,min(LepGood2_mvaTTH,LepGood3_mvaTTH))					: 32,0.6,1; XTitle="Worse lepMVA in 3l", Legend='TL'
-3lep_mtW: 	(abs(mZ1-mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)) < 0.01)*mt_2(LepGood3_pt,LepGood3_phi,met,met_phi) + (abs(mZ1-mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood3_pt,LepGood3_eta,LepGood3_phi,LepGood3_mass)) < 0.01)*mt_2(LepGood2_pt,LepGood2_phi,met,met_phi) + (abs(mZ1-mass_2(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass,LepGood3_pt,LepGood3_eta,LepGood3_phi,LepGood3_mass)) < 0.01)*mt_2(LepGood1_pt,LepGood1_phi,met,met_phi) : 36,0,180 ; XTitle="M_{T}(W#rightarrowlv) in 3l", Legend='TR'
+3lep_mtW: 	bestMTW3l: 40,0,240 ; XTitle="M_{T}(W#rightarrowlv) in 3l", Legend='TR'
 3lep_m3l: mass_3_cheap(LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,LepGood2_phi-LepGood1_phi,LepGood3_pt,LepGood3_eta,LepGood3_phi-LepGood1_phi): 40,0,400; XTitle="M_{3l} (GeV)"
 3lep_catIndex: ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25) : [10.5,11.5,12.5,13.5,14.5]; XTitle="", xBinLabels="#splitline{b-loose }{#Sigmaq < 0}\,#splitline{b-loose}{#Sigmaq > 0}\,#splitline{b-tight}{#Sigmaq < 0}\,#splitline{b-tight}{#Sigmaq > 0}", MoreY=2.0
 
@@ -90,11 +91,12 @@ nTauFO:	    	nTauFO					: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau FO\, p_{T} > 20 Ge
 htJet25j:   	htJet25j 				: 40,0,1000 ; XTitle="H_{T}(jet p_{T} > 25) (GeV)"
 mhtJet25:   	mhtJet25 				: 40,0,400 ; XTitle="H_{T}^{miss}(p_{T} > 25) (GeV)"
 met: 		met_pt					: 40,0,400 ; XTitle="E_{T}^{miss} (GeV)"
-metLD:		met_pt*0.00397 + mhtJet25*0.00265  	: 40,0,2; XTitle="MET LD"
+metLD:		met_pt*0.6 + mhtJet25*0.4  	        : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
 minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
 mZ1:		mZ1					: 80,50,130; XTitle="Best Z candidate mass (GeV)"
+mH1mm:		mH1mm					: 60,110,140; XTitle="Best H #rightarrow #mu #mu candidate mass (GeV)", IncludeOverflows=False, MoreY=2.0
 nVert:		nVert					: 240,0.5,60.5; XTitle="N_{vtx}"
 
 
@@ -103,23 +105,29 @@ nVert:		nVert					: 240,0.5,60.5; XTitle="N_{vtx}"
 
 kinMVA_2lss_ttbar: kinMVA_2lss_ttbar : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TR'
 kinMVA_2lss_ttbar_withBDTv8: kinMVA_2lss_ttbar_withBDTv8 : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TL'
+kinMVA_2lss_ttbar_withBDTrTT: kinMVA_2lss_ttbar_withBDTrTT : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TL'
 kinMVA_2lss_ttV: kinMVA_2lss_ttV : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'
-kinMVA_2lss_ttV_withHj: kinMVA_2lss_ttV_withHj : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'
+kinMVA_2lss_ttV_withHj_v8: kinMVA_2lss_ttV_withHj_v8 : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'
+kinMVA_2lss_ttV_withHj_rTT: kinMVA_2lss_ttV_withHj_rTT : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'
 
-kinMVA_2lss_bins8_ourBinning: OurBin2l(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5]; XTitle="BDT (ttH\,tt/ttV) bin", XNDiv=8, MoreY=2.0, Legend='TR'
-kinMVA_2lss_bins8_withBDTv8_withHj_ourBinning: OurBin2l(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV_withHj) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5]; XNDiv=8, XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
-
+kinMVA_2lss_bins11_binned: OurBin2l(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]; XTitle="BDT (ttH\,tt/ttV) bin", XNDiv=11, MoreY=2.0, Legend='TR'
+kinMVA_2lss_bins11_withBDTv8_withHj_binned: OurBin2l(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV_withHj_v8) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]; XNDiv=11, XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
+kinMVA_2lss_bins11_withBDTrTT_withHj_binned: OurBin2l(kinMVA_2lss_ttbar_withBDTrTT,kinMVA_2lss_ttV_withHj_rTT) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]; XNDiv=11, XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
 
 kinMVA_3l_ttbar: kinMVA_3l_ttbar : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TR'
+kinMVA_3l_ttbar_withMEM: kinMVA_3l_ttbar_withMEM : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TR'
 kinMVA_3l_ttV: kinMVA_3l_ttV : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TL'
 kinMVA_3l_ttV_withMEM: kinMVA_3l_ttV_withMEM : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'
 
-kinMVA_3l_bins5_ourBinning: OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, xBinLabels="1\,2\,3\,4\,5", Legend='TR'
-kinMVA_3l_bins5_withMEM_ourBinning: OurBin3lMEM(kinMVA_3l_ttbar,kinMVA_3l_ttV_withMEM) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, xBinLabels="1\,2\,3\,4\,5", Legend='TR'
+kinMVA_3l_bins6_binned: OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, xBinLabels="1\,2\,3\,4\,5\,6", Legend='TR'
+kinMVA_3l_bins6_withMEM_binned: OurBin3l(kinMVA_3l_ttbar_withMEM,kinMVA_3l_ttV_withMEM) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, xBinLabels="1\,2\,3\,4\,5\,6", Legend='TR'
 
-kinMVA_2lss_catbinIndex: 8*(ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)-1)+OurBin2l(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV_withHj) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5, 30.5, 31.5, 32.5, 33.5, 34.5, 35.5, 36.5, 37.5, 38.5, 39.5, 40.5, 41.5, 42.5, 43.5, 44.5, 45.5, 46.5, 47.5, 48.5, 49.5, 50.5, 51.5, 52.5, 53.5, 54.5, 55.5, 56.5, 57.5, 58.5, 59.5, 60.5, 61.5, 62.5, 63.5, 64.5, 65.5, 66.5, 67.5, 68.5, 69.5, 70.5, 71.5, 72.5, 73.5, 74.5, 75.5, 76.5, 77.5, 78.5, 79.5, 80.5]; XTitle="Category x BDT bin\, 2lss"
-kinMVA_3l_catbinIndex: 5*(ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)-11)+OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5]; XTitle="Category x BDT bin\, 3l"
-kinMVA_3l_catbinIndex_withMEM: 5*(ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)-11)+OurBin3lMEM(kinMVA_3l_ttbar,kinMVA_3l_ttV_withMEM) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5]; XTitle="Category x BDT bin\, 3l"
+kinMVA_2lss_catbinIndex: 11*(ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)-1)+OurBin2l(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5, 30.5, 31.5, 32.5, 33.5, 34.5, 35.5, 36.5, 37.5, 38.5, 39.5, 40.5, 41.5, 42.5, 43.5, 44.5, 45.5, 46.5, 47.5, 48.5, 49.5, 50.5, 51.5, 52.5, 53.5, 54.5, 55.5, 56.5, 57.5, 58.5, 59.5, 60.5, 61.5, 62.5, 63.5, 64.5, 65.5, 66.5, 67.5, 68.5, 69.5, 70.5, 71.5, 72.5, 73.5, 74.5, 75.5, 76.5, 77.5, 78.5, 79.5, 80.5, 81.5, 82.5, 83.5, 84.5, 85.5, 86.5, 87.5, 88.5, 89.5, 90.5, 91.5, 92.5, 93.5, 94.5, 95.5, 96.5, 97.5, 98.5, 99.5, 100.5, 101.5, 102.5, 103.5, 104.5, 105.5, 106.5, 107.5, 108.5, 109.5, 110.5]; XTitle="Category x BDT bin\, 2lss"
+kinMVA_2lss_catbinIndex_withBDTv8_withHj: 11*(ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)-1)+OurBin2l(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV_withHj_v8) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5, 30.5, 31.5, 32.5, 33.5, 34.5, 35.5, 36.5, 37.5, 38.5, 39.5, 40.5, 41.5, 42.5, 43.5, 44.5, 45.5, 46.5, 47.5, 48.5, 49.5, 50.5, 51.5, 52.5, 53.5, 54.5, 55.5, 56.5, 57.5, 58.5, 59.5, 60.5, 61.5, 62.5, 63.5, 64.5, 65.5, 66.5, 67.5, 68.5, 69.5, 70.5, 71.5, 72.5, 73.5, 74.5, 75.5, 76.5, 77.5, 78.5, 79.5, 80.5, 81.5, 82.5, 83.5, 84.5, 85.5, 86.5, 87.5, 88.5, 89.5, 90.5, 91.5, 92.5, 93.5, 94.5, 95.5, 96.5, 97.5, 98.5, 99.5, 100.5, 101.5, 102.5, 103.5, 104.5, 105.5, 106.5, 107.5, 108.5, 109.5, 110.5]; XTitle="Category x BDT bin\, 2lss"
+kinMVA_2lss_catbinIndex_withBDTrTT_withHj: 11*(ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)-1)+OurBin2l(kinMVA_2lss_ttbar_withBDTrTT,kinMVA_2lss_ttV_withHj_rTT) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5, 30.5, 31.5, 32.5, 33.5, 34.5, 35.5, 36.5, 37.5, 38.5, 39.5, 40.5, 41.5, 42.5, 43.5, 44.5, 45.5, 46.5, 47.5, 48.5, 49.5, 50.5, 51.5, 52.5, 53.5, 54.5, 55.5, 56.5, 57.5, 58.5, 59.5, 60.5, 61.5, 62.5, 63.5, 64.5, 65.5, 66.5, 67.5, 68.5, 69.5, 70.5, 71.5, 72.5, 73.5, 74.5, 75.5, 76.5, 77.5, 78.5, 79.5, 80.5, 81.5, 82.5, 83.5, 84.5, 85.5, 86.5, 87.5, 88.5, 89.5, 90.5, 91.5, 92.5, 93.5, 94.5, 95.5, 96.5, 97.5, 98.5, 99.5, 100.5, 101.5, 102.5, 103.5, 104.5, 105.5, 106.5, 107.5, 108.5, 109.5, 110.5]; XTitle="Category x BDT bin\, 2lss"
+
+kinMVA_3l_catbinIndex: 6*(ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)-11)+OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5]; XTitle="Category x BDT bin\, 3l"
+kinMVA_3l_catbinIndex_withMEM: 6*(ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)-11)+OurBin3l(kinMVA_3l_ttbar_withMEM,kinMVA_3l_ttV_withMEM) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5]; XTitle="Category x BDT bin\, 3l"
 
 kinMVA_input_max_Lep_eta: max(abs(LepGood1_eta),abs(LepGood2_eta)) : 40,0,2.5 ; XTitle="max lepton |#eta|"
 #kinMVA_input_numJets: nJet25_Recl : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="nJets"
@@ -132,25 +140,47 @@ kinMVA_input_MT_met_lep1: MT_met_lep1 : 40,0,400; XTitle="M_{T} (E_{T}^{miss}\,l
 kinMVA_input_mhtJet25: mhtJet25_Recl : 56,0,350; XTitle="H_{T}^{miss} (GeV)"
 kinMVA_input_met: min(met_pt, 400) : 56,0,350; XTitle="E_{T}^{miss} (GeV)"
 kinMVA_input_avg_dr_jet: avg_dr_jet : 40,0.5,4; XTitle="<#DeltaR(jet\,jet)>"
-kinMVA_input_BDTv8_eventReco_mvaValue : BDTv8_eventReco_mvaValue : 80,-0.4,1; XTitle="hadronic top tagger BDT score", Legend="TL"
-kinMVA_input_BDTv8_eventReco_Hj_score : BDTv8_eventReco_Hj_score : 40,-1,1 ; XTitle="H #rightarrow lv+jet(s) tagger BDT score", MoreY=2.0, Legend='TR'
-#kinMVA_input_BDTv8_eventReco_Hjj_score : BDTv8_eventReco_Hjj_score : 40,-1,1 ; XTitle="H #rightarrow lvjj tagger BDT score", MoreY=2.0, Legend='TR'
+kinMVA_input_BDTv8_eventReco_mvaValue : BDTv8_eventReco_mvaValue : 80,-1,1; XTitle="hadronic top tagger BDT score", Legend="TL"
+kinMVA_input_BDTv8_eventReco_Hj_score : BDTv8_eventReco_Hj_score : 80,-1,1 ; XTitle="H #rightarrow lv+jet(s) tagger BDT score", MoreY=2.0, Legend='TR'
+kinMVA_input_BDTv8_eventReco_Hjj_score : BDTv8_eventReco_Hjj_score : 80,-1,1 ; XTitle="H #rightarrow lvjj tagger BDT score", MoreY=2.0, Legend='TR'
 #kinMVA_input_BDTv8_eventReco_bJet_fromLepTop_CSV : BDTv8_eventReco_bJet_fromLepTop_CSV : 40,-0.4,1; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_bJet_fromHadTop_CSV : BDTv8_eventReco_bJet_fromHadTop_CSV : 40,-0.4,1; XTitle="BDTv8 input", Legend="TL"
-#kinMVA_input_BDTv8_eventReco_HadTop_pT : BDTv8_eventReco_HadTop_pT : 40,0,300; XTitle="BDTv8 input", Legend="TL"
-#kinMVA_input_BDTv8_eventReco_W_fromHadTop_mass : BDTv8_eventReco_W_fromHadTop_mass : 40,0,200; XTitle="BDTv8 input", Legend="TL"
-#kinMVA_input_BDTv8_eventReco_HadTop_mass : BDTv8_eventReco_HadTop_mass : 40,0,400; XTitle="BDTv8 input", Legend="TL"
+kinMVA_input_BDTv8_eventReco_HadTop_pT : BDTv8_eventReco_HadTop_pT : 80,0,400; XTitle="BDTv8 input", Legend="TL"
+kinMVA_input_BDTv8_eventReco_W_fromHadTop_mass : BDTv8_eventReco_W_fromHadTop_mass : 80,0,200; XTitle="BDTv8 input", Legend="TL"
+kinMVA_input_BDTv8_eventReco_HadTop_mass : BDTv8_eventReco_HadTop_mass : 80,0,300; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_lep_ptRatio_fromTop_fromHig : BDTv8_eventReco_lep_ptRatio_fromTop_fromHig : 40,0,4; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_dR_lep_fromTop_bJet_fromLepTop : BDTv8_eventReco_dR_lep_fromTop_bJet_fromLepTop : 40,0,4; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_dR_lep_fromTop_bJet_fromHadTop : BDTv8_eventReco_dR_lep_fromTop_bJet_fromHadTop : 40,0,4; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_dR_lep_fromHig_bJet_fromLepTop : BDTv8_eventReco_dR_lep_fromHig_bJet_fromLepTop : 40,0,4; XTitle="BDTv8 input", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_X_mass : BDTv8_eventReco_X_mass : 160,0,1600; XTitle="Reconstructed M_{a}^{vis} (GeV)", Legend="TR"
 #kinMVA_input_BDTv8_eventReco_MT_HadLepTop_MET: mt_2(pt_2(BDTv8_eventReco_HadTop_pT,BDTv8_eventReco_HadTop_phi,BDTv8_eventReco_LepTop_pT,BDTv8_eventReco_LepTop_phi),phi_2(BDTv8_eventReco_HadTop_pT,BDTv8_eventReco_HadTop_phi,BDTv8_eventReco_LepTop_pT,BDTv8_eventReco_LepTop_phi),met_pt,met_phi) : 160,0,1600; XTitle="Reconstructed M_{T}(a^{vis}\,E_{T}^{miss}) (GeV)", Legend="TR"
-kinMVA_3l_input_MEM_LR : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2)) : 60,0,40; XTitle="MEM ln(LR)", Legend="TR"
-#kinMVA_3l_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-100,0; XTitle="MEM_TTHfl weight", Legend="TL"
-#kinMVA_3l_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-100,0; XTitle="MEM_TTHsl weight", Legend="TR"
-#kinMVA_3l_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-100,0; XTitle="MEM_TTW weight", Legend="TL"
-#kinMVA_3l_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-100,0; XTitle="MEM_TTLL weight", Legend="TR"
+kinMVA_3l_input_MEM_LR_old : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2)) : 60,0,40; XTitle="MEM ln(LR)\, old", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_LR : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTH_mean*(MEM_TTH_mean<1)))) : 60,0,40; XTitle="MEM ln(LR)", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTbarLR : -log((MEM_TTbarfl*(MEM_TTbarfl<1)+MEM_TTbarsl*(MEM_TTbarsl<1)) / (MEM_TTH_mean*(MEM_TTH_mean<1))) : 60,-30,10; XTitle="MEM ln(LR) vs ttbar", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-90,0; XTitle="MEM_TTHfl weight", Legend="TL", MoreY=1.7
+kinMVA_3l_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-90,0; XTitle="MEM_TTHsl weight", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTH : min(0,log(max(3.72e-44,MEM_TTH_mean*(MEM_TTH_mean<1)))) : 60,-90,0; XTitle="MEM_TTH weight", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-90,0; XTitle="MEM_TTW weight", Legend="TL", MoreY=1.7
+kinMVA_3l_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-90,0; XTitle="MEM_TTLL weight", Legend="TR", MoreY=1.7
+kinMVA_3l_input_MEM_TTbarfl : min(0,log(max(3.72e-44,MEM_TTbarfl*(MEM_TTbarfl<1)))) : 60,-90,0; XTitle="MEM_TTbarfl weight", Legend="TL", MoreY=1.7
+kinMVA_3l_input_MEM_TTbarsl : min(0,log(max(3.72e-44,MEM_TTbarsl*(MEM_TTbarsl<1)))) : 60,-90,0; XTitle="MEM_TTbarsl weight", Legend="TR", MoreY=1.7
+
+kinMVA_input_BDTrTT_eventReco_mvaValue : BDTrTT_eventReco_mvaValue : 80,-1,1; XTitle="BDT_rTT mvaValue"
+kinMVA_input_BDTrTT_eventReco_HadTop_pt : BDTrTT_eventReco_HadTop_pt : 80,0,400; XTitle="BDT_rTT HadTop_pt"
+kinMVA_input_BDTrTT_eventReco_HadTop_mass : BDTrTT_eventReco_HadTop_mass : 80,0,300; XTitle="BDT_rTT HadTop_mass"
+kinMVA_input_BDTrTT_eventReco_W_fromHadTop_mass : BDTrTT_eventReco_W_fromHadTop_mass : 80,0,200; XTitle="BDT_rTT W_fromHadTop_mass"
+kinMVA_input_BDTrTT_eventReco_Hj_score : BDTrTT_eventReco_Hj_score : 80,-1,1 ; XTitle="BDT_rTT Hj score", MoreY=2.0, Legend='TR'
+kinMVA_input_BDTrTT_eventReco_Hjj_score : BDTrTT_eventReco_Hjj_score : 80,-1,1 ; XTitle="BDT_rTT Hjj score", MoreY=2.0, Legend='TR'
+
+kinMVA_input_BDThttTT_eventReco_mvaValue : BDThttTT_eventReco_mvaValue : 80,-1,1; XTitle="BDT_httTT mvaValue"
+kinMVA_input_BDThttTT_eventReco_mvaValue_transform : 1.0/(1.0+TMath::Sqrt((1.0-BDThttTT_eventReco_mvaValue)/(1.0+BDThttTT_eventReco_mvaValue))) : 80,0,1; XTitle="BDT_httTT mvaValue transform"
+kinMVA_input_BDThttTT_eventReco_HadTop_pt : BDThttTT_eventReco_HadTop_pt : 80,0,400; XTitle="BDT_httTT HadTop_pt"
+kinMVA_input_BDThttTT_eventReco_HadTop_mass : BDThttTT_eventReco_HadTop_mass : 80,0,300; XTitle="BDT_httTT HadTop_mass"
+kinMVA_input_BDThttTT_eventReco_Hj_score : BDThttTT_eventReco_Hj_score : 80,-1,1 ; XTitle="BDT_httTT Hj score", MoreY=2.0, Legend='TR'
+kinMVA_input_BDThttTT_eventReco_Hjj_score : BDThttTT_eventReco_Hjj_score : 80,-1,1 ; XTitle="BDT_httTT Hjj score", MoreY=2.0, Legend='TR'
+
+SVA_2lss_mll : mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass) : [10.0,50.0,70.0,80.0,90.0,110.0,140.0,190.0,400.0] ; XTitle="m(ll) (GeV)", MoreY=2.0, Legend='TR', Density=True
+SVA_3l_m3l: mass_3_cheap(LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,LepGood2_phi-LepGood1_phi,LepGood3_pt,LepGood3_eta,LepGood3_phi-LepGood1_phi): [26.0,107.0,146.0,193.0,261.0,400.0] ; XTitle="M_{3l} (GeV)", MoreY=2.0, Legend='TR', Density=True
 
 nLepFO:      nLepFO    : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of fakeable leptons", XNDdiv=505
 nLepTight:   nLepTight : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of tight leptons", XNDdiv=505

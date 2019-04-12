@@ -8,8 +8,10 @@ def _h1NormWithError(h,normSyst):
     stat2 = sum([h.GetBinError(b)**2 for b in xrange(1,h.GetNbinsX()+1)])
     return (y, sqrt(stat2 + (y*normSyst)**2))
 
-def addPolySystBands(tlist,amplitude,order):
-    ref = tlist.At(0)
+def addPolySystBands(hwn,amplitude,order,namePattern="{name}_pol{order}", norm=True):
+    ref = hwn.getCentral()
+    ytot = ref.Integral()
+    if (ytot == 0): return 
     funcs = {
         1: lambda u : 2*(u-0.5),
         2: lambda u : 8*((u-0.5)**2) - 1,
@@ -22,10 +24,16 @@ def addPolySystBands(tlist,amplitude,order):
         r = 1 + amplitude * funcs[order]((xval-xmin)/(xmax-xmin))
         hi.SetBinContent(b, ref.GetBinContent(b) * r)
         lo.SetBinContent(b, ref.GetBinContent(b) / r)
-    tlist.Add(hi)
-    tlist.Add(lo)
-def addStretchBands(tlist,amplitude,fineSlices=100):
-    ref = tlist.At(0)
+    if norm:
+        hi.Scale(ytot/hi.Integral())
+        lo.Scale(ytot/lo.Integral())
+    name = namePattern.format(name=hwn.GetName(), order=order)
+    hwn.addVariation(name, 'up', hi, clone=False)
+    hwn.addVariation(name, 'dn', lo, clone=False)
+def addStretchBands(hwn,amplitude,fineSlices=100,namePattern="{name}_stretch", norm=True):
+    ref = hwn.getCentral()
+    ytot = ref.Integral()
+    if (ytot == 0): return 
     ax = ref.GetXaxis() 
     xmin, xmax = ax.GetXmin(), ax.GetXmax()
     hi = ref.Clone(); hi.SetDirectory(None)
@@ -39,27 +47,12 @@ def addStretchBands(tlist,amplitude,fineSlices=100):
             x = x0 + dx*fineSlice
             hi.Fill(x*(1+amplitude), w)
             lo.Fill(x*(1-amplitude), w)
-    tlist.Add(hi)
-    tlist.Add(lo)
-def addBbB(tlist,ycutoff,relcutoff,verbose=False):
-    ret = []
-    ref = tlist.At(0)
-    ytot = ref.Integral()
-    if (ytot == 0): return ret
-    for b in xrange(1,ref.GetNbinsX()+1):
-        y, e = ref.GetBinContent(b), ref.GetBinError(b)
-        if y/ytot < ycutoff: continue
-        if e/y    < relcutoff: continue
-        if e < 0.2*sqrt(y+1): continue
-        if verbose: print "\tbin %3d: yield %9.1f +- %9.1f (rel %.5f), rel err. %.4f, poisson %.1f" % (b, y, e, y/ytot, e/y if y else 1, sqrt(y+1))
-        hi = ref.Clone(); hi.SetDirectory(None)
-        lo = ref.Clone(); lo.SetDirectory(None)
-        hi.SetBinContent(b, y+e)
-        lo.SetBinContent(b, y*y/(y+e))
-        tlist.Add(hi)
-        tlist.Add(lo)
-        ret.append("bin%d" % b)
-    return ret
+    if norm:
+        hi.Scale(ytot/hi.Integral())
+        lo.Scale(ytot/lo.Integral())
+    name = namePattern.format(name=hwn.GetName())
+    hwn.addVariation(name, 'up', hi, clone=False)
+    hwn.addVariation(name, 'dn', lo, clone=False)
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -76,6 +69,11 @@ if __name__ == "__main__":
     parser.add_option("--fcut", dest="fcut", default=None, nargs=2, type='float', help="Cut in the discriminating variable");
     parser.add_option("--fqcd-ranges", dest="fqcdRanges", default=(0.0, 20.0, 70.0, 120.0), nargs=4, type='float', help="Boundaries for the fqcd method");
     parser.add_option("--same-nd-templates", dest="sameNDTemplates", action="store_true", default=False, help="Just make the first histograms and stop");
+    parser.add_option("--kappaSig", dest="kappaSig", type="float", default=1.5, help="Lognormal Kappa for the signal in fits (if constraints are on)");
+    parser.add_option("--kappaBkg", dest="kappaBkg", type="float", default=1.2, help="Lognormal Kappa for the background in fits (if constraints are on)");
+    parser.add_option("--sigmaFBkg", dest="sigmaFBkg", type="float", default=1.0, help="Gaussian constrain for background fake rate in fits (if constraints are on)");
+    parser.add_option("--constrain", dest="constrain", default=[], action="append", help="Put constraints on signal or background yields (theta_sig, theta_bkg) or background rates (fbkg), can use multiple times");
+    parser.add_option("--regularize", dest="regularize", default=[], action="append", nargs=2, help="Put a constraint on the bin-by-bin difference of a given parameter (for fitGlobalSimND)");
     (options, args) = parser.parse_args()
     mca  = MCAnalysis(args[0],options)
     procs = mca.listProcesses()
@@ -99,19 +97,7 @@ if __name__ == "__main__":
         if xspec.name == fitvarname: continue
         for fspec in xvars:
             if fspec.name != fitvarname: continue
-            if xspec.bins[0] == "[":
-                if fspec.bins[0] == "[":        
-                    fbind = fspec.bins
-                else:
-                    (nbins,fmin,fmax) = map(float, fspec.bins.split(','))
-                    fbins = "[" + ",".join(map(str, [fmin+i*(fmax-fmin)/nbins for i in xrange(0,int(nbins+1))]))  + "]"
-                bins2d = xspec.bins + "*" + fbins
-            elif fspec.bins[0] == "[":
-                (nbins,xmin,xmax) = map(float, xspec.bins.split(','))
-                xbins = "[" + ",".join(map(str, [xmin+i*(xmax-xmin)/nbins for i in xrange(0,int(nbins+1))])) + "]"
-                bins2d = xbins + "*" + fspec.bins
-            else:
-                bins2d = xspec.bins + "," + fspec.bins
+            bins2d = makeBinningProductString(xspec.bins, fspec.bins)
             pspec = PlotSpec("%s_%s"  % (fspec.name, xspec.name), "%s:%s" % (fspec.expr, xspec.expr), bins2d, xspec.opts) 
             pspec.xvar = xspec
             pspec.fvar = fspec
@@ -200,6 +186,14 @@ if __name__ == "__main__":
                 for (p,h) in report.iteritems():
                     if gnorms[p]['pre'] != gnorms[p]['post'] and gnorms[p]['post'] > 0:
                         h.Scale(gnorms[p]['post']/gnorms[p]['pre'])
+            if options.algo == "fitGlobalSimND":
+                w = ROOT.RooWorkspace("w")
+                ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+                print "factory(", "num[%s]" % (",".join(["bin%d_%s"%(ix,z) for ix in xrange(1,projection.GetNbinsX()+1) for z in ("pass","fail")])), ")"
+                w.factory("num[%s]" % (",".join(["bin%d_%s"%(ix,z) for ix in xrange(1,projection.GetNbinsX()+1) for z in ("pass","fail")])))
+                globalReportND, globalFqcd, globalFbkg, globalDataHists = {}, {}, {}, {}
+                combiner = None
+                roofit = None
             for ix in xrange(1,projection.GetNbinsX()+1):
                 bxname = "_bin_%g_%g" % (projection.GetXaxis().GetBinLowEdge(ix),projection.GetXaxis().GetBinUpEdge(ix))
                 xval = projection.GetXaxis().GetBinCenter(ix)
@@ -382,41 +376,37 @@ if __name__ == "__main__":
                                           df, df)
                     # == restore settings ===
                     options.yrange = ybackup; options.showRatio = rbackup; options.xcut = xcbackup
-                elif options.algo == "fitSimND":
-                    w = ROOT.RooWorkspace("w")
-                    ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
-                    w.factory("num[pass=2,fail=1]")
-                    hist = freport_num_den["pass"]["data"]
-                    w.factory("f[%g,%g]" % (hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax()))
-                    fedges =  [ hist.GetXaxis().GetBinLowEdge(i) for i in xrange(1,hist.GetNbinsX()+1) ]
-                    fedges += [ hist.GetXaxis().GetXmax() ]
-                    w.var("f").setBinning(ROOT.RooBinning(hist.GetNbinsX(),array('d',fedges)))
+                elif options.algo in ("fitSimND", "fitGlobalSimND"):
+                    if options.algo == "fitGlobalSimND":
+                        xprefix = "bin%d_" % ix
+                    elif options.algo == "fitSimND":
+                        xprefix = ""
+                        w = ROOT.RooWorkspace("w")
+                        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+                        w.factory("num[pass=2,fail=1]")
+                    reportND = {}
+                    nuis = {}
+                    for k,o in ('sig',options.shapeSystSig),('bkg',options.shapeSystBkg):
+                        nuis[k] = [ (f[:1],float(f[2:])) for f in o.split(",") ]
                     Ndata = sum(freport_num_den[i]["data"].Integral() for i in ("pass", "fail"))
                     Newk  = sum(freport_num_den[i][p].Integral() for i in ("pass", "fail") for p in mca.listBackgrounds() if p in freport_num_den[i])
                     Nqcd  = sum(freport_num_den[i][p].Integral() for i in ("pass", "fail") for p in mca.listSignals()     if p in freport_num_den[i])
                     if Newk+Nqcd == 0: continue
                     fewk  = sum(freport_num_den["pass"][p].Integral() for p in mca.listBackgrounds() if p in freport_num_den["pass"])/(Newk if Newk else 1)
                     fqcd  = sum(freport_num_den["pass"][p].Integral() for p in mca.listSignals()     if p in freport_num_den["pass"])/(Nqcd if Nqcd else 1)
-                    Nqcd, Newk = Nqcd*Ndata/(Nqcd+Newk), Newk*Ndata/(Nqcd+Newk)
-                    w.factory("expr::Nsig_pass(\"@0* @1   \",N_sig[%g,0,%g], fsig[%g,0,1])" % (Nqcd,Ndata,fqcd))
-                    w.factory("expr::Nbkg_pass(\"@0* @1   \",N_bkg[%g,0,%g], fbkg[%g,0,1])" % (Newk,Ndata,fewk))
-                    w.factory("expr::Nsig_fail(\"@0*(1-@1)\",N_sig, fsig)")
-                    w.factory("expr::Nbkg_fail(\"@0*(1-@1)\",N_bkg, fbkg)")
-                    combiner = ROOT.CombDataSetFactory(ROOT.RooArgSet(w.var("f")), w.cat("num"))
-                    nuis = {}
-                    for k,o in ('sig',options.shapeSystSig),('bkg',options.shapeSystBkg):
-                        nuis[k] = [ (f[:1],float(f[2:])) for f in o.split(",") ]
-                    nuislists = {}; constraints = []; allnuis = ROOT.RooArgSet()
-                    for (k,ns) in nuis.iteritems():
-                        nuislists[k] = dict([ (s,ROOT.RooArgList()) for s in ('pass','fail') ])
-                        for n,val in ns:
-                            if n == "b": continue
-                            w.factory("Gaussian::nuis_{0}_shapePdf(nuis_{0}_shape[0,-3,3], 0, 1)".format(k+n))
-                            constraints.append(w.pdf("nuis_{0}_shapePdf".format(k+n)))
-                            for s in "pass","fail": nuislists[k][s].add(w.var("nuis_{0}_shape".format(k+n)))
-#                        allnuis.add(nuislists[k]["pass"], False)
-                        for idx in xrange(nuislists[k]["pass"].getSize()):
-                            allnuis.add(nuislists[k]["pass"].at(idx),False)
+                    sf_common = 1.0
+                    k0_sig = log(Ndata/(Nqcd+Newk))/options.kappaSig
+                    k0_bkg = log(Ndata/(Nqcd+Newk))/options.kappaBkg
+                    w.factory("expr::{xp}N_sig(\"{N}*pow({K},@0)\", {xp}theta_sig[{K0},-7,7])".format(N=Nqcd, K=options.kappaSig, K0=k0_sig, xp=xprefix))
+                    w.factory("expr::{xp}N_bkg(\"{N}*pow({K},@0)\", {xp}theta_bkg[{K0},-7,7])".format(N=Newk, K=options.kappaBkg, K0=k0_bkg, xp=xprefix))
+                    w.factory("expr::{xp}Nsig_pass(\"@0* @1   \",{xp}N_sig, {xp}fsig[{f},0,1])".format(f=fqcd, xp=xprefix))
+                    w.factory("expr::{xp}Nbkg_pass(\"@0* @1   \",{xp}N_bkg, {xp}fbkg[{f},0,1])".format(f=fewk, xp=xprefix))
+                    w.factory("expr::{xp}Nsig_fail(\"@0*(1-@1)\",{xp}N_sig, {xp}fsig)".format(xp=xprefix))
+                    w.factory("expr::{xp}Nbkg_fail(\"@0*(1-@1)\",{xp}N_bkg, {xp}fbkg)".format(xp=xprefix))
+                    w.factory("expr::{xp}sig_pass_sf(\"@0/{N0}\",{xp}Nsig_pass)".format(N0=Nqcd*fqcd, xp=xprefix))
+                    w.factory("expr::{xp}sig_fail_sf(\"@0/{N0}\",{xp}Nsig_fail)".format(N0=Nqcd*(1-fqcd), xp=xprefix))
+                    w.factory("expr::{xp}bkg_pass_sf(\"@0/{N0}\",{xp}Nbkg_pass)".format(N0=Newk*fewk, xp=xprefix))
+                    w.factory("expr::{xp}bkg_fail_sf(\"@0/{N0}\",{xp}Nbkg_fail)".format(N0=Newk*(1-fewk), xp=xprefix))
                     for zstate in "pass", "fail":
                         rep = freport_num_den[zstate];  
                         # make nominal templates 
@@ -433,8 +423,6 @@ if __name__ == "__main__":
                                 print "Very poor statistics in the signal passing template (%g +/- %g), will use the failing one (normalized to the passing)" % (nsig, nsigErr)
                                 rep["signal"] = mergePlots("signal_"+zstate,     [r[p] for p in mca.listSignals()     for r in freport_num_den.values() if p in r])
                                 rep["signal"].Scale(nsig/rep["signal"].Integral()) 
-                        #rep["signal"].Smooth()
-                        #rep["background"].Smooth()
                         # make dataset 
                         for b in xrange(1,rep["data"].GetNbinsX()+1):
                             if rep["data"].GetBinContent(b) > 0:
@@ -442,122 +430,123 @@ if __name__ == "__main__":
                                     print "WARNING, bin %d filled in data (%d/%d) and not in MC" % ( b, rep["data"].GetBinContent(b), Ndata )
                                     rep["data"].SetBinContent(b, 0) 
                                     rep["data"].SetBinError(b, 0) 
-                        rdh = ROOT.RooDataHist("data_"+zstate,"data",ROOT.RooArgList(w.var("f")), rep["data"])
-                        combiner.addSetAny(zstate,rdh)
+                        sighwn = HistoWithNuisances(rep["signal"]); sighwn.SetName("signal_"+xprefix+zstate)
+                        bkghwn = HistoWithNuisances(rep["background"]); bkghwn.SetName("background_"+xprefix+zstate)
                         # make systematic histograms
-                        sighists = ROOT.TList(); sighists.Add(rep["signal"])
-                        bkghists = ROOT.TList(); bkghists.Add(rep["background"])
-                        for what,tlist in [('sig',sighists),('bkg',bkghists)]:
+                        for what,hwn in [('sig',sighwn),('bkg',bkghwn)]:
                             for n,val in nuis[what]:
-                                if n == "l": addPolySystBands(tlist, val, 1)
-                                if n == "q": addPolySystBands(tlist, val, 2)
-                                if n == "s": addStretchBands(tlist, val)
+                                if n == "l": addPolySystBands(hwn, val, 1, norm=True, namePattern="nuis_%s%s_shape"%(xprefix+what,n))
+                                if n == "q": addPolySystBands(hwn, val, 2, norm=True, namePattern="nuis_%s%s_shape"%(xprefix+what,n))
+                                if n == "s": addStretchBands(hwn, val, norm=True, namePattern="nuis_%s%s_shape"%(xprefix+what,n))
                                 if n == "b": 
-                                    print "Adding bin-by-bin uncertainties on %s %s, threshold %g" % (what,zstate,val)
-                                    bins = addBbB(tlist,1e-3,val)
-                                    for b in bins:
-                                        key = "%s_%s_%s" % (what,zstate,b)
-                                        w.factory("Gaussian::nuis_{0}_shapePdf(nuis_{0}_shape[0,-3,3], 0, 1)".format(key))
-                                        nuislists[what][zstate].add(w.var("nuis_{0}_shape".format(key)))
-                                        constraints.append(w.pdf("nuis_{0}_shapePdf".format(key)))
-                                        allnuis.add(w.var("nuis_{0}_shape".format(key)))
+                                    #print "Adding bin-by-bin uncertainties on %s %s, threshold %g" % (what,zstate,val)
+                                    hwn.addBinByBin(relcutoff=val, namePattern="nuis_%s_%s_bin{bin}_shape"%(xprefix+what,zstate)) 
+                        reportND["signal_"+zstate] = sighwn
+                        reportND["background_"+zstate] = bkghwn
                         # make summary plots of templates
                         lsig = mca.listSignals()[0]; lbkg = mca.listBackgrounds()[0]
-                        for what,label,tlist in [('sig',lsig,sighists),('bkg',lbkg,bkghists)]:
-                            postfixes = ["_"+x+d for (x,v) in nuis[what] for d in "Up", "Dn" if x != "b"]
-                            shiftrep = dict([(label+p, tlist.At(i)) for (i,p) in enumerate([""]+postfixes)])
+                        for what,label,hwn in [('sig',lsig,sighwn),('bkg',lbkg,bkghwn)]:
+                            shiftrep = {label: hwn.getCentral()}
+                            for n,v in nuis[what]:
+                                if n == 'b': continue
+                                for (i,d) in enumerate(["Up","Dn"]):
+                                    shiftrep["%s_%s%s"%(label,n,d)] = hwn.getVariation("nuis_%s%s_shape"%(xprefix+what,n))[i]
                             for p,h in shiftrep.iteritems(): mca.stylePlot(p, h, fspec)
-                            plotter.printOnePlot(mca, fspec, shiftrep, extraProcesses = [label+x for x in postfixes], plotmode="norm", printDir=bindirname, 
-                                             outputName = "%s_for_%s%s_%s_%s_%sSyst" % (fspec.name,xspec.name,bxname,yspec.name,zstate,what)) 
-                        sigpdf = ROOT.FastVerticalInterpHistPdf2("signal_"+zstate,     "", w.var("f"), sighists, nuislists['sig'][zstate], 1., 1)
-                        bkgpdf = ROOT.FastVerticalInterpHistPdf2("background_"+zstate, "", w.var("f"), bkghists, nuislists['bkg'][zstate], 1., 1)
-                        getattr(w,'import')(sigpdf, ROOT.RooFit.RecycleConflictNodes(), ROOT.RooFit.Silence())
-                        getattr(w,'import')(bkgpdf, ROOT.RooFit.RecycleConflictNodes(), ROOT.RooFit.Silence())
-                        w.factory('SUM::all_{0}(Nsig_{0} * signal_{0}, Nbkg_{0} * background_{0})'.format(zstate))
+                            plotter.printOnePlot(mca, fspec, shiftrep, extraProcesses = [l for l in shiftrep.keys() if l != label], plotmode="norm", printDir=bindirname, 
+                                             outputName = "%s_for_%s%s_%s_%s_%sSyst" % (fspec.name,xspec.name,bxname,yspec.name,zstate,what))
+                    if options.algo == "fitSimND" or roofit == None:
+                        roofit = roofitizeReport(reportND, workspace=w, xvarName="f")
+                    else:
+                        roofitizeReport(reportND, context=roofit, xvarName="f")
+                    for what,wlong in ('sig','signal'),('bkg','background'):
+                        for zstate in "pass", "fail":
+                            reportND[wlong+"_"+zstate].addRooFitScaleFactor(w.function("%s_%s_sf" % (xprefix+what,zstate)))
+                    if options.algo == "fitSimND" or combiner == None:
+                        combiner = ROOT.CombDataSetFactory(ROOT.RooArgSet(roofit.xvar), w.cat("num"))
+                    for zstate in "pass", "fail":
+                        rdh = ROOT.RooDataHist("data_"+xprefix+zstate,"data",ROOT.RooArgList(roofit.xvar), roofit.hist2roofit(freport_num_den[zstate]["data"]))
+                        combiner.addSetAny(xprefix+zstate,rdh)
+                        if options.algo == "fitGlobalSimND": 
+                            globalDataHists[xprefix+zstate] = rdh # prevent early deletion
+                        sigpdf, signorm = reportND["signal_"    +zstate].rooFitPdfAndNorm()
+                        bkgpdf, bkgnorm = reportND["background_"+zstate].rooFitPdfAndNorm()
+                        roofit.imp(sigpdf, ROOT.RooFit.RecycleConflictNodes(), ROOT.RooFit.Silence())
+                        roofit.imp(bkgpdf, ROOT.RooFit.RecycleConflictNodes(), ROOT.RooFit.Silence())
+                        w.factory('SUM::all_{1}{0}({1}Nsig_{0} * signal_{1}{0}_pdf, {1}Nbkg_{0} * background_{1}{0}_pdf)'.format(zstate,xprefix))
+                    if options.algo == "fitGlobalSimND":
+                        for k,v in reportND.iteritems():
+                            globalReportND[(ix,k)] = v
+                        for zstate in "pass","fail":
+                            globalReportND[(ix,"data_"+zstate)] = freport_num_den[zstate]["data"]
+                        globalFqcd[ix] = fqcd
+                        globalFbkg[ix] = fewk
+                        continue
                     data = combiner.doneUnbinned("data","data")
                     w.factory('SIMUL::all(num, pass=all_pass, fail=all_fail)') 
                     sim = ROOT.RooSimultaneousOpt(w.pdf("all"), "")
-                    for c in constraints: sim.addExtraConstraint(c)
+                    nuisanceList = ROOT.RooArgSet()
+                    toConstrain = [ (n,0,1) for n in listAllNuisances(reportND) ]
+                    for theta in "theta_sig", "theta_bkg":
+                        if theta in options.constrain: toConstrain.append( (theta, 0, 1) )
+                    if "fbkg" in options.constrain:
+                        toConstrain.append( ("fbkg", fewk, options.sigmaFBkg) )
+                    for nuisance, mean, sigma in toConstrain:
+                        c = roofit.factory("SimpleGaussianConstraint::%sPdf(%s,%g,%g)" % (nuisance, nuisance, mean, sigma));
+                        sim.addExtraConstraint(c)
+                        nuisanceList.add(w.var(nuisance))
                     cmdArgs = ROOT.RooLinkedList()
-                    cmdArgs.Add(ROOT.RooFit.Constrain(allnuis))
+                    cmdArgs.Add(ROOT.RooFit.Constrain(nuisanceList))
                     nll = sim.createNLL(data, cmdArgs)
                     minim = ROOT.RooMinimizer(nll)
-                    minim.setPrintLevel(-1); minim.setStrategy(0);
+                    minim.setPrintLevel(0); minim.setStrategy(1);
                     minim.minimize("Minuit2","migrad")
-                    minim.setPrintLevel(-1); minim.setStrategy(1);
-#                    nll.setZeroPoint()
+                    nll = sim.createNLL(data, cmdArgs) # recreate, to update the zero point
+                    minim = ROOT.RooMinimizer(nll)
+                    minim.setPrintLevel(0); minim.setStrategy(2);
                     minim.minimize("Minuit2","migrad")
                     minim.hesse();
                     result = minim.save()
-                    # post-fit plots
-                    for zstate in "pass","fail":
-                        pfrep = { 'data':freport_num_den[zstate]["data"] }
-                        for what,wlong,label in [('sig','signal',lsig),('bkg','background',lbkg)]:
-                            pdf  = w.pdf(wlong+"_"+zstate)
-                            # nominal
-                            w.allVars().assignValueOnly(result.floatParsFinal())
-                            hist = pdf.createHistogram(wlong+"_"+zstate,w.var("f")); hist.SetDirectory(None)
-                            hist.Scale(w.function("N%s_%s"%(what,zstate)).getVal()/hist.Integral())
-                            # toys
-                            ntoys = 500
-                            sumw2s = [ 0. for b in xrange(1,hist.GetNbinsX()+1) ]
-                            for itoy in xrange(ntoys):
-                                w.allVars().assignValueOnly(result.randomizePars())
-                                histT = pdf.createHistogram(wlong+"_"+zstate+"_toy",w.var("f")); histT.SetDirectory(None)
-                                histT.Scale(w.function("N%s_%s"%(what,zstate)).getVal()/histT.Integral())
-                                for b in xrange(1,hist.GetNbinsX()+1):
-                                    sumw2s[b-1] += (histT.GetBinContent(b)-hist.GetBinContent(b))**2
-                                del histT
-                            for b in xrange(1,hist.GetNbinsX()+1):
-                                hist.SetBinError(b, sqrt(sumw2s[b-1]/ntoys))
-                            mca.stylePlot(label, hist, fspec)
-                            pfrep[label] = hist
-                        plotter.printOnePlot(mca, fspec, pfrep, printDir=bindirname, 
-                                             outputName = "%s_for_%s%s_%s_%s_postfit" % (fspec.name,xspec.name,bxname,yspec.name,zstate)) 
-                    # pre-fit plots
-                    for zstate in "pass","fail":
-                        pfrep = { 'data':freport_num_den[zstate]["data"] }
-                        for what,wlong,label in [('sig','signal',lsig),('bkg','background',lbkg)]:
-                            pdf  = w.pdf(wlong+"_"+zstate)
-                            # nominal
-                            w.allVars().assignValueOnly(result.floatParsInit())
-                            hist = pdf.createHistogram(wlong+"_"+zstate,w.var("f")); hist.SetDirectory(None)
-                            hist.Scale(w.function("N%s_%s"%(what,zstate)).getVal()/hist.Integral())
-                            # toys
-                            nuisancesSet = ROOT.RooArgSet(nuislists[what][zstate])
-                            nuispdfs  = ROOT.RooArgList()
-                            for c in constraints: nuispdfs.add(c)
-                            nuispdf = ROOT.RooProdPdf("nuispdf","",nuispdfs)
-                            ntoys = 500
-                            nuisvals = nuispdf.generate(nuisancesSet, ntoys)
-                            sumw2s = [ 0. for b in xrange(1,hist.GetNbinsX()+1) ]
-                            for itoy in xrange(ntoys):
-                                w.allVars().assignValueOnly(nuisvals.get(itoy))
-                                histT = pdf.createHistogram(wlong+"_"+zstate+"_toy",w.var("f")); histT.SetDirectory(None)
-                                histT.Scale(w.function("N%s_%s"%(what,zstate)).getVal()/histT.Integral())
-                                for b in xrange(1,hist.GetNbinsX()+1):
-                                    sumw2s[b-1] += (histT.GetBinContent(b)-hist.GetBinContent(b))**2
-                                del histT
-                            for b in xrange(1,hist.GetNbinsX()+1):
-                                hist.SetBinError(b, sqrt(sumw2s[b-1]/ntoys))
-                            mca.stylePlot(label, hist, fspec)
-                            pfrep[label] = hist
-                        plotter.printOnePlot(mca, fspec, pfrep, printDir=bindirname, 
-                                             outputName = "%s_for_%s%s_%s_%s_prefit" % (fspec.name,xspec.name,bxname,yspec.name,zstate)) 
+                    if result.status() != 0: # try again
+                        minim.setPrintLevel(1); minim.setStrategy(2);
+                        minim.minimize("Minuit2","migrad")
+                        minim.hesse();
+                        result = minim.save()
+                    postfit = PostFitSetup(fitResult=result)
+                    fspec.setLog("Fit", postfit.makeFitLog())
+                    postfit._roofitContext = roofit
+                    mca._postFit = postfit
+                    #for prefit we need a special setup that only varies the nuisances and not the unconstrained normalizations
+                    prefit = PostFitSetup(fitResult=result, params=nuisanceList)
+                    # pre and post-fit plots
+                    lsig = mca.listSignals()[0]; lbkg = mca.listBackgrounds()[0]
+                    for dopost,postlabel in (True,'postfit'), (False,'prefit'):
+                        for k,h in reportND.iteritems():
+                            if h.Integral() > 0: 
+                                h.setPostFitInfo(postfit if dopost else prefit, dopost)
+                        w.allVars().assignValueOnly(result.floatParsFinal() if dopost else result.floatParsInit())
+                        for zstate in "pass","fail":
+                            pfrep = { 'data':freport_num_den[zstate]["data"],
+                                      lsig:reportND["signal_"+zstate],
+                                      lbkg:reportND["background_"+zstate] }
+                            for label in lsig, lbkg:
+                                mca.stylePlot(label, pfrep[label], fspec)
+                            plotter.printOnePlot(mca, fspec, pfrep, printDir=bindirname, 
+                                                 outputName = "%s_for_%s%s_%s_%s_%s" % (fspec.name,xspec.name,bxname,yspec.name,zstate,postlabel)) 
                     # minos for the efficiency
                     w.allVars().assignValueOnly(result.floatParsFinal())
                     nll = sim.createNLL(data, cmdArgs)
-#                    nll.setZeroPoint()
                     var = w.var("fsig"); var.setConstant(True)
                     minim = ROOT.RooMinimizer(nll)
-                    minim.setPrintLevel(-1); minim.setStrategy(0);
+                    minim.setPrintLevel(-1); minim.setStrategy(1);
                     minim.minimize("Minuit2","migrad");
                     nll0 = nll.getVal(); f0 = var.getVal()
                     bounds = []; search = []
-                    if f0 > 0: search.append((f0,max(0,f0-4*var.getError())))
-                    if f0 < 1: search.append((f0,min(1,f0+4*var.getError())))
+                    err = max(4*var.getError(),0.01)
+                    if f0 > 0: search.append((f0,max(0,f0-err)))
+                    if f0 < 1: search.append((f0,min(1,f0+err)))
                     for x1,x2 in search:
                         for iTry in xrange(10):
+                            if x2 == 0 or x2 == 1: break
                             var.setVal(x2)
                             minim.minimize("Minuit2","migrad");
                             y2 = 2*(nll.getVal()-nll0)
@@ -580,8 +569,128 @@ if __name__ == "__main__":
                                           -projection.GetXaxis().GetBinLowEdge(ix) + xval,
                                           +projection.GetXaxis().GetBinUpEdge(ix)  - xval, 
                                           df, df)
-                    #print "MC fake rate: %.4f " % fqcd
-                    #print "Data fake rate: %.4f +- %.4f " % (f0, df)
+                    print "MC fake rate: %.4f " % fqcd
+                    print "Data fake rate: %.4f +- %.4f " % (f0, df)
+            # now, outside of the loop on the x bins
+            if options.algo == "fitGlobalSimND":
+                data = combiner.doneUnbinned("data","data")
+                sim  = ROOT.RooSimultaneousOpt("all", "", w.cat("num"))
+                goodxs = []
+                for ix in xrange(1,projection.GetNbinsX()+1):
+                    if not w.pdf("all_bin%d_pass" % ix): continue
+                    for zstate in "pass", "fail":
+                        sim.addPdf( w.pdf("all_bin%d_%s" % (ix,zstate)), "bin%d_%s"%(ix,zstate))
+                    goodxs.append(ix)
+                nuisanceList = ROOT.RooArgSet()
+                for nuisance in listAllNuisances(dict((k,v) for (k,v) in globalReportND.iteritems() if "data" not in k[1])):
+                    c = roofit.factory("SimpleGaussianConstraint::%sPdf(%s,0,1)" % (nuisance, nuisance));
+                    sim.addExtraConstraint(c)
+                    nuisanceList.add(w.var(nuisance))
+                for what, amount in options.regularize:
+                    for iix, ix2 in enumerate(goodxs[1:]): 
+                        ix1 = goodxs[iix]
+                        w1 = "bin%s_%s"%(ix1,what)
+                        w2 = "bin%s_%s"%(ix2,what)
+                        if "fsig" in what:
+                            w1 = "expr::delta_%s(\"@0-%g\", %s)" % (w1, globalFqcd[ix1], w1)
+                            w2 = "expr::delta_%s(\"@0-%g\", %s)" % (w2, globalFqcd[ix2], w2)
+                        if "fbkg" in what:
+                            w1 = "expr::delta_%s(\"@0-%g\", %s)" % (w1, globalFbkg[ix1], w1)
+                            w2 = "expr::delta_%s(\"@0-%g\", %s)" % (w2, globalFbkg[ix2], w2)
+                        c = roofit.factory("SimpleGaussianConstraint::%sRegularizerPdf%d(%s,%s,%s)" % (
+                            what, iix, w1, w2, amount));
+                        print "Constraining %s - %s to %s" % (w1, w2, amount)
+                        sim.addExtraConstraint(c)
+                for ix in xrange(1,projection.GetNbinsX()+1):
+                    if not w.pdf("all_bin%d_pass" % ix): continue
+                cmdArgs = ROOT.RooLinkedList()
+                cmdArgs.Add(ROOT.RooFit.Constrain(nuisanceList))
+                nll = sim.createNLL(data, cmdArgs)
+                minim = ROOT.RooMinimizer(nll)
+                minim.setPrintLevel(0); minim.setStrategy(1);
+                minim.minimize("Minuit2","migrad")
+                nll = sim.createNLL(data, cmdArgs) # recreate, to update the zero point
+                minim = ROOT.RooMinimizer(nll)
+                minim.setPrintLevel(0); minim.setStrategy(2);
+                minim.minimize("Minuit2","migrad")
+                minim.hesse();
+                result = minim.save()
+                if result.status() != 0: # try again
+                    minim.setPrintLevel(1); minim.setStrategy(2);
+                    minim.minimize("Minuit2","migrad")
+                    minim.hesse();
+                    result = minim.save()
+                postfit = PostFitSetup(fitResult=result)
+                fspec.setLog("Fit", postfit.makeFitLog())
+                postfit._roofitContext = roofit
+                mca._postFit = postfit
+                #for prefit we need a special setup that only varies the nuisances and not the unconstrained normalizations
+                prefit = PostFitSetup(fitResult=result, params=nuisanceList)
+                # pre and post-fit plots
+                lsig = mca.listSignals()[0]; lbkg = mca.listBackgrounds()[0]
+                for dopost,postlabel in (True,'postfit'), (False,'prefit'):
+                    for k,h in globalReportND.iteritems():
+                        if ("data" not in k[1]) and (h.Integral() > 0): 
+                            h.setPostFitInfo(postfit if dopost else prefit, dopost)
+                    w.allVars().assignValueOnly(result.floatParsFinal() if dopost else result.floatParsInit())
+                    for ix in goodxs: 
+                        bxname = "_bin_%g_%g" % (projection.GetXaxis().GetBinLowEdge(ix),projection.GetXaxis().GetBinUpEdge(ix))
+                        for zstate in "pass","fail":
+                            pfrep = { 'data':globalReportND[(ix,"data_"+zstate)],
+                                      lsig  :globalReportND[(ix,"signal_"+zstate)],
+                                      lbkg  :globalReportND[(ix,"background_"+zstate)] }
+                            for label in lsig, lbkg:
+                                mca.stylePlot(label, pfrep[label], fspec)
+                            plotter.printOnePlot(mca, fspec, pfrep, printDir=bindirname, 
+                                                 outputName = "%s_for_%s%s_%s_%s_%s" % (fspec.name,xspec.name,bxname,yspec.name,zstate,postlabel)) 
+                # minos for the efficiency
+                for ix in goodxs: 
+                    w.allVars().assignValueOnly(result.floatParsFinal())
+                    var = w.var("bin%d_fsig" % ix); var.setConstant(True)
+                    minim = ROOT.RooMinimizer(nll)
+                    minim.setPrintLevel(-1); minim.setStrategy(0);
+                    for iTry in xrange(3):
+                        minim.minimize("Minuit2","migrad");
+                        if minim.save().status() == 0: break
+                    nll0 = nll.getVal(); f0 = var.getVal()
+                    bounds = []; search = []
+                    err = max(4*var.getError(),0.01)
+                    if f0 > 0: search.append((f0,max(0,f0-err)))
+                    if f0 < 1: search.append((f0,min(1,f0+err)))
+                    for x1,x2 in search:
+                        for iTry in xrange(10):
+                            if x2 == 0 or x2 == 1: break
+                            var.setVal(x2)
+                            for iTry in xrange(3):
+                                minim.minimize("Minuit2","migrad");
+                                if minim.save().status() == 0: break
+                            y2 = 2*(nll.getVal()-nll0)
+                            if y2 > 1: break
+                            if x2 > x1: x2 = min((x2+1)/2, x2+(x2-x1))
+                            else:       x2 = max((x2+0)/2, x2-(x1-x2))
+                        while abs(x1-x2) > 0.0005:
+                            xc = 0.5*(x1+x2)
+                            var.setVal(xc)
+                            for iTry in xrange(3):
+                                minim.minimize("Minuit2","migrad");
+                                if minim.save().status() == 0: break
+                            y = 2*(nll.getVal()-nll0)
+                            if y < 1: x1 = xc
+                            else:     x2 = xc
+                        bounds.append(x2)
+                    df = max(abs(b-f0) for b in bounds)
+                    ilast = fr_fit.GetN()
+                    xval = projection.GetXaxis().GetBinCenter(ix)
+                    fr_fit.Set(ilast+1)
+                    fr_fit.SetPoint(ilast, xval, f0)
+                    fr_fit.SetPointError(ilast, 
+                                          -projection.GetXaxis().GetBinLowEdge(ix) + xval,
+                                          +projection.GetXaxis().GetBinUpEdge(ix)  - xval, 
+                                          df, df)
+                    print "bin %g %g" % (projection.GetXaxis().GetBinLowEdge(ix),projection.GetXaxis().GetBinUpEdge(ix))
+                    print "     MC fake rate: %.4f " % globalFqcd[ix]
+                    print "     Data fake rate: %.4f +- %.4f " % (f0, df)
+                    var.setConstant(False)
         #print "\n"*5,"===== ALL BINS DONE ===== "
         for rep in xzreport, xzreport0: 
             for p,h in rep.iteritems(): 
@@ -599,7 +708,7 @@ if __name__ == "__main__":
         else:    ereport = dict([(title, effFromH2D(hist,options, uncertainties="PF")) for (title, hist) in xzreport.iteritems()])
         if options.algo in ("fQCD","ifQCD"):
             ereport["data_fqcd"] = fr_fit
-        elif options.algo == "fitSimND":
+        elif options.algo in ("fitSimND","fitGlobalSimND"):
             ereport["data_fit"] = fr_fit
         for p,g in ereport.iteritems(): 
             print "%-30s: %s" % (p,g) 

@@ -74,5 +74,5 @@ def conept_SSDL_for3l(lep):
 def conept_TTH(lep):
     if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
     if (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.90: return lep.pt
-    else: return 0.90 * lep.pt / lep.jetPtRatiov2
+    else: return 0.90 * lep.pt / lep.jetPtRatiov3
 

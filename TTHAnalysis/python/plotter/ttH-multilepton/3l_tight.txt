@@ -6,7 +6,7 @@ trigger: Trigger_3l
 pt251515: LepGood1_conePt>25 && LepGood2_conePt>15 && LepGood3_conePt>15
 TTT: LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight
 Zveto: abs(mZ1-91.2) > 10
-met LD: nJet25 >= 4 || met_pt*0.00397 + mhtJet25*0.00265 > 0.2 + 0.1*(mZ1 > 0)
+met LD: nJet25 >= 4 || met_pt*0.6 + mhtJet25*0.4 > 30 + 15*(mZ1 > 0)
 q1: abs(LepGood1_charge + LepGood2_charge + LepGood3_charge) == 1
 
 ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0)) && (abs(LepGood3_pdgId)!=11 || (LepGood3_convVeto && LepGood3_lostHits==0))

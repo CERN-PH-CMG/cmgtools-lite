@@ -11,8 +11,9 @@ class fastCombinedObjectRecleaner:
 
         self.vars = ["pt","eta","phi","mass"]
         self.vars_leptons = ["pdgId"]
-        self.vars_taus = ["idMVAdR03"]
-        self.vars_jets = ["btagCSV","btagDeepCSV","qgl","ctagCsvL","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
+        self.vars_taus = ["mvaId2017"]
+        self.vars_taus_int = ["idMVAdR03"]
+        self.vars_jets = ["btagCSV","btagDeepCSV","qgl","btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
         self.vars_jets_int = ["mult"]+(["hadronFlavour"] if isMC else [])
         self.vars_jets_nooutput = []
         self.jc = jetCollection
@@ -33,7 +34,7 @@ class fastCombinedObjectRecleaner:
 
         self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=20, saveSelectedIndices=True,padSelectedIndicesWith=0)
         self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=20, saveTagForAll=True)
-        self._helper_taus = CollectionSkimmer("TauSel"+self.label, "TauGood", floats=self.vars, ints=self.vars_taus, maxSize=20)
+        self._helper_taus = CollectionSkimmer("TauSel"+self.label, "TauGood", floats=self.vars+self.vars_taus, ints=self.vars_taus_int, maxSize=20)
         self._helper_jets = CollectionSkimmer("%sSel"%self.jc+self.label, self.jc, floats=self.vars+self.vars_jets, ints=self.vars_jets_int, maxSize=20)
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
 
@@ -63,7 +64,7 @@ class fastCombinedObjectRecleaner:
             setattr(self,'n'+coll,tree.valueReader('n'+coll))
             _vars = self.vars[:]
             if coll=='LepGood': _vars.extend(self.vars_leptons)
-            if coll=='TauGood': _vars.extend(self.vars_taus)
+            if coll=='TauGood': _vars.extend(self.vars_taus+self.vars_taus_int)
             if coll==self.jc: _vars.extend(self.vars_jets+self.vars_jets_int+self.vars_jets_nooutput)
             for B in _vars:
                 setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
