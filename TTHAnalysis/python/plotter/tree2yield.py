@@ -12,6 +12,7 @@ import ROOT
 sys.argv = args
 ROOT.gROOT.SetBatch(True)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
+ROOT.gSystem.Load("libpng") # otherwise we may end up with a bogus version
 
 from copy import *
 

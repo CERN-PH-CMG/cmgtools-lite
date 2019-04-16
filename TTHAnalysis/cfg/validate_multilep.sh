@@ -61,13 +61,13 @@ function do_plot {
       fi
       WA=1; if echo $WHAT | grep -q Presc; then WA=prescaleFromSkim; fi;
       python mcPlots.py -f --s2v --tree treeProducerSusyMultilepton  -P ${DIR} $MCA $CUTS ${CUTS/.txt/_plots.txt} \
-              --pdir plots/94X/validation/${OUTNAME}  -u -e --WA $WA \
+              --pdir plots/104X/validation/${OUTNAME}  -u -e --WA $WA \
               --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences
     );
 }
 function do_size {
     PROC=$1; SUB=$2; 
-    perl /afs/cern.ch/user/g/gpetrucc/pl/treeSize.pl $DIR/$PROC/treeProducerSusyMultilepton/tree.root > ../python/plotter/plots/94X/validation/treeSize/${PROC}${SUB}.html
+    perl /afs/cern.ch/user/g/gpetrucc/pl/treeSize.pl $DIR/$PROC/treeProducerSusyMultilepton/tree.root > ../python/plotter/plots/104X/validation/treeSize/${PROC}${SUB}.html
 }
 
 
