@@ -72,21 +72,21 @@ case "$PLOTTAG" in
     "3l" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
         #MCA="tHq-multilepton/mca-3l-mcdata.txt --xp data"
-        MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt --xp data"
+        MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-3l.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
         ;;
     "3l-zcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
-        MCA="tHq-multilepton/mca-3l-mcdata.txt"
-	#MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
+        #MCA="tHq-multilepton/mca-3l-mcdata.txt"
+	MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-3l-Zcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-zcontrol.txt"
         ;;
     "3l-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT3L}"
-        MCA="tHq-multilepton/mca-3l-mcdata.txt"
-	#MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
+        #MCA="tHq-multilepton/mca-3l-mcdata.txt"
+	MCA="tHq-multilepton/mca-3l-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-3l-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
         ;;
@@ -110,7 +110,7 @@ case "$PLOTTAG" in
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
         #MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips --xp data"
-	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt --xp Flips --xp data"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt --xp Flips"
         CUTS="tHq-multilepton/cuts-thq-2lss.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
@@ -118,14 +118,14 @@ case "$PLOTTAG" in
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E em_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_ee_60"
         #MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
-	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt --xp data"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ee" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E ee_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp data"
+        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
 	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
@@ -133,32 +133,32 @@ case "$PLOTTAG" in
     "2lss-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L}"
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
-	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        #MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-mm-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E mm_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_em_60 --xP finalBins_log_ee_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips"
-	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        #MCA="tHq-multilepton/mca-2lss-mcdata.txt --xp Flips"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt --xp Flips"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-em-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E em_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_ee_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
-	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        #MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
     "2lss-ee-ttcontrol" )
         OPTIONS="${OPTIONS} ${DRAWOPTIONS} ${OPT2L} -E ee_chan"
         OPTIONS="${OPTIONS} --xP finalBins_log_mm_60 --xP finalBins_log_em_60"
-        MCA="tHq-multilepton/mca-2lss-mcdata.txt"
-	#MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
+        #MCA="tHq-multilepton/mca-2lss-mcdata.txt"
+	MCA="tHq-multilepton/mca-2lss-mcdata-frdata.txt"
         CUTS="tHq-multilepton/cuts-thq-2lss-ttbarcontrol.txt"
         PLOTS="tHq-multilepton/plots-thq-2lss-kinMVA.txt"
         ;;
