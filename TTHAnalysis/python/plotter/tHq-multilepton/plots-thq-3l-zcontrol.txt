@@ -8,3 +8,7 @@ maxEtaJet25_60 : maxEtaJet25_60       : 10,0,5.0; XTitle="max jet |#eta|"
 fwdJetPt25_60  : fwdJetPt25_60        : 10,0,150;  XTitle="max |#eta| jet p_{T} [GeV]"
 maxEtaJet25    : maxEtaJet25          : 10,0,5.0; XTitle="max jet |#eta|"
 fwdJetPt25     : fwdJetPt25           : 10,0,150;  XTitle="max |#eta| jet p_{T} [GeV]"
+minDRll                 : minDRll                 : 10,0,4;   XTitle="Minimum #DeltaR between any two leptons"
+dEtaFwdJetBJet_60       : dEtaFwdJetBJet_60       : 10,0,6;   XTitle="#Delta#eta max fwd jet and leading bjet"
+dEtaFwdJetClosestLep_60 : dEtaFwdJetClosestLep_60 : 10,0,6 ;  XTitle="#Delta#eta max fwd jet and closest lepton"
+
