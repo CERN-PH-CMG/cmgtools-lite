@@ -69,8 +69,6 @@ class VVBuilder(Analyzer):
 
 
 
-
-
         jet.subJetTags = [-99.0] * 2
         jet.subJetCTagL = [-99.0] * 2
         jet.subJetCTagB = [-99.0] * 2
