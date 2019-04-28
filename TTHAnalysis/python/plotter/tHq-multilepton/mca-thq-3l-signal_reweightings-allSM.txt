@@ -2,12 +2,12 @@
 # Numbers are: n_entries/sum_of_weights*cross-section (* BR for tHq) : LHEweight (445+x with x from mg_reweight_x)
 # Note: avoid using SkipMe=True here, otherwise those will be skipped in makeShapeCardsTHQ.py
 
-#tHq_hww_1_m1+      : THQ_ctcvcp : 0.07096                      : GenHiggsDecayMode==24 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+1
-#tHW_hww_1_m1+      : THW_ctcvcp : 0.01561                      : GenHiggsDecayMode==24 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+6
-#tHq_hzz_1_m1+      : THQ_ctcvcp : 0.07096                      : GenHiggsDecayMode==23 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+1
-#tHW_hzz_1_m1+      : THW_ctcvcp : 0.01561                      : GenHiggsDecayMode==23 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+6
-#tHq_htt_1_m1+      : THQ_ctcvcp : 0.07096                      : GenHiggsDecayMode==15 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+1
-#tHW_htt_1_m1+      : THW_ctcvcp : 0.01561                      : GenHiggsDecayMode==15 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+6
+#tHq_hww+      : THQ_ctcvcp : 0.07096                      : GenHiggsDecayMode==24 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+1
+#tHW_hww+      : THW_ctcvcp : 0.01561                      : GenHiggsDecayMode==24 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+6
+#tHq_hzz+      : THQ_ctcvcp : 0.07096                      : GenHiggsDecayMode==23 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+1
+#tHW_hzz+      : THW_ctcvcp : 0.01561                      : GenHiggsDecayMode==23 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+6
+#tHq_htt+      : THQ_ctcvcp : 0.07096                      : GenHiggsDecayMode==15 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+1
+#tHW_htt+      : THW_ctcvcp : 0.01561                      : GenHiggsDecayMode==15 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ;  FillColor=ROOT.kOrange+6
 
 tHq_hww+      : THQ_ctcvcp : 7560604.0/133.398992*0.07096 : LHEweight_wgt[893]*(GenHiggsDecayMode==24 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0)  ;  FillColor=ROOT.kOrange+1,
 tHW_hww+      : THW_ctcvcp : 4228895.0/173.253646*0.01561 : LHEweight_wgt[1091]*(GenHiggsDecayMode==24 && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0)  ;  FillColor=ROOT.kOrange+6,
