@@ -7,8 +7,9 @@ from CMGTools.TTHAnalysis.plotter.histoWithNuisances import *
 import pickle, re, random, time
 from copy import copy, deepcopy
 from collections import defaultdict
+from glob import glob
 
-#_T0 = long(ROOT.gSystem.Now())
+_T0 = long(ROOT.gSystem.Now())
 
 ## These must be defined as standalone functions, to allow runing them in parallel
 def _runYields(args):
@@ -31,6 +32,10 @@ def _runGetEntries(args):
     key,tty = args
     return (key, tty.getEntries())
 
+def _runSumW(args):
+    key, tty, genWName = args
+    return (key, tty.getSumW(genWName))
+
 
 class MCAnalysis:
     def __init__(self,samples,options):
@@ -44,6 +49,7 @@ class MCAnalysis:
         self._projection  = Projections(options.project, options) if options.project != None else None
         self._premap = []
         self._optionsOnlyProcesses = {}
+        self._groupsToNormalize = [] # list of (gen weight name, list of ttys)
         self.init_defaults = {}
         for premap in options.premap:
             to,fro = premap.split("=")
@@ -167,6 +173,8 @@ class MCAnalysis:
 
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
+            genWeightName = extra["genWeightName"] if "genWeightName" in extra else "genWeight"
+            genSumWeightName = extra["genSumWeightName"] if "genSumWeightName" in extra else "genEventSumw"
             is_w = -1
             pname0 = pname
             for cname in cnames:
@@ -202,8 +210,24 @@ class MCAnalysis:
                     rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
                 pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+                if options.tree == "NanoAOD":
+                    objname = "Events"
+                    pckfile = None
+                    rootfile = "%s/%s" % (basepath, cname)
+                    if os.path.isdir(rootfile):
+                        rootfiles = glob("%s/%s/*.root" % (basepath, cname))
+                    else:
+                        rootfiles = [ rootfile ]
+                else:
+                    rootfiles = [ rootfile ]
+                
+                for rootfile in rootfiles:
+                    mycname = cname if len(rootfiles) == 1 else cname + "-" + os.path.basename(rootfile).replace(".root","") 
+                    tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=mycname, objname=objname, variation_inputs=variations.values(), nanoAOD=True); 
+                    tty.pckfile = pckfile
+                    ttys.append(tty)
 
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname, variation_inputs=variations.values()); ttys.append(tty)
+            for tty in ttys:
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -215,13 +239,16 @@ class MCAnalysis:
                 if pname in self._allData: self._allData[pname].append(tty)
                 else                     : self._allData[pname] =     [tty]
                 if "data" not in pname:
-                    pckobj  = pickle.load(open(pckfile,'r'))
-                    counters = dict(pckobj)
+                    if options.tree != "NanoAOD":
+                        pckobj  = pickle.load(open(tty.pckfile,'r'))
+                        counters = dict(pckobj)
+                    else:
+                        counters = { 'Sum Weights':0.0 }  # fake
                     if ('Sum Weights' in counters) and options.weight:
                         if (is_w==0): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
                         is_w = 1; 
                         total_w += counters['Sum Weights']
-                        scale = "genWeight*(%s)" % field[2]
+                        scale = "(%s)*(%s)" % (genWeightName, field[2])
                     else:
                         if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
                         is_w = 0;
@@ -269,8 +296,14 @@ class MCAnalysis:
                     print "Overwrite the norm systematic for %s to make it correlated with %s" % (pname, tty.getOption('PegNormToProcess'))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
-                for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
-            for tty in ttys: tty.makeTTYVariations()
+                if options.tree != "NanoAOD":
+                    if total_w == 0: raise RuntimeError, "Zero total weight for %s" % pname
+                    for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                else:
+                    if total_w != 0: raise RuntimeError, "Weights from pck file shoulnd't be there for NanoAOD for %s " % pname
+                    self._groupsToNormalize.append( (ttys, genSumWeightName, scale) )
+                    
+            #for tty in ttys: tty.makeTTYVariations()
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
     def listProcesses(self,allProcs=False):
@@ -323,6 +356,7 @@ class MCAnalysis:
     def setScales(self,process,scales):
         for (tty,factor) in zip(self._allData[process],scales): tty.setScaleFactor(factor,mcCorrs=False)
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
+        if self._groupsToNormalize: self._normalizeGroups()
         ## first figure out what we want to do
         tasks = []
         for key,ttys in self._allData.iteritems():
@@ -368,6 +402,7 @@ class MCAnalysis:
                 ret['background'] = mergeReports(allBg)
         return ret
     def getYieldsHN(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False,addUncertainties=True):
+        if self._groupsToNormalize: self._normalizeGroups()
         report = []; cut = ""
         cutseq = [ ['entry point','1'] ]
         if noEntryLine: cutseq = []
@@ -408,6 +443,7 @@ class MCAnalysis:
     def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
         return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process=process,nodata=nodata,makeSummary=makeSummary,closeTreeAfter=closeTreeAfter)
     def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
+        if self._groupsToNormalize: self._normalizeGroups()
         allSig = []; allBg = []
         tasks = []
         for key,ttys in self._allData.iteritems():
@@ -719,9 +755,10 @@ class MCAnalysis:
             stylePlot(plot, pspec, lambda key,default : opts[key] if key in opts else default)
         elif not mayBeMissing:
             raise KeyError, "Process %r not found" % process
-    def _processTasks(self,func,tasks,name=None,chunkTasks=200):
-        #timer = ROOT.TStopwatch()
-        #print "Starting job %s with %d tasks, %d threads" % (name,len(tasks),self._options.jobs)
+    def _processTasks(self,func,tasks,name=None,chunkTasks=200,verbose=False):
+        if verbose:
+            timer = ROOT.TStopwatch()
+            print "Starting job %s with %d tasks, %d threads" % (name,len(tasks),self._options.jobs)
         if self._options.jobs == 0: 
             retlist = map(func, tasks)
         else:
@@ -733,7 +770,8 @@ class MCAnalysis:
                 pool.close()
                 pool.join()
                 del pool
-        #print "Done %s in %s s at %.2f " % (name,timer.RealTime(),0.001*(long(ROOT.gSystem.Now()) - _T0))
+        if verbose:
+            print "Done %s in %s s at %.2f " % (name,timer.RealTime(),0.001*(long(ROOT.gSystem.Now()) - _T0))
         return retlist
     def _splitTasks(self,tasks):
         nsplit = self._options.splitFactor
@@ -765,7 +803,18 @@ class MCAnalysis:
                     newtasks.append( tuple( (list(task)[:-1]) + [fsplit] ) )
         #print "New task list has %d entries; actual split factor %.2f" % (len(newtasks), len(newtasks)/float(len(tasks)))
         return newtasks
-
+    def _normalizeGroups(self):
+        tasks = []
+        for igroup, (ttys, genWName, scale) in enumerate(self._groupsToNormalize):
+            for tty in ttys: tasks.append( (igroup, tty, genWName) )
+        retlist = self._processTasks(_runSumW, tasks, name="sumw")
+        mergemap = defaultdict(float)
+        for (igroup,w) in retlist:
+            mergemap[igroup] += w
+        for (igroup,total_w) in mergemap.iteritems():
+            ttys, _, scale = self._groupsToNormalize[igroup]
+            for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+        self._groupsToNormalize = []
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     if addTreeToYieldOnesToo: addTreeToYieldOptions(parser)

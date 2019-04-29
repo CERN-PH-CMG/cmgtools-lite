@@ -27,7 +27,7 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
 
 def scalarToVector(x):
     x0 = x
-    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|PhoGood|TauGood|Tau)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
+    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|PhoGood|TauGood|Tau|Muon|Electron)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
     x = re.sub(r"\bmet\b", "met_pt", x)
     return x
 
@@ -134,12 +134,12 @@ def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
         histo.Sumw2()
         return histo
 
-
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[]):
+    def __init__(self,root,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[],nanoAOD=False):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
+        self._isNano = nanoAOD
         self._isInit = False
         self._options = options
         self._objname = objname if objname else options.obj
@@ -175,6 +175,7 @@ class TreeToYield:
         self._appliedCut = None
         self._elist = None
         self._entries = None
+        self._sumweights = {} if self._isNano else None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
         for _var in variation_inputs:
             if _var.isDummy(): continue
@@ -330,10 +331,31 @@ class TreeToYield:
         self._tfile.Close()
         self._tfile = None
         self._isInit = False
-    def getTree(self):
+    def getTree(self,treeName=None):
         if not self._isInit: self._init()
-        return self._tree
-
+        if treeName is None:
+            return self._tree
+        else:
+            t = self._tfile.Get(treeName)
+            if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (treeName, self._fname)
+            return t
+    def getSumW(self,expr="genEventSumw",closeFileAfterwards=True):
+        if self._maintty != None: print "WARNING: getSumW called on a non-main TTY"
+        if expr not in self._sumweights:
+            if self._isNano:
+                if closeFileAfterwards and (not self._isInit):
+                    if "root://" in self._fname: ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
+                    tfile = ROOT.TFile.Open(self._fname)
+                    if not tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
+                    t = tfile.Get("Runs")
+                    if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % ("LuminosityBlocks", self._fname)
+                    self._sumweights[expr] = _treeSum(t, expr)
+                    tfile.Close()
+                else:
+                    self._sumweights[expr] = _treeSum(self.getTree("Runs"), expr)
+            else:
+                raise RuntimeError, "getSumW implemented only for NanoAOD for now"
+        return self._sumweights[expr]
     def getEntries(self,useEList=True,closeFileAfterwards=True):
         if useEList and self._elist: 
             return self._elist.GetN()
@@ -637,6 +659,13 @@ def _copyPlotStyle(self,plotfrom,plotto):
         plotto.GetXaxis().SetNdivisions(plotfrom.GetXaxis().GetNdivisions())
         plotto.GetYaxis().SetNdivisions(plotfrom.GetYaxis().GetNdivisions())
         plotto.GetZaxis().SetNdivisions(plotfrom.GetZaxis().GetNdivisions())
+
+def _treeSum(tree,expr):
+    ROOT.gROOT.cd()
+    if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
+    histo = ROOT.TH1D("dummy","dummy",1,0.0,1.0); histo.Sumw2()
+    tree.Draw("0.5>>dummy", expr, "goff")
+    return histo.GetBinContent(1)
 
 def addTreeToYieldOptions(parser):
     parser.add_option("-l", "--lumi",           dest="lumi",   type="float", default="19.7", help="Luminosity (in 1/fb)");
