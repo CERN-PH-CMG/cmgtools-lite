@@ -137,7 +137,11 @@ class tHqEventVariableFriend:
         jets = [j for j in Collection(event, "%s_Recl" % (coll), "n%s_Recl"%(coll))]
 
         # Apply JEC and re-apply the pt cut
-        return filter(lambda j: getCorrectedJetPt(j, jec_syst) > ptcut, jets)
+        #return filter(lambda j: getCorrectedJetPt(j, jec_syst) > ptcut, jets)
+	jets_corr = filter(lambda j: getCorrectedJetPt(j, jec_syst) > ptcut, jets)
+	for j in jets_corr:
+	    j.pt = getCorrectedJetPt(j, jec_syst)
+	return jets_corr
 
     def getLeptonCollection(self, event, label='LepGood', lenlabel='nLepFO_Recl'):
         """Get a lepton collection, either default or recleaned"""
