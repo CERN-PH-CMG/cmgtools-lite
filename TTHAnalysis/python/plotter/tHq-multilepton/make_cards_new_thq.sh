@@ -11,7 +11,7 @@ case $HOSTNAME in
         test -d /tmp/$USER/TREES_TTH_190418_Fall17_skim2lss3l && ORIGIN=/tmp/$USER;;
 esac;
 
-T2L=" -P skimtrees --Fs {P}/1_recleaner_290319 --Fs {P}/2_thq_eventvars_290319 --Fs {P}/5_triggerDecision --Fs {P}/7_tauTightSel --FMCs {P}/8_vtxWeight2017 --FMCs {P}/6_bTagSF"
+T2L=" -P skimtrees --Fs {P}/1_recleaner_290319 --Fs {P}/2_thq_eventvars_270419 --Fs {P}/5_triggerDecision --Fs {P}/7_tauTightSel --FMCs {P}/8_vtxWeight2017_v2 --FMCs {P}/6_bTagSF_v4"
 T3L=${T2L}
 T4L=${T2L}
 #if test -d $ORIGIN/TREES_TTH_190418_Fall17_skim4l ; then
@@ -27,7 +27,7 @@ OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --WA pres
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
-SYSTS="--unc tHq-multilepton/signal_extraction/systsUnc.txt --amc"
+SYSTS="--unc tHq-multilepton/signal_extraction/systsUnc.txt"
 case $1 in
 --bbb)
     shift;

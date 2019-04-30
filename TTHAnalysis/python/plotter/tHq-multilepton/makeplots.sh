@@ -35,11 +35,11 @@ BASEOPTIONS=" -f -j 8 -l ${LUMI} --s2v"\
 " --mcc ttH-multilepton/lepchoice-ttH-FO.txt"
 TREEINPUTS="-P skimtrees/"
 FRIENDTREES=" -F sf/t skimtrees/1_recleaner_290319/evVarFriend_{cname}.root"\
-" -F sf/t skimtrees/2_thq_eventvars_290319/evVarFriend_{cname}.root"\
+" -F sf/t skimtrees/2_thq_eventvars_270419/evVarFriend_{cname}.root"\
 " -F sf/t skimtrees/5_triggerDecision/evVarFriend_{cname}.root"\
-" --FMC sf/t skimtrees/6_bTagSF/evVarFriend_{cname}.root"\
+" --FMC sf/t skimtrees/6_bTagSF_v4/evVarFriend_{cname}.root"\
 " -F sf/t skimtrees/7_tauTightSel/evVarFriend_{cname}.root"\
-" --FMC sf/t skimtrees/8_vtxWeight2017/evVarFriend_{cname}.root"
+" --FMC sf/t skimtrees/8_vtxWeight2017_v2/evVarFriend_{cname}.root"
 DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99 --ratioYNDiv 505"\
 " --showRatio --attachRatioPanel --fixRatioRange --showMCError"\
 " --unc tHq-multilepton/signal_extraction/systsUnc.txt"\
@@ -91,9 +91,10 @@ case "$PLOTTAG" in
         PLOTS="tHq-multilepton/plots-thq-3l-kinMVA.txt"
         ;;
     "3l-frclosure" )
-	DRAWOPTIONS="${DRAWOPTIONS} --ratioDen TT_FR_QCD --errors --AP --rebin 2 --ratioNums TT_fake"
-	SELECTPLOT="--sP thqMVA_tt_3l_60 --sP thqMVA_ttv_3l_60"
+	DRAWOPTIONS="${DRAWOPTIONS} --ratioNums TT_fake --ratioDen TT_FR_QCD --errors --AP --rebin 2 "
+	SELECTPLOT="--sP thqMVA_tt_3l_60 --sP thqMVA_ttv_3l_60 "
 	#SELECTPROCESS="-p incl_TT_FR_QCD -p incl_TT_FR_TT -p incl_TT_fake"
+	SELECTPROCESS="-p TT_FR_QCD -p TT_FR_TT -p TT_fake "
 	OPTIONS="${TREEINPUTS} ${FRIENDTREES} ${BASEOPTIONS} ${DRAWOPTIONS} ${OPT3L} ${SELECTPROCESS} ${SELECTPLOT}"
 	MCA="tHq-multilepton/mca-3l-mc-closuretest.txt"
 	CUTS="tHq-multilepton/cuts-thq-3l.txt"
@@ -177,9 +178,10 @@ case "$PLOTTAG" in
         PLOTS="tHq-multilepton/plots-thq-ttbar-fwdjet.txt --sP maxEtaJet25_60"
         ;;
     "2lss-frclosure" )
-	DRAWOPTIONS="${DRAWOPTIONS} --ratioDen TT_FR_QCD --errors --AP --rebin 2 --ratioNums TT_fake"
-	SELECTPLOT="--sP thqMVA_tt_2lss_60 --sP thqMVA_ttv_2lss_60"
-	SELECTPROCESS="-p incl_FR_QCD_elonly -p incl_FR_QCD_muonly -p TT_FR_QCD -p TT_FR_TT -p TT_fake"
+	DRAWOPTIONS="${DRAWOPTIONS} --ratioNums TT_fake --ratioDen TT_FR_QCD --errors --AP --rebin 2 "
+	SELECTPLOT="--sP thqMVA_tt_2lss_60 --sP thqMVA_ttv_2lss_60 "
+	#SELECTPROCESS="-p incl_FR_QCD_elonly -p incl_FR_QCD_muonly -p TT_FR_QCD -p TT_FR_TT -p TT_fake"
+	SELECTPROCESS="-p TT_FR_QCD -p TT_FR_TT -p TT_fake "
 	OPTIONS="${TREEINPUTS} ${FRIENDTREES} ${BASEOPTIONS} ${DRAWOPTIONS} ${OPT3L} ${SELECTPROCESS} ${SELECTPLOT}"
 	MCA="tHq-multilepton/mca-2lss-mc-closuretest.txt"
 	CUTS="tHq-multilepton/cuts-thq-2lss.txt"
