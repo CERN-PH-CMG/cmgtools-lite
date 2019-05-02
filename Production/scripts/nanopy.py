@@ -2,8 +2,11 @@
 from __future__ import print_function
 import os, sys, imp, pickle, multiprocessing
 from copy import copy
+from math import ceil
 
 def _processOneComponent(pp, comp, outdir, preprocessor, options):
+    if not comp.files: return
+    pp.postfix = "_nanopy"
     pp.noOut = options.noOut
     pp.justcount = options.justcount
     if options.prefetch is not None: 
@@ -12,11 +15,27 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
         pp.longTermCache = options.longTermCache
     if options.maxEntries: 
         pp.maxEntries = options.maxEntries
+    fineSplit = getattr(comp, 'fineSplit', None)
+    if fineSplit:
+        if len(comp.files) != 1:
+            raise RuntimeError("FineSplitting not supported for component %s with %d files" % (comp.name, len(comp.files)))
+        fineSplitIndex, fineSplitFactor = fineSplit
+        if fineSplitFactor <= 1:
+            raise RuntimeError("FineSplitting not supported for component %s with %r fineSplitFactor" % (comp.name, fineSplitFactor))
+        import ROOT
+        ROOT.PyConfig.IgnoreCommandLineOptions = True
+        tfile = ROOT.TFile.Open(comp.files[0])
+        totEvents = min(tfile.Get("Events").GetEntries(), pp.maxEntries)
+        tfile.Close()
+        pp.maxEntries = int(ceil(totEvents/float(fineSplitFactor)))
+        pp.firstEntry = fineSplitIndex * pp.maxEntries
+        pp.postfix += "_fineSplit_%d" % fineSplitIndex
 
     preprocessor = getattr(comp, 'preprocessor', preprocessor)
     if preprocessor:
+        if fineSplit: raise RuntimeError("FineSplitting not supported for component %s with preprocessor at the moment" % comp.name)
         comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries) ]
-
+        
     print("Processing component %s (%d files)" % (comp.name, len(comp.files)))
     # setting specific configuration for the modules, if needed
     for mod in pp.modules:
@@ -26,7 +45,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     trigSel = getattr(comp, 'triggers', [])
     trigVeto = getattr(comp, 'vetoTriggers', [])
     if trigSel:
-        cut = "(%s) && (%s)" % (cut, " || ".join(trigSel))
+        cut = "(%s) && (%s)" % (cut if cut else 1, " || ".join(trigSel))
         if trigVeto: cut += " && !(%s)" % (" || ".join(trigVeto))
     elif trigVeto: raise RuntimeError("vetoTriggers specified without triggers for component %s" % comp.name)
     pp.cut = cut
@@ -42,12 +61,12 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     # clean up intermediate files if needed
     if len(pp.inputFiles) > 1:
         for f in pp.inputFiles:
-            of = os.path.join(pp.outputDir, os.path.basename(f).replace(".root","_Skim.root"))
+            of = os.path.join(pp.outputDir, os.path.basename(f).replace(".root",pp.postfix+".root"))
             if os.path.isfile(of): 
                 print("removing temporary file "+of)
                 os.unlink(of)
     else:
-        of = os.path.join(pp.outputDir, os.path.basename(pp.inputFiles[0]).replace(".root","_Skim.root"))
+        of = os.path.join(pp.outputDir, os.path.basename(pp.inputFiles[0]).replace(".root",pp.postfix+".root"))
         os.rename(of, target)
     if preprocessor:
         preprocessor.doneProcessComponent(comp, outdir)

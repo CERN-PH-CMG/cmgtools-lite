@@ -661,6 +661,7 @@ def _copyPlotStyle(self,plotfrom,plotto):
         plotto.GetZaxis().SetNdivisions(plotfrom.GetZaxis().GetNdivisions())
 
 def _treeSum(tree,expr):
+    if tree.GetEntries() == 0: return 0.
     ROOT.gROOT.cd()
     if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
     histo = ROOT.TH1D("dummy","dummy",1,0.0,1.0); histo.Sumw2()
