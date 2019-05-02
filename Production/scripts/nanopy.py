@@ -1,0 +1,108 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import os, sys, imp, pickle, subprocess, multiprocessing
+from copy import copy
+
+
+def _processOneComponent(pp, comp, options):
+    pp.noOut = options.noOut
+    pp.justcount = options.justcount
+    if options.prefetch is not None: 
+        pp.prefetch = options.prefetch
+    if options.longTermCache is not None: 
+        pp.longTermCache = options.longTermCache
+    if options.maxEntries: 
+        pp.maxEntries = options.maxEntries
+
+    print("Processing component %s (%d files)" % (comp.name, len(comp.files)))
+    # setting specific configuration for the modules, if needed
+    for mod in pp.modules:
+        if hasattr(mod, 'initComponent'): mod.initComponent(comp)
+    # reading cut string (and apply trigger bits together with it) 
+    cut = getattr(comp, 'cut', pp.cut)
+    trigSel = getattr(comp, 'triggers', [])
+    trigVeto = getattr(comp, 'vetoTriggers', [])
+    if trigSel:
+        cut = "(%s) && (%s)" % (cut, " || ".join(trigSel))
+        if trigVeto: cut += " && !(%s)" % (" || ".join(trigVeto))
+    elif trigVeto: raise RuntimeError("vetoTriggers specified without triggers for component %s" % comp.name)
+    pp.cut = cut
+    # input
+    pp.inputFiles = comp.files[:]
+    pp.json = getattr(comp, 'json', pp.json)
+    # output
+    pp.outputDir = outdir
+    target = os.path.join(outdir, comp.name + ".root")
+    if len(pp.inputFiles) > 1: pp.haddFileName = target 
+    # go and have fun
+    pp.run()
+    # clean up intermediate files if needed
+    if len(pp.inputFiles) > 1:
+        for f in pp.inputFiles:
+            of = os.path.join(pp.outputDir, os.path.basename(f).replace(".root","_Skim.root"))
+            if os.path.isfile(of): 
+                print("removing temporary file "+of)
+                os.unlink(of)
+    else:
+        of = os.path.join(pp.outputDir, os.path.basename(pp.inputFiles[0]).replace(".root","_Skim.root"))
+        os.rename(of, target)
+
+def _processOneComponentAsync(args):
+    pp, comp, options = args
+    try:
+        _processOneComponent(pp, comp, options)
+    except Exception:
+        import traceback
+        print("ERROR processing component %s" % comp.name)
+        print(comp)
+        print("STACK TRACE: ")
+        print(traceback.format_exc())
+        raise
+
+if __name__ == "__main__":
+    from optparse import OptionParser
+    parser = OptionParser(usage="%prog [options] outputDir inputCfg [ component ]")
+    parser.add_option("--single",  dest="single", action="store_true",  default=False, help="Run on a single component, single-threaded, without creating subdirectories")
+    parser.add_option("--prefetch", dest="prefetch", action="store_true",  default=None, help="Prefetch remote files with xrdcp (overrides what is in the cfg file)")
+    parser.add_option("--no-prefetch", dest="prefetch", action="store_false",  default=None, help="Do not prefetch remote files with xrdcp (overrides what is in the cfg file)")
+    parser.add_option("--long-term-cache", dest="longTermCache", action="store_true",  default=None, help="Keep prefetched files across runs (overrides what is in the cfg file)")
+    parser.add_option("--no-long-term-cache", dest="longTermCache", action="store_false",  default=None, help="Keep prefetched files across runs (overrides what is in the cfg file)")
+    parser.add_option("-N", "--nevents", "--max-entries", dest="maxEntries", type="long",  default=None, help="Maximum number of entries to process from any single given input tree")
+    parser.add_option("-j", dest="ntasks", type="int",  default=4, help="Maximum number of entries to processes to run simultaneously")
+    parser.add_option("--noout",  dest="noOut", action="store_true",  default=False, help="Do not produce output, just run modules")
+    parser.add_option("--justcount",   dest="justcount", default=False, action="store_true",  help="Just report the number of selected events") 
+    (options, args) = parser.parse_args()
+
+    if len(args) < 2 :
+	 parser.print_help()
+         sys.exit(1)
+    outdir = args[0] 
+    cfg = args[1]
+
+    cfo = imp.load_source(os.path.basename(cfg).rstrip('.py'), cfg, open(cfg,'r'))
+    pp = cfo.POSTPROCESSOR
+
+    if len(args) == 2:
+        components = cfo.selectedComponents
+    else:
+        components = [ pickle.load(open(arg, 'r')) for arg in args[2:] ]
+
+    if options.single:
+        if len(components) > 1: 
+            print("WARNING: option --single specified but multiple components found")
+        for comp in components:
+            _processOneComponent(copy(pp), comp, options)
+
+    else:
+        from PhysicsTools.HeppyCore.framework.heppy_loop import split
+        components = split(components)
+        if options.ntasks == 0: # single core, for debugging
+            for comp in components: _processOneComponent(copy(pp), comp, options)
+        else:
+            pool = multiprocessing.Pool(processes=min(len(components),options.ntasks,multiprocessing.cpu_count()))
+            pool.map( _processOneComponentAsync, [(copy(pp), comp, options) for comp in components ])
+            pool.close()
+            pool.join()
+            del pool
+
+    print("\nDone")
