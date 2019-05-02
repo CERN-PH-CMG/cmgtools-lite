@@ -1,7 +1,8 @@
 import os
-import pprint
 import pickle
 import shutil
+import subprocess
+from collections import defaultdict
 
 def haddPck(file, odir, idirs):
     '''add pck files in directories idirs to a directory outdir.
@@ -72,7 +73,6 @@ def haddRec(odir, idirs):
     print 'adding', idirs
     print 'to', odir
 
-    cmd = ' '.join( ['mkdir', odir])
     # import pdb; pdb.set_trace()
     # os.system( cmd )
     try:
@@ -87,15 +87,67 @@ def haddRec(odir, idirs):
         for dir in dirs:
             dir = '/'.join([root, dir])
             dir = dir.replace(idirs[0], odir)
-            cmd = 'mkdir ' + dir 
+            # cmd = 'mkdir ' + dir 
             # print cmd
             # os.system(cmd)
             os.mkdir(dir)
         for file in files:
             hadd('/'.join([root, file]), odir, idirs)
 
+def haddNano(odir, idirs, firstTime=True):
+    print 'adding', idirs
+    print 'to', odir
 
-def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None):
+    if os.path.exists(odir):
+        raise RuntimeError("Error, %s exists already." % odir)
+    elif os.path.dirname(odir):
+        if not os.path.isdir(os.path.dirname(odir)): 
+            os.makedirs(os.path.dirname(odir))
+
+    if firstTime:
+        files = []
+        for chunk in idirs:
+            if os.path.isdir(chunk):
+                found = False
+                for fname in os.listdir(chunk):
+                    if fname.endswith(".root") and os.path.isfile(os.path.join(chunk, fname)):
+                        files.append(os.path.join(chunk, fname))
+                        found = True
+                if not found: 
+                    raise RuntimeError("Error, chunk %s doesn't contain any root file" % chunk)
+            elif chunk.endswith(".root"):
+                files.append(chunk)
+    else:
+        files = idirs[:]
+
+    if len(files) == 0:
+        raise RuntimeError("Error, no files for target %s" % odir)
+    elif len(files) > 200:
+        newlist = []; sublist = []
+        for f in files:
+            sublist.append(f)
+            if len(sublist) == 200:
+                haddNano(odir+"_sub%d" % len(newlist), sublist, firstTime=False)
+                newlist.append(odir+"_sub%d.root" % len(newlist))
+                sublist = []
+        if sublist:
+            haddNano(odir+"_sub%d" % len(newlist), sublist, firstTime=False)
+            newlist.append(odir+"_sub%d.root" % len(newlist))
+        haddNano(odir, newlist, firstTime=False)
+        return
+
+    try:
+        if len(files) == 1:
+            shutil.move(files[0], odir+".root")
+        else:
+            subprocess.call(["haddnano.py", odir+".root" ] + files)
+    except OSError:
+        print 
+        print 'ERROR: directory in the way. Maybe you ran hadd already in this directory? Remove it and try again'
+        print 
+        raise
+
+def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None, nanoAOD=False):
 
     chunks = {}
     compsToSpare = set()
@@ -103,9 +155,10 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
 
     for file in sorted(os.listdir(idir)):
         filepath = '/'.join( [idir, file] )
+        isdir = os.path.isdir(filepath)
         # print filepath
-        if os.path.isdir(filepath):
-            compdir = file
+        if isdir or (nanoAOD and filepath.endswith(".root")):
+            compdir = file if isdir else file.rstrip(".root")
             try:
                 prefix,num = compdir.rsplit('_Chunk',1)
             except ValueError:
@@ -133,7 +186,10 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
             #print odir, cchunks
             running = [ dict(files=[], size=0.) ]
             for ch in cchunks:
-                size = sum(sum(os.path.getsize(os.path.join(p,f)) for f in fs) for p,d,fs in os.walk(ch))
+                if nanoAOD and os.path.isfile(ch+".root"):
+                    size = os.path.getsize(ch+".root")
+                else:
+                    size = sum(sum(os.path.getsize(os.path.join(p,f)) for f in fs) for p,d,fs in os.walk(ch))
                 if running[-1]['size'] + size > threshold:
                     running.append(dict(files=[], size=0.))
                 running[-1]['files'].append(ch)
@@ -148,11 +204,17 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
         for odir, cchunks in tasks:
             #print odir, cchunks
             if removeDestDir:
-                if os.path.isdir( odir ):
+                if nanoAOD and os.path.isfile(odir + ".root"):
+                    os.unlink(odir + ".root")
+                elif os.path.isdir( odir ):
                     shutil.rmtree(odir)
-            haddRec(odir, cchunks)
+            if nanoAOD:
+                haddNano(odir, cchunks)
+            else:
+                haddRec(odir, cchunks)
             if cleanUp and (comp not in compsToSpare):
                 for chunk in cchunks:
+                    if nanoAOD and not os.path.exists(chunk): continue
                     shutil.move(chunk, chunkDir)
 
 
