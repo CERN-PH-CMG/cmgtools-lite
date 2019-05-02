@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import os, sys, imp, pickle, subprocess, multiprocessing
+import os, sys, imp, pickle, multiprocessing
 from copy import copy
 
-
-def _processOneComponent(pp, comp, options):
+def _processOneComponent(pp, comp, outdir, preprocessor, options):
     pp.noOut = options.noOut
     pp.justcount = options.justcount
     if options.prefetch is not None: 
@@ -13,6 +12,10 @@ def _processOneComponent(pp, comp, options):
         pp.longTermCache = options.longTermCache
     if options.maxEntries: 
         pp.maxEntries = options.maxEntries
+
+    preprocessor = getattr(comp, 'preprocessor', preprocessor)
+    if preprocessor:
+        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries) ]
 
     print("Processing component %s (%d files)" % (comp.name, len(comp.files)))
     # setting specific configuration for the modules, if needed
@@ -46,15 +49,16 @@ def _processOneComponent(pp, comp, options):
     else:
         of = os.path.join(pp.outputDir, os.path.basename(pp.inputFiles[0]).replace(".root","_Skim.root"))
         os.rename(of, target)
+    if preprocessor:
+        preprocessor.doneProcessComponent(comp, outdir)
 
 def _processOneComponentAsync(args):
-    pp, comp, options = args
     try:
-        _processOneComponent(pp, comp, options)
+        _processOneComponent(*args)
     except Exception:
         import traceback
-        print("ERROR processing component %s" % comp.name)
-        print(comp)
+        print("ERROR processing component %s" % args[1].name)
+        print(args[1])
         print("STACK TRACE: ")
         print(traceback.format_exc())
         raise
@@ -87,20 +91,22 @@ if __name__ == "__main__":
     else:
         components = [ pickle.load(open(arg, 'r')) for arg in args[2:] ]
 
+    preprocessor = getattr(cfo, 'PREPROCESSOR', None)
+
     if options.single:
         if len(components) > 1: 
             print("WARNING: option --single specified but multiple components found")
         for comp in components:
-            _processOneComponent(copy(pp), comp, options)
+            _processOneComponent(copy(pp), comp, outdir, preprocessor, options)
 
     else:
         from PhysicsTools.HeppyCore.framework.heppy_loop import split
         components = split(components)
-        if options.ntasks == 0: # single core, for debugging
-            for comp in components: _processOneComponent(copy(pp), comp, options)
+        if options.ntasks == 0 or len(components) == 1: # single core, for debugging
+            map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ])
         else:
             pool = multiprocessing.Pool(processes=min(len(components),options.ntasks,multiprocessing.cpu_count()))
-            pool.map( _processOneComponentAsync, [(copy(pp), comp, options) for comp in components ])
+            pool.map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ])
             pool.close()
             pool.join()
             del pool
