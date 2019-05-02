@@ -53,8 +53,8 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     pp.inputFiles = comp.files[:]
     pp.json = getattr(comp, 'json', pp.json)
     # output
-    pp.outputDir = outdir
-    target = os.path.join(outdir, comp.name + ".root")
+    pp.outputDir = outdir if not preprocessor else os.path.join(outdir, comp.name)
+    target = os.path.join(pp.outputDir, comp.name + ".root")
     if len(pp.inputFiles) > 1: pp.haddFileName = target 
     # go and have fun
     pp.run()
