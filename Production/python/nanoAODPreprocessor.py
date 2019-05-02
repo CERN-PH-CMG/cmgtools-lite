@@ -11,9 +11,9 @@ class nanoAODPreprocessor:
         self._outputFileName = outputFileName
         self._keepOutput = keepOutput
         self._name = name
-    def preProcessComponent(self, comp, outdir, maxEntries, verbose=True):
+    def preProcessComponent(self, comp, outdir, maxEntries, noSubDir=False, verbose=True):
         if verbose: print("Pre-processing component %s (%d files) with %s" % (comp.name, len(comp.files), self._cfg))
-        workingDir = os.path.join(outdir, comp.name)
+        workingDir = outdir if noSubDir else os.path.join(outdir, comp.name)
         subprocess.check_output(["mkdir","-p", workingDir])
         if not os.path.isdir(workingDir): raise RuntimeError("Can't create preprocessor working directory: "+comp)
         # make cfg file
@@ -42,9 +42,9 @@ class nanoAODPreprocessor:
             subprocess.check_output([scriptName])
         # return 
         return os.path.join(workingDir, self._outputFileName)
-    def doneProcessComponent(self, comp, outdir, verbose=True):
+    def doneProcessComponent(self, comp, outdir, noSubDir=False, verbose=True):
         if not self._keepOutput:
-            tmpfile = os.path.join(outdir, comp.name, self._outputFileName)
+            tmpfile = os.path.join(outdir, '' if noSubDir else comp.name, self._outputFileName)
             if os.path.isfile(tmpfile):
                 if verbose: print("removing temporary file %s from preprocessor" % tmpfile)
                 os.unlink(tmpfile)

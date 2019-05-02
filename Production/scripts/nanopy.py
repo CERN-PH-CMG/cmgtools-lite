@@ -34,7 +34,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     preprocessor = getattr(comp, 'preprocessor', preprocessor)
     if preprocessor:
         if fineSplit: raise RuntimeError("FineSplitting not supported for component %s with preprocessor at the moment" % comp.name)
-        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries) ]
+        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries, options.single) ]
         
     print("Processing component %s (%d files)" % (comp.name, len(comp.files)))
     # setting specific configuration for the modules, if needed
@@ -53,7 +53,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     pp.inputFiles = comp.files[:]
     pp.json = getattr(comp, 'json', pp.json)
     # output
-    pp.outputDir = outdir if not preprocessor else os.path.join(outdir, comp.name)
+    pp.outputDir = outdir if (options.single or not preprocessor) else os.path.join(outdir, comp.name)
     target = os.path.join(pp.outputDir, comp.name + ".root")
     if len(pp.inputFiles) > 1: pp.haddFileName = target 
     # go and have fun
@@ -69,7 +69,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
         of = os.path.join(pp.outputDir, os.path.basename(pp.inputFiles[0]).replace(".root",pp.postfix+".root"))
         os.rename(of, target)
     if preprocessor:
-        preprocessor.doneProcessComponent(comp, outdir)
+        preprocessor.doneProcessComponent(comp, outdir, options.single)
 
 def _processOneComponentAsync(args):
     try:
