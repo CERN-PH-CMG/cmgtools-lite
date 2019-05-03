@@ -97,7 +97,7 @@ echo
 env | sort
 echo
 echo '==== running ===='
-nanopy.py --single Loop pycfg.py config.pck
+nanopy.py --single Loop pycfg.py config.pck --options=options.json
 echo
 echo '==== sending the files back ===='
 echo
@@ -126,6 +126,11 @@ class MyBatchManager( BatchManager ):
        shutil.copyfile(cfgFileName, jobDir+'/pycfg.py')
        cfgFile = open(jobDir+'/config.pck','w')
        pickle.dump( components[value] , cfgFile )
+       from PhysicsTools.HeppyCore.framework.heppy_loop import _heppyGlobalOptions
+       optjsonfile = open(jobDir+'/options.json','w')
+       optjsonfile.write(json.dumps(_heppyGlobalOptions))
+       optjsonfile.close()
+
 
 if __name__ == '__main__':
     batchManager = MyBatchManager()
@@ -138,8 +143,15 @@ if __name__ == '__main__':
 
     options, args = batchManager.ParseOptions()
 
-    cfgFileName = args[0]
+    from PhysicsTools.HeppyCore.framework.heppy_loop import _heppyGlobalOptions
+    for opt in options.extraOptions:
+        if "=" in opt:
+            (key,val) = opt.split("=",1)
+            _heppyGlobalOptions[key] = val
+        else:
+            _heppyGlobalOptions[opt] = True
 
+    cfgFileName = args[0]
     cfo = imp.load_source("pycfg", cfgFileName, open(cfgFileName, 'r'))
 
     components = split( [comp for comp in cfo.selectedComponents if len(comp.files)>0] )

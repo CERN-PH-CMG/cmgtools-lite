@@ -4,10 +4,24 @@ import os, sys, imp, pickle, multiprocessing, types
 from copy import copy
 from math import ceil
 
+def _loadHeppyGlobalOptions(options):
+    from PhysicsTools.HeppyCore.framework.heppy_loop import _heppyGlobalOptions
+    for opt in options.extraOptions:
+        if "=" in opt:
+            (key,val) = opt.split("=",1)
+            _heppyGlobalOptions[key] = val
+        else:
+            _heppyGlobalOptions[opt] = True
+    if options.optionFile:
+        opt = json.load(open(options.optionFile, 'r'))
+        for key,val in opt: 
+            _heppyGlobalOptions[key] = val
+
 def _processOneComponent(pp, comp, outdir, preprocessor, options):
     if not comp.files: return
 
     if isinstance(pp, str) or isinstance(pp, unicode):
+        _loadHeppyGlobalOptions(options)
         cfo = imp.load_source(os.path.basename(pp).rstrip('.py'), pp, open(pp,'r'))
         pp = cfo.POSTPROCESSOR
 
@@ -101,14 +115,19 @@ if __name__ == "__main__":
     parser.add_option("-j", dest="ntasks", type="int",  default=4, help="Maximum number of entries to processes to run simultaneously")
     parser.add_option("--noout",  dest="noOut", action="store_true",  default=False, help="Do not produce output, just run modules")
     parser.add_option("--justcount",   dest="justcount", default=False, action="store_true",  help="Just report the number of selected events") 
+    parser.add_option("-o", "--option", dest="extraOptions", type="string", action="append", default=[], help="Save one extra option (either a flag, or a key=value pair) that can be then accessed from the job config file")
+    parser.add_option('--options', dest='optionFile', default=None, help='options specified as a json file')
     (options, args) = parser.parse_args()
 
     if len(args) < 2 :
 	 parser.print_help()
          sys.exit(1)
     outdir = args[0] 
-    cfg = args[1]
 
+    # this must be done before calling the source
+    _loadHeppyGlobalOptions(options)
+
+    cfg = args[1]
     cfo = imp.load_source(os.path.basename(cfg).rstrip('.py'), cfg, open(cfg,'r'))
     pp = cfo.POSTPROCESSOR
 
