@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import os, sys, imp, pickle, multiprocessing
+import os, sys, imp, pickle, multiprocessing, types
 from copy import copy
 from math import ceil
 
 def _processOneComponent(pp, comp, outdir, preprocessor, options):
     if not comp.files: return
+
+    if isinstance(pp, str) or isinstance(pp, unicode):
+        cfo = imp.load_source(os.path.basename(pp).rstrip('.py'), pp, open(pp,'r'))
+        pp = cfo.POSTPROCESSOR
+
     pp.postfix = "_nanopy"
     pp.noOut = options.noOut
     pp.justcount = options.justcount
@@ -35,7 +40,9 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     if preprocessor:
         if fineSplit: raise RuntimeError("FineSplitting not supported for component %s with preprocessor at the moment" % comp.name)
         comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries, options.single) ]
-        
+    
+    # unwrap any module still wrapped by a lambda
+    pp.modules = [ (m() if isinstance(m,types.FunctionType) else m) for m in pp.modules ]
     print("Processing component %s (%d files)" % (comp.name, len(comp.files)))
     # setting specific configuration for the modules, if needed
     for mod in pp.modules:
@@ -125,7 +132,7 @@ if __name__ == "__main__":
             map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ])
         else:
             pool = multiprocessing.Pool(processes=min(len(components),options.ntasks,multiprocessing.cpu_count()))
-            pool.map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ])
+            pool.map(_processOneComponentAsync, [(cfg, comp, outdir, preprocessor, options) for comp in components ])
             pool.close()
             pool.join()
             del pool
