@@ -17,12 +17,30 @@ function do_run {
     echo "Run done. press enter to continue (ctrl-c to break)";
     read DUMMY;
 }
+function do_friends_heppy {
+    pushd ../macros
+    SRC=$1; shift;
+    case $1 in
+        ttHMC)
+            echo "python prepareEventVariablesFriendTree.py --tra2 $SRC {P}/1_recleaner_v0 --tree treeProducerSusyMultilepton -I CMGTools.TTHAnalysis.tools.functionsTTH -m jetPtRatiov3 -m leptonJetFastReCleanerTTH_step1 -m leptonJetFastReCleanerTTH_step2_mc -d $2 -j 0"
+            python prepareEventVariablesFriendTree.py --tra2 $SRC {P}/1_recleaner_v0 --tree treeProducerSusyMultilepton -I CMGTools.TTHAnalysis.tools.functionsTTH -m jetPtRatiov3 -m leptonJetFastReCleanerTTH_step1 -m leptonJetFastReCleanerTTH_step2_mc -d $2 -j 0
+            python prepareEventVariablesFriendTree.py --tra2 $SRC {P}/2_eventVars_v0 --tree treeProducerSusyMultilepton -I CMGTools.TTHAnalysis.tools.functionsTTH -m eventVars -F sf/t {P}/1_recleaner_v0/evVarFriend_{cname}.root -d $2 -j 0
+            ;;
+        ttHData)
+            python prepareEventVariablesFriendTree.py --tra2 $SRC {P}/1_recleaner_v0 --tree treeProducerSusyMultilepton -I CMGTools.TTHAnalysis.tools.functionsTTH -m jetPtRatiov3 -m leptonJetFastReCleanerTTH_step1 -m leptonJetFastReCleanerTTH_step2_data -d $2 -j 0
+            python prepareEventVariablesFriendTree.py --tra2 $SRC {P}/2_eventVars_v0 --tree treeProducerSusyMultilepton -I CMGTools.TTHAnalysis.tools.functionsTTH -m eventVars -F sf/t {P}/1_recleaner_v0/evVarFriend_{cname}.root -d $2 -j 0
+            ;;
+    esac;
+    popd
+}
 function do_plot {
-    PROC=$1; PROCR=$2; LABEL=$3; RVER=$4
+    PROC=$1; PROCR=$2; LABEL=$3; RVER=$4; shift; shift; shift; shift;
     if [[ "${PROCR}" == "" ]]; then return; fi;
-    if test \! -d ${DIR}/${PROC}; then echo "Did not find ${PROC} in ${DIR}"; exit 1; fi
+    if test \! -d ${DIR}/${PROC} && test \! -d ${DIR}/New; then echo "Did not find ${PROC} or New in ${DIR}"; exit 1; fi
     if [[ "${RVER}" == "" ]]; then RVER=94X; fi;
-    if [[ "${LABEL}" != "MANUAL" ]]; then 
+    if [[ "${PROCR}" == "Ref" ]]; then
+        test -d ${DIR}/Ref && echo "Using existing Ref"
+    elif [[ "${LABEL}" != "MANUAL" ]]; then 
         test -L ${DIR}/Ref && rm ${DIR}/Ref    
         test -L ${DIR}/New && rm ${DIR}/New    
         if test -d ~/Reference_${RVER}_${PROCR}${LABEL}; then
@@ -30,6 +48,7 @@ function do_plot {
         else
              ln -sd $PWD/Reference_${RVER}_${PROCR}${LABEL} ${DIR}/Ref;
         fi
+        ln -sd ${DIR}/${PROC} ${DIR}/New;
     else
         test -L ${DIR}/Ref && rm ${DIR}/Ref    
         test -L ${DIR}/New && rm ${DIR}/New    
@@ -39,8 +58,9 @@ function do_plot {
             ln -sd ${PROCR}  ${DIR}/Ref
             PROCR=$(basename ${PROCR})
         fi;
+        ln -sd ${DIR}/${PROC} ${DIR}/New;
     fi
-    ln -sd ${DIR}/${PROC} ${DIR}/New;
+    test -d ${DIR}/New || ln -sd ${DIR}/${PROC} ${DIR}/New;
     OUTNAME=${WHAT}-${PROCR}${LABEL}
     ( cd ../python/plotter;
       # ---- MCA ---
@@ -58,10 +78,15 @@ function do_plot {
         else
              CUTS=susy-multilepton/validation-data.txt
         fi;
+      elif echo "X$LABEL" | grep -q [Rr]ecl; then
+        CUTS=ttH-multilepton/validation-recl.txt
       fi
       WA=1; if echo $WHAT | grep -q Presc; then WA=prescaleFromSkim; fi;
+      echo "python mcPlots.py -f --s2v --tree treeProducerSusyMultilepton  -P ${DIR} $MCA $CUTS ${CUTS/.txt/_plots.txt} \
+              --pdir plots/104X/validation/${OUTNAME}  -u -e --WA $WA $* \
+              --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences"
       python mcPlots.py -f --s2v --tree treeProducerSusyMultilepton  -P ${DIR} $MCA $CUTS ${CUTS/.txt/_plots.txt} \
-              --pdir plots/104X/validation/${OUTNAME}  -u -e --WA $WA \
+              --pdir plots/104X/validation/${OUTNAME}  -u -e --WA $WA $* \
               --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences
     );
 }
@@ -80,6 +105,19 @@ case $WHAT in
     ttHMC)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-MC -o sample=TTLep -N 2000;
         do_plot TTLep_pow TTLep_pow
+        ;;
+    ttHMC_Recl)
+        if test -d ${DIR/_Recl/}; then
+            if $RUN; then
+                test -d $DIR || mkdir $DIR || exit 1;
+                test -d $DIR/New || cp -av ${DIR/_Recl/}/{Ref,New,TTLep_pow} $DIR || exit 1;
+                test -d $DIR/1_recleaner_v0 || cp -rv ~/Reference_94X_TTLep_pow_friends/[0-9]_* $DIR || exit 1;
+                do_friends_heppy $DIR ttHMC New;
+            fi;
+            do_plot TTLep_pow Ref -recl 94X --Fs {P}/1_recleaner_v0 --Fs {P}/2_eventVars_v0  -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt
+        else
+            echo "first run ttHMC to create $DIR";
+        fi
         ;;
     ttHSpeed)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-MC -o sample=TTSemi -N 10000 -t -o fast -o single;
