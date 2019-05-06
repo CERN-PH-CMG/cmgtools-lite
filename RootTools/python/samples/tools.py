@@ -3,12 +3,15 @@ import os, sys, re
 def _filterSamples(samples,args):
     selsamples = []
     use_regexp = ( "--re" in args or "--regexp" in args or "--regex" in args)
+    noext = ("--noext" in args)
     realargs = [ a for a in args if not(a.startswith("--")) ]
     if len(realargs) > 2:
         for x in realargs[2:]:
             regexp = re.compile(x if use_regexp else re.escape(x))
             for s in samples:
                 if re.search(regexp, s.name) and s not in selsamples:
+                    if noext and "_ext" in s.name: 
+                        continue
                     selsamples.append(s)
     else:
         selsamples = samples
@@ -142,6 +145,17 @@ python samplefile.py checkdecl:
                         fneg += "(%.3f in sample file, \033[01;33mWARNING\033[00m)" % d.fracNegWeights
             else: fneg = ""
             print "XS(genAnalyzer) = %g +/- %g pb : %s kFactor = %g %s\033[00m%s" % (xs, xserr, col, kfactor, stat, fneg)
+   if "hasfnegw" in args:
+        for d in selsamples:
+            dataset = getattr(d, 'dataset', None)
+            if not dataset or len(dataset.split("/")) != 4: 
+                continue
+            if "amcatnlo" in dataset or "FXFX" in dataset:
+                if not hasattr(d, 'xSection'): 
+                    print "Skipping %s which has no cross section" % d.name
+                    continue
+                if getattr(d, 'fracNegWeights', None) == None:
+                    print "WARNING: no fracNegWeights for component %s dataset %s" % (d.name, dataset)
    if "checkdecl" in args:
         if localobjs == None: raise RuntimeError("you have to runMain(samples,localobjs=locals())")
         import PhysicsTools.HeppyCore.framework.config as cfg
@@ -156,6 +170,12 @@ python samplefile.py checkdecl:
                 else:
                     ok += 1
         print "\tINFO: %d correctly declared components" % ok
-
-
-
+        found_datasets = {}
+        for comp in samples:
+            dataset = getattr(comp, 'dataset', None)
+            if not dataset or len(dataset.split("/")) != 4: 
+                continue
+            if dataset in found_datasets: 
+                print "WARNING: components %s and %s share the same dataset %s" % (comp.name, found_datasets[dataset], dataset)
+            else:
+                found_datasets[dataset] = comp.name
