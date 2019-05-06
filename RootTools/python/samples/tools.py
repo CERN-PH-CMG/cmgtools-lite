@@ -52,15 +52,21 @@ python samplefile.py checkdecl:
    if "locality" in args:
        import re
        from CMGTools.Production.localityChecker import LocalityChecker
-       tier2Checker = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
+       tier2CheckerMini = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
+       tier2CheckerNano = LocalityChecker("T2_CH_CERN", datasets="/*/*/NANOAOD*")
        for comp in selsamples:
            if len(comp.files) == 0: 
                print '\033[34mE: Empty component: '+comp.name+'\033[0m'
                continue
            if not hasattr(comp,'dataset'): continue
-           if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
            if "/store/" not in comp.files[0]: continue
            if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
+           if re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset):
+                tier2Checker = tier2CheckerMini
+           elif re.match("/[^/]+/[^/]+/NANOAOD(SIM)?", comp.dataset):
+                tier2Checker = tier2CheckerNano
+           else:
+                continue
            if not tier2Checker.available(comp.dataset):
                print "\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset)
            else: print "Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset)
