@@ -66,7 +66,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     trigSel = getattr(comp, 'triggers', [])
     trigVeto = getattr(comp, 'vetoTriggers', [])
     if trigSel:
-        cut = "(%s) && (%s)" % (cut if cut else 1, " || ".join(trigSel))
+        cut = "(%s) && (%s)" % (cut.rstrip("_v*") if cut else 1, " || ".join(trigSel))
         if trigVeto: cut += " && !(%s)" % (" || ".join(trigVeto))
     elif trigVeto: raise RuntimeError("vetoTriggers specified without triggers for component %s" % comp.name)
     pp.cut = cut
