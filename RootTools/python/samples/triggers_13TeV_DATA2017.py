@@ -79,3 +79,6 @@ triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_DZ_PFMET50_PFMHT60_v*"]
 triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*","HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v*"] #NoMu version
 #triggers_SOS_highMET = ["HLT_PFMET100_PFMHT100_IDTight_PFHT60_v*","HLT_PFMET120_PFMHT120_IDTight_PFHT60_v*","HLT_PFMET120_PFMHT120_IDTight_v*", "HLT_PFMET140_PFMHT140_IDTight_v*"]
 triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3_Mass3p8to60_DZ_v*"]
+
+### Wrap all in a dictionary for easier importing of multiple years
+all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals() if x.startswith("triggers_") and isinstance(y,list))
