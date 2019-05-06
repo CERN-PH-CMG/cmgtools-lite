@@ -48,4 +48,4 @@ triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for 
 
 
 ### Wrap all in a dictionary for easier importing of multiple years
-all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals() if x.startswith("triggers_") and isinstance(y,list))
+all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals().items() if x.startswith("triggers_") and isinstance(y,list))

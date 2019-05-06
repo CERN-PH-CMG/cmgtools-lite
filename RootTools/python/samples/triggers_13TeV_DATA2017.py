@@ -81,4 +81,4 @@ triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60_v*","HLT_P
 triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3_Mass3p8to60_DZ_v*"]
 
 ### Wrap all in a dictionary for easier importing of multiple years
-all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals() if x.startswith("triggers_") and isinstance(y,list))
+all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals().items() if x.startswith("triggers_") and isinstance(y,list))
