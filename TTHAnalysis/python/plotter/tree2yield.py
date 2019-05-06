@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from math import *
+from math import ceil, hypot, sqrt
 import re
 import os, os.path
 from array import array
@@ -14,7 +14,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gSystem.Load("libpng") # otherwise we may end up with a bogus version
 
-from copy import *
+import copy
 
 from CMGTools.TTHAnalysis.plotter.cutsFile import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
@@ -211,7 +211,7 @@ class TreeToYield:
         ttyVariations = {}
         for var in self.getVariations():
             for direction in ['up','dn']:
-                tty2 = copy(self)
+                tty2 = copy.copy(self)
                 tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
@@ -319,7 +319,7 @@ class TreeToYield:
                     basepath = treepath
                     break
             if not basepath:
-                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
+                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, self._cname, repr(self._options.path)))
 
             tf_filename = tf_file.format(name=self._name, cname=self._cname, P=basepath)
             tf = self._tree.AddFriend(tf_tree, tf_filename),
@@ -704,7 +704,6 @@ def addTreeToYieldOptions(parser):
 
 
 def mergeReports(reports):
-    import copy
     one = copy.deepcopy(reports[0])
     for i,(c,x) in enumerate(one):
         one[i][1][1] = pow(one[i][1][1], 2)
