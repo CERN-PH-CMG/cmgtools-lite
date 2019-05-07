@@ -9,6 +9,8 @@ import CMGTools.TTHAnalysis.plotter.mcPlots as mcP
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import MCAnalysis
 from CMGTools.TTHAnalysis.plotter.tree2yield import PlotSpec
 
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances
+
 # RARES = ["ZZTo4L","WWW","WWZ","WZZ","ZZZ","TTTT",
 #          "tZq_ll_ext_highstat","tWll",
 #          "DYJetsToLL_M10to50_LO",
@@ -36,8 +38,10 @@ PROC_TO_PLOTHIST = {
 # colors etc. from these other processes
     'Rares'   : 'ZZ',
     'WWss'    : 'ZZ',
+    'tHq_hww' : 'tHq',
     'tHq_htt' : 'tHq',
     'tHq_hzz' : 'tHq',
+    'tHW_hww' : 'tHW',
     'tHW_htt' : 'tHW',
     'tHW_hzz' : 'tHW',
     'ttH_hww' : 'ttH',
@@ -196,7 +200,7 @@ def doLegend(pmap, mca,
         legend_ = leg 
         return leg
 
-def doRatioHistsCustom(pspec, pmap, total, totalSyst, maxRange,
+def doRatioHistsCustom(pspec, pmap, total, maxRange,
                        fixRange=False,
                        fitRatio=None,
                        errorsOnRef=True,
@@ -226,7 +230,6 @@ def doRatioHistsCustom(pspec, pmap, total, totalSyst, maxRange,
             # then we can overwrite total with background
             numkey = 'signal'
             total     = pmap[ratioDen]
-            totalSyst = pmap[ratioDen]
         else:    
             return (None,None,None,None)
     ratios = [] #None
@@ -242,33 +245,30 @@ def doRatioHistsCustom(pspec, pmap, total, totalSyst, maxRange,
                                        ratio.GetErrorYhigh(i)/div if div > 0 else 0) 
         else:
             ratio = pmap[numkey].Clone("data_div"); 
-            ratio.Divide(total)
+            ratio.Divide(total.raw())
         ratios.append(ratio)
-    unity  = totalSyst.Clone("sim_div");
-    unity0 = total.Clone("sim_div");
+    unity  = total.raw().Clone("sim_div");
+    unityErr  = total.graphAsymmTotalErrors(relative=True)
+    unityErr0 = total.graphAsymmTotalErrors(toadd=[],relative=True)
     rmin, rmax =  1,1
     for b in xrange(1,unity.GetNbinsX()+1):
-        e,e0,n = unity.GetBinError(b), unity0.GetBinError(b), unity.GetBinContent(b)
+        e,n = unity.GetBinError(b), unity.GetBinContent(b)
         unity.SetBinContent(b, 1 if n > 0 else 0)
-        unity0.SetBinContent(b,  1 if n > 0 else 0)
-        if errorsOnRef:
-            unity.SetBinError(b, e/n if n > 0 else 0)
-            unity0.SetBinError(b, e0/n if n > 0 else 0)
-        else:
-            unity.SetBinError(b, 0)
-            unity0.SetBinError(b, 0)
-        rmin = min([ rmin, 1-2*e/n if n > 0 else 1])
-        rmax = max([ rmax, 1+2*e/n if n > 0 else 1])
+        unity.SetBinError(b, 0)
+        if not errorsOnRef:
+            raise RuntimeError("Not implemented yet with histoWithNuisances")
+    rmin = min(1-2*unityErr.GetErrorYlow(b)  for b in xrange(unityErr.GetN())) if unityErr.GetN() else 1
+    rmax = max(1+2*unityErr.GetErrorYhigh(b) for b in xrange(unityErr.GetN())) if unityErr.GetN() else 1
     for ratio in ratios:
         if ratio.ClassName() != "TGraphAsymmErrors":
             for b in xrange(1,unity.GetNbinsX()+1):
                 if ratio.GetBinContent(b) == 0: continue
-                rmin = min([ rmin, ratio.GetBinContent(b) - 2*ratio.GetBinError(b) ]) 
-                rmax = max([ rmax, ratio.GetBinContent(b) + 2*ratio.GetBinError(b) ])  
+                rmin = min( rmin, ratio.GetBinContent(b) - 2*ratio.GetBinError(b) )
+                rmax = max( rmax, ratio.GetBinContent(b) + 2*ratio.GetBinError(b) )
         else:
             for i in xrange(ratio.GetN()):
-                rmin = min([ rmin, ratio.GetY()[i] - 2*ratio.GetErrorYlow(i)  ]) 
-                rmax = max([ rmax, ratio.GetY()[i] + 2*ratio.GetErrorYhigh(i) ])  
+                rmin = min( rmin, ratio.GetY()[i] - 2*ratio.GetErrorYlow(i)  )
+                rmax = max( rmax, ratio.GetY()[i] + 2*ratio.GetErrorYhigh(i) )
     if rmin < maxRange[0] or fixRange: rmin = maxRange[0]; 
     if rmax > maxRange[1] or fixRange: rmax = maxRange[1];
     if (rmax > 3 and rmax <= 3.4): rmax = 3.4
@@ -276,30 +276,29 @@ def doRatioHistsCustom(pspec, pmap, total, totalSyst, maxRange,
     unity.SetFillStyle(3244);
     unity.SetFillColor(ROOT.kGray+2)
     unity.SetMarkerStyle(0)
-    # unity.SetFillStyle(1001);
-    # unity.SetFillColor(ROOT.kCyan);
-    # unity.SetMarkerStyle(1);
-    # unity.SetMarkerColor(ROOT.kCyan);
-    unity0.SetFillStyle(1001);
-    unity0.SetFillColor(ROOT.kBlue-7);
-    unity0.SetMarkerStyle(1);
-    unity0.SetMarkerColor(ROOT.kBlue-7);
+    unityErr.SetFillStyle(1001);
+    unityErr.SetFillColor(ROOT.kCyan);
+    unityErr.SetMarkerStyle(1);
+    unityErr.SetMarkerColor(ROOT.kCyan);
+    unityErr0.SetFillStyle(1001);
+    unityErr0.SetFillColor(ROOT.kBlue-7);
+    unityErr0.SetMarkerStyle(1);
+    unityErr0.SetMarkerColor(ROOT.kBlue-7);
     ROOT.gStyle.SetErrorX(0.5);
+    unity.Draw("AXIS");
     if errorsOnRef:
-        unity.Draw("E2");
-    else:
-        unity.Draw("AXIS");
+        unityErr.Draw("E2");
     if fitRatio != None and len(ratios) == 1:
         from CMGTools.TTHAnalysis.tools.plotDecorations import fitTGraph
         fitTGraph(ratio,order=fitRatio)
-        unity.SetFillStyle(3013);
-        unity0.SetFillStyle(3013);
+        unityErr.SetFillStyle(3013);
+        unityErr0.SetFillStyle(3013);
         if errorsOnRef:
-            unity.Draw("AXIS SAME");
-            # unity0.Draw("E2 SAME");
-    # else:
-    #     if total != totalSyst and errorsOnRef:
-    #         unity0.Draw("E2 SAME");
+            unityErr0.Draw("E2 SAME");
+    else:
+        if errorsOnRef:
+            unityErr0.Draw("E2 SAME");
+    unity.Draw("AXIS SAME");
     rmin = float(pspec.getOption("RMin",rmin))
     rmax = float(pspec.getOption("RMax",rmax))
     unity.GetYaxis().SetRangeUser(rmin,rmax);
@@ -351,7 +350,7 @@ def doRatioHistsCustom(pspec, pmap, total, totalSyst, maxRange,
     leg0.SetLineColor(0)
     leg0.SetTextFont(43)
     leg0.SetTextSize(18)
-    leg0.AddEntry(unity0, "stat. bkg. unc.", "F")
+    leg0.AddEntry(unityErr0, "stat. unc.", "F")
     # if showStatTotLegend: leg0.Draw()
     leg1 = ROOT.TLegend(0.2, 0.8, 0.5, 0.9)
     leg1.SetFillColor(0)
@@ -359,12 +358,12 @@ def doRatioHistsCustom(pspec, pmap, total, totalSyst, maxRange,
     leg1.SetLineColor(0)
     leg1.SetTextFont(43)
     leg1.SetTextSize(18)
-    leg1.AddEntry(unity, "Total uncertainty", "F")
+    leg1.AddEntry(unityErr, "Total uncertainty", "F")
     if showStatTotLegend: leg1.Draw()
     global legendratio0_, legendratio1_
     legendratio0_ = leg0
     legendratio1_ = leg1
-    return (ratios, unity, unity0, line)
+    return (ratios, unity,(unityErr,unityErr0), line)
 
 options = None
 if __name__ == "__main__":
@@ -454,8 +453,7 @@ if __name__ == "__main__":
         outfile = ROOT.TFile(os.path.join(options.outDir, "%s_%s.root" % (MLD, channel)), "RECREATE")
 
         # `processes` should be all the ones defined in the fit (i.e. the second mca)
-        #processes = list(reversed(mca_indivi.listBackgrounds()))
-	processes = list(mca_indivi.listBackgrounds())
+        processes = list(reversed(mca_indivi.listBackgrounds()))
         thqsigs = ['tHq_hww', 'tHq_htt', 'tHq_hzz']
         thwsigs = ['tHW_hww', 'tHW_htt', 'tHW_hzz']
         tthsigs = ['ttH_hww', 'ttH_htt', 'ttH_hzz']
@@ -463,13 +461,10 @@ if __name__ == "__main__":
         processes += thwsigs
         processes += thqsigs
 
-	for proc in processes:
-	    #print proc
-	    rm = proc+"_promptsub"
-	    try: processes.remove(rm)
-	    except ValueError: pass
+        # Remove the _promptsub processes
+        processes = [p for p in processes if not p.endswith('_promptsub')]
 
-	#for proc in processes:
+        #for proc in processes:
         #    print proc
         ## HACK
         if '2lss_mm' in channel:
@@ -479,9 +474,9 @@ if __name__ == "__main__":
 
         stack = ROOT.THStack("%s_stack_%s"%(var,MLD),"")
 
+        print infile
         for process in processes:
-	    print process
-	    print infile
+            print process
             # Get the pre-fit histogram (just for the color etc.)
             hist = infile.Get("%s_%s" % (var, PROC_TO_PLOTHIST.get(process, process)))
             if not hist:
@@ -492,12 +487,12 @@ if __name__ == "__main__":
             hist.SetDirectory(0)
 
             # Get the post-fit shape
-	    channel = "thq_3l_13TeV"
-	    chdir = mldir.GetDirectory("%s" % channel)
-	    h_postfit = chdir.Get("%s" % process)
+            channel = "thq_3l_13TeV"
+            chdir = mldir.GetDirectory("%s" % channel)
+            h_postfit = chdir.Get("%s" % process)
             #h_postfit = mldir.Get("%s/%s" % (channel, process))
-	    print h_postfit.GetName()
-	    print h_postfit.GetNbinsX()
+            print h_postfit.GetName()
+            print h_postfit.GetNbinsX()
             if not h_postfit:
                 # if process not in mergeMap:
                 raise RuntimeError("Could not find shape for %s/%s in dir %s of file %s" % (channel, process, mldir.GetName(), args[3]))
@@ -594,6 +589,7 @@ if __name__ == "__main__":
         if not options.bkgSub:
             htot.Draw("HIST")
             stack.Draw("HIST F SAME")
+            htot = HistoWithNuisances(htot)
             totalError = mcP.doShadedUncertainty(htot)
             hdata.poissonGraph.Draw("PZ")
             htot.Draw("AXIS SAME")
@@ -601,6 +597,7 @@ if __name__ == "__main__":
             mca_merged.setProcessOption('data', 'Label', 'Data-Backgr.')
             hsig.Draw("HIST")
             stack.Draw("HIST F SAME")
+            hsig = HistoWithNuisances(hsig)
             totalError = mcP.doShadedUncertainty(hsig)
             hdata_bgsub.Draw("PE SAME")
             hsig.Draw("AXIS SAME")
@@ -611,8 +608,8 @@ if __name__ == "__main__":
             line.Draw("L")
 
         ## Add prefit signal shape
-        thqprefit = infile.Get("%s_tHq_hww" % var).Clone("%s_tHq_prefit"%var)
-        thwprefit = infile.Get("%s_tHW_hww" % var).Clone("%s_tHW_prefit"%var)
+        thqprefit = infile.Get("%s_tHq" % var).Clone("%s_tHq_prefit"%var)
+        thwprefit = infile.Get("%s_tHW" % var).Clone("%s_tHW_prefit"%var)
         thwprefit.Add(thwprefit)
         thqprefit.SetLineWidth(3)
         thqprefit.SetFillStyle(0)
@@ -674,20 +671,20 @@ if __name__ == "__main__":
         ## Do the ratio plot
         ## Draw relative prediction in the bottom frame
         p2.cd()
-        rdata,rnorm,rnorm2,rline = doRatioHistsCustom(PlotSpec(var,var,"",{}),
-                                                      plots,
-                                                      htot if not options.bkgSub else hsig,
-                                                      htot if not options.bkgSub else hsig,
-                                                      maxRange=options.maxRatioRange,
-                                                      fixRange=options.fixRatioRange,
-                                                      fitRatio=options.fitRatio,
-                                                      errorsOnRef=options.errorBandOnRatio,
-                                                      ratioNums=options.ratioNums,
-                                                      ratioDen=options.ratioDen,
-                                                      ylabel="Data/Pred." if not options.bkgSub else "(Data-Bkg)/Sig",
-                                                      doWide=options.wideplot,
-                                                      showStatTotLegend=True)
+        rdata,rnorm,(rnorm2,rnorm0),rline = doRatioHistsCustom(PlotSpec(var,var,"",{}),
+                                                             plots,
+                                                             htot if not options.bkgSub else hsig,
+                                                             maxRange=options.maxRatioRange,
+                                                             fixRange=options.fixRatioRange,
+                                                             fitRatio=options.fitRatio,
+                                                             errorsOnRef=options.errorBandOnRatio,
+                                                             ratioNums=options.ratioNums,
+                                                             ratioDen=options.ratioDen,
+                                                             ylabel="Data/Pred." if not options.bkgSub else "(Data-Bkg)/Sig",
+                                                             doWide=options.wideplot,
+                                                             showStatTotLegend=True)
         rnorm2.Delete()
+        rnorm0.Delete()
 
         # ## Legend for uncertainties
         # leg2 = ROOT.TLegend(x1,y1,x2,y2)
