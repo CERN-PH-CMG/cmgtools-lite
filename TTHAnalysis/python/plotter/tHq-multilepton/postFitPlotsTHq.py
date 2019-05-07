@@ -9,6 +9,8 @@ import CMGTools.TTHAnalysis.plotter.mcPlots as mcP
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import MCAnalysis
 from CMGTools.TTHAnalysis.plotter.tree2yield import PlotSpec
 
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances
+
 # RARES = ["ZZTo4L","WWW","WWZ","WZZ","ZZZ","TTTT",
 #          "tZq_ll_ext_highstat","tWll",
 #          "DYJetsToLL_M10to50_LO",
@@ -36,8 +38,10 @@ PROC_TO_PLOTHIST = {
 # colors etc. from these other processes
     'Rares'   : 'ZZ',
     'WWss'    : 'ZZ',
+    'tHq_hww' : 'tHq',
     'tHq_htt' : 'tHq',
     'tHq_hzz' : 'tHq',
+    'tHW_hww' : 'tHW',
     'tHW_htt' : 'tHW',
     'tHW_hzz' : 'tHW',
     'ttH_hww' : 'ttH',
@@ -454,8 +458,7 @@ if __name__ == "__main__":
         outfile = ROOT.TFile(os.path.join(options.outDir, "%s_%s.root" % (MLD, channel)), "RECREATE")
 
         # `processes` should be all the ones defined in the fit (i.e. the second mca)
-        #processes = list(reversed(mca_indivi.listBackgrounds()))
-	processes = list(mca_indivi.listBackgrounds())
+        processes = list(reversed(mca_indivi.listBackgrounds()))
         thqsigs = ['tHq_hww', 'tHq_htt', 'tHq_hzz']
         thwsigs = ['tHW_hww', 'tHW_htt', 'tHW_hzz']
         tthsigs = ['ttH_hww', 'ttH_htt', 'ttH_hzz']
@@ -463,13 +466,10 @@ if __name__ == "__main__":
         processes += thwsigs
         processes += thqsigs
 
-	for proc in processes:
-	    #print proc
-	    rm = proc+"_promptsub"
-	    try: processes.remove(rm)
-	    except ValueError: pass
+        # Remove the _promptsub processes
+        processes = [p for p in processes if not p.endswith('_promptsub')]
 
-	#for proc in processes:
+        #for proc in processes:
         #    print proc
         ## HACK
         if '2lss_mm' in channel:
@@ -479,9 +479,9 @@ if __name__ == "__main__":
 
         stack = ROOT.THStack("%s_stack_%s"%(var,MLD),"")
 
+        print infile
         for process in processes:
-	    print process
-	    print infile
+            print process
             # Get the pre-fit histogram (just for the color etc.)
             hist = infile.Get("%s_%s" % (var, PROC_TO_PLOTHIST.get(process, process)))
             if not hist:
@@ -492,12 +492,12 @@ if __name__ == "__main__":
             hist.SetDirectory(0)
 
             # Get the post-fit shape
-	    channel = "thq_3l_13TeV"
-	    chdir = mldir.GetDirectory("%s" % channel)
-	    h_postfit = chdir.Get("%s" % process)
+            channel = "thq_3l_13TeV"
+            chdir = mldir.GetDirectory("%s" % channel)
+            h_postfit = chdir.Get("%s" % process)
             #h_postfit = mldir.Get("%s/%s" % (channel, process))
-	    print h_postfit.GetName()
-	    print h_postfit.GetNbinsX()
+            print h_postfit.GetName()
+            print h_postfit.GetNbinsX()
             if not h_postfit:
                 # if process not in mergeMap:
                 raise RuntimeError("Could not find shape for %s/%s in dir %s of file %s" % (channel, process, mldir.GetName(), args[3]))
@@ -594,6 +594,7 @@ if __name__ == "__main__":
         if not options.bkgSub:
             htot.Draw("HIST")
             stack.Draw("HIST F SAME")
+            htot = HistoWithNuisances(htot)
             totalError = mcP.doShadedUncertainty(htot)
             hdata.poissonGraph.Draw("PZ")
             htot.Draw("AXIS SAME")
@@ -601,6 +602,7 @@ if __name__ == "__main__":
             mca_merged.setProcessOption('data', 'Label', 'Data-Backgr.')
             hsig.Draw("HIST")
             stack.Draw("HIST F SAME")
+            hsig = HistoWithNuisances(hsig)
             totalError = mcP.doShadedUncertainty(hsig)
             hdata_bgsub.Draw("PE SAME")
             hsig.Draw("AXIS SAME")
@@ -611,8 +613,8 @@ if __name__ == "__main__":
             line.Draw("L")
 
         ## Add prefit signal shape
-        thqprefit = infile.Get("%s_tHq_hww" % var).Clone("%s_tHq_prefit"%var)
-        thwprefit = infile.Get("%s_tHW_hww" % var).Clone("%s_tHW_prefit"%var)
+        thqprefit = infile.Get("%s_tHq" % var).Clone("%s_tHq_prefit"%var)
+        thwprefit = infile.Get("%s_tHW" % var).Clone("%s_tHW_prefit"%var)
         thwprefit.Add(thwprefit)
         thqprefit.SetLineWidth(3)
         thqprefit.SetFillStyle(0)
