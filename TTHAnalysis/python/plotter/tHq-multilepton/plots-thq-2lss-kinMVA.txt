@@ -23,3 +23,5 @@ finalBins_log_mm_60 : tHq_MVAto1D_2lss_10(thqMVA_tt_2lss_60, thqMVA_ttv_2lss_60)
 finalBins_log_em_60 : tHq_MVAto1D_2lss_10(thqMVA_tt_2lss_60, thqMVA_ttv_2lss_60) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle='BDT bin',Logy,LegendCutoff=0.01,YMin=0.5,YMax=200,Legend='BR' # for em
 finalBins_log_ee_60 : tHq_MVAto1D_2lss_10(thqMVA_tt_2lss_60, thqMVA_ttv_2lss_60) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle='BDT bin',Logy,LegendCutoff=0.01,YMin=0.5,YMax=70,Legend='BR' # for ee
 # finalBins_60        : tHq_MVAto1D_2lss_sbratio(thqMVA_tt_2lss_60, thqMVA_ttv_2lss_60) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle='BDT bin', Legend='TL'
+
+kinMVA_2lss_2Dplot : thqMVA_tt_2lss_60\:thqMVA_ttv_2lss_60 : 20,-1,1,20,-1,1; XTitle="BDT (tHq vs. tt)", YTitle="BDT (tHq vs. ttV)"

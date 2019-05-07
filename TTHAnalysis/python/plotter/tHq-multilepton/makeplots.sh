@@ -46,6 +46,7 @@ DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --maxRatioRange 0.0  1.99
 " --legendColumns 3 --legendWidth 0.6  --legendFontSize 0.042"\
 " --noCms --topSpamSize 1.1 --lspam #scale[1.1]{#bf{CMS}}#scale[1.0]{#it{Preliminary}}"\
 " --plotgroup data_fakes+=.*_promptsub --neglist .*_promptsub.*"
+#DRAWOPTIONS=" --split-factor=-1 --WA prescaleFromSkim  --noCms --topSpamSize 1.1 --lspam #scale[1.1]{#bf{CMS}}#scale[1.0]{#it{Preliminary}} --plotgroup data_fakes+=.*_promptsub --neglist .*_promptsub.*" #for 2D BDT plots
 
 # Pileup weight, btag SFs, trigger SFs, lepton Eff SFs, L1 prefiring SFs:
 OPT2L="-W vtxWeight2017*eventBTagSF*NonPrefiringProb*"\
@@ -198,6 +199,17 @@ case "$PLOTTAG" in
 	python mcPlots.py ${ARGOPTS} --pdir /afs/cern.ch/work/p/pdas/www/THQ2017/${OUTDIR}/2lss_em_elfake_shape/ -E em_chan -E elfake --plotmode norm --fitRatio 1
 	DONE
 	;;
+    "postfit" )
+        FITRESULT="cards/cards_May6/ITC_unblinded/fitDiagnostics_sb.root"
+        DRAWOPTIONS="--maxRatioRange 0 3.2 --fixRatioRange"
+
+        MCA1="tHq-multilepton/mca-3l-mcdata-frdata.txt"
+        MCA2="tHq-multilepton/signal_extraction/mca-thq-3l-mcdata-frdata_limits_new.txt"
+        PLOTINPUT="/afs/cern.ch/work/p/pdas/www/THQ2017/plots_May2/unblinded/3l/plots-thq-3l-kinMVA.root"
+        python tHq-multilepton/postFitPlotsTHq.py ${MCA1} ${MCA2} ${PLOTINPUT} ${FITRESULT} 3l --outDir ${OUTDIR} ${DRAWOPTIONS}
+
+	DONE
+        ;;
     *)
         echo "${USAGE}"
         echo -e "\e[31mUnknown plottag\e[0m"
