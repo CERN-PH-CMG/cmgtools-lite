@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import os, sys, imp, pickle, multiprocessing, types
+import os, sys, imp, pickle, multiprocessing, types, json
 from copy import copy
 from math import ceil
 
