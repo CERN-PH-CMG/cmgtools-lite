@@ -1,4 +1,3 @@
-from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
 
 
@@ -76,7 +75,6 @@ class fastCombinedObjectRecleaner(Module):
             x.initOutputTree(wrappedOutputTree.tree(), True);
 
     def initReaders(self,tree):
-        print "INIT: %r -> %r" % (getattr(self,'_ttreereaderversion','unset'), tree._ttreereaderversion)
         self._ttreereaderversion = tree._ttreereaderversion
         for coll in ["LepGood",self.tauc,self.jc]:
             setattr(self,'n'+coll,tree.valueReader('n'+coll))
@@ -98,7 +96,6 @@ class fastCombinedObjectRecleaner(Module):
     def analyze(self, event):
         # Init
         if self._ttreereaderversion != event._tree._ttreereaderversion:
-            print "RE-INIT"
             for x in self._helpers: x.initInputTree(event._tree)
             self.initReaders(event._tree)
             self.initWorkers()

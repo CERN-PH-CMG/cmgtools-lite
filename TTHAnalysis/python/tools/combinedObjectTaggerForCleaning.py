@@ -3,7 +3,16 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class CombinedObjectTaggerForCleaning(Module):
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
+    def __init__(self,label,
+                 looseLeptonSel = lambda l : True,
+                 cleaningLeptonSel = lambda l : True,
+                 FOLeptonSel = lambda l : True,
+                 tightLeptonSel = lambda l : True,
+                 FOTauSel = lambda t : True,
+                 tightTauSel = lambda t : True,
+                 selectJet = lambda j : True,
+                 coneptdef = lambda l : l.pt,
+                 debug=False):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
 
@@ -61,13 +70,15 @@ class CombinedObjectTaggerForCleaning(Module):
 MODULES=[]
 
 if __name__ == '__main__':
+    from CMGTools.TTHAnalysis.treeReAnalyzer import EventLoop
+    from CMGTools.TTHAnalysis.treeReAnalyzer import Module as CMGModule
     from sys import argv
     file = ROOT.TFile(argv[1])
     tree = file.Get("tree")
     tree.vectorTree = True
-    class Tester(Module):
+    class Tester(CMGModule):
         def __init__(self, name):
-            Module.__init__(self,name,None)
+            CMGModule.__init__(self,name,None)
             self.sf1 = CombinedObjectTaggerForCleaning("Test",
                                                        looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                                                        cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
