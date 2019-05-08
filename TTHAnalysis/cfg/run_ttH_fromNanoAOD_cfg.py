@@ -93,6 +93,10 @@ test = getHeppyOption("test")
 if test == "94X-MC":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
     TTLep_pow.files = ["/afs/cern.ch/user/g/gpetrucc/NanoAOD_94X_TTLep.root"]
+    lepSkim.requireSameSignPair = False
+    lepSkim.minJets = 0
+    lepSkim.minMET = 0
+    lepSkim.prescaleFactor = 0
     selectedComponents = [TTLep_pow]
 elif test == "94X-MC-miniAOD":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )

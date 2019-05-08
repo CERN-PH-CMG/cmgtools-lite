@@ -9,7 +9,7 @@ class xsecTagger( Module ):
             self.wrappedOutputTree.branch('xsec','F')
     def analyze(self, event):
         if self._xsec:
-            self.wrappedOutputTree.xsec = self._xsec
+            self.wrappedOutputTree.fillBranch('xsec', self._xsec)
         return True
     def initComponent(self, component):
         if component.isMC:

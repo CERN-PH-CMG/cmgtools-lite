@@ -19,6 +19,7 @@ electronSelection = lambda l : abs(l.eta) < 2.5 and l.pt > conf["elePt"] and l.m
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttHPrescalingLepSkimmer import ttHPrescalingLepSkimmer
 lepSkim = ttHPrescalingLepSkimmer(5, 
                 muonSel = muonSelection, electronSel = electronSelection,
+                minLeptonsNoPrescale = 2, # things with less than 2 leptons are rejected irrespectively of the prescale
                 minLeptons = 2, requireSameSignPair = True,
                 jetSel = lambda j : j.pt > 25 and abs(j.eta) < 2.4, 
                 minJets = 4, minMET = 70)

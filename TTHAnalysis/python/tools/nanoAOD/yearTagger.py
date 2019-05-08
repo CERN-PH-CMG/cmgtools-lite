@@ -7,7 +7,7 @@ class yearTagger( Module ):
         self.wrappedOutputTree = wrappedOutputTree
         self.wrappedOutputTree.branch('year','i')
     def analyze(self, event):
-        self.wrappedOutputTree.year = self._year
+        self.wrappedOutputTree.fillBranch('year', self._year)
         return True
     def initComponent(self, component):
         if hasattr(component, 'year'):
