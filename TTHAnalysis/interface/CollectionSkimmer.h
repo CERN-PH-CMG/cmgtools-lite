@@ -9,6 +9,7 @@
 #include <vector>
 #include <cassert>
 #include <algorithm>
+#include <iostream>
 class TTree;
 #include <Rtypes.h>
 #include <TTreeReaderValue.h>
@@ -22,7 +23,10 @@ class CollectionSkimmer {
                       collName_(collName), varName_(varName), in_(src), branch_(NULL) {}
                 const std::string & collName() { return collName_; }
                 const std::string & varName() { return varName_; }
-                void setSrc(TTreeReaderArray<T1> *src) { in_ = src; }
+                void setSrc(TTreeReaderArray<T1> *src) { 
+                    if (!src) { std::cout << "ERROR: CollectionSkimmer::CopyVar(" << collName_ << "," << varName_ << ")::setSrc: asked to copy from null reader" << std::endl; }
+                    in_ = src; 
+                }
                 void copy(int ifrom, int ito) { out_[ito] = (*in_)[ifrom]; } 
                 void branch(TTree *tree, unsigned int maxEntries) ; 
                 void ensureSize(unsigned int n);
@@ -52,6 +56,9 @@ class CollectionSkimmer {
         void makeBranches(TTree *tree, unsigned int maxEntries, bool padSelectedIndicesCollection = false, int padSelectedIndicesCollectionWith = -1) ;
 
         unsigned int count() {
+            if (srcCount_signed_ == nullptr && srcCount_unsigned_ == nullptr) {
+                std::cout << "ERROR: CollectionSkimmer(" << collName_ << " -> " << outName_ << ")::count: both counters are null." << std::endl; 
+            }
             assert (srcCount_signed_ != nullptr || srcCount_unsigned_!= nullptr); // pointer to srcCount TTreeReaderValue must be set
             return srcCount_signed_ ? ** srcCount_signed_ : int(**srcCount_unsigned_);
         }
