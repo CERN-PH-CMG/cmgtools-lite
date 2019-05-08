@@ -558,22 +558,22 @@ All jet pt cut 25 GeV. Events where 2.7 < maxJetEta25 < 3.0 are rejected.
 */
   eta = fabs(eta);
   if(eta < 0.278) return 1.0057;
-  if(eta < 0.556) return 1.00570.9447;
-  if(eta < 0.833) return 1.00570.9457;
-  if(eta < 1.111) return 1.00570.9528;
-  if(eta < 1.389) return 1.00570.9811;
-  if(eta < 1.667) return 1.00570.9982;
-  if(eta < 1.944) return 1.00570.9814;
-  if(eta < 2.222) return 1.00571.0093;
-  if(eta < 2.500) return 1.00570.9889;
-  if(eta < 2.778) return 1.00571.0259;
-  if(eta < 3.056) return 1.00571.3785;
-  if(eta < 3.333) return 1.00570.9859;
-  if(eta < 3.611) return 1.00571.1512;
-  if(eta < 3.889) return 1.00571.0969;
-  if(eta < 4.167) return 1.00571.0784;
-  if(eta < 4.444) return 1.00570.8716;
-  if(eta < 4.722) return 1.00570.6220;
+  if(eta < 0.556) return 0.9447;
+  if(eta < 0.833) return 0.9457;
+  if(eta < 1.111) return 0.9528;
+  if(eta < 1.389) return 0.9811;
+  if(eta < 1.667) return 0.9982;
+  if(eta < 1.944) return 0.9814;
+  if(eta < 2.222) return 1.0093;
+  if(eta < 2.500) return 0.9889;
+  if(eta < 2.778) return 1.0259;
+  if(eta < 3.056) return 1.3785;
+  if(eta < 3.333) return 0.9859;
+  if(eta < 3.611) return 1.1512;
+  if(eta < 3.889) return 1.0969;
+  if(eta < 4.167) return 1.0784;
+  if(eta < 4.444) return 0.8716;
+  if(eta < 4.722) return 0.6220;
   if(eta < 5.000) return 1.0000;
   return 1.0;
 }
