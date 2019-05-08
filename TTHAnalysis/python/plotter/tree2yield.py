@@ -135,10 +135,11 @@ def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
         return histo
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[],nanoAOD=False):
+    def __init__(self,root,basepath,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[],nanoAOD=False):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
+        self._basepath = basepath
         self._isNano = nanoAOD
         self._isInit = False
         self._options = options
@@ -306,22 +307,17 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         friendOpts = self._options.friendTrees[:]
-        friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._options.friendTreesSimple]
         friendOpts += (self._options.friendTreesData if self._isdata else self._options.friendTreesMC)
-        friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in (self._options.friendTreesDataSimple if self._isdata else self._options.friendTreesMCSimple) ]
         if 'Friends' in self._settings: friendOpts += self._settings['Friends']
-        if 'FriendsSimple' in self._settings: friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._settings['FriendsSimple'] ]
+        friendSimpleOpts = self._options.friendTreesSimple[:]
+        friendSimpleOpts += (self._options.friendTreesDataSimple if self._isdata else self._options.friendTreesMCSimple)
+        if 'FriendsSimple' in self._settings: friendSimpleOpts += self._settings['FriendsSimple']
+        if self._isNano:
+            friendOpts += [ ('Friends', d+"/{cname}_Friend.root") for d in friendSimpleOpts]
+        else:
+            friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in friendSimpleOpts]
         for tf_tree,tf_file in friendOpts:
-#            print 'Adding friend',tf_tree,tf_file
-            basepath = None
-            for treepath in getattr(self._options, 'path', []):
-                if self._cname in os.listdir(treepath):
-                    basepath = treepath
-                    break
-            if not basepath:
-                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, self._cname, repr(self._options.path)))
-
-            tf_filename = tf_file.format(name=self._name, cname=self._cname, P=basepath)
+            tf_filename = tf_file.format(name=self._name, cname=self._cname, P=self._basepath)
             tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
