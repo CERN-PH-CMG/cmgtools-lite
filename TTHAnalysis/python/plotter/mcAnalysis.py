@@ -191,7 +191,7 @@ class MCAnalysis:
 
                 basepath = None
                 for treepath in options.path:
-                    if os.path.exists(treepath+"/"+cname) or (options.tree == "NanoAOD" and os.path.isfile(treepath+"/"+cname+".root")):
+                    if os.path.exists(treepath+"/"+cname) or (treename == "NanoAOD" and os.path.isfile(treepath+"/"+cname+".root")):
                         basepath = treepath
                         break
                 if not basepath:
@@ -210,7 +210,7 @@ class MCAnalysis:
                     rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
                 pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-                if options.tree == "NanoAOD":
+                if treename == "NanoAOD":
                     objname = "Events"
                     pckfile = None
                     rootfile = "%s/%s" % (basepath, cname)
@@ -222,13 +222,12 @@ class MCAnalysis:
                         rootfiles = [ rootfile+".root" ]
                     else:
                         raise RuntimeError("%s -- ERROR: cannot find NanoAOD file for %s process in paths (%s)" % (__name__, cname, repr(options.path)))
-                    print "%s: %r" % (cname, rootfiles) 
                 else:
                     rootfiles = [ rootfile ]
                 
                 for rootfile in rootfiles:
                     mycname = cname if len(rootfiles) == 1 else cname + "-" + os.path.basename(rootfile).replace(".root","") 
-                    tty = TreeToYield(rootfile, basepath, options, settings=extra, name=pname, cname=mycname, objname=objname, variation_inputs=variations.values(), nanoAOD=(options.tree == "NanoAOD")); 
+                    tty = TreeToYield(rootfile, basepath, options, settings=extra, name=pname, cname=mycname, objname=objname, variation_inputs=variations.values(), nanoAOD=(treename == "NanoAOD")); 
                     tty.pckfile = pckfile
                     ttys.append(tty)
 
@@ -244,7 +243,7 @@ class MCAnalysis:
                 if pname in self._allData: self._allData[pname].append(tty)
                 else                     : self._allData[pname] =     [tty]
                 if "data" not in pname:
-                    if options.tree != "NanoAOD":
+                    if treename != "NanoAOD":
                         pckobj  = pickle.load(open(tty.pckfile,'r'))
                         counters = dict(pckobj)
                     else:
@@ -301,7 +300,7 @@ class MCAnalysis:
                     print "Overwrite the norm systematic for %s to make it correlated with %s" % (pname, tty.getOption('PegNormToProcess'))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
-                if options.tree != "NanoAOD":
+                if treename != "NanoAOD":
                     if total_w == 0: raise RuntimeError, "Zero total weight for %s" % pname
                     for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
                 else:

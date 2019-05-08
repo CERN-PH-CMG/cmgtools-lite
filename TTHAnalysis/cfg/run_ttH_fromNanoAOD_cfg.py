@@ -92,7 +92,7 @@ POSTPROCESSOR = PostProcessor(None, [], modules = modules,
 test = getHeppyOption("test")
 if test == "94X-MC":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
-    TTLep_pow.files = ["/afs/cern.ch/user/g/gpetrucc/NanoAOD_94X_TTLep.root"]
+    TTLep_pow.files = ["/afs/cern.ch/user/g/gpetrucc/cmg/NanoAOD_94X_TTLep.root"]
     lepSkim.requireSameSignPair = False
     lepSkim.minJets = 0
     lepSkim.minMET = 0
@@ -100,7 +100,7 @@ if test == "94X-MC":
     selectedComponents = [TTLep_pow]
 elif test == "94X-MC-miniAOD":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
-    TTLep_pow.files =A [ 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
+    TTLep_pow.files = [ 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
     localfile = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(TTLep_pow.files[0]))
     if os.path.exists(localfile): TTLep_pow.files = [ localfile ] 
     from CMGTools.Production.nanoAODPreprocessor import nanoAODPreprocessor

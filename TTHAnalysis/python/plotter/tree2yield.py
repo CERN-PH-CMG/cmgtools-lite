@@ -164,7 +164,7 @@ class TreeToYield:
         else:
             self._mcCorrSourceList = [('_default_',x) for x in globalMCCorrections()]            
         if 'MCCorrections' in settings:
-            self._mcCorrs = self._mcCorrs[:] # make copy
+            self._mcCorrs = getattr(self, '_mcCorrs', [])[:] # make copy
             for cfile in settings['MCCorrections'].split(','): 
                 self._mcCorrSourceList.append( (cfile,MCCorrections(cfile)) )            
         if 'FakeRate' in settings:
