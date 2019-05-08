@@ -1,7 +1,7 @@
-from CMGTools.TTHAnalysis.treeReAnalyzer import *
 import ROOT, os
+from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
-class CombinedObjectTaggerForCleaning:
+class CombinedObjectTaggerForCleaning(Module):
 
     def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
 
@@ -20,14 +20,28 @@ class CombinedObjectTaggerForCleaning:
         self.coneptdef = coneptdef
         self.debug = debug
 
+    # interface for old code
     def listBranches(self):
         return []
 
     def __call__(self,event):
-
+        from CMGTools.TTHAnalysis.treeReAnalyzer import Collection
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         taus = [t for t in Collection(event,"TauGood","nTauGood")]
         jets = [j for j in Collection(event,"Jet","nJet")]
+        self.run(event, leps,taus,jets)
+        return {}
+
+    # interface for new code
+    def analyze(self, event):
+        from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
+        leps = [l for l in Collection(event,"LepGood")]
+        taus = [t for t in Collection(event,"Tau")]
+        jets = [j for j in Collection(event,"Jet")]
+        self.run(event, leps,taus,jets)
+        return True
+
+    def run(self, event, leps,taus,jets):
 
         tags = ROOT.CombinedObjectTags(len(leps),len(taus),len(jets))
 
