@@ -17,9 +17,10 @@ nTauFO:	    	nTauFO					: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau FO\, p_{T} > 20 Ge
 
 met: 		met_pt					: 40,0,400 ; XTitle="E_{T}^{miss} (GeV)"
 metLD:		met_pt*0.6 + mhtJet25*0.4  	        : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
-minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
-minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
-minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+minMllAFAS:	minMllAFAS_Recl				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+minMllAFOS:     minMllAFOS_Recl                         : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+minMllSFOS:     minMllSFOS_Recl                         : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+mZ1:            mZ1_Recl                                : 20,0,200; XTitle="best M_{ll} (GeV)", Legend='TR'
 
 kinMVA_input_mindr_lep1_jet: mindr_lep1_jet : 40,0,4; XTitle="min #DeltaR(l_{1}\,jet)"
 kinMVA_input_mindr_lep2_jet: mindr_lep2_jet : 40,0,4; XTitle="min #DeltaR(l_{2}\,jet)"

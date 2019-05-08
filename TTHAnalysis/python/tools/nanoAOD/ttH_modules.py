@@ -73,7 +73,7 @@ recleaner_step1 = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                        tightLeptonSel = tightLeptonSel,
                                        FOTauSel = foTauSel,
                                        tightTauSel = tightTauSel,
-                                       selectJet = lambda jet: abs(jet.eta)<2.4,
+                                       selectJet = lambda jet: abs(jet.eta)<2.4 and jet.pt > 25, # FIXME need to select on pt or ptUp or ptDown
                                        coneptdef = lambda lep: conept_TTH(lep))
 recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                        cleanTausWithLooseLeptons=True,
