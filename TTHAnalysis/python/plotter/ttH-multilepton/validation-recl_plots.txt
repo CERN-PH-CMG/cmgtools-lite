@@ -48,6 +48,7 @@ lep2_phi: 	 LepGood2_phi					 : 20,-3.14,3.14; XTitle="Sub-leading lepton #phi"
 lep2_pdgId:	 0.5*LepGood2_pdgId/abs(LepGood2_pdgId)*(abs(LepGood2_pdgId)-10) : [-2,-1,0,1,2]; XTitle="Sub-leading lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+})", XNDdiv=505
 lep2_charge:	 LepGood2_charge				 : [-1.5,-0.5,0.5,1.5]; XTitle="Sub-leading lepton charge", XNDdiv=505, Legend='TL', MoreY=2.0
 lep2_mvaTTH:	 LepGood2_mvaTTH				 : 40,-1,1; XTitle="Sub-leading lepton MVA value", Legend='TL', Logy
+lep2_miniIso:	 LepGood2_miniRelIso				 : 40,0,0.4; XTitle="Sub-leading lepton miniIso", Logy
 lep2_ptratio:	 LepGood2_jetPtRatiov2				 : 40,0,1.2; XTitle="Sub-leading lepton ptRatio", Legend='TL'
 lep2_ptrel:	 LepGood2_jetPtRelv2				 : 40,0,40; XTitle="Sub-leading lepton ptRel", Legend='TL'
 lep2_jetBTagCSV: LepGood2_jetBTagCSV				 : 40,0,1; XTitle="Sub-leading lepton CSV of nearest jet"

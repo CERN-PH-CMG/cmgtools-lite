@@ -1,4 +1,4 @@
-import ROOT, os
+import ROOT
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class CombinedObjectTaggerForCleaning(Module):
