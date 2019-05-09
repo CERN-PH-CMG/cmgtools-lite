@@ -41,7 +41,7 @@ class ShapeCardMaker:
         infile = ROOT.TFile(filename, "read")
         for proc in self.mca.listProcesses(allProcs=True): # ignore SkipMe=True in mca
             variations = self.mca.getProcessNuisances(proc) if proc != "data" else []
-            histo = readHistoWithNuisances(infile, "x_%s" % proc, variations, mayBeMissing=True) ## FIXME mayBeMissing?
+            histo = readHistoWithNuisances(infile, "x_%s" % proc, variations, mayBeMissing=True)
             try:
                 if histo:
                     if self.options.verbose > 5:
@@ -52,12 +52,15 @@ class ShapeCardMaker:
             except ReferenceError:
                 raise RuntimeError("ERROR: Key %s not found in %s" % (proc, filename))
 
+        ## FIXME: Somehow the data_obs entry wasn't created? Fix it by hand:
+        if not 'data_obs' in self.report:
+            self.report['data_obs'] = self.report['data'].Clone("x_data_obs")
+
         self.updateAllYields()
 
     def saveReport(self, filename):
         tfile = ROOT.TFile(filename, "recreate")
         for n,h in self.report.iteritems():
-            # tfile.WriteTObject(h,n) ## Previous
             h.writeToFile(tfile, takeOwnership=False)
         tfile.Close()
         print "...report written to %s" % filename
@@ -71,9 +74,8 @@ class ShapeCardMaker:
             histo.cropNegativeBins()
             report[name] = histo.Clone('x_%s' % name)
 
-        if not self.options.asimov:
+        if not self.options.asimov: ## FIXME this didn't work?
             report['data_obs'] = report['data'].Clone("x_data_obs")
-            report['data_obs'].SetDirectory(0)
 
         self.report.update(report)
         self.updateAllYields()
@@ -186,7 +188,7 @@ class ShapeCardMaker:
     def writeDataCard(self, ofilename=None, procnames=None):
         if self.options.verbose:
             print ("...writing datacard")
-        # myyields = {k:v for (k,v) in self.allyields.iteritems()} # doesn't this just copy the dict?
+
         if not os.path.exists(self.options.outdir):
             os.mkdir(self.options.outdir)
 
@@ -201,7 +203,7 @@ class ShapeCardMaker:
                                           ofilename.replace('.card.txt','.input.root'))
             datacard.write('##----------------------------------\n')
             datacard.write('bin         %s\n' % self.binname)
-            datacard.write('observation %s\n' % self.allyields['data']) ## FIXME: was 'data_obs'
+            datacard.write('observation %s\n' % self.allyields['data_obs'])
             datacard.write('##----------------------------------\n')
 
             klen = max([7, len(self.binname)]+map(len, self.processes))
@@ -276,7 +278,7 @@ class ShapeCardMaker:
                                     "RECREATE")
 
         hists_to_store = [h.raw() for n,h in self.report.iteritems() if any([n.startswith(p) for p in self.processes])]
-        hists_to_store.append(self.report['data']) ## FIXME: was 'data_obs'
+        hists_to_store.append(self.report['data_obs'])
         for hist in hists_to_store:
             if self.options.verbose > 2:
                 print "      %-60s %8.3f events" % (hist.GetName(),hist.Integral())
@@ -299,26 +301,15 @@ if __name__ == '__main__':
     parser.add_option("--od", "--outdir", dest="outdir", type="string",
                       default="shapecards/", help="output name")
     parser.add_option("-v", "--verbose", dest="verbose", type="int",
-                      default=0, help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
+                      default=1, help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
     parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
     parser.add_option("--infile", dest="infile", type="string",
                       default=None, help="File to read histos from")
     parser.add_option("--savefile", dest="savefile", action="store_true", help="Save histos")
-    # parser.add_option("--savefile", dest="savefile", type="string",
-    #                   default=None, help="File to save histos to")
-    parser.add_option("--ntuple_folder", dest="ntuple_folder", type="string",
-                      default=None, help="Read signal trees from ntuples in this directory")
-    parser.add_option("--cp", dest="cp", type="string",
-                      default=None, help="run for cp phase angles")
+    # parser.add_option("--cp", dest="cp", type="string",
+    #                   default=None, help="run for cp phase angles")
 
     # Added
-    parser.add_option("--bbb", dest="bbb", type="string", default=None,
-                      help=("Options for bin-by-bin statistical uncertainties with the "
-                            "specified nuisance name"))
-    parser.add_option("--amc", "--autoMCStats", dest="autoMCStats", action="store_true",
-                      default=False, help="use autoMCStats")
-    parser.add_option("--autoMCStatsThreshold", dest="autoMCStatsValue", type="int",
-                      default=10, help="threshold to put on autoMCStats")
     parser.add_option("--regularize", dest="regularize", action="store_true", default=False,
                       help="Regularize templates")
 
@@ -341,18 +332,11 @@ if __name__ == '__main__':
                                bins=args[3],
                                options=options)
 
+    # import pdb; pdb.set_trace()
+
     if options.infile != None:
         cardMaker.readReport(options.infile)
     else:
-        # all_processes = cardMaker.mca.listProcesses(allProcs=True)
-        # sig_prods = ['tHq', 'tHW', 'ttH', 'ggH', 'WH']
-        # sigs_and_systs = [p for p in all_processes if any([p.startswith(x) for x in sig_prods])]
-        # backgrounds    = [p for p in all_processes if not p in sigs_and_systs]
-
-        # if options.ntuple_folder != None:
-        #     cardMaker.produceReportFromNTuples(processes=sigs_and_systs, inputfolder=options.ntuple_folder, cp=options.cp)
-        #     cardMaker.produceReportFromMCA(processes=backgrounds)
-        # else:
         cardMaker.produceReportFromMCA()
 
     if options.savefile:
@@ -369,7 +353,6 @@ if __name__ == '__main__':
                     'ttH_hww', 'ttH_htt', 'ttH_hzz']
                     # 'WH_hww', 'WH_htt', 'WH_hzz', 'ggH_hzz']
 
-    points = ["1_m1"] ## DEBUG
     for point in points:
         # Take the correct signals for this point
         signals = ['tHq_hww_%s'%point, 'tHq_htt_%s'%point, 'tHq_hzz_%s'%point,
