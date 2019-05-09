@@ -38,7 +38,7 @@ if year == 2018:
 elif year == 2017:
     from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_RunIIFall17_NanoAODv4 
     mcSamples = byCompName(mcSamples_RunIIFall17_NanoAODv4, [ 
-        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
+        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow", "TTHnobb_pow",
     ])
     from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import samples as dataSamples_DATA2017_NanoAODv4 
     allData = dataSamples_DATA2017_NanoAODv4
@@ -126,5 +126,5 @@ elif test == "102X-MC":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/NANOAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2), useAAA=True )
     TTLep_pow.files = TTLep_pow.files[:1]
     selectedComponents = [TTLep_pow]
-elif test in ('2','3'):
+elif test in ('2','3','3s'):
     doTestN(test, selectedComponents)

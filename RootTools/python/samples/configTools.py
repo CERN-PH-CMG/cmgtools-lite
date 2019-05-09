@@ -137,10 +137,13 @@ def doTestN(test, selectedComponents):
             comp.files = comp.files[:1]
             comp.splitFactor = 1
             comp.fineSplitFactor = 1
-    elif test == '3':
+    elif test in ('3','3s'):
         for comp in selectedComponents:
             comp.files = comp.files[:3]
-            comp.splitFactor = 1
-            comp.fineSplitFactor = 3
+            if test == '3':
+                comp.splitFactor = 1
+                comp.fineSplitFactor = 3
+            else:
+                comp.splitFactor = len(comp.files)
  
 

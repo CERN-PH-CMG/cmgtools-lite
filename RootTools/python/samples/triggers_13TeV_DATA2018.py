@@ -27,8 +27,8 @@ triggers_mue_ht = [ "HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT350_DZ_v*" ]
 triggers_3e = [ "HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v*" ] # unprescaled for 54.7 out of 60 fb 
 triggers_3mu = [ "HLT_TripleMu_10_5_5_DZ_v*",    
                  "HLT_TripleMu_12_10_5_v*", 
-                 "HLT_TripleMu_5_3_3_Mass3p8to60_DCA_v*", # FIXME 5_3_3 to be checked
-                 "HLT_TripleMu_5_3_3_Mass3p8to60_DZ_v*" ]
+                 "HLT_TripleMu_5_3_3_Mass3p8_DCA_v*", # FIXME 5_3_3 to be checked
+                 "HLT_TripleMu_5_3_3_Mass3p8_DZ_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
 
