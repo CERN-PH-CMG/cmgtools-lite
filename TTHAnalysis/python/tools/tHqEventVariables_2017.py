@@ -69,6 +69,7 @@ class tHqEventVariableFriend:
                 self.branches.append(("maxEta2BJet%s%s"%(ptcutlabel,jecsyst), -99.9)) # max Eta of the second hardest Bjet
                 self.branches.append(("dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst), -99.9)) # delta eta: max fwd jet and second hardest bjet
                 self.branches.append(("dEtaBJet2BJet%s%s"%(ptcutlabel,jecsyst), -99.9)) # delta eta: hardest bjet and second hardest bjet
+                self.branches.append(("sumJetsPt%s%s"%(ptcutlabel,jecsyst), -99.9)) # sum of selected jets pt
 
         # Signal MVA
         self.mvavars = {}
@@ -99,6 +100,8 @@ class tHqEventVariableFriend:
                     MVAVar(name="LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]"),
                     MVAVar(name="dEtaFwdJet2BJet%s%s"%(ptcutlabel,jecsyst)),
                     MVAVar(name="fwdJetPt25%s%s"%(ptcutlabel,jecsyst)),
+                    MVAVar(name="BDThttTT_eventReco_mvaValue"),
+                    MVAVar(name="sumJetsPt%s%s"%(ptcutlabel,jecsyst)),
                 ]
 
         self.mvaspectators = [
@@ -183,6 +186,17 @@ class tHqEventVariableFriend:
                 # Get jet collections
                 jets  = self.getJetCollection(event, jec_syst=jecsyst, coll="JetSel")
                 fjets = self.getJetCollection(event, jec_syst=jecsyst, coll="JetFwdSel")
+
+                sumpt = 0
+                for j in jets: sumpt += j.pt
+                if (ptcut == 60) :
+                    for f in fjets:
+                        if (abs(f.eta) <= 2.7 or abs(f.eta) >= 3.0 or f.pt > ptcut) : sumpt += f.pt
+                else :
+                    for f in fjets:
+                        if f.pt > ptcut : sumpt += f.pt
+                ret['sumJetsPt%s%s'%(ptcutlabel,jecsyst)] = sumpt
+
                 bjets = [j for j in jets if j.btagDeepCSV > BTAGWP]
                 bjets.sort(key=lambda x:x.pt, reverse=True)
 

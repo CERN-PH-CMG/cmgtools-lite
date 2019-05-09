@@ -129,6 +129,8 @@ VARIABLES['2lss'] = [
     ("lepCharge := LepGood_charge[iLepFO_Recl[0]]+LepGood_charge[iLepFO_Recl[1]]", "I"),
     ("dEtaFwdJet2BJet","F"),
     ("fwdJetPt25","F"),
+    ("BDThttTT_eventReco_mvaValue","F"),
+    ("sumJetsPt","F"),
 ]
 
 def train(cuts, variables, dsets, options):
