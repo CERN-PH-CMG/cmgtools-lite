@@ -9,20 +9,32 @@ def byCompName(components, regexps):
     return [ c for c in components if any(re.match(r, c.name) for r in regexps) ]
 
 year = int(getHeppyOption("year", "2018"))
+analysis = getHeppyOption("analysis", "main")
 
 DatasetsAndTriggers = []
 if year == 2018:
     from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_RunIIAutumn18_NanoAODv4 
-    mcSamples = byCompName(mcSamples_RunIIAutumn18_NanoAODv4, [ 
-        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
-    ])
+    if analysis == "main":
+        mcSamples = byCompName(mcSamples_RunIIAutumn18_NanoAODv4, [ 
+            "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
+        ])
+    elif analysis == "frqcd":
+        mcSamples = byCompName(mcSamples_RunIIAutumn18_NanoAODv4, [ 
+            "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170).*_(Mu5|EMEn).*", 
+            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+        ])
     from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import samples as dataSamples_DATA2018_NanoAODv4 
     allData = dataSamples_DATA2018_NanoAODv4
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
-    DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
-    DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) )
-    DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
-    DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
+    if analysis == "main":
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
+        DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) )
+        DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
+    elif analysis == "frqcd":
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu"] + triggers["FR_1mu_noiso"]) )
+        DatasetsAndTriggers.append( ("EGamma",     triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 elif year == 2017:
     from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_RunIIFall17_NanoAODv4 
     mcSamples = byCompName(mcSamples_RunIIFall17_NanoAODv4, [ 
@@ -57,7 +69,7 @@ for comp in mcSamples:
 # make data
 dataSamples = []; vetoTriggers = []
 for pd, triggers in DatasetsAndTriggers:
-    for comp in byCompName(allData, pd):
+    for comp in byCompName(allData, [pd]):
         comp.triggers = triggers[:]
         comp.vetoTriggers = vetoTriggers[:]
         dataSamples.append(comp)
@@ -80,13 +92,17 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 
 # in the cut string, keep only the main cuts to have it simpler
 modules = ttH_sequence_step1
+cut = ttH_skim_cut
+if analysis == "frqcd":
+    modules = ttH_sequence_step1_FR
+    cut = ttH_skim_cut_FR
 
 branchsel_in = None
 branchsel_out = None
 compression = "ZLIB:3" #"LZ4:4" #"LZMA:9"
 
 POSTPROCESSOR = PostProcessor(None, [], modules = modules,
-        cut = ttH_skim_cut, prefetch = True, longTermCache = True,
+        cut = cut, prefetch = True, longTermCache = True,
         branchsel = branchsel_in, outputbranchsel = branchsel_out, compression = compression)
 
 test = getHeppyOption("test")
