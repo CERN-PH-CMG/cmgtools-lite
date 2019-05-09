@@ -35,7 +35,7 @@ BASEOPTIONS=" -f -j 8 -l ${LUMI} --s2v"\
 " --mcc ttH-multilepton/lepchoice-ttH-FO.txt"
 TREEINPUTS="-P skimtrees/"
 FRIENDTREES=" -F sf/t skimtrees/1_recleaner_290319/evVarFriend_{cname}.root"\
-" -F sf/t skimtrees/2_thq_eventvars_270419/evVarFriend_{cname}.root"\
+" -F sf/t skimtrees/2_thq_eventvars_070519/evVarFriend_{cname}.root"\
 " -F sf/t skimtrees/5_triggerDecision/evVarFriend_{cname}.root"\
 " --FMC sf/t skimtrees/6_bTagSF_v4/evVarFriend_{cname}.root"\
 " -F sf/t skimtrees/7_tauTightSel/evVarFriend_{cname}.root"\

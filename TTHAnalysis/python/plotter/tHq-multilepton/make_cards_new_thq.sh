@@ -11,7 +11,7 @@ case $HOSTNAME in
         test -d /tmp/$USER/TREES_TTH_190418_Fall17_skim2lss3l && ORIGIN=/tmp/$USER;;
 esac;
 
-T2L=" -P skimtrees --Fs {P}/1_recleaner_290319 --Fs {P}/2_thq_eventvars_270419 --Fs {P}/5_triggerDecision --Fs {P}/7_tauTightSel --FMCs {P}/8_vtxWeight2017_v2 --FMCs {P}/6_bTagSF_v4"
+T2L=" -P skimtrees --Fs {P}/1_recleaner_290319 --Fs {P}/2_thq_eventvars_070519 --Fs {P}/5_triggerDecision --Fs {P}/7_tauTightSel --FMCs {P}/8_vtxWeight2017_v2 --FMCs {P}/6_bTagSF_v4 --Fs {P}/3_BDThttTT_Hj"
 T3L=${T2L}
 T4L=${T2L}
 #if test -d $ORIGIN/TREES_TTH_190418_Fall17_skim4l ; then
@@ -43,8 +43,8 @@ PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
 OPTIONS="${OPTIONS} -L ttH-multilepton/functionsTTH.cc -L tHq-multilepton/functionsTHQ.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt ${PROMPTSUB} --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
-FUNCTION_2L="tHq_MVAto1D_2lss_10(thqMVA_tt_2lss_60,thqMVA_ttv_2lss_60) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"
-FUNCTION_3L="tHq_MVAto1D_3l_10(thqMVA_tt_3l_60,thqMVA_ttv_3l_60) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"
+FUNCTION_2L="tHq_MVAto1D_2lss_8(thqMVA_tt_2lss_60,thqMVA_ttv_2lss_60) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5]"
+FUNCTION_3L="tHq_MVAto1D_3l_8(thqMVA_tt_3l_60,thqMVA_ttv_3l_60) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5]"
 #FUNCTION_2L="OurBin2l(kinMVA_2lss_ttbar_withBDTrTT,kinMVA_2lss_ttV_withHj_rTT) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]"
 #FUNCTION_3L="OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) [0.5,1.5,2.5,3.5,4.5,5.5,6.5]"
 #FUNCTION_3L="OurBin3l(kinMVA_3l_ttbar_withMEM,kinMVA_3l_ttV_withMEM) [0.5,1.5,2.5,3.5,4.5,5.5,6.5]"
