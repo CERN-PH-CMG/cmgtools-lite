@@ -19,16 +19,20 @@ class ttHLepQCDFakeRateAnalyzer( Module ):
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
-        for v in self.jetFloats:
+        vnames = []
+        for v in self.jetFloats[:]:
             if not inputTree.GetBranch("Jet_"+v): 
                 print "Skip missing Jet_"+v
                 continue
             self.out.branch("LepGood_awayJet_"+v, "F", lenVar="nLepGood")
-        for v in self.jetInts:
+            vnames.append(v)
+        for v in self.jetInts[:]:
             if not inputTree.GetBranch("Jet_"+v): 
                 print "Skip missing Jet_"+v
                 continue
             self.out.branch("LepGood_awayJet_"+v, "I", lenVar="nLepGood")
+            vnames.append(v)
+        self.vnames = vnames
 
 
     def analyze(self, event):
@@ -39,14 +43,13 @@ class ttHLepQCDFakeRateAnalyzer( Module ):
         jets = filter(self.jetSel, Collection(event, 'Jet'))
         jets.sort(key = lambda j : j.pt, reverse=True)
 
-        vnames = self.jetFloats + self.jetInts
-        ret = dict((v, [0 for l in leps]) for v in vnames)
+        ret = dict((v, [0 for l in leps]) for v in self.vnames)
 
         npairs = 0
         for i,lep in enumerate(leps):
             for jet in jets:
                 if self.pairSel((lep,jet)):
-                    for v in vnames:
+                    for v in self.vnames:
                         ret[v][i] = getattr(jet, v)
                     npairs += 1
                     break
@@ -55,7 +58,7 @@ class ttHLepQCDFakeRateAnalyzer( Module ):
             if npairs == 0: 
                 return False
 
-        for v in vnames:
+        for v in self.vnames:
             self.out.fillBranch("LepGood_awayJet_"+v, ret[v])
 
         return True
