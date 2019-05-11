@@ -2,9 +2,9 @@
 
 
 ### Alias definitions. Careful to avoid trailing '.*' to avoid matching _promptsub
-$alias : ttH : ttH|ttH_h[a-z]+
-$alias : tHq : tHq|tHq_h[a-z]+
-$alias : tHW : tHW|tHW_h[a-z]+
+$alias : ttH : ttH|ttH_h[a-z]{2}|ttH_h[a-z]{2}_[mp\d]+_[mp\d]+
+$alias : tHq : tHq|tHq_h[a-z]{2}|tHq_h[a-z]{2}_[mp\d]+_[mp\d]+
+$alias : tHW : tHW|tHW_h[a-z]{2}|tHW_h[a-z]{2}_[mp\d]+_[mp\d]+
 $alias : ttHX : $ttH|$tHq|$tHW
 $alias : ttV  : TT[WZ]|TTWW
 $alias : PromptFromMC : $ttHX|$ttV|Rares|Convs|WZ|ZZ|EWK|TZQ

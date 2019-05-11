@@ -75,7 +75,7 @@ class ShapeCardMaker:
             histo.cropNegativeBins()
             report[name] = histo.Clone('x_%s' % name)
 
-        if not self.options.asimov: 
+        if not self.options.asimov: ## FIXME this didn't work?
             report['data_obs'] = report['data'].Clone("x_data_obs")
 
         self.report.update(report)
@@ -140,6 +140,7 @@ class ShapeCardMaker:
             for p in self.processes:
                 h = self.report[p]
                 n0 = h.Integral()
+
                 if h.hasVariation(name):
                     if isShape or h.isShapeVariation(name):
                         if name.endswith("_lnU"): 
@@ -196,6 +197,7 @@ class ShapeCardMaker:
         procnames = procnames or dict() # use custom process names in case
 
         nuisances = self.setSystematics()
+        hists_to_store = []
 
         ofilename = ofilename or self.binname+".card.txt"
         with open(os.path.join(self.options.outdir, ofilename), 'w') as datacard:
@@ -223,9 +225,9 @@ class ShapeCardMaker:
                 (kind, effmap, effshape) = self.systs[name]
                 datacard.write(('%s %5s' % (hpatt % name,kind)) + " ".join([kpatt % effmap[p] for p in self.processes]) +"\n")
 
-                # for p, (hup,hdn) in effshape.iteritems(): ## FIXME?
-                #     towrite.append(hup.Clone("x_%s_%sUp"   % (p,name)))
-                #     towrite.append(hdn.Clone("x_%s_%sDown" % (p,name)))
+                for p, (hup,hdn) in effshape.iteritems():
+                    hists_to_store.append(hup.Clone("x_%s_%sUp"   % (p,name)))
+                    hists_to_store.append(hdn.Clone("x_%s_%sDown" % (p,name)))
 
             # for name, effmap in self.systs.iteritems():
             #     datacard.write((hpatt%name+'  lnN') + " ".join([kpatt % effmap[p] for p in self.processes]) +"\n")
@@ -266,10 +268,14 @@ class ShapeCardMaker:
             datacard.write('HiggsDecayWidthTHU_hzg param 0 1 [-7,7]\n')
             datacard.write('HiggsDecayWidthTHU_hgluglu param 0 1 [-7,7]\n')
 
-        self.writeInputRootFile(ofilename=ofilename.replace('.card.txt', '.input.root'),
-                                procnames=procnames)
+        hists_to_store += [h.raw() for n,h in self.report.iteritems() if any([n.startswith(p) for p in self.processes])]
+        hists_to_store.append(self.report['data_obs'].raw())
 
-    def writeInputRootFile(self, ofilename=None, procnames=None):
+        self.writeInputRootFile(ofilename=ofilename.replace('.card.txt', '.input.root'),
+                                procnames=procnames,
+                                hists_to_store=hists_to_store)
+
+    def writeInputRootFile(self, hists_to_store, ofilename=None, procnames=None):
         ofilename = ofilename or self.binname+".input.root"
         procnames = procnames or dict() # use custom process names in case
         if self.options.verbose: print ("...writing input root file to %s" %
@@ -278,8 +284,7 @@ class ShapeCardMaker:
                                                  ofilename),
                                     "RECREATE")
 
-        hists_to_store = [h.raw() for n,h in self.report.iteritems() if any([n.startswith(p) for p in self.processes])]
-        hists_to_store.append(self.report['data_obs'].raw())
+        hists_to_store = hists_to_store or []
         for hist in hists_to_store:
             if self.options.verbose > 2:
                 print "      %-60s %8.3f events" % (hist.GetName(),hist.Integral())
@@ -358,7 +363,7 @@ if __name__ == '__main__':
         # Take the correct signals for this point
         signals = ['tHq_hww_%s'%point, 'tHq_htt_%s'%point, 'tHq_hzz_%s'%point,
                    'tHW_hww_%s'%point, 'tHW_htt_%s'%point, 'tHW_hzz_%s'%point,
-                   'ttH_hww_%s'%point, 'ttH_htt_%s'%point, 'ttH_hzz_%s'%point]
+                   'ttH_hww', 'ttH_htt', 'ttH_hzz']
                    # 'WH_hww', 'WH_htt', 'WH_hzz', 'ggH_hzz']
 
         if options.asimov:
