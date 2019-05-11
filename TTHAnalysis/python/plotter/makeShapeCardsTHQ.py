@@ -13,6 +13,7 @@ from CMGTools.TTHAnalysis.plotter.mcAnalysis import addMCAnalysisOptions
 from CMGTools.TTHAnalysis.plotter.histoWithNuisances import mergePlots
 from CMGTools.TTHAnalysis.plotter.histoWithNuisances import listAllNuisances
 from CMGTools.TTHAnalysis.plotter.histoWithNuisances import readHistoWithNuisances
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances
 from CMGTools.TTHAnalysis.plotter.tree2yield import makeHistFromBinsAndSpec
 
 class ShapeCardMaker:
@@ -69,12 +70,12 @@ class ShapeCardMaker:
         report = {}
         print "...producing report"
         
-        rawplots = self.mca.getPlotsRaw("x", self.var, self.bins, self.cuts.allCuts(), nodata=options.asimov)
+        rawplots = self.mca.getPlotsRaw("x", self.var, self.bins, self.cuts.allCuts(), nodata=self.options.asimov)
         for name,histo in rawplots.iteritems():
             histo.cropNegativeBins()
             report[name] = histo.Clone('x_%s' % name)
 
-        if not self.options.asimov: ## FIXME this didn't work?
+        if not self.options.asimov: 
             report['data_obs'] = report['data'].Clone("x_data_obs")
 
         self.report.update(report)
@@ -101,10 +102,10 @@ class ShapeCardMaker:
         for p in asimovprocesses:
             if p in self.report: 
                 if tomerge is None: 
-                    tomerge = report[p].raw().Clone("x_data_obs")
+                    tomerge = self.report[p].raw().Clone("x_data_obs")
                     tomerge.SetDirectory(None)
                 else:
-                    tomerge.Add(report[p].raw())
+                    tomerge.Add(self.report[p].raw())
 
         self.report['data_obs'] = HistoWithNuisances(tomerge)
         self.allyields['data_obs'] = self.report['data_obs'].Integral()
@@ -278,7 +279,7 @@ class ShapeCardMaker:
                                     "RECREATE")
 
         hists_to_store = [h.raw() for n,h in self.report.iteritems() if any([n.startswith(p) for p in self.processes])]
-        hists_to_store.append(self.report['data_obs'])
+        hists_to_store.append(self.report['data_obs'].raw())
         for hist in hists_to_store:
             if self.options.verbose > 2:
                 print "      %-60s %8.3f events" % (hist.GetName(),hist.Integral())
@@ -357,7 +358,7 @@ if __name__ == '__main__':
         # Take the correct signals for this point
         signals = ['tHq_hww_%s'%point, 'tHq_htt_%s'%point, 'tHq_hzz_%s'%point,
                    'tHW_hww_%s'%point, 'tHW_htt_%s'%point, 'tHW_hzz_%s'%point,
-                   'ttH_hww', 'ttH_htt', 'ttH_hzz']
+                   'ttH_hww_%s'%point, 'ttH_htt_%s'%point, 'ttH_hzz_%s'%point]
                    # 'WH_hww', 'WH_htt', 'WH_hzz', 'ggH_hzz']
 
         if options.asimov:
