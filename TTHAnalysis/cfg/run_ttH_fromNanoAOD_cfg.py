@@ -135,7 +135,7 @@ if analysis == "frqcd":
     modules = ttH_sequence_step1_FR
     cut = ttH_skim_cut_FR
 
-branchsel_in = None
+branchsel_in = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/tools/nanoAOD/branchsel_in.txt"
 branchsel_out = None
 compression = "ZLIB:3" #"LZ4:4" #"LZMA:9"
 
