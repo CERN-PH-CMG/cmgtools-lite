@@ -43,7 +43,17 @@ DatasetsAndTriggers = []
 if year == 2018:
     if analysis == "main":
         mcSamples = byCompName(mcSamples_, [
-            "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
+            "WJetsToLNu_LO$", "DYJetsToLL_M10to50_LO$", "DYJetsToLL_M50$",
+            "TTJets_SingleLeptonFromT$", "TTJets_SingleLeptonFromTbar$", "TTJets_DiLepton$",
+            "T_sch_lep$", "T_tch$", "TBar_tch$", "T_tWch_noFullyHad$", "TBar_tWch_noFullyHad$",
+            "TTGJets$", "TGJets_lep",
+            "TTWToLNu_fxfx$", "TTZToLLNuNu_amc$", "TTZToLLNuNu_m1to10$",
+            "TT[WZ]_LO$",
+            "TTHnobb_pow$",
+            "TZQToLL$", "tWll$", "TTTT$", "TTWW$",
+            "WWTo2L2Nu$", "WZTo3LNu_fxfx$",  "ZZTo4L$", "WW_DPS$", "WpWpJJ$",
+            "GGHZZ4L$", "VHToNonbb_ll$",
+            "WWW_ll$", "WWZ$", "WZG$", "WZZ$", "ZZZ$",
         ])
     elif analysis == "frqcd":
         mcSamples = byCompName(mcSamples_, [
