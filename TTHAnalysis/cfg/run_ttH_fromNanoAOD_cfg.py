@@ -11,21 +11,45 @@ def byCompName(components, regexps):
 year = int(getHeppyOption("year", "2018"))
 analysis = getHeppyOption("analysis", "main")
 
+if getHeppyOption("nanoPreProcessor"):
+    if year == 2018:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18MiniAOD import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_MiniAOD import samples as allData
+        from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
+    elif year == 2017:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import dataSamples_31Mar2018 as allData
+        from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
+    elif year == 2016:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv3 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import dataSamples_17Jul2018 as allData
+        from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
+else:
+    if year == 2018:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import samples as allData
+        from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
+    elif year == 2017:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import samples as allData
+        from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
+    elif year == 2016:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import samples as allData
+        from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
+
+
 DatasetsAndTriggers = []
 if year == 2018:
-    from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_RunIIAutumn18_NanoAODv4 
     if analysis == "main":
-        mcSamples = byCompName(mcSamples_RunIIAutumn18_NanoAODv4, [ 
+        mcSamples = byCompName(mcSamples_, [
             "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
         ])
     elif analysis == "frqcd":
-        mcSamples = byCompName(mcSamples_RunIIAutumn18_NanoAODv4, [ 
+        mcSamples = byCompName(mcSamples_, [
             "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170).*_(Mu5|EMEn).*", 
             "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
         ])
-    from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import samples as dataSamples_DATA2018_NanoAODv4 
-    allData = dataSamples_DATA2018_NanoAODv4
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
     if analysis == "main":
         DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
         DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) )
@@ -36,26 +60,18 @@ if year == 2018:
         DatasetsAndTriggers.append( ("EGamma",     triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
         DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 elif year == 2017:
-    from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_RunIIFall17_NanoAODv4 
-    mcSamples = byCompName(mcSamples_RunIIFall17_NanoAODv4, [ 
+    mcSamples = byCompName(mcSamples_ [
         "DYJetsToLL_M50$", "TT(Lep|Semi)_pow", "TTHnobb_pow",
     ])
-    from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import samples as dataSamples_DATA2017_NanoAODv4 
-    allData = dataSamples_DATA2017_NanoAODv4
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
     DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
     DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
     DatasetsAndTriggers.append( ("SingleElectron", triggers["1e_iso"]) )
 elif year == 2016:
-    from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_RunIISummer16_NanoAODv4 
-    mcSamples = byCompName(mcSamples_RunIISummer16_NanoAODv4, [ 
+    mcSamples = byCompName(mcSamples_, [
         "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
     ])
-    from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import samples as dataSamples_DATA2016_NanoAODv4 
-    allData = dataSamples_DATA2016_NanoAODv4
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
     DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
