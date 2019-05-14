@@ -5,7 +5,7 @@ conf = dict(
         sip3d = 8, 
         dxy =  0.05, 
         dz = 0.1, 
-        eleId = "mvaFall17V1noIso_WPL"
+        eleId = "mvaFall17V2noIso_WPL",
 )
 
 ttH_skim_cut = ("nMuon + nElectron >= 2 &&" + 
