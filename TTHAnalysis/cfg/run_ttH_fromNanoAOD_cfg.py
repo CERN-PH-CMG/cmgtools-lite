@@ -97,6 +97,18 @@ if getHeppyOption('selectComponents'):
 autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)))
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
+# create and set preprocessor if requested
+if getHeppyOption("nanoPreProcessor"):
+    from CMGTools.Production.nanoAODPreprocessor import nanoAODPreprocessor
+    preproc_cfg = {2016: ("mc94X2016","data94X2016"),
+                   2017: ("mc94Xv2","data94Xv2"),
+                   2018: ("mc102X","data102X")}
+    preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_tth/CMSSW_10_2_14"
+    preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
+    preproc_data = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True)
+    for comp in selectedComponents:
+        comp.preprocessor = preproc_data if comp.isData else preproc_mc
+
 # print summary of components to process
 if getHeppyOption("justSummary"): 
     printSummary(selectedComponents)
