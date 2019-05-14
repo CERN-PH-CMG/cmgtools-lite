@@ -2,7 +2,7 @@ from __future__ import print_function
 import os, subprocess, time
 
 class nanoAODPreprocessor:
-    def __init__(self, cfg, cmsswArea=None, outputModuleName=None, name="preprocessor", outputFileName="cmsswPreProcessing.root", keepOutput=False):
+    def __init__(self, cfg, cmsswArea=None, outputModuleName=None, name="preprocessor", outputFileName="cmsswPreProcessing.root", keepOutput=False, injectTriggerFilter=False, injectJSON=False, inlineCustomize=None, nanoSequence="nanoAOD_step"):
         if not os.path.isfile(cfg): 
             raise RuntimeError("Preprocessor created for non-existing cfg file %r" % cfg)
         self._cfg = cfg
@@ -10,6 +10,10 @@ class nanoAODPreprocessor:
         self._outputModuleName = outputModuleName
         self._outputFileName = outputFileName
         self._keepOutput = keepOutput
+        self._injectTriggerFilter = injectTriggerFilter
+        self._injectJSON = injectJSON
+        self._inlineCustomize = inlineCustomize
+        self._nanoSequence = nanoSequence
         self._name = name
     def preProcessComponent(self, comp, outdir, maxEntries, noSubDir=False, verbose=True):
         if verbose: print("Pre-processing component %s (%d files) with %s" % (comp.name, len(comp.files), self._cfg))
@@ -21,9 +25,33 @@ class nanoAODPreprocessor:
         cmsswCfg = open(os.path.join(workingDir, self._name+"_cfg.py"), "w")
         cmsswCfg.write("".join(open(self._cfg, "r")))
         cmsswCfg.write("\n### === POSTFIX ====\n")
-        cmsswCfg.write("process.source.fileNames = %r\n" % [ ("file:"+f if os.path.isfile(f) else f) for f in comp.files])
+        cmsswCfg.write("process.source.fileNames = %r\n" % [ str("file:"+f if os.path.isfile(f) else f) for f in comp.files])
         cmsswCfg.write("process.%s.fileName = %r\n" % (outputModuleName, self._outputFileName))
         cmsswCfg.write("process.maxEvents.input = %g\n" % (maxEntries if maxEntries else -1))
+        cmsswCfg.write("process.MessageLogger.cerr.FwkReport.reportEvery = 100\n") 
+        cmsswCfg.write("if hasattr(process,'options'): process.options.wantSummary = cms.untracked.bool(True)\n")
+        if self._injectTriggerFilter and getattr(comp, 'triggers', []):
+            cmsswCfg.write("## --- trigger bit filter ---\n")
+            cmsswCfg.write("import HLTrigger.HLTfilters.triggerResultsFilter_cfi as hlt\n")
+            cmsswCfg.write("""process.triggerFilter = hlt.triggerResultsFilter.clone(
+    hltResults = "TriggerResults::HLT",
+    triggerConditions =  %r ,
+    l1tResults = '',
+    throw = False
+)\n""" % ( [ (p.rstrip("_v*")+"_v*") for p in comp.triggers ]))
+            if getattr(comp, 'vetoTriggers', []):
+                cmsswCfg.write("process.triggerFilterVeto = process.triggerFilter.clone(\n    triggerConditions = %r)\n" % ([ (p.rstrip("_v*")+"_v*") for p in comp.vetoTriggers ] ))
+                cmsswCfg.write("process.%s.insert(0, process.triggerFilter + ~process.triggerFilterVeto)\n" % self._nanoSequence)
+            else:
+                cmsswCfg.write("process.%s.insert(0, process.triggerFilter)\n" % self._nanoSequence)
+            cmsswCfg.write("process.%s.SelectEvents = cms.untracked.PSet( SelectEvents = cms.vstring('%s') )\n" % (outputModuleName, self._nanoSequence))
+        if self._injectJSON and getattr(comp, 'json', None):
+            cmsswCfg.write("## --- json filter ---\n")
+            cmsswCfg.write("import FWCore.PythonUtilities.LumiList as LumiList\n")
+            cmsswCfg.write("process.source.lumisToProcess = LumiList.LumiList(filename = %r).getVLuminosityBlockRange()\n" % comp.json)
+        if self._inlineCustomize:
+            cmsswCfg.write("## --- inline customization\n")
+            cmsswCfg.write(self._inlineCustomize+"\n")
         cmsswCfg.close()
         # make script 
         scriptName = os.path.join(workingDir, self._name+".sh")
