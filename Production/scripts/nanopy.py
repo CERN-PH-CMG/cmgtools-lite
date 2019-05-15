@@ -14,7 +14,7 @@ def _loadHeppyGlobalOptions(options):
             _heppyGlobalOptions[opt] = True
     if options.optionFile:
         opt = json.load(open(options.optionFile, 'r'))
-        for key,val in opt: 
+        for key,val in opt.iteritems(): 
             _heppyGlobalOptions[key] = val
 
 def _processOneComponent(pp, comp, outdir, preprocessor, options):
