@@ -1,5 +1,5 @@
 import re, os, sys
-from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions, doTestN
+from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions, doTestN, configureSplittingFromTime, cropToLumi
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
@@ -10,8 +10,9 @@ def byCompName(components, regexps):
 
 year = int(getHeppyOption("year", "2018"))
 analysis = getHeppyOption("analysis", "main")
+preprocessor = getHeppyOption("nanoPreProcessor")
 
-if getHeppyOption("nanoPreProcessor"):
+if preprocessor:
     if year == 2018:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18MiniAOD import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2018_MiniAOD import samples as allData
@@ -105,10 +106,11 @@ selectedComponents = mcSamples + dataSamples
 if getHeppyOption('selectComponents'):
     selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
 autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)))
+configureSplittingFromTime(selectedComponents,100 if preprocessor else 10,4)
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
 # create and set preprocessor if requested
-if getHeppyOption("nanoPreProcessor"):
+if preprocessor:
     from CMGTools.Production.nanoAODPreprocessor import nanoAODPreprocessor
     preproc_cfg = {2016: ("mc94X2016","data94X2016"),
                    2017: ("mc94Xv2","data94Xv2"),
