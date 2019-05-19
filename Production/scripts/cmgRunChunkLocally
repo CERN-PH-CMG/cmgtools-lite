@@ -6,6 +6,7 @@ test -f $1/batchScript.sh || exit 1;
 cd $1
 NAME=$(basename $PWD)
 rename LSFJ OLD_LSFJ *; 
+rename condor_job OLD_condor_job *; 
 test -f submission_failed && rm submission_failed
 export LS_SUBCWD=$PWD
 cd /tmp

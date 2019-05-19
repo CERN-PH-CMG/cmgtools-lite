@@ -85,25 +85,40 @@ for D in */; do
     # test if there are empty pickle files
     ${P} && find $D -name '*.pck' -empty -follow | grep -q pck && PCKBAD=true;
     # test if file to be tested for is present and whether bad pickle file flag has been set
-    if test \! -s $D/$F || $PCKBAD; then
+    TOTEST=$D/${F}
+    if [[ "$F" == "NanoAOD" ]]; then TOTEST=$D/$(basename $D).root; fi
+    if test \! -s $TOTEST || $PCKBAD; then
+        LSFDONE=true
+        if ${LSFL}; then
+            if find $D -maxdepth 1 -type d -name 'LSFJOB_*' -or -name 'condor_job*.out' -not -empty | grep -q .; then
+                LSFDONE=true
+            elif find $D -maxdepth 1 -name 'condor_job*.log' -not -empty | xargs cat | \
+                 grep -q "Job removed by SYSTEM_PERIODIC_REMOVE due to wall time exceeded allowed max"; then
+                LSFDONE=true
+            else
+                LSFDONE=false
+            fi;
+        fi
         # check for batch directory if requested or proceed to command printout
-        if [ "${LSFL}" = false ] || find $D -maxdepth 1 -type d -name 'LSFJOB_*'  -or -name 'condor_job*.out' -not -empty | grep -q . || test -f $D/submission_failed ; then
+        if $LSFDONE || test -f $D/submission_failed ; then
             if $LOC; then
                 # print local command
-                echo "cmgRunChunkLocally ${BASE}${D} ";
-	        else
+                echo "cmgRunChunkLocally ${BASE}${D} "; 
+            else
                 # print batch command
-		        echo "cmgResubChunk $Q ${BASE}${D} ";
+                echo "cmgResubChunk $Q ${BASE}${D} ";
             fi
         else
-            $TERSE || echo "# Chunk ${BASE}${D} does not have a LSFJOB directory, maybe still running? ";
+            $TERSE || echo "# Chunk ${BASE}${D} does not have a LSFJOB directory or non-empty condor output file, maybe still running? ";
         fi;
     fi;
 done;
 
 if $Z; then
     $TERSE || echo "# Testing for zombies";
-    for ZOMBIE in $(cmgListZombies  "*/$F"); do
+    ZOMBIEPATTERN="*/$F"
+    if [[ "$F" == "NanoAOD" ]]; then ZOMBIEPATTERN="*/*.root"; fi
+    for ZOMBIE in $(cmgListZombies  "$ZOMBIEPATTERN" ); do
         if test -s $ZOMBIE; then # empty files have already been found
             D=${ZOMBIE%%/*};
             if $LOC; then
