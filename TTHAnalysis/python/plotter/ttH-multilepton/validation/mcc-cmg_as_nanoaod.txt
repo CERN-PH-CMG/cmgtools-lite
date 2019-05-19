@@ -12,3 +12,4 @@ Jet(\d*)_btagCSVV2 : Jet\1_btagCSV; AlsoData
 Jet(\d*)_btagDeepB : Jet\1_btagDeepCSV; AlsoData
 MET_(\w+) : met_\1; AlsoData
 GenJet_pt\[\s*Jet(\d*)_genJetIdx\s*] : Jet\1_mcPt; AlsoData
+HLT_(\w+) : HLT_BIT_HLT_\1_v ; AlsoData
