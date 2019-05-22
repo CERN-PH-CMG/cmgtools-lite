@@ -16,7 +16,7 @@ class nanoAODPreprocessor:
         self._nanoStep = nanoStep
         self._cfgHasFilter = cfgHasFilter
         self._name = name
-    def preProcessComponent(self, comp, outdir, maxEntries, noSubDir=False, verbose=True):
+    def preProcessComponent(self, comp, outdir, maxEntries, noSubDir=False, verbose=False):
         if verbose: print("Pre-processing component %s (%d files) with %s" % (comp.name, len(comp.files), self._cfg))
         workingDir = outdir if noSubDir else os.path.join(outdir, comp.name)
         subprocess.check_output(["mkdir","-p", workingDir])
@@ -68,6 +68,8 @@ if hasattr(process, 'genWeightsTable') and process.{seq}.contains(process.genWei
         scriptFile.write("#!/bin/bash\n")
         scriptFile.write("cd %s\neval $(scram runtime -sh)\ncd %s\n" % (self._cmsswArea, os.path.abspath(workingDir)))
         scriptFile.write("cmsRun %s_cfg.py 2>&1 | tee %s.log\n" % (self._name, self._name));
+        if not verbose:
+            scriptFile.write("gzip -9 %s.log\n" % (self._name))
         scriptFile.close()
         subprocess.check_output(["chmod","+x", scriptName])
         # run

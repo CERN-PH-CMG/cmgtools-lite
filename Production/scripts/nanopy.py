@@ -53,7 +53,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     preprocessor = getattr(comp, 'preprocessor', preprocessor)
     if preprocessor:
         if fineSplit: raise RuntimeError("FineSplitting not supported for component %s with preprocessor at the moment" % comp.name)
-        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries, options.single) ]
+        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries, options.single, verbose=options.verbose) ]
     
     # unwrap any module still wrapped by a lambda
     pp.modules = [ (m() if isinstance(m,types.FunctionType) else m) for m in pp.modules ]
@@ -84,13 +84,13 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
         for f in pp.inputFiles:
             of = os.path.join(pp.outputDir, os.path.basename(f).replace(".root",pp.postfix+".root"))
             if os.path.isfile(of): 
-                print("removing temporary file "+of)
+                if options.verbose: print("removing temporary file "+of)
                 os.unlink(of)
     else:
         of = os.path.join(pp.outputDir, os.path.basename(pp.inputFiles[0]).replace(".root",pp.postfix+".root"))
         os.rename(of, target)
     if preprocessor:
-        preprocessor.doneProcessComponent(comp, outdir, options.single)
+        preprocessor.doneProcessComponent(comp, outdir, options.single, verbose=options.verbose)
 
 def _processOneComponentAsync(args):
     try:
@@ -106,6 +106,7 @@ def _processOneComponentAsync(args):
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] outputDir inputCfg [ component ]")
+    parser.add_option("-v", "--verbose",  dest="verbose", action="store_true",  default=False, help="Verbose")
     parser.add_option("--single",  dest="single", action="store_true",  default=False, help="Run on a single component, single-threaded, without creating subdirectories")
     parser.add_option("--prefetch", dest="prefetch", action="store_true",  default=None, help="Prefetch remote files with xrdcp (overrides what is in the cfg file)")
     parser.add_option("--no-prefetch", dest="prefetch", action="store_false",  default=None, help="Do not prefetch remote files with xrdcp (overrides what is in the cfg file)")
