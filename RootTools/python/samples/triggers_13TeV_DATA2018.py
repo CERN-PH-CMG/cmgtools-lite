@@ -39,7 +39,7 @@ triggers_1e_iso = [ "HLT_Ele32_WPTight_Gsf_v*" ]
 triggers_1e_noniso = [ "HLT_Ele115_CaloIdVT_GsfTrkIdT_v*"] 
 
 # Prescaled lepton triggers
-triggers_FR_1mu       = [ "HLT_Mu%d_TrkIsoVVL_v*" % pt for pt in (8,17,19) ] # DoubleMu PD
+triggers_FR_1mu_iso   = [ "HLT_Mu%d_TrkIsoVVL_v*" % pt for pt in (8,17,19) ] # DoubleMu PD
 triggers_FR_1mu_noiso = [ "HLT_Mu%d_v*" % pt for pt in (8,17,19) ] # DoubleMu PD
 triggers_FR_1mu_noiso_smpd = [ "HLT_Mu%d_v*" % pt for pt in (12,15,20,27) ] + ["HLT_Mu3_PFJet40_v*"] # SingleMu PD
 triggers_FR_1mu_noiso_highpt = [ "HLT_Mu%d_v*" % pt for pt in (50,) ] # SingleMu PD
