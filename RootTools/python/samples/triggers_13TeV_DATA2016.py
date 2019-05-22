@@ -207,3 +207,4 @@ triggers_pfht = triggers_pfht200 + triggers_pfht250 + triggers_pfht300 + trigger
 ###---- MET:
 triggers_htmet = ['HLT_PFHT300_PFMET110_v*']
 
+all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals().items() if x.startswith("triggers_") and isinstance(y,list))

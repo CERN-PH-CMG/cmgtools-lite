@@ -53,7 +53,7 @@ def configureSplittingFromTime(selectedComponents,msPerEvent,jobTimeInHours,minS
             comp.splitFactor = int(ceil(len(comp.files)/float(filesPerJob)))
         #print "for %s: %d events, %.1f ms/ev --> %.2f jobs" % (comp.name, nev, msPerEvent, njobs)
 
-def cropToLumi(selectedComponents, maxLumi):
+def cropToLumi(selectedComponents, maxLumi, minFiles=4):
     from math import ceil
     for comp in selectedComponents:
         nev   = getattr(comp, 'dataset_entries', 0)
@@ -63,6 +63,7 @@ def cropToLumi(selectedComponents, maxLumi):
             lumi *= (1 - 2*comp.fracNegWeights)**2
         if lumi > maxLumi:
             cfiles = int(ceil(len(comp.files) * maxLumi/lumi))
+            if cfiles < minFiles: cfiles = min(minFiles, len(comp.files))
             comp.dataset_entries = nev * cfiles / float(len(comp.files))
             comp.files = comp.files[:cfiles]
 
@@ -137,10 +138,13 @@ def doTestN(test, selectedComponents):
             comp.files = comp.files[:1]
             comp.splitFactor = 1
             comp.fineSplitFactor = 1
-    elif test == '3':
+    elif test in ('3','3s'):
         for comp in selectedComponents:
             comp.files = comp.files[:3]
-            comp.splitFactor = 1
-            comp.fineSplitFactor = 3
+            if test == '3':
+                comp.splitFactor = 1
+                comp.fineSplitFactor = 3
+            else:
+                comp.splitFactor = len(comp.files)
  
 

@@ -1,0 +1,5 @@
+drop FatJet_*
+drop GenDressedLepton_*
+drop L1_*
+drop SoftActivityJet_*
+drop SV_*

@@ -13,19 +13,20 @@ class CollectionSkimmer:
         self._saveTagForAll = saveTagForAll
         self._impl = ROOT.CollectionSkimmer(outName,srcColl,saveSelectedIndices,saveTagForAll)
         self._iprefix = srcColl + "_"
-        for i in ints: self._impl.copyInt(i)
-        for f in floats: self._impl.copyFloat(f)
+        for i in ints: self._impl.declareCopyInt(i)
+        for f in floats: self._impl.declareCopyFloat(f)
         self._ttreereaderversion = -1
     def initInputTree(self,tree):
         """To be called to initialize the input tree. 
            initEvent also takes care of re-calling it if needed"""
+        #always read the size, to be sure of the capacity of the vectors
+        self._impl.srcCount(tree.valueReader('n'+self._iprefix[:-1]))
         for i in self._ints:   self._impl.copyInt(i, tree.arrayReader(self._iprefix+i))
         for f in self._floats: self._impl.copyFloat(f, tree.arrayReader(self._iprefix+f))
-        if self._saveTagForAll: self._impl.srcCount(tree.valueReader('n'+self._iprefix[:-1]))
         self._ttreereaderversion = tree._ttreereaderversion
-    def initOutputTree(self,outpytree):
+    def initOutputTree(self,outpytree,bareTree=False):
         """To be called once when defining the output PyTree, to declare the branches"""
-        self._impl.makeBranches(outpytree.tree, self._maxSize, (self._padSelectedIndicesWith!=None), self._padSelectedIndicesWith if (self._padSelectedIndicesWith!=None) else -1)
+        self._impl.makeBranches(outpytree if bareTree else outpytree.tree, self._maxSize, (self._padSelectedIndicesWith!=None), self._padSelectedIndicesWith if (self._padSelectedIndicesWith!=None) else -1)
     def initEvent(self,event):
         """To be called at the beginning of every event.
            Returns true if the underlying TTreeReader has changed"""

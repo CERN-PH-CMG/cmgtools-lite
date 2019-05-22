@@ -1,7 +1,14 @@
-from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as NanoAODCollection 
 
-class EventVars2LSS:
-    def __init__(self, label="", recllabel='Recl'):
+from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
+from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
+
+from math import sqrt, cos
+from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
+
+class EventVars2LSS(Module):
+    def __init__(self, label="", recllabel='Recl', doSystJEC=True):
         self.namebranches = [ "mindr_lep1_jet",
                               "mindr_lep2_jet",
                               "avg_dr_jet",
@@ -11,17 +18,29 @@ class EventVars2LSS:
                               #"sum_sgnpz"
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} if doSystJEC else {0:""}
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
+
+    # old interface (CMG)
     def listBranches(self):
         return self.branches[:]
     def __call__(self,event):
+        return self.run(event, CMGCollection, "met")
 
+    # new interface (nanoAOD-tools)
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        declareOutput(self, wrappedOutputTree, self.branches)
+    def analyze(self, event):
+        writeOutput(self, self.run(event, NanoAODCollection, "MET"))
+        return True
+
+    # logic of the algorithm
+    def run(self,event,Collection,metName):
         allret = {}
 
-        all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
+        all_leps = [l for l in Collection(event,"LepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iLepFO"+self.inputlabel)
         leps = [all_leps[chosen[i]] for i in xrange(nFO)]
@@ -29,7 +48,7 @@ class EventVars2LSS:
         for var in self.systsJEC:
             _var = var
             if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
-            jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
+            jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
             elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
@@ -37,8 +56,8 @@ class EventVars2LSS:
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
-            met = getattr(event,"met"+self.systsJEC[_var]+"_pt")
-            metphi = getattr(event,"met"+self.systsJEC[_var]+"_phi")
+            met = getattr(event,metName+self.systsJEC[_var]+"_pt")
+            metphi = getattr(event,metName+self.systsJEC[_var]+"_phi")
             njet = len(jets); nlep = len(leps)
             # prepare output
             ret = dict([(name,0.0) for name in self.namebranches])

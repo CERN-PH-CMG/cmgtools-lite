@@ -1,9 +1,18 @@
-from CMGTools.TTHAnalysis.treeReAnalyzer import *
-import ROOT, os
+import ROOT
+from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
-class CombinedObjectTaggerForCleaning:
+class CombinedObjectTaggerForCleaning(Module):
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
+    def __init__(self,label,
+                 looseLeptonSel = lambda l : True,
+                 cleaningLeptonSel = lambda l : True,
+                 FOLeptonSel = lambda l : True,
+                 tightLeptonSel = lambda l : True,
+                 FOTauSel = lambda t : True,
+                 tightTauSel = lambda t : True,
+                 selectJet = lambda j : True,
+                 coneptdef = lambda l : l.pt,
+                 debug=False):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
 
@@ -20,14 +29,28 @@ class CombinedObjectTaggerForCleaning:
         self.coneptdef = coneptdef
         self.debug = debug
 
+    # interface for old code
     def listBranches(self):
         return []
 
     def __call__(self,event):
-
+        from CMGTools.TTHAnalysis.treeReAnalyzer import Collection
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         taus = [t for t in Collection(event,"TauGood","nTauGood")]
         jets = [j for j in Collection(event,"Jet","nJet")]
+        self.run(event, leps,taus,jets)
+        return {}
+
+    # interface for new code
+    def analyze(self, event):
+        from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
+        leps = [l for l in Collection(event,"LepGood")]
+        taus = [t for t in Collection(event,"Tau")]
+        jets = [j for j in Collection(event,"Jet")]
+        self.run(event, leps,taus,jets)
+        return True
+
+    def run(self, event, leps,taus,jets):
 
         tags = ROOT.CombinedObjectTags(len(leps),len(taus),len(jets))
 
@@ -47,13 +70,15 @@ class CombinedObjectTaggerForCleaning:
 MODULES=[]
 
 if __name__ == '__main__':
+    from CMGTools.TTHAnalysis.treeReAnalyzer import EventLoop
+    from CMGTools.TTHAnalysis.treeReAnalyzer import Module as CMGModule
     from sys import argv
     file = ROOT.TFile(argv[1])
     tree = file.Get("tree")
     tree.vectorTree = True
-    class Tester(Module):
+    class Tester(CMGModule):
         def __init__(self, name):
-            Module.__init__(self,name,None)
+            CMGModule.__init__(self,name,None)
             self.sf1 = CombinedObjectTaggerForCleaning("Test",
                                                        looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                                                        cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from math import *
+from math import ceil, hypot, sqrt
 import re
 import os, os.path
 from array import array
@@ -14,7 +14,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gSystem.Load("libpng") # otherwise we may end up with a bogus version
 
-from copy import *
+import copy
 
 from CMGTools.TTHAnalysis.plotter.cutsFile import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
@@ -135,10 +135,11 @@ def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
         return histo
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[],nanoAOD=False):
+    def __init__(self,root,basepath,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[],nanoAOD=False):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
+        self._basepath = basepath
         self._isNano = nanoAOD
         self._isInit = False
         self._options = options
@@ -163,7 +164,7 @@ class TreeToYield:
         else:
             self._mcCorrSourceList = [('_default_',x) for x in globalMCCorrections()]            
         if 'MCCorrections' in settings:
-            self._mcCorrs = self._mcCorrs[:] # make copy
+            self._mcCorrs = getattr(self, '_mcCorrs', [])[:] # make copy
             for cfile in settings['MCCorrections'].split(','): 
                 self._mcCorrSourceList.append( (cfile,MCCorrections(cfile)) )            
         if 'FakeRate' in settings:
@@ -211,7 +212,7 @@ class TreeToYield:
         ttyVariations = {}
         for var in self.getVariations():
             for direction in ['up','dn']:
-                tty2 = copy(self)
+                tty2 = copy.copy(self)
                 tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
@@ -306,22 +307,17 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         friendOpts = self._options.friendTrees[:]
-        friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._options.friendTreesSimple]
         friendOpts += (self._options.friendTreesData if self._isdata else self._options.friendTreesMC)
-        friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in (self._options.friendTreesDataSimple if self._isdata else self._options.friendTreesMCSimple) ]
         if 'Friends' in self._settings: friendOpts += self._settings['Friends']
-        if 'FriendsSimple' in self._settings: friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._settings['FriendsSimple'] ]
+        friendSimpleOpts = self._options.friendTreesSimple[:]
+        friendSimpleOpts += (self._options.friendTreesDataSimple if self._isdata else self._options.friendTreesMCSimple)
+        if 'FriendsSimple' in self._settings: friendSimpleOpts += self._settings['FriendsSimple']
+        if self._isNano:
+            friendOpts += [ ('Friends', d+"/{cname}_Friend.root") for d in friendSimpleOpts]
+        else:
+            friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in friendSimpleOpts]
         for tf_tree,tf_file in friendOpts:
-#            print 'Adding friend',tf_tree,tf_file
-            basepath = None
-            for treepath in getattr(self._options, 'path', []):
-                if self._cname in os.listdir(treepath):
-                    basepath = treepath
-                    break
-            if not basepath:
-                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
-
-            tf_filename = tf_file.format(name=self._name, cname=self._cname, P=basepath)
+            tf_filename = tf_file.format(name=self._name, cname=self._cname, P=self._basepath)
             tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
@@ -661,6 +657,7 @@ def _copyPlotStyle(self,plotfrom,plotto):
         plotto.GetZaxis().SetNdivisions(plotfrom.GetZaxis().GetNdivisions())
 
 def _treeSum(tree,expr):
+    if tree.GetEntries() == 0: return 0.
     ROOT.gROOT.cd()
     if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
     histo = ROOT.TH1D("dummy","dummy",1,0.0,1.0); histo.Sumw2()
@@ -703,7 +700,6 @@ def addTreeToYieldOptions(parser):
 
 
 def mergeReports(reports):
-    import copy
     one = copy.deepcopy(reports[0])
     for i,(c,x) in enumerate(one):
         one[i][1][1] = pow(one[i][1][1], 2)

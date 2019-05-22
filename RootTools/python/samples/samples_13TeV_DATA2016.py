@@ -384,25 +384,126 @@ Tau_Run2016H_03Feb2017_v3     = kreator.makeDataComponent("Tau_Run2016H_03Feb201
 
 dataSamples_Run2016H_03Feb2017_v3 = [JetHT_Run2016H_03Feb2017_v3, HTMHT_Run2016H_03Feb2017_v3, MET_Run2016H_03Feb2017_v3, SingleElectron_Run2016H_03Feb2017_v3, SingleMuon_Run2016H_03Feb2017_v3, SinglePhoton_Run2016H_03Feb2017_v3, DoubleEG_Run2016H_03Feb2017_v3, MuonEG_Run2016H_03Feb2017_v3, DoubleMuon_Run2016H_03Feb2017_v3, Tau_Run2016H_03Feb2017_v3]
 
-samples = dataSamples_PromptReco
-
 ### Summary of 03Feb2017
 dataSamples_03Feb2017 = dataSamples_Run2016B_03Feb2017_v2 + dataSamples_Run2016C_03Feb2017 + dataSamples_Run2016D_03Feb2017 + dataSamples_Run2016E_03Feb2017 + dataSamples_Run2016F_03Feb2017 + dataSamples_Run2016G_03Feb2017 + dataSamples_Run2016H_03Feb2017_v2 + dataSamples_Run2016H_03Feb2017_v3
 
 
-dataSamples = dataSamples_PromptReco + dataSamples_23Sep2016 + dataSamples_03Feb2017
+### ----------------------------- Run2016B (raw v2) 17Jul2018 ----------------------------------------
+
+JetHT_Run2016B_17Jul2018       = kreator.makeDataComponent("JetHT_Run2016B_17Jul2018"      , "/JetHT/Run2016B-17Jul2018_ver2-v2/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016B_17Jul2018       = kreator.makeDataComponent("HTMHT_Run2016B_17Jul2018"      , "/HTMHT/Run2016B-17Jul2018_ver2-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016B_17Jul2018         = kreator.makeDataComponent("MET_Run2016B_17Jul2018"        , "/MET/Run2016B-17Jul2018_ver2-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016B_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016B_17Jul2018", "/SingleElectron/Run2016B-17Jul2018_ver2-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016B_17Jul2018  = kreator.makeDataComponent("SingleMuon_Run2016B_17Jul2018" , "/SingleMuon/Run2016B-17Jul2018_ver2-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016B_17Jul2018= kreator.makeDataComponent("SinglePhoton_Run2016B_17Jul2018"  , "/SinglePhoton/Run2016B-17Jul2018_ver2-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016B_17Jul2018    = kreator.makeDataComponent("DoubleEG_Run2016B_17Jul2018"   , "/DoubleEG/Run2016B-17Jul2018_ver2-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016B_17Jul2018     = kreator.makeDataComponent("MuonEG_Run2016B_17Jul2018"     , "/MuonEG/Run2016B-17Jul2018_ver2-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016B_17Jul2018  = kreator.makeDataComponent("DoubleMuon_Run2016B_17Jul2018" , "/DoubleMuon/Run2016B-17Jul2018_ver2-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016B_17Jul2018  = kreator.makeDataComponent("Tau_Run2016B_17Jul2018" , "/Tau/Run2016B-17Jul2018_ver2-v1/MINIAOD"    , "CMS", ".*root", json)
+
+dataSamples_Run2016B_17Jul2018 = [JetHT_Run2016B_17Jul2018, HTMHT_Run2016B_17Jul2018, MET_Run2016B_17Jul2018, SingleElectron_Run2016B_17Jul2018, SingleMuon_Run2016B_17Jul2018, SinglePhoton_Run2016B_17Jul2018, DoubleEG_Run2016B_17Jul2018, MuonEG_Run2016B_17Jul2018, DoubleMuon_Run2016B_17Jul2018, Tau_Run2016B_17Jul2018]
+
+### ----------------------------- Run2016C 17Jul2018 ----------------------------------------
+
+JetHT_Run2016C_17Jul2018          = kreator.makeDataComponent("JetHT_Run2016C_17Jul2018"         , "/JetHT/Run2016C-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016C_17Jul2018          = kreator.makeDataComponent("HTMHT_Run2016C_17Jul2018"         , "/HTMHT/Run2016C-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016C_17Jul2018            = kreator.makeDataComponent("MET_Run2016C_17Jul2018"           , "/MET/Run2016C-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016C_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016C_17Jul2018", "/SingleElectron/Run2016C-17Jul2018-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016C_17Jul2018     = kreator.makeDataComponent("SingleMuon_Run2016C_17Jul2018"    , "/SingleMuon/Run2016C-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016C_17Jul2018   = kreator.makeDataComponent("SinglePhoton_Run2016C_17Jul2018"  , "/SinglePhoton/Run2016C-17Jul2018-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016C_17Jul2018       = kreator.makeDataComponent("DoubleEG_Run2016C_17Jul2018"      , "/DoubleEG/Run2016C-17Jul2018-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016C_17Jul2018         = kreator.makeDataComponent("MuonEG_Run2016C_17Jul2018"        , "/MuonEG/Run2016C-17Jul2018-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016C_17Jul2018     = kreator.makeDataComponent("DoubleMuon_Run2016C_17Jul2018"    , "/DoubleMuon/Run2016C-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016C_17Jul2018            = kreator.makeDataComponent("Tau_Run2016C_17Jul2018"           , "/Tau/Run2016C-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+
+dataSamples_Run2016C_17Jul2018 = [JetHT_Run2016C_17Jul2018, HTMHT_Run2016C_17Jul2018, MET_Run2016C_17Jul2018, SingleElectron_Run2016C_17Jul2018, SingleMuon_Run2016C_17Jul2018, SinglePhoton_Run2016C_17Jul2018, DoubleEG_Run2016C_17Jul2018, MuonEG_Run2016C_17Jul2018, DoubleMuon_Run2016C_17Jul2018, Tau_Run2016C_17Jul2018]
+
+
+### ----------------------------- Run2016D 17Jul2018 ----------------------------------------
+
+JetHT_Run2016D_17Jul2018          = kreator.makeDataComponent("JetHT_Run2016D_17Jul2018"         , "/JetHT/Run2016D-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016D_17Jul2018          = kreator.makeDataComponent("HTMHT_Run2016D_17Jul2018"         , "/HTMHT/Run2016D-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016D_17Jul2018            = kreator.makeDataComponent("MET_Run2016D_17Jul2018"           , "/MET/Run2016D-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016D_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016D_17Jul2018", "/SingleElectron/Run2016D-17Jul2018-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016D_17Jul2018     = kreator.makeDataComponent("SingleMuon_Run2016D_17Jul2018"    , "/SingleMuon/Run2016D-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016D_17Jul2018   = kreator.makeDataComponent("SinglePhoton_Run2016D_17Jul2018"  , "/SinglePhoton/Run2016D-17Jul2018-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016D_17Jul2018       = kreator.makeDataComponent("DoubleEG_Run2016D_17Jul2018"      , "/DoubleEG/Run2016D-17Jul2018-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016D_17Jul2018         = kreator.makeDataComponent("MuonEG_Run2016D_17Jul2018"        , "/MuonEG/Run2016D-17Jul2018-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016D_17Jul2018     = kreator.makeDataComponent("DoubleMuon_Run2016D_17Jul2018"    , "/DoubleMuon/Run2016D-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016D_17Jul2018            = kreator.makeDataComponent("Tau_Run2016D_17Jul2018"           , "/Tau/Run2016D-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+
+dataSamples_Run2016D_17Jul2018 = [JetHT_Run2016D_17Jul2018, HTMHT_Run2016D_17Jul2018, MET_Run2016D_17Jul2018, SingleElectron_Run2016D_17Jul2018, SingleMuon_Run2016D_17Jul2018, SinglePhoton_Run2016D_17Jul2018, DoubleEG_Run2016D_17Jul2018, MuonEG_Run2016D_17Jul2018, DoubleMuon_Run2016D_17Jul2018, Tau_Run2016D_17Jul2018]
+
+### ----------------------------- Run2016E 17Jul2018 ----------------------------------------
+
+JetHT_Run2016E_17Jul2018          = kreator.makeDataComponent("JetHT_Run2016E_17Jul2018"         , "/JetHT/Run2016E-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016E_17Jul2018          = kreator.makeDataComponent("HTMHT_Run2016E_17Jul2018"         , "/HTMHT/Run2016E-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016E_17Jul2018            = kreator.makeDataComponent("MET_Run2016E_17Jul2018"           , "/MET/Run2016E-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016E_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016E_17Jul2018", "/SingleElectron/Run2016E-17Jul2018-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016E_17Jul2018     = kreator.makeDataComponent("SingleMuon_Run2016E_17Jul2018"    , "/SingleMuon/Run2016E-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016E_17Jul2018   = kreator.makeDataComponent("SinglePhoton_Run2016E_17Jul2018"  , "/SinglePhoton/Run2016E-17Jul2018-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016E_17Jul2018       = kreator.makeDataComponent("DoubleEG_Run2016E_17Jul2018"      , "/DoubleEG/Run2016E-17Jul2018-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016E_17Jul2018         = kreator.makeDataComponent("MuonEG_Run2016E_17Jul2018"        , "/MuonEG/Run2016E-17Jul2018-v2/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016E_17Jul2018     = kreator.makeDataComponent("DoubleMuon_Run2016E_17Jul2018"    , "/DoubleMuon/Run2016E-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016E_17Jul2018            = kreator.makeDataComponent("Tau_Run2016E_17Jul2018"           , "/Tau/Run2016E-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+
+dataSamples_Run2016E_17Jul2018 = [JetHT_Run2016E_17Jul2018, HTMHT_Run2016E_17Jul2018, MET_Run2016E_17Jul2018, SingleElectron_Run2016E_17Jul2018, SingleMuon_Run2016E_17Jul2018, SinglePhoton_Run2016E_17Jul2018, DoubleEG_Run2016E_17Jul2018, MuonEG_Run2016E_17Jul2018, DoubleMuon_Run2016E_17Jul2018, Tau_Run2016E_17Jul2018]
+
+
+### ----------------------------- Run2016F 17Jul2018 ----------------------------------------
+
+JetHT_Run2016F_17Jul2018          = kreator.makeDataComponent("JetHT_Run2016F_17Jul2018"         , "/JetHT/Run2016F-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016F_17Jul2018          = kreator.makeDataComponent("HTMHT_Run2016F_17Jul2018"         , "/HTMHT/Run2016F-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016F_17Jul2018            = kreator.makeDataComponent("MET_Run2016F_17Jul2018"           , "/MET/Run2016F-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016F_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016F_17Jul2018", "/SingleElectron/Run2016F-17Jul2018-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016F_17Jul2018     = kreator.makeDataComponent("SingleMuon_Run2016F_17Jul2018"    , "/SingleMuon/Run2016F-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016F_17Jul2018   = kreator.makeDataComponent("SinglePhoton_Run2016F_17Jul2018"  , "/SinglePhoton/Run2016F-17Jul2018-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016F_17Jul2018       = kreator.makeDataComponent("DoubleEG_Run2016F_17Jul2018"      , "/DoubleEG/Run2016F-17Jul2018-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016F_17Jul2018         = kreator.makeDataComponent("MuonEG_Run2016F_17Jul2018"        , "/MuonEG/Run2016F-17Jul2018-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016F_17Jul2018     = kreator.makeDataComponent("DoubleMuon_Run2016F_17Jul2018"    , "/DoubleMuon/Run2016F-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016F_17Jul2018            = kreator.makeDataComponent("Tau_Run2016F_17Jul2018"           , "/Tau/Run2016F-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+
+dataSamples_Run2016F_17Jul2018 = [JetHT_Run2016F_17Jul2018, HTMHT_Run2016F_17Jul2018, MET_Run2016F_17Jul2018, SingleElectron_Run2016F_17Jul2018, SingleMuon_Run2016F_17Jul2018, SinglePhoton_Run2016F_17Jul2018, DoubleEG_Run2016F_17Jul2018, MuonEG_Run2016F_17Jul2018, DoubleMuon_Run2016F_17Jul2018, Tau_Run2016F_17Jul2018]
+
+### ----------------------------- Run2016G 17Jul2018 ----------------------------------------
+
+JetHT_Run2016G_17Jul2018          = kreator.makeDataComponent("JetHT_Run2016G_17Jul2018"         , "/JetHT/Run2016G-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016G_17Jul2018          = kreator.makeDataComponent("HTMHT_Run2016G_17Jul2018"         , "/HTMHT/Run2016G-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016G_17Jul2018            = kreator.makeDataComponent("MET_Run2016G_17Jul2018"           , "/MET/Run2016G-17Jul2018-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016G_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016G_17Jul2018", "/SingleElectron/Run2016G-17Jul2018-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016G_17Jul2018     = kreator.makeDataComponent("SingleMuon_Run2016G_17Jul2018"    , "/SingleMuon/Run2016G-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016G_17Jul2018   = kreator.makeDataComponent("SinglePhoton_Run2016G_17Jul2018"  , "/SinglePhoton/Run2016G-17Jul2018-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016G_17Jul2018       = kreator.makeDataComponent("DoubleEG_Run2016G_17Jul2018"      , "/DoubleEG/Run2016G-17Jul2018-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016G_17Jul2018        = kreator.makeDataComponent("MuonEG_Run2016G_17Jul2018"        , "/MuonEG/Run2016G-17Jul2018-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016G_17Jul2018     = kreator.makeDataComponent("DoubleMuon_Run2016G_17Jul2018"    , "/DoubleMuon/Run2016G-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016G_17Jul2018     = kreator.makeDataComponent("Tau_Run2016G_17Jul2018"    , "/Tau/Run2016G-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+
+dataSamples_Run2016G_17Jul2018 = [JetHT_Run2016G_17Jul2018, HTMHT_Run2016G_17Jul2018, MET_Run2016G_17Jul2018, SingleElectron_Run2016G_17Jul2018, SingleMuon_Run2016G_17Jul2018, SinglePhoton_Run2016G_17Jul2018, DoubleEG_Run2016G_17Jul2018, MuonEG_Run2016G_17Jul2018, DoubleMuon_Run2016G_17Jul2018, Tau_Run2016G_17Jul2018]
+
+### ----------------------------- Run2016H 17Jul2018 ----------------------------------------
+
+JetHT_Run2016H_17Jul2018          = kreator.makeDataComponent("JetHT_Run2016H_17Jul2018"         , "/JetHT/Run2016H-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2016H_17Jul2018          = kreator.makeDataComponent("HTMHT_Run2016H_17Jul2018"         , "/HTMHT/Run2016H-17Jul2018-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2016H_17Jul2018            = kreator.makeDataComponent("MET_Run2016H_17Jul2018"           , "/MET/Run2016H-17Jul2018-v2/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2016H_17Jul2018 = kreator.makeDataComponent("SingleElectron_Run2016H_17Jul2018", "/SingleElectron/Run2016H-17Jul2018-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2016H_17Jul2018     = kreator.makeDataComponent("SingleMuon_Run2016H_17Jul2018"    , "/SingleMuon/Run2016H-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2016H_17Jul2018   = kreator.makeDataComponent("SinglePhoton_Run2016H_17Jul2018"  , "/SinglePhoton/Run2016H-17Jul2018-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2016H_17Jul2018       = kreator.makeDataComponent("DoubleEG_Run2016H_17Jul2018"      , "/DoubleEG/Run2016H-17Jul2018-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2016H_17Jul2018        = kreator.makeDataComponent("MuonEG_Run2016H_17Jul2018"        , "/MuonEG/Run2016H-17Jul2018-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2016H_17Jul2018     = kreator.makeDataComponent("DoubleMuon_Run2016H_17Jul2018"    , "/DoubleMuon/Run2016H-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2016H_17Jul2018     = kreator.makeDataComponent("Tau_Run2016H_17Jul2018"    , "/Tau/Run2016H-17Jul2018-v1/MINIAOD"    , "CMS", ".*root", json)
+
+dataSamples_Run2016H_17Jul2018 = [JetHT_Run2016H_17Jul2018, HTMHT_Run2016H_17Jul2018, MET_Run2016H_17Jul2018, SingleElectron_Run2016H_17Jul2018, SingleMuon_Run2016H_17Jul2018, SinglePhoton_Run2016H_17Jul2018, DoubleEG_Run2016H_17Jul2018, MuonEG_Run2016H_17Jul2018, DoubleMuon_Run2016H_17Jul2018, Tau_Run2016H_17Jul2018]
+
+
+### Summary of 17Jul2018
+dataSamples_17Jul2018 = dataSamples_Run2016B_17Jul2018 + dataSamples_Run2016C_17Jul2018 + dataSamples_Run2016D_17Jul2018 + dataSamples_Run2016E_17Jul2018 + dataSamples_Run2016F_17Jul2018 + dataSamples_Run2016G_17Jul2018 + dataSamples_Run2016H_17Jul2018
+
+
+dataSamples = dataSamples_PromptReco + dataSamples_23Sep2016 + dataSamples_03Feb2017 + dataSamples_17Jul2018
 samples = dataSamples
 
 ### ---------------------------------------------------------------------
-
-from CMGTools.TTHAnalysis.setup.Efficiencies import *
-dataDir = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data"
-
-for comp in samples:
-    comp.splitFactor = 1000
-    comp.isMC = False
-    comp.isData = True
-
 if __name__ == "__main__":
     from CMGTools.RootTools.samples.tools import runMain
-    runMain(samples)
+    runMain(samples, localobjs=locals())

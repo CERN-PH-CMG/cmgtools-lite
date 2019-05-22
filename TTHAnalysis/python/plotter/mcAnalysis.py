@@ -191,7 +191,7 @@ class MCAnalysis:
 
                 basepath = None
                 for treepath in options.path:
-                    if os.path.exists(treepath+"/"+cname):
+                    if os.path.exists(treepath+"/"+cname) or (treename == "NanoAOD" and os.path.isfile(treepath+"/"+cname+".root")):
                         basepath = treepath
                         break
                 if not basepath:
@@ -210,20 +210,24 @@ class MCAnalysis:
                     rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
                 pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-                if options.tree == "NanoAOD":
+                if treename == "NanoAOD":
                     objname = "Events"
                     pckfile = None
                     rootfile = "%s/%s" % (basepath, cname)
                     if os.path.isdir(rootfile):
                         rootfiles = glob("%s/%s/*.root" % (basepath, cname))
-                    else:
+                    elif os.path.isfile(rootfile):
                         rootfiles = [ rootfile ]
+                    elif os.path.isfile(rootfile+".root"):
+                        rootfiles = [ rootfile+".root" ]
+                    else:
+                        raise RuntimeError("%s -- ERROR: cannot find NanoAOD file for %s process in paths (%s)" % (__name__, cname, repr(options.path)))
                 else:
                     rootfiles = [ rootfile ]
                 
                 for rootfile in rootfiles:
                     mycname = cname if len(rootfiles) == 1 else cname + "-" + os.path.basename(rootfile).replace(".root","") 
-                    tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=mycname, objname=objname, variation_inputs=variations.values(), nanoAOD=True); 
+                    tty = TreeToYield(rootfile, basepath, options, settings=extra, name=pname, cname=mycname, objname=objname, variation_inputs=variations.values(), nanoAOD=(treename == "NanoAOD")); 
                     tty.pckfile = pckfile
                     ttys.append(tty)
 
@@ -239,11 +243,11 @@ class MCAnalysis:
                 if pname in self._allData: self._allData[pname].append(tty)
                 else                     : self._allData[pname] =     [tty]
                 if "data" not in pname:
-                    if options.tree != "NanoAOD":
+                    if treename != "NanoAOD":
                         pckobj  = pickle.load(open(tty.pckfile,'r'))
                         counters = dict(pckobj)
                     else:
-                        counters = { 'Sum Weights':0.0 }  # fake
+                        counters = { 'Sum Weights':0.0, 'All Events':0 }  # fake
                     if ('Sum Weights' in counters) and options.weight:
                         if (is_w==0): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
                         is_w = 1; 
@@ -296,12 +300,12 @@ class MCAnalysis:
                     print "Overwrite the norm systematic for %s to make it correlated with %s" % (pname, tty.getOption('PegNormToProcess'))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
-                if options.tree != "NanoAOD":
+                if treename != "NanoAOD":
                     if total_w == 0: raise RuntimeError, "Zero total weight for %s" % pname
                     for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
                 else:
                     if total_w != 0: raise RuntimeError, "Weights from pck file shoulnd't be there for NanoAOD for %s " % pname
-                    self._groupsToNormalize.append( (ttys, genSumWeightName, scale) )
+                    self._groupsToNormalize.append( (ttys, genSumWeightName if is_w == 1 else "genEventCount", scale) )
                     
             #for tty in ttys: tty.makeTTYVariations()
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
@@ -858,7 +862,7 @@ if __name__ == "__main__":
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
     if not options.path: options.path = ['./']
-    tty = TreeToYield(args[0],options) if ".root" in args[0] else MCAnalysis(args[0],options)
+    tty = TreeToYield(args[0],options.path[0],options) if ".root" in args[0] else MCAnalysis(args[0],options)
     cf  = CutsFile(args[1],options)
     for cutFile in args[2:]:
         temp = CutsFile(cutFile,options)

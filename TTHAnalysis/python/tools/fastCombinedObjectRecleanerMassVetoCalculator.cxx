@@ -25,9 +25,22 @@ struct MassVetoCalculatorOutput {
 
 class fastCombinedObjectRecleanerMassVetoCalculator {
 public:
+  typedef TTreeReaderValue<unsigned>   ruint;
   typedef TTreeReaderValue<int>   rint;
   typedef TTreeReaderArray<float> rfloats;
   typedef TTreeReaderArray<int> rints;
+  class rcount {
+      public:
+          rcount() : signed_(NULL), unsigned_(NULL) {}
+          rcount(rint *src) : signed_(src), unsigned_(NULL) {}
+          rcount(ruint *src) : signed_(NULL), unsigned_(src) {}
+          rcount & operator=(rint *src) { signed_ = src; return *this; }  
+          rcount & operator=(ruint *src) { unsigned_ = src; return *this; }  
+          int operator*() const { return signed_ ? **signed_ : int(**unsigned_); }
+      private:
+          rint * signed_;
+          ruint * unsigned_;
+  };
 
   typedef math::PtEtaPhiMLorentzVectorD ptvec;
   typedef math::XYZTLorentzVectorD crvec;
@@ -36,6 +49,11 @@ public:
   
   void setLeptons(rint *nLep, rfloats *lepPt, rfloats *lepEta, rfloats *lepPhi, rfloats *lepMass, rints *lepPdgId) {
     nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi; Lep_mass_ = lepMass; Lep_pdgid_ = lepPdgId;
+    if (!nLep || !lepPt || !lepEta || !lepPhi || !lepPdgId) { std::cout << "ERROR: fastCombinedObjectRecleanerMassVetoCalculator initialized setLeptons with a null reader" << std::endl; }
+  }
+  void setLeptons(ruint *nLep, rfloats *lepPt, rfloats *lepEta, rfloats *lepPhi, rfloats *lepMass, rints *lepPdgId) {
+    nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi; Lep_mass_ = lepMass; Lep_pdgid_ = lepPdgId;
+    if (!nLep || !lepPt || !lepEta || !lepPhi || !lepPdgId) { std::cout << "ERROR: fastCombinedObjectRecleanerMassVetoCalculator initialized setLeptons with a null reader" << std::endl; }
   }
 
   float Mass(int i, int j){
@@ -60,8 +78,7 @@ public:
   }
 
   void run() {
-
-    int nLep = **nLep_;
+    int nLep = *nLep_;
     for (int i=0; i<nLep; i++) if (leps_loose[i]) leps_p4[i] = ptvec((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
     for (int i=0; i<nLep; i++){
       if (!leps_loose[i]) continue;
@@ -95,7 +112,7 @@ public:
   std::vector<int>* getVetoedTight() {return &leps_tight;}
 
   void clear(){
-    nLep = **nLep_;
+    nLep = *nLep_;
     pairs.clear();
     leps_loose.reset(new bool[nLep]);
     std::fill_n(leps_loose.get(),nLep,false);
@@ -105,9 +122,9 @@ public:
   }
 
   void loadTags(CombinedObjectTags *tags){
-    std::copy(tags->lepsL.get(),tags->lepsL.get()+**nLep_,leps_loose.get());
+    std::copy(tags->lepsL.get(),tags->lepsL.get()+*nLep_,leps_loose.get());
     for (auto i : tags->getLepsF_byConePt()) leps_fo.push_back(i);
-    for (int i=0; i<**nLep_; i++) if (tags->lepsT[i]) leps_tight.push_back(i);
+    for (int i=0; i<*nLep_; i++) if (tags->lepsT[i]) leps_tight.push_back(i);
   }
 
   void setLeptonFlagLoose(int i){
@@ -124,7 +141,7 @@ public:
 
 private:
   CollectionSkimmer &skim_lepsF_, &skim_lepsT_;
-  rint *nLep_;
+  rcount nLep_;
   rfloats *Lep_pt_, *Lep_eta_, *Lep_phi_, *Lep_mass_;
   rints *Lep_pdgid_;
   std::vector<LeptonPairInfo> pairs;

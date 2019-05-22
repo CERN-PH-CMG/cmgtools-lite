@@ -42,8 +42,8 @@ dataSamples_Run2018C_14Dec2018 = [JetHT_Run2018C_14Dec2018, MET_Run2018C_14Dec20
 # ----------------------------- Run2017D PromptReco  ----------------------------------------
 JetHT_Run2018D_14Dec2018 = kreator.makeDataComponent("JetHT_Run2018D_14Dec2018", "/JetHT/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
 MET_Run2018D_14Dec2018 = kreator.makeDataComponent("MET_Run2018D_14Dec2018", "/MET/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
-EGamma_Run2018D_14Dec2018 = kreator.makeDataComponent("EGamma_Run2018D_14Dec2018", "/EGamma/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
-SingleMuon_Run2018D_14Dec2018 = kreator.makeDataComponent("SingleMuon_Run2018D_14Dec2018", "/SingleMuon/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
+EGamma_Run2018D_14Dec2018 = kreator.makeDataComponent("EGamma_Run2018D_14Dec2018", "/EGamma/Run2018D-22Jan2019_Nano14Dec2018-v1/NANOAOD", "CMS", ".*root", json) # 22Jan2019 to recover lumi lost in /EGamma/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD
+SingleMuon_Run2018D_14Dec2018 = kreator.makeDataComponent("SingleMuon_Run2018D_14Dec2018", "/SingleMuon/Run2018D-22Jan2019_Nano14Dec2018-v1/NANOAOD", "CMS", ".*root", json) # 22Jan2019 to recover lumi lost in /SingleMuon/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD
 DoubleMuon_Run2018D_14Dec2018 = kreator.makeDataComponent("DoubleMuon_Run2018D_14Dec2018", "/DoubleMuon/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
 MuonEG_Run2018D_14Dec2018 = kreator.makeDataComponent("MuonEG_Run2018D_14Dec2018", "/MuonEG/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
 Tau_Run2018D_14Dec2018 = kreator.makeDataComponent("Tau_Run2018D_14Dec2018", "/Tau/Run2018D-Nano14Dec2018_ver2-v1/NANOAOD", "CMS", ".*root", json)
