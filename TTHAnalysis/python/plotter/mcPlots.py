@@ -245,7 +245,7 @@ def doScaleSigNormData(pspec,pmap,mca):
         bkg = pmap["background"]
     else:
         bkg = sig.raw().Clone(); bkg.Reset()
-    sf = (data.Integral()-bkg.Integral())/sig.Integral()
+    sf = (data.Integral()-bkg.Integral())/sig.Integral() if sig.Integral() else 1
     signals = [ "signal" ] + mca.listSignals()
     for p,h in pmap.iteritems():
         if p in signals: h.Scale(sf)
@@ -258,9 +258,9 @@ def doScaleBkgNormData(pspec,pmap,mca,list = []):
     if any([l not in pmap for l in list]): return -1.0
     data = pmap["data"]
     bkg  = pmap["background"]
-    int = sum([pmap[l].Integral() for l in list])
-    rm = bkg.Integral() - int
-    sf = (data.Integral() - rm) / int
+    integral = sum([pmap[l].Integral() for l in list])
+    rm = bkg.Integral() - integral
+    sf = (data.Integral() - rm) / integral if integral else 0
     bkgs = ["background"] + list
     for p,h in pmap.iteritems():
         if p in bkgs: h.Scale(sf)
