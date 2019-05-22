@@ -3,6 +3,10 @@ from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 
 # QCD_Pt
+QCD_Pt15to30 = kreator.makeMCComponent("QCD_Pt15to30", "/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM", "CMS", ".*root", 1.243e+09)
+QCD_Pt30to50 = kreator.makeMCComponent("QCD_Pt30to50", "/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 1.069e+08)
+QCD_Pt50to80 = kreator.makeMCComponent("QCD_Pt50to80", "/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 1.567e+07)
+QCD_Pt50to80_ext1 = kreator.makeMCComponent("QCD_Pt50to80_ext1", "/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM", "CMS", ".*root", 1.567e+07)
 QCD_Pt80to120 = kreator.makeMCComponent("QCD_Pt80to120", "/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 2.345e+06*1.17805)
 QCD_Pt120to170 = kreator.makeMCComponent("QCD_Pt120to170", "/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 407800*1.15522)
 QCD_Pt170to300 = kreator.makeMCComponent("QCD_Pt170to300", "/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 103400*1.1342)
@@ -22,6 +26,10 @@ QCD_Pt3200toInf = kreator.makeMCComponent("QCD_Pt3200toInf", "/QCD_Pt_3200toInf_
 QCD_Pt3200toInf_ext2 = kreator.makeMCComponent("QCD_Pt3200toInf_ext2", "/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext2-v2/MINIAODSIM", "CMS", ".*root", 0.0001349*1.22643)
 
 QCDPt = [
+    QCD_Pt15to30,
+    QCD_Pt30to50,
+    QCD_Pt50to80,
+    QCD_Pt50to80_ext1,
     QCD_Pt80to120,
     QCD_Pt120to170,
     QCD_Pt170to300,
