@@ -1,4 +1,15 @@
--D LepOther* -D Jet_jec*  -D DiscJet* -D SV* -D JetFwd* -D DiscLep* 
--D Jet_* -K Jet_pt -K Jet_eta -K Jet_phi -K Jet_mass -K Jet_btagCSV 
--D LepGood_jet* -K LepGood_jetPtRatiov2 -K LepGood_jetPtRelv2 -K LepGood_jetBTagCSV
--D LepGood_sv* -D LepGood_t* -K LepGood_tightCharge
+drop *
+keep HLT_Mu* 
+keep HLT_Ele*
+keep Jet_*
+keep LepGood_*
+keep PV_*
+keep MET_pt
+keep MET_phi
+keep genWeight
+keep luminosityBlock
+keep run
+keep event
+keep xsec
+keep year
+keep puW*
