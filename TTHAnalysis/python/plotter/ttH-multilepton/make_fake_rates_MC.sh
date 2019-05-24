@@ -5,16 +5,15 @@
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
 ttH) 
-    T=/afs/cern.ch/work/g/gpetrucc/TREES_94X_FR_240518;
-    hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_94X_FR_240518
-    hostname | grep -q cmsphys10 && T=/data/g/gpetrucc/TREES_94X_FR_240518
-    PBASE="plots/94X/${ANALYSIS}/lepMVA/v2.0-dev/fr-mc/"
+    YEAR=$1; shift; 
+    case $YEAR in 2016) L=35.9;; 2017) L=41.5;; 2018) L=59.7;; esac
+    T=/eos/cms/store/cmst3/group/tthlep/gpetrucc/TREES_ttH_FR_nano_v5/$YEAR
+    #hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_94X_FR_240518
+    #hostname | grep -q cmsphys10 && T=/data/g/gpetrucc/TREES_94X_FR_240518
+    PBASE="plots/94X/${ANALYSIS}/lepMVA/v1.0-dev/fr-mc/$YEAR"
     ;;
 susy) 
     echo "NOT UP TO DATE"; exit 1; 
-    T="/afs/cern.ch/work/p/peruzzi/ra5trees/TREES_80X_011216_Spring16MVA_1lepFR"
-    hostname | grep -q cmsco01 && T="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --xf QCD_Pt_20to30_bcToE"
-    PBASE="~/www/plots_FR/80X/lepMVA/v2.0_041216"
     ;;
 *)
     echo "Unknown analysis '$ANALYSIS'";
@@ -22,7 +21,7 @@ susy)
 esac;
 
 
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt  --WA prescaleFromSkim "
+BCORE=" --s2v --tree NanoAOD ttH-multilepton/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt"
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'   "
 PLOTTER="python mcPlots.py $BCORE   "
 
@@ -111,12 +110,10 @@ for WP in $WPs; do
 	    sMi*)    ptJI="ptJIMIX4";;
 	esac
         B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
-        B0="$B0 --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
-        B0="$B0 --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
+        #B0="$B0 --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         #B0="$B0 --legend=TR --showRatio --ratioRange 0.41 1.59   --yrange 0 0.20 " 
         B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99   --yrange 0 0.25 " 
 	B1="${PLOTTER} -P $T ttH-multilepton/make_fake_rates_plots.txt"
-        B1="$B1 --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
 	B1="${B1} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
         JetDen="-A pt20 mll 'nLepGood == 1'"

@@ -2,24 +2,26 @@
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
 T_SUSY="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
-T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_94X_FR_240518
-if hostname | grep -q cmsco01; then
-    T_TTH=/data1/gpetrucc/TREES_94X_FR_240518
-elif hostname | grep -q cmsphys10; then
-    T_TTH=/data/g/gpetrucc/TREES_94X_FR_240518
-fi
+T_TTH=/eos/cms/store/cmst3/group/tthlep/gpetrucc/TREES_ttH_FR_nano_v5/
+#if hostname | grep -q cmsco01; then
+#    T_TTH=/data1/gpetrucc/TREES_94X_FR_240518
+#elif hostname | grep -q cmsphys10; then
+#    T_TTH=/data/g/gpetrucc/TREES_94X_FR_240518
+#fi
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
-ttH) T="${T_TTH}"; CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI90_mvaPt090_coarse"; NUM="mvaPt_090i";;
+ttH)
+    YEAR=$1; shift; 
+    case $YEAR in 2016) L=35.9;; 2017) L=41.5;; 2018) L=59.7;; esac
+    T="${T_TTH}/${YEAR}"; CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI90_mvaPt090_coarse"; NUM="mvaPt_090i";;
 #susy_wpM) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
 #susy_wpV) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
 #susy_RA7) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_RA7.txt"; XVAR="conePt_RA7_coarselongbin"; NUM="ra7_tight";;
 susy*) echo "NOT UP TO DATE"; exit 1;;
 *) echo "You did not specify the analysis"; exit 1;;
 esac;
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 41.7 --AP  --WA prescaleFromSkim  "
-BCORE="${BCORE} --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
-BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
+BCORE=" --s2v --tree NanoAOD ttH-multilepton/mca-qcd1l-${YEAR}.txt ${CUTFILE} -P $T -l $L --AP "
+#BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 #BCORE="${BCORE} --mcc ttH-multilepton/mcc-noHLTinMC-some.txt  "; 
 
 MVAWP=90
@@ -44,76 +46,76 @@ loose_el)
 esac;
 
 trigger=$2; if [[ "$2" == "" ]]; then exit 1; fi
-conept="LepGood_pt*if3(LepGood_mvaTTH>0.${MVAWP}&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2)"
+conept="LepGood_pt*if3(LepGood_mvaTTH>0.${MVAWP}&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso))"
 case $trigger in
 #PFJet6)
 #    BCORE="${BCORE} -E HLT_PFJet6   "; 
-#    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+#    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(PV_npvsGood)' "
 #    ;;
 Mu3_PFJet40)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt>45'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt>45'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu8)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu17)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>17 && $conept > 25' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>17 && $conept > 25' "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu20)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>20 && $conept > 30' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>20 && $conept > 30' "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu27)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>27 && $conept > 40' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>27 && $conept > 40' "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu50)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>50 && $conept > 75' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>50 && $conept > 75' "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 MuX_Combined)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5'  "; 
     PUW=" "
     ;;
 MuX_OR)
     BCORE="${BCORE} -E ^${CUTPREFIX}trigMu -E ^${CUTPREFIX}conePt10 -E ^${CUTPREFIX}notConePt100 "; 
     CONEPTVAR="ptJI90_mvaPt0${MVAWP}_coarsecomb"
-    PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw$trigger($conept,nVert)' "
+    PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw${trigger}_${YEAR}($conept,PV_npvsGood)' "
     ;;
 Ele8|Ele8_CaloIdM_TrackIdM_PFJet30)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30' -A veto recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle8(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_Ele8_CaloIdM_TrackIdM_PFJet30' -A veto recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle8_${YEAR}(PV_npvsGood)' "
     ;;
 Ele17|Ele17_CaloIdM_TrackIdM_PFJet30)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30' -A veto recoptfortrigger 'LepGood_pt>17 && $conept > 25'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle17(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_Ele17_CaloIdM_TrackIdM_PFJet30' -A veto recoptfortrigger 'LepGood_pt>17 && $conept > 25'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle17_${YEAR}(PV_npvsGood)' "
     ;;
 Ele23|Ele23_CaloIdM_TrackIdM_PFJet30)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30' -A veto recoptfortrigger 'LepGood_pt>23 && $conept > 32'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle23(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_Ele23_CaloIdM_TrackIdM_PFJet30' -A veto recoptfortrigger 'LepGood_pt>23 && $conept > 32'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle23_${YEAR}(PV_npvsGood)' "
     ;;
 EleX_Combined)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5' --xf 'SingleMu.*'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5' --xf 'SingleMu.*'  "; 
     PUW=" "
     ;;
 EleX_OR)
     BCORE="${BCORE} -E ^${CUTPREFIX}trigEl -E ^${CUTPREFIX}conePt15 -E ^${CUTPREFIX}notConePt100 "; 
     CONEPTVAR="ptJI90_mvaPt0${MVAWP}_coarseelcomb"
-    PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw$trigger($conept,nVert)' "
+    PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw${trigger}_${YEAR}($conept,PV_npvsGood)' "
     ;;
 *)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    BCORE="${BCORE} -A veto trigger 'HLT_${trigger}'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 esac;
 
 
 what=$3;
 more=$4
-PBASE="plots/94X/${ANALYSIS}/lepMVA/v2.0-dev/fr-meas/qcd1l/$lepdir/HLT_$trigger/$what/$more"
+PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.0-dev/fr-meas/qcd1l/$lepdir/$YEAR/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,Top,data"
@@ -138,8 +140,11 @@ case $what in
     nvtx)
         echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE " 
         echo "echo; echo; ";
-        echo "python ../tools/vertexWeightFriend.py _puw$trigger $PBASE/qcd1l_plots.root ";
-        echo "echo; echo ' ---- Now you should put the normalization and weight into frPuReweight.cc defining a puw$trigger ----- ' ";
+        echo "python ../tools/vertexWeightFriend.py _puw${trigger}_${YEAR} $PBASE/qcd1l_plots.root ";
+        echo "echo; echo ' ---- Now you should put the normalization and weight into frPuReweight.cc defining a puw${trigger}_${YEAR} ----- ' ";
+        ;;
+    nvtx-closure)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
         ;;
     coneptw)
         echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/make_fake_rates_xvars.txt --pdir $PBASE --sP ${CONEPTVAR}_nvtx $EWKONE " 
@@ -149,9 +154,6 @@ case $what in
         ;;
     coneptw-closure)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/make_fake_rates_xvars.txt --pdir $PBASE --sP ${CONEPTVAR}_nvtx,$CONEPTVAR,nvtx $EWKONE " 
-        ;;
-    nvtx-closure)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
         ;;
     mc-yields)
         echo "python mcAnalysis.py -f -j 6 $BCORE $PUW ${EWKSPLIT} --sp 'QCD.*' --fom S/B --fom S/errSB -G " 
