@@ -12,103 +12,85 @@ year = int(getHeppyOption("year", "2018"))
 analysis = getHeppyOption("analysis", "main")
 preprocessor = getHeppyOption("nanoPreProcessor")
 
+# Samples
 if preprocessor:
     if year == 2018:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18MiniAOD import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2018_MiniAOD import samples as allData
-        from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
     elif year == 2017:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import dataSamples_31Mar2018 as allData
-        from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
     elif year == 2016:
         from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv3 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import dataSamples_17Jul2018 as allData
-        from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
 else:
     if year == 2018:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import samples as allData
-        from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
     elif year == 2017:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import samples as allData
-        from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
     elif year == 2016:
         from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import samples as allData
-        from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
+autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False))) # must be done before mergeExtensions
+mcSamples_, _ = mergeExtensions(mcSamples_)
+
+# Triggers
+if year == 2018:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
+elif year == 2017:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
+    triggers["FR_1mu_iso"] = [] # they probably existed but we didn't use them in 2017
+elif year == 2016:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
+    triggers["FR_1mu_noiso_smpd"] = [] 
 
 
 DatasetsAndTriggers = []
-if year == 2018:
-    if analysis == "main":
-        mcSamples = byCompName(mcSamples_, [
-            "WJetsToLNu_LO$", "DYJetsToLL_M10to50_LO$", "DYJetsToLL_M50$",
-            "TTJets_SingleLeptonFromT$", "TTJets_SingleLeptonFromTbar$", "TTJets_DiLepton$",
-            "T_sch_lep$", "T_tch$", "TBar_tch$", "T_tWch_noFullyHad$", "TBar_tWch_noFullyHad$",
-            "TTGJets$", "TGJets_lep",
-            "TTWToLNu_fxfx$", "TTZToLLNuNu_amc$", "TTZToLLNuNu_m1to10$",
-            "TT[WZ]_LO$",
-            "TTHnobb_pow$",
-            "TZQToLL$", "tWll$", "TTTT$", "TTWW$",
-            "WWTo2L2Nu$", "WZTo3LNu_fxfx$",  "ZZTo4L$", "WW_DPS$", "WpWpJJ$",
-            "GGHZZ4L$", "VHToNonbb_ll$",
-            "WWW_ll$", "WWZ$", "WZG$", "WZZ$", "ZZZ$",
-        ])
-    elif analysis == "frqcd":
-        mcSamples = byCompName(mcSamples_, [
-            "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_(Mu5|EMEn).*",
-            "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*",
-           r"QCD_Pt(20|30|50|80|120|170)to\d+$",
-            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
-        ])
-    if analysis == "main":
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
-        DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) )
-        DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
-    elif analysis == "frqcd":
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu"] + triggers["FR_1mu_noiso"]) )
-        DatasetsAndTriggers.append( ("EGamma",     triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
-elif year == 2017:
-    if analysis == "main":
-        mcSamples = byCompName(mcSamples_, [
-            "DYJetsToLL_M50$", "TT(Lep|Semi)_pow", "TTHnobb_pow",
-        ])
-    elif analysis == "frqcd":
-        mcSamples = byCompName(mcSamples_, [
-            "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)[tT].*_(Mu5|EMEn|bcToE).*", 
-            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
-        ])
-    if analysis == "main":
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
-        DatasetsAndTriggers.append( ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
-        DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
-        DatasetsAndTriggers.append( ("SingleElectron", triggers["1e_iso"]) )
-    elif analysis == "frqcd":
-        DatasetsAndTriggers.append( ("DoubleMuon",     triggers["FR_1mu_noiso"]) )
-        DatasetsAndTriggers.append( ("SingleElectron", triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
-        DatasetsAndTriggers.append( ("SingleMuon",     triggers["FR_1mu_noiso_smpd"]) )
-elif year == 2016:
+if analysis == "main":
     mcSamples = byCompName(mcSamples_, [
-        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
+        "WJetsToLNu_LO$", "DYJetsToLL_M10to50_LO$", "DYJetsToLL_M50$",
+        "TTJets_SingleLeptonFromT$", "TTJets_SingleLeptonFromTbar$", "TTJets_DiLepton$",
+        "T_sch_lep$", "T_tch$", "TBar_tch$", "T_tWch_noFullyHad$", "TBar_tWch_noFullyHad$",
+        "TTGJets$", "TGJets_lep",
+        "TTWToLNu_fxfx$", "TTZToLLNuNu_amc$", "TTZToLLNuNu_m1to10$",
+        "TT[WZ]_LO$",
+        "TTHnobb_pow$",
+        "TZQToLL$", "tWll$", "TTTT$", "TTWW$",
+        "WWTo2L2Nu$", "WZTo3LNu_fxfx$",  "ZZTo4L$", "WW_DPS$", "WpWpJJ$",
+        "GGHZZ4L$", "VHToNonbb_ll$",
+        "WWW_ll$", "WWZ$", "WZG$", "WZZ$", "ZZZ$",
     ])
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
-    DatasetsAndTriggers.append( ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
+    DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) if year == 2018 else
+                                ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
     DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
     DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
-    DatasetsAndTriggers.append( ("SingleElectron", triggers["1e_iso"]) )
+    DatasetsAndTriggers.append( ("SingleElectron", triggers["1e_iso"]) if year != 2018 else (None,None) )
+elif analysis == "frqcd":
+    mcSamples = byCompName(mcSamples_, [
+        "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
+        "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
+      (r"QCD_Pt(20|30|50|80|120|170)to\d+$"       if year == 2018 else  
+        "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*" ),        
+        "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+    ])
+    DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+    DatasetsAndTriggers.append( ("EGamma",         triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) if year == 2018 else
+                                ("SingleElectron", triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+    DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
+
 # make MC
 mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers), [])
-for comp in mcSamples:
-    comp.triggers = mcTriggers
+if getHeppyOption('applyTriggersInMC'):
+    for comp in mcSamples:
+        comp.triggers = mcTriggers
 
 # make data
 dataSamples = []; vetoTriggers = []
 for pd, trigs in DatasetsAndTriggers:
+    if not trigs: continue
     for comp in byCompName(allData, [pd]):
         comp.triggers = trigs[:]
         comp.vetoTriggers = vetoTriggers[:]
