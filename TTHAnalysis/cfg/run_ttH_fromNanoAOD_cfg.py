@@ -82,7 +82,7 @@ elif analysis == "frqcd":
     DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 # make MC
-mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers), [])
+mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers if trigs), [])
 if getHeppyOption('applyTriggersInMC'):
     for comp in mcSamples:
         comp.triggers = mcTriggers
@@ -188,7 +188,7 @@ if analysis == "frqcd":
     branchsel_out = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/plotter/ttH-multilepton/qcd1l-skim-ec.txt"
 
 POSTPROCESSOR = PostProcessor(None, [], modules = modules,
-        cut = cut, prefetch = True, longTermCache = True,
+        cut = cut, prefetch = True, longTermCache = False,
         branchsel = branchsel_in, outputbranchsel = branchsel_out, compression = compression)
 
 test = getHeppyOption("test")
