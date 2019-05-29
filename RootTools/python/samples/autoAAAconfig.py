@@ -2,8 +2,8 @@ def autoAAA(selectedComponents,quiet=False):
     import re, os
     from CMGTools.Production import changeComponentAccessMode
     from CMGTools.Production.localityChecker import LocalityChecker
-    tier2CheckerMini = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
-    tier2CheckerNano = LocalityChecker("T2_CH_CERN", datasets="/*/*/NANOAOD*")
+    tier2CheckerMini = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*", verbose=not(quiet))
+    tier2CheckerNano = LocalityChecker("T2_CH_CERN", datasets="/*/*/NANOAOD*", verbose=not(quiet))
     for comp in selectedComponents:
         if len(comp.files) == 0: print "ERROR, comp %s (dataset %s) has no files!" % (comp.name, getattr(comp,'dataset',None)); continue
         if not hasattr(comp,'dataset'): continue
