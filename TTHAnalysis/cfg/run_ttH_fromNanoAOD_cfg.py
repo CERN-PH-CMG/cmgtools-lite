@@ -76,9 +76,9 @@ elif analysis == "frqcd":
         "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*" ),        
         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
     ])
+    egfrpd = {2016:"DoubleEG", 2017:"SingleElectron", 2018:"EGamma"}[year]
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
-    DatasetsAndTriggers.append( ("EGamma",         triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) if year == 2018 else
-                                ("SingleElectron", triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+    DatasetsAndTriggers.append( (egfrpd,       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
     DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 # make MC
