@@ -1,5 +1,5 @@
 from __future__ import print_function
-import os, subprocess, time
+import os, subprocess, time, hashlib
 
 def _stripv(x,maybe_postfix):
     return x[:-len("_v*")] if x.endswith("_v*") else x
@@ -18,17 +18,52 @@ class nanoAODPreprocessor:
         self._nanoStep = nanoStep
         self._cfgHasFilter = cfgHasFilter
         self._name = name
-    def preProcessComponent(self, comp, outdir, maxEntries, noSubDir=False, verbose=False):
+    def prefetchFile(self, fname, longTermCache=False, verbose=True):
+        tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
+        if not fname.startswith("root://"):
+            return fname, False
+        rndchars  = "".join([hex(ord(i))[2:] for i in os.urandom(8)]) if not longTermCache else "long_cache-id%d-%s" % (os.getuid(), hashlib.sha1(fname).hexdigest());
+        localfile = "%s/%s-%s.root" % (tmpdir, os.path.basename(fname).replace(".root",""), rndchars)
+        if longTermCache and os.path.exists(localfile):
+            if verbose: print("Filename %s is already available in local path %s " % (fname,localfile))
+            return localfile, False
+        try:
+            if verbose: print("Filename %s is remote, will do a copy to local path %s " % (fname,localfile))
+            start = time.clock()
+            subprocess.check_output(["xrdcp","-f","-N",fname,localfile])
+            if verbose: print("Time used for transferring the file locally: %s s" % (time.clock() - start))
+            return localfile, (not longTermCache)
+        except:
+            if verbose: print("Error: could not save file locally, will run from remote" )
+            if os.path.exists(localfile):
+                if verbose: print("Deleting partially transferred file %s" % localfile)
+                try:
+                    os.unlink(localfile)
+                except:
+                    pass
+            return fname, False
+    def preProcessComponent(self, comp, outdir, maxEntries, noSubDir=False, verbose=False, prefetch=False, longTermCache=False):
         if verbose: print("Pre-processing component %s (%d files) with %s" % (comp.name, len(comp.files), self._cfg))
         workingDir = outdir if noSubDir else os.path.join(outdir, comp.name)
         subprocess.check_output(["mkdir","-p", workingDir])
         if not os.path.isdir(workingDir): raise RuntimeError("Can't create preprocessor working directory: "+comp)
+        # make list of temporary files to be deleted later
+        self.toDelete = getattr(self, 'toDelete', [])
+        # possible prefetch
+        if prefetch:
+            files = []
+            for fname in comp.files:
+                ftoread, toBeDeleted = self.prefetchFile(fname, verbose=verbose, longTermCache=longTermCache)
+                files.append(ftoread)
+                if toBeDeleted: self.toDelete.append(ftoread)
+        else:
+            files = comp.files[:]
         # make cfg file
         outputModuleName = self._outputModuleName if self._outputModuleName else ("NANOAODSIMoutput" if comp.isMC else "NANOAODoutput")
         cmsswCfg = open(os.path.join(workingDir, self._name+"_cfg.py"), "w")
         cmsswCfg.write("".join(open(self._cfg, "r")))
         cmsswCfg.write("\n### === POSTFIX ====\n")
-        cmsswCfg.write("process.source.fileNames = %r\n" % [ str("file:"+f if os.path.isfile(f) else f) for f in comp.files])
+        cmsswCfg.write("process.source.fileNames = %r\n" % [ str("file:"+f if os.path.isfile(f) else f) for f in files])
         cmsswCfg.write("process.%s.fileName = %r\n" % (outputModuleName, self._outputFileName))
         cmsswCfg.write("process.maxEvents.input = %g\n" % (maxEntries if maxEntries else -1))
         cmsswCfg.write("process.MessageLogger.cerr.FwkReport.reportEvery = 100\n") 
@@ -82,10 +117,11 @@ if hasattr(process, 'genWeightsTable') and process.{seq}.contains(process.genWei
         else:
             subprocess.check_output([scriptName])
         # return 
-        return os.path.join(workingDir, self._outputFileName)
+        ret = os.path.join(workingDir, self._outputFileName)
+        if not self._keepOutput: self.toDelete.append(ret)
+        return ret
     def doneProcessComponent(self, comp, outdir, noSubDir=False, verbose=True):
-        if not self._keepOutput:
-            tmpfile = os.path.join(outdir, '' if noSubDir else comp.name, self._outputFileName)
+        for tmpfile in getattr(self, 'toDelete', []):
             if os.path.isfile(tmpfile):
                 if verbose: print("removing temporary file %s from preprocessor" % tmpfile)
                 os.unlink(tmpfile)
