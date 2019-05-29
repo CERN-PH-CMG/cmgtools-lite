@@ -1,6 +1,8 @@
 from __future__ import print_function
 import os, subprocess, time
 
+def _stripv(x,maybe_postfix):
+    return x[:-len("_v*")] if x.endswith("_v*") else x
 class nanoAODPreprocessor:
     def __init__(self, cfg, cmsswArea=None, outputModuleName=None, name="preprocessor", outputFileName="cmsswPreProcessing.root", keepOutput=False, injectTriggerFilter=False, injectJSON=False, inlineCustomize=None, cfgHasFilter=False, nanoStep="nanoAOD_step"):
         if not os.path.isfile(cfg): 
@@ -40,9 +42,9 @@ class nanoAODPreprocessor:
     triggerConditions =  %r ,
     l1tResults = '',
     throw = False
-)\n""" % ( [ (p.rstrip("_v*")+"_v*") for p in comp.triggers ]))
+)\n""" % ( [ (_stripv(p)+"_v*") for p in comp.triggers ]))
             if getattr(comp, 'vetoTriggers', []):
-                cmsswCfg.write("process.triggerFilterVeto = process.triggerFilter.clone(\n    triggerConditions = %r)\n" % ([ (p.rstrip("_v*")+"_v*") for p in comp.vetoTriggers ] ))
+                cmsswCfg.write("process.triggerFilterVeto = process.triggerFilter.clone(\n    triggerConditions = %r)\n" % ([ (_stripv(p)+"_v*") for p in comp.vetoTriggers ] ))
                 cmsswCfg.write("process.%s.insert(0, process.triggerFilter + ~process.triggerFilterVeto)\n" % self._nanoStep)
             else:
                 cmsswCfg.write("process.%s.insert(0, process.triggerFilter)\n" % self._nanoStep)
