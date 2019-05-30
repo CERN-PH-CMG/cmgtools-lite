@@ -158,7 +158,7 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
         isdir = os.path.isdir(filepath)
         # print filepath
         if isdir or (nanoAOD and filepath.endswith(".root")):
-            compdir = file if isdir else file.rstrip(".root")
+            compdir = file if isdir else file[:-len(".root")]
             try:
                 prefix,num = compdir.rsplit('_Chunk',1)
             except ValueError:

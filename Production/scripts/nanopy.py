@@ -53,7 +53,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     preprocessor = getattr(comp, 'preprocessor', preprocessor)
     if preprocessor:
         if fineSplit: raise RuntimeError("FineSplitting not supported for component %s with preprocessor at the moment" % comp.name)
-        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries, options.single, verbose=options.verbose) ]
+        comp.files = [ preprocessor.preProcessComponent(comp, outdir, options.maxEntries, options.single, verbose=options.verbose, prefetch=pp.prefetch, longTermCache=pp.longTermCache) ]
     
     # unwrap any module still wrapped by a lambda
     pp.modules = [ (m() if isinstance(m,types.FunctionType) else m) for m in pp.modules ]

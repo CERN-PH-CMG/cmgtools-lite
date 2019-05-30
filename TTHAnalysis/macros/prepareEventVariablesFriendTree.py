@@ -1,11 +1,30 @@
 #!/usr/bin/env python
 import os, re, types, sys, subprocess
 from collections import defaultdict
-if "--tra2" in sys.argv:
-    print "Will use the new experimental version of treeReAnalyzer"
-    from CMGTools.TTHAnalysis.treeReAnalyzer2 import Module, EventLoop, Booker, PyTree
+
+## Need to catch upfront if it's run with -t NanoAOD, even before parsing other options
+def _getarg(opts,default):
+    for opt in opts:
+        if opt not in sys.argv: continue
+        idx = sys.argv.index(opt)+1
+        if idx < len(sys.argv): return sys.argv[idx]
+    return default
+if _getarg(("-t","--tree"),"NanoAOD") == "NanoAOD":
+    isNano = True
+    print "Will use the nanoAOD postprocessor"
+    # catch attempt of instantiating older modules"
+    class Module:
+        def __init__(self,*args,**kwargs):
+            raise RuntimeError("Trying to instantiate a old CMGTools module while using the postprocessor")
 else:
-    from CMGTools.TTHAnalysis.treeReAnalyzer import Module, EventLoop, Booker, PyTree
+    isNano = False
+    if "--tra2" in sys.argv:
+        print "Will use the CMGTools new version of treeReAnalyzer"
+        from CMGTools.TTHAnalysis.treeReAnalyzer2 import Module, EventLoop, Booker, PyTree
+    else:
+        print "Will use the CMGTools version of treeReAnalyzer"
+        from CMGTools.TTHAnalysis.treeReAnalyzer import Module, EventLoop, Booker, PyTree
+
 from glob import glob
 from math import ceil
 import ROOT
@@ -57,7 +76,7 @@ class VariableProducer(Module):
 
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] <TREE_DIR> <OUT>")
-parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run these modules");
+# common options, independent of the flavour chosen
 parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
 parser.add_option("-D", "--dm", "--dataset-match", dest="datasetMatches",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times): REGEXP");
 parser.add_option("--xD", "--de", "--dataset-exclude", dest="datasetExcludes",  type="string", default=[], action="append", help="Exclude these dataset (or dataset if specified multiple times): REGEXP");
@@ -72,57 +91,71 @@ parser.add_option("--justtrivial", dest="justtrivial",   action="store_true", de
 parser.add_option("--checkchunks", dest="checkchunks",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("--checkrunning", dest="checkrunning",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("--quiet", dest="quiet",   action="store_true", default=False, help="Check chunks that have been produced");
-parser.add_option("-T", "--tree-dir",   dest="treeDir",     type="string", default="sf", help="Directory of the friend tree in the file (default: 'sf')");
 parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch queue or condor instead of locally");
 parser.add_option("--maxruntime", "--time",  dest="maxruntime", type="int", default=360, help="Condor job wall clock time in minutes (default: 6h)");
-parser.add_option("-t", "--tree",    dest="tree",      default='ttHLepTreeProducerTTH', help="Pattern for tree name");
-parser.add_option("-V", "--vector",  dest="vectorTree", action="store_true", default=True, help="Input tree is a vector");
-parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename")
-parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to MC only. Can use {name}, {cname} patterns in the treename")
-parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename")
-parser.add_option("-L", "--list-modules",  dest="listModules", action="store_true", default=False, help="just list the configured modules");
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
-parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 parser.add_option("--sub", "--subfile", dest="subfile", type="string", default="condor.sub", help="Subfile for condor (default: condor.sub)");
 parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
 parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
-parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new experimental version of treeReAnalyzer");
+parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new version of treeReAnalyzer");
+parser.add_option("-t", "--tree", dest="tree", default='NanoAOD', help="Pattern for tree name");
+# input friends
+parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename")
+parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to MC only. Can use {name}, {cname} patterns in the treename")
+parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename")
+# options that are different between old CMGTools and nanoAOD-tools
+if isNano: # new nanoAOD-tools options
+    # importing of modules
+    parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", nargs=2, help="Import modules (python package, comma-separated list of ");
+    # output file name pattern
+    #parser.add_option("-o", "--outPattern",   dest="outPattern",     type="string", default="%s_Friend", help="Pattern string for output file name"); # not really configurable due to postprocessor limitations
+    parser.add_option("-z", "--compression",  dest="compression", type="string", default=("ZLIB:3"), help="Compression: none, or (algo):(level) ")
+else: # old CMGTools options
+    # importing of modules
+    parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run these modules");
+    parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
+    parser.add_option("-L", "--list-modules",  dest="listModules", action="store_true", default=False, help="just list the configured modules");
+    # output file name pattern
+    parser.add_option("-o", "--outPattern",   dest="outPattern",     type="string", default="evVarFriend_%s", help="Pattern string for output file name");
+    parser.add_option("-T", "--tree-dir",   dest="treeDir",     type="string", default="sf", help="Directory of the friend tree in the file (default: 'sf')");
 (options, args) = parser.parse_args()
 
 
-if options.imports:
-    MODULES = []
-    from importlib import import_module
-    for mod in options.imports:
-        import_module(mod)
-        obj = sys.modules[mod]
-        for (name,x) in obj.MODULES:
-            print "Loaded %s from %s " % (name, mod)
-            MODULES.append((name,x))
+if not isNano:
+    if options.imports:
+        MODULES = []
+        from importlib import import_module
+        for mod in options.imports:
+            import_module(mod)
+            obj = sys.modules[mod]
+            for (name,x) in obj.MODULES:
+                print "Loaded %s from %s " % (name, mod)
+                MODULES.append((name,x))
 
-if options.listModules:
-    print "List of modules"
-    for (n,x) in MODULES:
-        if type(x) == types.FunctionType: x = x()
-        print "   '%s': %s" % (n,x)
-    exit()
-
-if options.modules != []:
-    found = False
-    for m,v in MODULES:
-        for pat in options.modules:
-            if re.match(pat,m):
-                found = True
-                break
-    if not found: 
-        print "ERROR: no modules selected\n - selection was %s\n - list of modules is %s\n" % (
-                    sorted(options.modules), sorted(_[0] for _ in MODULES))
+    if options.listModules:
+        print "List of modules"
+        for (n,x) in MODULES:
+            if type(x) == types.FunctionType: x = x()
+            print "   '%s': %s" % (n,x)
         exit()
+
+    if options.modules != []:
+        found = False
+        for m,v in MODULES:
+            for pat in options.modules:
+                if re.match(pat,m):
+                    found = True
+                    break
+        if not found: 
+            print "ERROR: no modules selected\n - selection was %s\n - list of modules is %s\n" % (
+                        sorted(options.modules), sorted(_[0] for _ in MODULES))
+            exit()
 
 if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
 if len(args) != 2:
+    print args
     print "Usage: program <TREE_DIR> <OUT>"
     exit()
 if not os.path.isdir(args[0]):
@@ -138,6 +171,9 @@ if len(options.chunks) != 0 and len(options.datasets) != 1:
     print "must specify a single dataset with -d if using -c to select chunks"
     exit()
 
+if isNano:
+    options.outPattern = "%s_Friend"
+
 done_chunks = defaultdict(set)
 done_subchunks = defaultdict(set)
 chunks_with_subs = defaultdict(set)
@@ -145,12 +181,13 @@ if options.checkchunks:
     npass, nfail = 0,0
     lsls = subprocess.check_output(["ls", "-l", args[1]])
     for line in sorted(lsls.split("\n")):
-        if "evVarFriend" not in line: continue
+        if (options.outPattern % "") not in line: continue
         fields = line.split()
         size = int(fields[4])
         fname = fields[8]
-        m1 = re.match(r"evVarFriend_(\w+).chunk(\d+).sub(\d+).root", fname);
-        m2 = re.match(r"evVarFriend_(\w+).chunk(\d+).root", fname);
+        basepattern = options.outPattern % r"(\w+)"
+        m1 = re.match(basepattern + r"%s.chunk(\d+).sub(\d+).root" % (), fname);
+        m2 = re.match(basepattern + r"%s.chunk(\d+).root", fname);
         good = (size > 2048)
         if m1:
             sample = m1.group(1)
@@ -177,9 +214,8 @@ if options.checkchunks:
             for chunk in chunks:
                 if done_subchunks[(sample,chunk)] == allsubs:
                     print "%s chunk %s has all the fine splits -> doing the hadd " % (sample, chunk),
-                    target = "evVarFriend_%s.chunk%d.root" % (sample, chunk)
-                    inputs = [ "evVarFriend_%s.chunk%d.sub%d.root" % (sample, chunk, sub) for sub in range(options.fineSplit) ]
-                    #print "hadd -f %s %s" % (target, " ".join(inputs))
+                    target = "%s.chunk%d.root" % (options.outPattern % sample, chunk)
+                    inputs = [ "%s.chunk%d.sub%d.root" % (options.outPattern % sample, chunk, sub) for sub in range(options.fineSplit) ]
                     try:
                         haddout = subprocess.check_output(["hadd", "-f", target]+inputs, cwd=args[1])
                         subprocess.check_output(["mv", "-v" ]+inputs+["subchunks/"], cwd=args[1])
@@ -210,19 +246,27 @@ if options.checkrunning:
     print "Found %d chunks running" % (nrunning)
 jobs = []
 for D in sorted(glob(args[0]+"/*")):
-    treename = options.tree
-    fname    = "%s/%s/%s_tree.root" % (D,options.tree,options.tree)
-    if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root" % (D,options.tree)) ):
-        treename = "tree"
-        fname    = "%s/%s/tree.root" % (D,options.tree)
-
-    if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root.url" % (D,options.tree)) ):
-        treename = "tree"
-        fname    = "%s/%s/tree.root" % (D,options.tree)
-        fname    = open(fname+".url","r").readline().strip()
-
+    if isNano:
+        treename = "Events"
+        if os.path.isfile(D) and D.endswith(".root"):
+            fname = D
+        elif os.path.isdir(D) and os.path.isfile("%s/%s.root" % (D, os.path.basename(D))):
+            fname = "%s/%s.root" % (D, os.path.basename(D))
+        else:
+            continue
+    else:
+        treename = options.tree
+        fname    = "%s/%s/%s_tree.root" % (D,options.tree,options.tree)
+        if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root" % (D,options.tree)) ):
+            treename = "tree"
+            fname    = "%s/%s/tree.root" % (D,options.tree)
+        if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root.url" % (D,options.tree)) ):
+            treename = "tree"
+            fname    = "%s/%s/tree.root" % (D,options.tree)
+            fname    = open(fname+".url","r").readline().strip()
     if os.path.exists(fname) or (os.path.exists("%s/%s/tree.root.url" % (D,options.tree))):
         short = os.path.basename(D)
+        if short.endswith(".root"): short = short[:-len(".root")] # rstrip does not do what one would like
         if options.datasets != []:
             if short not in options.datasets: continue
         if options.datasetMatches != []:
@@ -235,7 +279,7 @@ for D in sorted(glob(args[0]+"/*")):
             for dm in  options.datasetExcludes:
                 if re.match(dm,short): found = True
             if found: continue
-        data =  any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl".split()) # FIXME
+        data =  any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl EGamma".split()) # FIXME
         f = ROOT.TFile.Open(fname)
         t = f.Get(treename)
         if not t:
@@ -244,14 +288,14 @@ for D in sorted(glob(args[0]+"/*")):
         entries = t.GetEntries()
         if options.justtrivial and entries > 0: continue
         f.Close()
+        fout = "%s/%s.root" % (args[1],options.outPattern%short)
         if options.newOnly:
-            fout = "%s/evVarFriend_%s.root" % (args[1],short)
             if os.path.exists(fout):
-                f = ROOT.TFile.Open(fname);
-                t = f.Get(treename)
-                if t.GetEntries() != entries:
-                    if not options.quiet: print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries())
-                    f.Close()
+                f2 = ROOT.TFile.Open(fout)
+                t2 = f2.Get("Friends" if isNano else (options.treeDir+"/t"))
+                if t2.GetEntries() != entries:
+                    if not options.quiet: print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t2.GetEntries())
+                    f2.Close()
                 else:
                     if not options.quiet: print "Component %s exists already and has matching number of entries (%d)" % (short, entries)
                     continue
@@ -262,7 +306,7 @@ for D in sorted(glob(args[0]+"/*")):
             if options.queue == "condor":
                 jobs.append((short,data,1))
             else:
-                jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1,None))
+                jobs.append((short,fname,"%s/%s.root" % (args[1],options.outPattern%short),data,(0,entries),-1,None))
         else:
             nchunk = int(ceil(entries/float(chunk)))
             if not options.quiet: print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks (%d events)" % (nchunk, entries)
@@ -287,15 +331,15 @@ for D in sorted(glob(args[0]+"/*")):
                 if options.chunks != []:
                     if i not in options.chunks: continue
                 if not options.fineSplit:
-                    r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
-                    jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i,None))
+                    r = (int(i*chunk),min(int((i+1)*chunk),entries))
+                    jobs.append((short,fname,"%s/%s.chunk%d.root" % (args[1],options.outPattern%short,i),data,r,i,None))
                 else:
                     ev_per_fs = int(ceil(chunk/float(options.fineSplit)))
                     for ifs in xrange(options.fineSplit):
                         if i in chunks_with_subs[short] and ifs in done_subchunks[(short,i)]: continue
                         if options.subChunk != None and ifs != options.subChunk: continue
-                        r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
-                        jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
+                        r = (i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
+                        jobs.append((short,fname,"%s/%s.chunk%d.sub%d.root" % (args[1],options.outPattern%short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
 njobs = len(jobs)
 if options.queue == "condor": 
@@ -342,22 +386,26 @@ if options.queue:
         runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
 
-    basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -j 0 -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
+    basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -j 0 -N {chunkSize}  -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
-                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
+                self=sys.argv[0], chunkSize=options.chunkSize,
                 tree=options.tree, data=args[0], output=theoutput)
+    if not isNano: basecmd += " -T %s " % options.treeDir
 
     writelog = ""
     logdir   = ""
     if options.logdir: logdir = options.logdir.rstrip("/")
 
-    if options.vectorTree: basecmd += " --vector "
-    if options.useTRAv2:   basecmd += " --tra2 "
+    if options.useTRAv2: basecmd += " --tra2 "
     friendPost =  "".join(["  -F  %s %s " % (fn,ft) for fn,ft in options.friendTrees])
     friendPost += "".join([" --FM %s %s " % (fn,ft) for fn,ft in options.friendTreesMC])
     friendPost += "".join([" --FD %s %s " % (fn,ft) for fn,ft in options.friendTreesData])
-    friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
-    friendPost += "".join(["  -I  '%s'  " % m for m in options.imports])
+    if isNano:
+        friendPost += "".join(["  -I  '%s' '%s' " % m for m in options.imports])
+        friendPost += " --compression '%s' " % options.compression
+    else:
+        friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
+        friendPost += "".join(["  -I  '%s'  " % m for m in options.imports])
 
     if options.queue == "condor":
       baseargs = basecmd[len(os.getcwd())+len(runner)+2:] + friendPost
@@ -446,10 +494,7 @@ def _runIt(myargs):
     tb = fb.Get(options.tree)
 
     if not tb: tb = fb.Get("tree") # new trees
-    if options.vectorTree:
-        tb.vectorTree = True
-    else:
-        tb.vectorTree = False
+    tb.vectorTree = True
 
     friends = options.friendTrees[:]
     friends += (options.friendTreesData if data else options.friendTreesMC)
@@ -472,7 +517,7 @@ def _runIt(myargs):
                     toRun[m] = True
         modulesToRun = [ (m,v) for (m,v) in MODULES if m in toRun ]
     el = EventLoop([ VariableProducer(options.treeDir,booker,modulesToRun), ])
-    el.loop([tb], eventRange=range)
+    el.loop([tb], eventRange=xrange(range))
     booker.done()
     fb.Close()
     time = timer.RealTime()
@@ -483,18 +528,42 @@ def _runIt(myargs):
         os.system("rm %s"%fetchedfile)
     if options.bookkeeping:
         if not os.path.exists(fout[:fout.rfind("/")] + "/cmd"): os.system("mkdir -p " + fout[:fout.rfind("/")] + "/cmd")
-        fcmd = open(fout[:fout.rfind("/")] + "/cmd/" + fout[fout.rfind("/")+1:].rstrip(".root") + "_command.txt", "w")
+        fcmd = open(fout[:fout.rfind("/")] + "/cmd/" + fout[fout.rfind("/")+1:-len(".root")] + "_command.txt", "w")
         fcmd.write("%s\n\n" % " ".join(sys.argv)) 
         fcmd.write("%s\n%s\n" % (args,options)) 
         fcmd.close()
     return (name,(nev,time))
 
+def _runItNano(myargs):
+    (name,fin,ofout,data,range,chunk,fineSplit) = myargs
+    timer = ROOT.TStopwatch()
+    command = ["nano_postproc.py", "--friend", os.path.dirname(ofout), "--postfix", os.path.basename(ofout)[len(name):-len(".root")] ]
+    for i in options.imports:  command += [ "-I", i[0], i[1] ]
+    command += [ "-z", options.compression ]
+    fin = fin
+    friends = options.friendTrees[:] + (options.friendTreesData if data else options.friendTreesMC)
+    for tf_tree,tf_file in friends:
+        if tf_tree not in ("Friends", "Events"): print "Unsupported friend tree name %s" % tf_tree
+        fin += ",%s" % tf_file.format(name=name, cname=name, P=args[0])
+    command += [ fin, "--first-entry", str(range[0]), "-N", str(range[1] - range[0]) ]
+    if options.pretend:
+        print "==== pretending to run %s (%d entries starting from %d, %s) ====" % (name, range[1] - range[0], range[0], ofout)
+        print "# ", "  ".join(command)
+        return (name,(range[1] - range[0],0))
+    print "==== %s starting (%d entries starting from %d) ====" % (name, range[1] - range[0], range[0])
+    print "  ".join(command)
+    subprocess.call(command)
+    time = timer.RealTime()
+    print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, range[1] - range[0], time,(range[1] - range[0]/time) )
+    return (name,(range[1] - range[0],time))
+    
+_run = _runItNano if isNano else _runIt
 if options.jobs > 0:
     from multiprocessing import Pool
     pool = Pool(options.jobs)
-    ret  = dict(pool.map(_runIt, jobs)) if options.jobs > 0 else dict([_runIt(j) for j in jobs])
+    ret  = dict(pool.map(_run, jobs)) if options.jobs > 0 else dict([_run(j) for j in jobs])
 else:
-    ret = dict(map(_runIt, jobs))
+    ret = dict(map(_run, jobs))
 fulltime = maintimer.RealTime()
 totev   = sum([ev   for (ev,time) in ret.itervalues()])
 tottime = sum([time for (ev,time) in ret.itervalues()])
