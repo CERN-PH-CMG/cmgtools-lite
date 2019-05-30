@@ -82,7 +82,7 @@ elif analysis == "frqcd":
     DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 # make MC
-mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers), [])
+mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers if trigs), [])
 if getHeppyOption('applyTriggersInMC'):
     for comp in mcSamples:
         comp.triggers = mcTriggers
@@ -101,7 +101,8 @@ selectedComponents = mcSamples + dataSamples
 if getHeppyOption('selectComponents'):
     selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
 autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)))
-configureSplittingFromTime(selectedComponents,100 if preprocessor else 10,4)
+configureSplittingFromTime(mcSamples,100 if preprocessor else 10,4)
+configureSplittingFromTime(dataSamples,50 if preprocessor else 5,8)
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
 # create and set preprocessor if requested
@@ -155,6 +156,10 @@ process.skim1El = cms.EDFilter("PATElectronRefSelector",
 )
 process.nanoAOD_step.insert(0, process.skim1El)
 """)
+if analysis == "main":
+    cropToLumi(byCompName(selectedComponents,["^(?!.*(TTH|TTW|TTZ)).*"]),1000.)
+    cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
+    cropToLumi(byCompName(selectedComponents,["DYJetsToLL"]),2.)
 if analysis == "frqcd":
     cropToLumi(selectedComponents, 1.0)
     cropToLumi(byCompName(selectedComponents,["QCD"]), 0.3)
