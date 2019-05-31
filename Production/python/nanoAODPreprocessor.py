@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os, subprocess, time, hashlib
 
-def _stripv(x,maybe_postfix):
+def _stripv(x):
     return x[:-len("_v*")] if x.endswith("_v*") else x
 class nanoAODPreprocessor:
     def __init__(self, cfg, cmsswArea=None, outputModuleName=None, name="preprocessor", outputFileName="cmsswPreProcessing.root", keepOutput=False, injectTriggerFilter=False, injectJSON=False, inlineCustomize=None, cfgHasFilter=False, nanoStep="nanoAOD_step"):
