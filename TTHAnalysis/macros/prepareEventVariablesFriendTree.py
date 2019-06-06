@@ -436,6 +436,8 @@ if options.queue:
             subfile.write("Queue {njobs} Dataset in {name}\n".format(name=name, njobs=nchunks))
       subfile.close()
       print "Saved condor submit file to %s" % options.subfile
+      if not options.pretend:
+         os.system("condor_submit "+cmd)
     else:
       for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
@@ -550,11 +552,11 @@ def _runItNano(myargs):
         print "==== pretending to run %s (%d entries starting from %d, %s) ====" % (name, range[1] - range[0], range[0], ofout)
         print "# ", "  ".join(command)
         return (name,(range[1] - range[0],0))
-    print "==== %s starting (%d entries starting from %d) ====" % (name, range[1] - range[0], range[0])
+    print "==== %s starting (%d entries starting from %d, %s) ====" % (name, range[1] - range[0], range[0], ofout)
     print "  ".join(command)
     subprocess.call(command)
     time = timer.RealTime()
-    print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, range[1] - range[0], time,(range[1] - range[0]/time) )
+    print "=== %s done (%d entries starting from %d, %.0f s, %.0f e/s, %s) ====" % ( name, range[1] - range[0], range[0], time, (range[1] - range[0]/time), ofout )
     return (name,(range[1] - range[0],time))
     
 _run = _runItNano if isNano else _runIt
