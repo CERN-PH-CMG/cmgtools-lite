@@ -16,7 +16,7 @@ ROOT.gSystem.Load("libpng") # otherwise we may end up with a bogus version
 
 import copy
 
-from CMGTools.TTHAnalysis.plotter.cutsFile import *
+from CMGTools.TTHAnalysis.plotter.cutsFile import CutsFile
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.uncertaintyFile import *
