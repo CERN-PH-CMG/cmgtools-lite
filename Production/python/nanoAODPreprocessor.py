@@ -18,6 +18,13 @@ class nanoAODPreprocessor:
         self._nanoStep = nanoStep
         self._cfgHasFilter = cfgHasFilter
         self._name = name
+    def clone(self, **kwargs):
+        import copy
+        ret = copy.copy(self)
+        for k,v in kwargs.items():
+            if not hasattr(self, "_"+k): raise RuntimeError("No parameter %s to be modified" % k)
+            setattr(ret, "_"+k, v)
+        return ret
     def prefetchFile(self, fname, longTermCache=False, verbose=True):
         tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
         if not fname.startswith("root://"):

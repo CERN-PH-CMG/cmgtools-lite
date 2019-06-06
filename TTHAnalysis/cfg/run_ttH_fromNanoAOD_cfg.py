@@ -132,12 +132,9 @@ if preprocessor:
                 comp.preprocessor = preproc_mcv1
     if analysis == "frqcd":
         for comp in selectedComponents:
-            comp.preprocessor._keepOutput = False
-            comp.preprocessor._injectTriggerFilter = True
-            comp.preprocessor._injectJSON = True
+            comp.preprocessor = comp.preprocessor.clone(keepOutput = False, injectTriggerFilter = True, injectJSON = True)
             if 'Mu' in comp.dataset:
-                comp.preprocessor._cfgHasFilter = True
-                comp.preprocessor._inlineCustomize = ("""
+                comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = """
 process.skim1Mu = cms.EDFilter("PATMuonRefSelector",
     src = cms.InputTag("slimmedMuons"),
     cut = cms.string("pt > %g && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
@@ -145,9 +142,8 @@ process.skim1Mu = cms.EDFilter("PATMuonRefSelector",
 )
 process.nanoAOD_step.insert(0, process.skim1Mu)
 """ % (7.5 if "DoubleMuon" in comp.dataset else 4.5))
-            elif 'QCD_Pt' in comp.dataset:
-                comp.preprocessor._cfgHasFilter = True
-                comp.preprocessor._inlineCustomize = ("""
+            elif 'QCD_Pt' in comp.dataset or "EGamma" in comp.dataset or "SingleElectron" in comp.dataset or "DoubleEG" in comp.dataset:
+                comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = """
 process.skim1El = cms.EDFilter("PATElectronRefSelector",
     src = cms.InputTag("slimmedElectrons"),
     cut = cms.string("pt > 6 && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
@@ -159,9 +155,9 @@ if analysis == "frqcd":
     cropToLumi(selectedComponents, 1.0)
     cropToLumi(byCompName(selectedComponents,["QCD"]), 0.3)
     cropToLumi(byCompName(selectedComponents,["QCD_Pt\d+to\d+$"]), 0.1)
-    configureSplittingFromTime(selectedComponents, 10, 3, maxFiles=8)
+    configureSplittingFromTime(selectedComponents, 20, 3, maxFiles=8)
     configureSplittingFromTime(byCompName(selectedComponents, ["EGamma","Single.*Run2017.*","SingleMuon_Run2018.*"]), 10, 4, maxFiles=12) 
-    configureSplittingFromTime(byCompName(selectedComponents, ["WJ","TT","DY"]), 60, 3, maxFiles=6) 
+    configureSplittingFromTime(byCompName(selectedComponents, ["WJ","TT","DY","QCD_Mu15"]), 60, 3, maxFiles=6) 
     configureSplittingFromTime(byCompName(selectedComponents, [r"QCD_Pt\d+to\d+$","QCD.*EME"]), 60, 3, maxFiles=6) 
 
 
