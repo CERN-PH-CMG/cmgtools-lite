@@ -443,16 +443,20 @@ if options.queue:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
             cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-            if options.queue == "batch":
+            if options.queue == "batch" and options.env != "oviedo":
                 cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            elif options.env == "oviedo":
+                cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post} ".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             if fs:
                 cmd += " --fineSplit %d --subChunk %d" % (fs[1], fs[0])
         else:
             if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
             cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
 
-            if options.queue == "batch":
+            if options.queue == "batch" and options.env != "oviedo":
                 cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            elif options.env == "oviedo":
+                cmd = "{super} {base} -d {data} {post} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         print cmd
         if not options.pretend:
             os.system(cmd)
