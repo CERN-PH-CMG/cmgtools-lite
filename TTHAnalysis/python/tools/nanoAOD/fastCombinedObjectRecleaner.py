@@ -31,10 +31,11 @@ class fastCombinedObjectRecleaner(Module):
     def beginJob(self,histFile=None,histDirName=None):
         self.vars = ["pt","eta","phi","mass"]
         self.vars_leptons = ["pdgId",'jetIdx']
-        self.vars_taus = []#"mvaId2017"] # FIXME recover
-        self.vars_taus_int = ['jetIdx']#"idMVAdR03"] # FIXME recover
-        self.vars_jets = ["btagDeepB",'pt_jesTotalUp','pt_jesTotalDown', "qgl"] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
-        self.vars_jets_int = []#(["hadronFlavour"] if self.isMC else [])#+["mult"] # FIXME
+        self.vars_taus = []
+        self.vars_taus_int = ['jetIdx']
+        self.vars_taus_uchar = ['idMVAoldDMdR032017v2']
+        self.vars_jets = ["btagDeepB",'pt_jesTotalUp','pt_jesTotalDown', "qgl",'btagDeepFlavB'] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
+        self.vars_jets_int = (["hadronFlavour"] if self.isMC else [])
         self.vars_jets_nooutput = []
 
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} 
@@ -50,7 +51,7 @@ class fastCombinedObjectRecleaner(Module):
 
         self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=10, saveSelectedIndices=True,padSelectedIndicesWith=0)
         self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=10, saveTagForAll=True)
-        self._helper_taus = CollectionSkimmer("TauSel"+self.label, self.tauc, floats=self.vars+self.vars_taus, ints=self.vars_taus_int, maxSize=10)
+        self._helper_taus = CollectionSkimmer("TauSel"+self.label, self.tauc, floats=self.vars+self.vars_taus, ints=self.vars_taus_int, uchars=self.vars_taus_uchar, maxSize=10)
         self._helper_jets = CollectionSkimmer("%sSel"%self.jc+self.label, self.jc, floats=self.vars+self.vars_jets, ints=self.vars_jets_int, maxSize=20)
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
 
@@ -80,7 +81,7 @@ class fastCombinedObjectRecleaner(Module):
             setattr(self,'n'+coll,tree.valueReader('n'+coll))
             _vars = self.vars[:]
             if coll=='LepGood': _vars.extend(self.vars_leptons)
-            if coll==self.tauc: _vars.extend(self.vars_taus+self.vars_taus_int)
+            if coll==self.tauc: _vars.extend(self.vars_taus+self.vars_taus_int+self.vars_taus_uchar)
             if coll==self.jc: _vars.extend(self.vars_jets+self.vars_jets_int+self.vars_jets_nooutput)
             for B in _vars:
                 setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
