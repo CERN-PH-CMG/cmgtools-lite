@@ -30,14 +30,14 @@ class fastCombinedObjectRecleaner(Module):
 
     def beginJob(self,histFile=None,histDirName=None):
         self.vars = ["pt","eta","phi","mass"]
-        self.vars_leptons = ["pdgId"]
+        self.vars_leptons = ["pdgId",'jetIdx']
         self.vars_taus = []#"mvaId2017"] # FIXME recover
-        self.vars_taus_int = []#"idMVAdR03"] # FIXME recover
-        self.vars_jets = ["btagDeepB"] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV","qgl","btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1","corr","corr_JECUp","corr_JECDown"] # FIXME recover
+        self.vars_taus_int = ['jetIdx']#"idMVAdR03"] # FIXME recover
+        self.vars_jets = ["btagDeepB",'pt_jesTotalUp','pt_jesTotalDown', "qgl"] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
         self.vars_jets_int = []#(["hadronFlavour"] if self.isMC else [])#+["mult"] # FIXME
         self.vars_jets_nooutput = []
 
-        self.systsJEC = {0:""}#, 1:"_jecUp", -1:"_jecDown"} # FIXME recover
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} 
 
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS']
         self._outjetvars = [x%self.jc for x in ['ht%s%%dj','mht%s%%d','nB%sLoose%%d','nB%sMedium%%d','n%s%%d']]
@@ -57,7 +57,7 @@ class fastCombinedObjectRecleaner(Module):
         if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ recleaner worker module"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
-        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,self.btagL_thr,self.btagM_thr)
+        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,self.btagL_thr,self.btagM_thr, True)
         for x in self.jetPts: self._worker.addJetPt(x)
 
         if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
@@ -87,10 +87,10 @@ class fastCombinedObjectRecleaner(Module):
         return True
 
     def initWorkers(self):
-        self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi)
-        self._worker.setTaus(getattr(self,'n%s'%self.tauc),getattr(self,'%s_pt'%self.tauc),getattr(self,'%s_eta'%self.tauc),getattr(self,'%s_phi'%self.tauc))
+        self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_jetIdx)
+        self._worker.setTaus(getattr(self,'n%s'%self.tauc),getattr(self,'%s_pt'%self.tauc),getattr(self,'%s_eta'%self.tauc),getattr(self,'%s_phi'%self.tauc), getattr(self,'%s_jetIdx'%self.tauc))
         self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc),
-                             getattr(self,'%s_%s'%(self.jc,self.jetBTag))) # ,getattr(self,'%s_corr'%self.jc),getattr(self,'%s_corr_JECUp'%self.jc),getattr(self,'%s_corr_JECDown'%self.jc)) # FIXME
+                             getattr(self,'%s_%s'%(self.jc,self.jetBTag)),getattr(self,'%s_pt_jesTotalUp'%self.jc),getattr(self,'%s_pt_jesTotalDown'%self.jc))
         self._workerMV.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_mass, self.LepGood_pdgId)
 
     def analyze(self, event):

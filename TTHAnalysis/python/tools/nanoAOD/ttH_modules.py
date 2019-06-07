@@ -115,3 +115,4 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl', doSystJEC=False)
 
+from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016, jetmetUncertainties2017, jetmetUncertainties2018
