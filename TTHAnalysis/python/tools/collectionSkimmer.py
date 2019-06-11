@@ -1,12 +1,13 @@
 import ROOT
 
 class CollectionSkimmer:
-    def __init__(self, outName, srcColl, ints=[], floats=[], maxSize=100, saveSelectedIndices=False, padSelectedIndicesWith=None, saveTagForAll=False):
+    def __init__(self, outName, srcColl, ints=[], floats=[], uchars=[], maxSize=100, saveSelectedIndices=False, padSelectedIndicesWith=None, saveTagForAll=False):
         """Read from a collection called srcColl (eg. 'Jet'), write out to a collection called outName (e.g. 'CleanJet')
            Clone the variables specified in the ints and floats list (e.g. 'mcMatchId', 'pt', ...)
            maxSize fixes the maximum allowed number of entries in the output."""
         self._maxSize = maxSize
         self._ints   = ints
+        self._uchars = uchars
         self._floats = floats
         self._saveSelectedIndices = saveSelectedIndices
         self._padSelectedIndicesWith = padSelectedIndicesWith
@@ -15,6 +16,7 @@ class CollectionSkimmer:
         self._iprefix = srcColl + "_"
         for i in ints: self._impl.declareCopyInt(i)
         for f in floats: self._impl.declareCopyFloat(f)
+        for u in uchars: self._impl.declareCopyUChar(u)
         self._ttreereaderversion = -1
     def initInputTree(self,tree):
         """To be called to initialize the input tree. 
@@ -23,6 +25,7 @@ class CollectionSkimmer:
         self._impl.srcCount(tree.valueReader('n'+self._iprefix[:-1]))
         for i in self._ints:   self._impl.copyInt(i, tree.arrayReader(self._iprefix+i))
         for f in self._floats: self._impl.copyFloat(f, tree.arrayReader(self._iprefix+f))
+        for u in self._uchars: self._impl.copyUChar(u, tree.arrayReader(self._iprefix+u))
         self._ttreereaderversion = tree._ttreereaderversion
     def initOutputTree(self,outpytree,bareTree=False):
         """To be called once when defining the output PyTree, to declare the branches"""

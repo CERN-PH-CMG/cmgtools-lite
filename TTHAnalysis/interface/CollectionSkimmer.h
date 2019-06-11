@@ -39,6 +39,7 @@ class CollectionSkimmer {
         };
         typedef CopyVar<float,Float_t> CopyFloat;
         typedef CopyVar<int,Int_t> CopyInt;
+	typedef CopyVar<unsigned char, UChar_t> CopyUChar;
 
         CollectionSkimmer(const std::string &outName, const std::string &collName, bool saveSelectedIndices = false, bool saveTagForAll = false) : outName_(outName), collName_(collName), hasBranched_(false), srcCount_signed_(NULL), srcCount_unsigned_(NULL), saveSelectedIndices_(saveSelectedIndices), saveTagForAll_(saveTagForAll), maxEntries_(0), branch_(NULL), branchTag_(NULL) {}
         CollectionSkimmer(const CollectionSkimmer &other) = delete;
@@ -47,8 +48,10 @@ class CollectionSkimmer {
         /// to be called first to register the branches, and possibly re-called if the treeReaderArrays are remade
         void declareCopyFloat(const std::string &varname) ; 
         void declareCopyInt(const std::string &varname) ;
+	void declareCopyUChar(const std::string &varname) ;
         void copyFloat(const std::string &varname, TTreeReaderArray<Float_t> * src = nullptr) ; 
         void copyInt(const std::string &varname, TTreeReaderArray<Int_t> * src = nullptr) ;
+	void copyUChar(const std::string &varname, TTreeReaderArray<UChar_t> * src = nullptr) ;
 	void srcCount(TTreeReaderValue<Int_t> * src);
 	void srcCount(TTreeReaderValue<UInt_t> * src);
 
@@ -85,6 +88,7 @@ class CollectionSkimmer {
 	  ensureSize(iSrc);
 	  for (auto & c : copyFloats_) c.copy(iSrc, nOut_);
 	  for (auto & c : copyInts_) c.copy(iSrc, nOut_);
+	  for (auto & c : copyUChars_) c.copy(iSrc, nOut_);
 	  if (saveSelectedIndices_) iOut_[nOut_] = iSrc;
 	  if (saveTagForAll_) iTagOut_[iSrc] = 1;
 	  nOut_++;
@@ -104,6 +108,7 @@ class CollectionSkimmer {
 	    iTagOut_[iSrc] = true; // careful if using with saveTagForAll_, do not overwrite with copy
             for (auto & c : copyFloats_) c.copy(iSrc, iTo);
             for (auto & c : copyInts_) c.copy(iSrc, iTo);
+	    for (auto & c : copyUChars_) c.copy(iSrc, iTo);
         }
 
         /// number of selected output objects
@@ -119,6 +124,7 @@ class CollectionSkimmer {
         TTreeReaderValue<UInt_t> *srcCount_unsigned_;
         std::vector<CopyFloat> copyFloats_;
         std::vector<CopyInt> copyInts_;
+	std::vector<CopyUChar> copyUChars_;
 	bool saveSelectedIndices_;
 	bool padSelectedIndicesCollection_;
 	int padSelectedIndicesCollectionWith_;
