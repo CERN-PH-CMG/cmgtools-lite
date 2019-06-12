@@ -1,4 +1,5 @@
 <use name="CommonTools/Utils"/>
+<use name="CommonTools/MVAUtils"/>
 <use name="TrackingTools/IPTools"/>
 <use name="MagneticField/UniformEngine"/>
 <use name="MagneticField/ParametrizedEngine"/>

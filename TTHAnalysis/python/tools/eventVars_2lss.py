@@ -18,7 +18,7 @@ class EventVars2LSS(Module):
                               #"sum_sgnpz"
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} if doSystJEC else {0:""}
+        self.systsJEC = {0:"", 1:"_jecTotalUp", -1:"_jecTotalDown"} if doSystJEC else {0:""}
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
@@ -51,13 +51,13 @@ class EventVars2LSS(Module):
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
+            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
-            met = getattr(event,metName+self.systsJEC[_var]+"_pt")
-            metphi = getattr(event,metName+self.systsJEC[_var]+"_phi")
+            met = getattr(event,metName+"_pt"+self.systsJEC[_var])
+            metphi = getattr(event,metName+"_phi"+self.systsJEC[_var])
             njet = len(jets); nlep = len(leps)
             # prepare output
             ret = dict([(name,0.0) for name in self.namebranches])
