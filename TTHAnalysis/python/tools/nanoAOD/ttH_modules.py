@@ -216,10 +216,17 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HTT_HadTopTagger_2017_nomasscut_nvar17_resolved.xml',
                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
                                      algostring = 'k_httTT_Hj',
-                                    csv_looseWP = 0.5426,
+                                     csv_looseWP = 0.5426, 
                                      csv_mediumWP = 0.8484,
                                      selection = [
                                          lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
                                          lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
                 ]
 )
+
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+higgsRecoTTH= lambda : HiggsRecoTTH(label="_Recl",
+                                    cut_BDT_rTT_score = 0.0,
+                                    cuts_mW_had = (60.,100.),
+                                    cuts_mH_vis = (80.,140.),
+                                    btagDeepCSVveto = 0.1522)
