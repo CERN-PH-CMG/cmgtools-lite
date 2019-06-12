@@ -24,3 +24,5 @@ class lepJetBTagAdder( Module ):
 
 lepJetBTagCSV = lambda : lepJetBTagAdder("btagCSVV2", "jetBTagCSV")
 lepJetBTagDeepCSV = lambda : lepJetBTagAdder("btagDeepB", "jetBTagDeepCSV")
+lepJetBTagDeepFlav = lambda : lepJetBTagAdder("btagDeepFlavB", "jetBTagDeepFlav")
+lepJetBTagDeepFlavC = lambda : lepJetBTagAdder("btagDeepFlavC", "jetBTagDeepFlavC")

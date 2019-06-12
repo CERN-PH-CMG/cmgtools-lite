@@ -1,7 +1,7 @@
 import os, os.path, json, sys, urllib2, time
 
 class LocalityChecker:
-    def __init__(self, node="T2_CH_CERN", datasets=None, cacheTime=4*3600, cacheDir="~/.cmgdataset"):#, datasets="/*/*/*AOD*"):
+    def __init__(self, node="T2_CH_CERN", datasets=None, cacheTime=4*3600, cacheDir="~/.cmgdataset", verbose=True):#, datasets="/*/*/*AOD*"):
         self.data = None
         self.node = node
         self.datasets = datasets
@@ -14,6 +14,7 @@ class LocalityChecker:
         else:
             self.cacheFile = None
         self.cacheTime = cacheTime 
+        self.verbose = verbose
     def available(self,dataset):
         if self.data == None: self.data = self.initData()
         return dataset in self.data
@@ -23,16 +24,16 @@ class LocalityChecker:
             if os.path.exists(self.cacheFile):
                 age = time.time() - os.path.getmtime(self.cacheFile)
                 if isBatch and age >= self.cacheTime:
-                    sys.stderr.write("WARNING: Phedex cache validity expired, but will ignore that since I'm runing in batch\n")
+                    if self.verbose: sys.stderr.write("WARNING: Phedex cache validity expired, but will ignore that since I'm runing in batch\n")
                 if age < self.cacheTime or isBatch:
                     try:
                         data = json.load(open(self.cacheFile))
-                        sys.stderr.write("Reading phedex query from cache: %d samples, %.1f hours old\n" % (len(data), age/3600))
+                        if self.verbose: sys.stderr.write("Reading phedex query from cache: %d samples, %.1f hours old\n" % (len(data), age/3600))
                         return data
                     except:
                         pass
                 else:
-                    sys.stderr.write("Phedex query cache is %.1f hours old, will re-make the query\n" % (age/3600))
+                    if self.verbose: sys.stderr.write("Phedex query cache is %.1f hours old, will re-make the query\n" % (age/3600))
         if isBatch:
             raise RuntimeError, "Trying to do a DAS query while in a LXBatch job (env variable LSB_JOBID defined)"
         sys.stderr.write("Querying Phedex for node %s, datasets %s; this may take some time...\n" % (self.node, self.datasets))
@@ -42,7 +43,7 @@ class LocalityChecker:
         text = urllib2.urlopen(urlquery).read()
         if not text: 
             raise RuntimeError, "Error executing phedex query: "+urlquery
-        sys.stderr.write(" ... query took %.1f seconds\n" % (time.time()-start))
+        if self.verbose: sys.stderr.write(" ... query took %.1f seconds\n" % (time.time()-start))
         jsondata = json.loads(text)
         datasets = jsondata['phedex']['dataset']
         data = {}; errors = 0

@@ -60,13 +60,14 @@ class MCAnalysis:
         self.variationsFile = UncertaintyFile(options.variationsFile,options) if options.variationsFile else None
         self.readMca(samples,options)
 
-    def readMca(self,samples,options,addExtras={}):
+    def readMca(self,samples,options,addExtras={},selectProcesses=None):
         field_previous = None
         extra_previous = {}
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
             line = line.replace(r"\#","#")        ## and now we just unescape the remaining #'s
+            if not line.strip(): continue
             extra = {}
             if ";" in line:
                 (line,more) = line.split(";")[:2]
@@ -77,8 +78,11 @@ class MCAnalysis:
                         extra[key] = eval(val)
                     else: extra[setting] = True
             for k,v in addExtras.iteritems():
-                if k in extra: raise RuntimeError, 'You are trying to overwrite an extra option already set'
-                extra[k] = v
+                if k[-1] == ":": extra[k[:-1]] = v # forced overwrite
+                elif k[-1] == "+": extra[k[:-1]] += v # forced append
+                else:
+                    if k in extra: raise RuntimeError, 'You are trying to overwrite an extra option already set'
+                    extra[k] = v
             field = [f.strip() for f in line.split(':')]
             if len(field) == 1 and field[0] == "*":
                 if len(self._allData): raise RuntimeError, "MCA defaults ('*') can be specified only before all processes"
@@ -131,7 +135,11 @@ class MCAnalysis:
                 if 'IncludeMca' not in extra: raise RuntimeError, 'You have declared a component with IncludeMca format, but not included this option'
                 extra_to_pass = copy(extra)
                 del extra_to_pass['IncludeMca']
-                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass) # call readMca recursively on included mca files
+                selectProcesses = None
+                if 'Processes' in extra_to_pass: 
+                    selectProcesses = extra_to_pass['Processes']
+                    del extra_to_pass['Processes']
+                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass,selectProcesses=selectProcesses) # call readMca recursively on included mca files
                 continue
             # Customize with additional weight if requested
             if 'AddWeight' in extra:
@@ -149,6 +157,12 @@ class MCAnalysis:
             for p0 in options.filesToExclude:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
+            if selectProcesses and not skipMe:
+                # remove a postfix if it was added
+                pnameOriginal = pname[:-len(extra['PostFix'])] if 'PostFix' in extra else pname
+                skipMe = True
+                for p in selectProcesses.split(","):
+                    if re.match(p+"$", pnameOriginal): skipMe = False
             if skipMe: continue
 
             # Load variations if matching this process name

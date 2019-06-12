@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os, subprocess, time, hashlib
 
-def _stripv(x,maybe_postfix):
+def _stripv(x):
     return x[:-len("_v*")] if x.endswith("_v*") else x
 class nanoAODPreprocessor:
     def __init__(self, cfg, cmsswArea=None, outputModuleName=None, name="preprocessor", outputFileName="cmsswPreProcessing.root", keepOutput=False, injectTriggerFilter=False, injectJSON=False, inlineCustomize=None, cfgHasFilter=False, nanoStep="nanoAOD_step"):
@@ -18,6 +18,13 @@ class nanoAODPreprocessor:
         self._nanoStep = nanoStep
         self._cfgHasFilter = cfgHasFilter
         self._name = name
+    def clone(self, **kwargs):
+        import copy
+        ret = copy.copy(self)
+        for k,v in kwargs.items():
+            if not hasattr(self, "_"+k): raise RuntimeError("No parameter %s to be modified" % k)
+            setattr(ret, "_"+k, v)
+        return ret
     def prefetchFile(self, fname, longTermCache=False, verbose=True):
         tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
         if not fname.startswith("root://"):

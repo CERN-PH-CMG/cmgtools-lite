@@ -1,6 +1,6 @@
 import cPickle, math, optparse, os, os.path, shutil, copy
 
-def reSplitChunk(compname,splitFactor,options):
+def reSplitChunk(compname,splitFactor):
     from PhysicsTools.HeppyCore.framework.heppy_loop import split
     try:
         comp = cPickle.load(open("%s/config.pck" % compname))
@@ -21,15 +21,19 @@ def reSplitChunk(compname,splitFactor,options):
         comp.splitFactor = splitFactor
         comp.fineSplitFactor = 1
     comps = split([comp])
+    ret = []
     for i, ci in enumerate(comps):
         print "Comp %s: file %s, fineSplit %s" % (ci.name, ci.files, getattr(ci, 'fineSplit', None))
-        os.mkdir("%s/%s" % (workDir,ci.name))
+        newcomp = "%s/%s" % (workDir,ci.name)
+        os.mkdir(newcomp)
         for f in [ "options.json", "batchScript.sh", "pycfg.py" ]:
             if os.path.exists("%s/source/%s" % (workDir, f)):
-                shutil.copy("%s/source/%s" % (workDir, f), "%s/%s/%s" % (workDir, ci.name, f))
-            fout = open("%s/%s/config.pck" % (workDir, ci.name), 'w')
+                shutil.copy("%s/source/%s" % (workDir, f), "%s/%s" % (newcomp, f))
+            fout = open("%s/config.pck" % newcomp, 'w')
             cPickle.dump(ci,fout)
             fout.close()
+        ret.append(newcomp)
+    return ret
                 
  
 if __name__ == '__main__':
@@ -39,4 +43,4 @@ if __name__ == '__main__':
     parser.add_option("-n", "--splitFactor", dest="splitFactor", type="int", default=-1, help="New split factor. -1 for one file per job, -N for fineSplit N")
     (options, args) = parser.parse_args()
     for a in args:
-        reSplitChunk(a,options.splitFactor,options)
+        reSplitChunk(a,options.splitFactor)

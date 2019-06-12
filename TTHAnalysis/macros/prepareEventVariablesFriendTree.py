@@ -436,21 +436,27 @@ if options.queue:
             subfile.write("Queue {njobs} Dataset in {name}\n".format(name=name, njobs=nchunks))
       subfile.close()
       print "Saved condor submit file to %s" % options.subfile
+      if not options.pretend:
+         os.system("condor_submit "+cmd)
     else:
       for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
             cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-            if options.queue == "batch":
+            if options.queue == "batch" and options.env != "oviedo":
                 cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            elif options.env == "oviedo":
+                cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post} ".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             if fs:
                 cmd += " --fineSplit %d --subChunk %d" % (fs[1], fs[0])
         else:
             if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
             cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
 
-            if options.queue == "batch":
+            if options.queue == "batch" and options.env != "oviedo":
                 cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            elif options.env == "oviedo":
+                cmd = "{super} {base} -d {data} {post} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         print cmd
         if not options.pretend:
             os.system(cmd)
@@ -550,11 +556,11 @@ def _runItNano(myargs):
         print "==== pretending to run %s (%d entries starting from %d, %s) ====" % (name, range[1] - range[0], range[0], ofout)
         print "# ", "  ".join(command)
         return (name,(range[1] - range[0],0))
-    print "==== %s starting (%d entries starting from %d) ====" % (name, range[1] - range[0], range[0])
+    print "==== %s starting (%d entries starting from %d, %s) ====" % (name, range[1] - range[0], range[0], ofout)
     print "  ".join(command)
     subprocess.call(command)
     time = timer.RealTime()
-    print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, range[1] - range[0], time,(range[1] - range[0]/time) )
+    print "=== %s done (%d entries starting from %d, %.0f s, %.0f e/s, %s) ====" % ( name, range[1] - range[0], range[0], time, (range[1] - range[0]/time), ofout )
     return (name,(range[1] - range[0],time))
     
 _run = _runItNano if isNano else _runIt

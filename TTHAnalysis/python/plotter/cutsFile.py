@@ -3,7 +3,7 @@ from math import *
 import re
 import os, os.path
 from array import array
-from copy import *
+from copy import deepcopy
 
 class CutsFile:
     def __init__(self,txtfileOrCuts,options=None,ignoreEmptyOptionsEnforcement=False):

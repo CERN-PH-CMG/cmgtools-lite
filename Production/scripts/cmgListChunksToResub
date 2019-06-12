@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # define valid options, those with trailing colon have a second argument
-OPTS=`getopt -n 'parse-options' -o hTdt:lpq:z --long help -- "$@"`
+OPTS=`getopt -n 'parse-options' -o hTdt:lLpq:z --long help -- "$@"`
 
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
@@ -12,6 +12,7 @@ TERSE=/bin/false
 LSFL=false
 F=JSONAnalyzer/JSON.pck
 LOC=false
+LIST=false
 P=false
 Q=""
 Z=false
@@ -24,6 +25,7 @@ while true; do
     -d )            LSFL=true; shift ;;
     -t )            F="$2"; shift 2 ;;
     -l )            LOC=true; shift ;;
+    -L )            LIST=true; TERSE=true; shift ;;
     -p )            P=true; shift ;;
     -q )            Q="-q $2"; shift 2 ;;
     -z )            Z=true; shift ;;
@@ -43,6 +45,7 @@ function help {
     echo "-d  check for a LSFJOB_ dir or non-empty condor*.out"
     echo "-t <filename>  name of ROOT file to check for zombie (option -z)"
     echo "-l  print commands for local running instead of batch submission"
+    echo "-L  just print the name of the chunks (implies also -T)"
     echo "-p  check for null pck files"
     echo "-q  queue to resubmit to (use HTCondor to resubmit to HTCondor instead of LSF)"
     echo "-z  check for zombie ROOT files"
@@ -103,13 +106,16 @@ for D in */; do
         if $LSFDONE || test -f $D/submission_failed ; then
             if $LOC; then
                 # print local command
-                echo "cmgRunChunkLocally ${BASE}${D} "; 
+                echo "cmgRunChunkLocally ${BASE}${D%%/} "; 
+            elif $LIST; then
+                # print local command
+                echo "${BASE}${D%%/}"; 
             else
                 # print batch command
-                echo "cmgResubChunk $Q ${BASE}${D} ";
+                echo "cmgResubChunk $Q ${BASE}${D%%/} ";
             fi
         else
-            $TERSE || echo "# Chunk ${BASE}${D} does not have a LSFJOB directory or non-empty condor output file, maybe still running? ";
+            $TERSE || echo "# Chunk ${BASE}${D%%/} does not have a LSFJOB directory or non-empty condor output file, maybe still running? ";
         fi;
     fi;
 done;

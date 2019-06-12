@@ -10,6 +10,7 @@ void CollectionSkimmer::CopyVar<T1,T2>::branch(TTree *tree, unsigned int maxLeng
     std::string typecode = "?";
     if      (typeid(T2) == typeid(int))   typecode = "I";
     else if (typeid(T2) == typeid(float)) typecode = "F";
+    else if (typeid(T2) == typeid(unsigned char)) typecode = "b";
     else throw std::logic_error("Unsupported type");
     maxEntries_ = maxLength;
     branch_ = tree->Branch( (collName_ + "_" + varName_).c_str(),
@@ -47,6 +48,7 @@ CollectionSkimmer::makeBranches(TTree *tree, unsigned int maxEntries, bool padSe
     }
     for (auto & c : copyFloats_) c.branch(tree, maxEntries);
     for (auto & c : copyInts_) c.branch(tree, maxEntries);
+    for (auto & c : copyUChars_) c.branch(tree, maxEntries);
     hasBranched_ = true;
 }
 
@@ -63,6 +65,7 @@ void CollectionSkimmer::ensureSize(unsigned int n) {
         }
         for (auto & c : copyFloats_) c.ensureSize(n);
         for (auto & c : copyInts_) c.ensureSize(n);
+	for (auto & c : copyUChars_) c.ensureSize(n);
     }
 }
 
@@ -76,6 +79,11 @@ void CollectionSkimmer::declareCopyInt(const std::string &varname)
     _copyVar(varname, (TTreeReaderArray<Int_t>*)nullptr, copyInts_);
 }
 
+void CollectionSkimmer::declareCopyUChar(const std::string &varname) 
+{
+    _copyVar(varname, (TTreeReaderArray<UChar_t>*)nullptr, copyUChars_);
+}
+
 void CollectionSkimmer::copyFloat(const std::string &varname, TTreeReaderArray<Float_t> * src) 
 { 
     if (!src) { std::cout << "ERROR: CollectionSkimmer(" << collName_ << " -> " << outName_ << "): asked to copy float " << varname << " from null reader" << std::endl; }
@@ -86,6 +94,12 @@ void CollectionSkimmer::copyInt(const std::string &varname, TTreeReaderArray<Int
 {
     if (!src) { std::cout << "ERROR: CollectionSkimmer(" << collName_ << " -> " << outName_ << "): asked to copy int " << varname << " from null reader" << std::endl; }
     _copyVar(varname, src, copyInts_);
+}
+
+void CollectionSkimmer::copyUChar(const std::string &varname, TTreeReaderArray<UChar_t> * src)
+{    
+  if (!src) { std::cout << "ERROR: CollectionSkimmer(" << collName_ << " -> " << outName_ << "): asked to copy uchar " << varname << " from null reader" << std::endl; }
+  _copyVar(varname, src, copyUChars_);
 }
 
 void CollectionSkimmer::srcCount(TTreeReaderValue<Int_t> * src)

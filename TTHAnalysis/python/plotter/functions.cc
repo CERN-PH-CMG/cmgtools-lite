@@ -228,8 +228,30 @@ float lnN1D_p1(float kappa, float x, float xmin, float xmax) {
     return std::pow(kappa,(x-xmin)/(xmax-xmin));
 }
 
-void functions() {}
+float deepFlavB_WPLoose(int year) {
+    float wp[3]  = { 0.0614, 0.0521, 0.0494 };
+    return wp[year-2016];
+}
+float deepFlavB_WPMedium(int year) {
+    float wp[3] = { 0.3093, 0.3033, 0.2770 };
+    return wp[year-2016];
+}
+float deepFlavB_WPTight(int year) {
+    float wp[3]  = { 0.7221, 0.7489, 0.7264 };
+    return wp[year-2016];
+}
 
+
+float deepFlavB_WP(int year, int wp /*0 = loose, 1 = medium, 2=tight*/) {
+    switch(wp) {
+        case 0: return deepFlavB_WPLoose(year);
+        case 1: return deepFlavB_WPMedium(year);
+        case 2: return deepFlavB_WPTight(year);
+    }
+    return -99;
+}
+
+void functions() {}
 
 
 
