@@ -51,12 +51,12 @@ class HiggsRecoTTH(Module):
                 j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%self.systsJEC[var])
                 j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
-                jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepCSV<self.btagDeepCSVveto]
+                jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
 
                 for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                     for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
-                        j1.SetPtEtaPhiM(getattr(j1,'pt_%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
-                        j2.SetPtEtaPhiM(getattr(j2,'pt_%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
+                        j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
+                        j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
                         W = j1+j2
                         mW = W.M()
                         if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
