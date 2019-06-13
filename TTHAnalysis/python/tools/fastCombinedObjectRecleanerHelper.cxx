@@ -16,6 +16,7 @@ struct JetSumCalculatorOutput {
   int nBJetLoose;
   int nBJetMedium; 
   int nJet;
+  int nFwdJet;
 };
 
 class fastCombinedObjectRecleanerHelper {
@@ -72,6 +73,11 @@ public:
   void addJetPt(int pt){
     _jetptcuts.insert(pt);
   }
+  void setFwdPt(float fwdJetPt1, float fwdJetPt2){
+    fwdJetPt1_= fwdJetPt1;
+    fwdJetPt2_= fwdJetPt2;
+  }
+
 
   typedef math::PtEtaPhiMLorentzVectorD ptvec;
   typedef math::XYZTLorentzVectorD crvec;
@@ -102,7 +108,7 @@ public:
       sums.nBJetLoose = 0;
       sums.nBJetMedium = 0;
       sums.nJet = 0;
-      
+      sums.nFwdJet = 0;
       for (auto j : *_cj){
 	float pt = (*Jet_pt_)[j];
 	if (Jet_pt_JECUp_){
@@ -113,6 +119,16 @@ public:
 	  if (variation==1) pt *= (*Jet_corr_JECUp_)[j] / (*Jet_corr_)[j];
 	  if (variation==-1) pt *= (*Jet_corr_JECDown_)[j] / (*Jet_corr_)[j];
 	}
+	float abseta = fabs((*Jet_eta_)[j]) ;
+	if (abseta > 2.7 && abseta < 3 ){
+	  if (pt  > fwdJetPt2_) sums.nFwdJet++;
+	  continue;
+	}
+	else if (abseta > 2.4 && abseta < 5){
+	  if (pt > fwdJetPt1_) sums.nFwdJet++;
+	  continue;
+	}
+	else if(abseta > 2.4) continue;
 	if (pt<=thr) continue;
 	float phi = (*Jet_phi_)[j];
 	float csv = (*Jet_btagCSV_)[j];
@@ -145,8 +161,8 @@ public:
   void selectLeptonExtraForTau(uint i, bool what=true) {sel_leps_extrafortau.get()[i]=what;}
   void selectTau(uint i, bool what=true) {sel_taus.get()[i]=what;}
   void selectJet(uint i, bool what=true) {sel_jets.get()[i]=what;}
-
-  void loadTags(CombinedObjectTags *tags, bool cleanTausWithLooseLeptons){
+  void loadTags(CombinedObjectTags *tags, bool cleanTausWithLooseLeptons, float wPL=0, float wPM=0){
+    bTagL_ = wPL; bTagM_ = wPM;
     std::copy(tags->lepsC.get(),tags->lepsC.get()+*nLep_,sel_leps.get());
     if (cleanTausWithLooseLeptons) std::copy(tags->lepsL.get(),tags->lepsL.get()+*nLep_,sel_leps_extrafortau.get());
     std::copy(tags->tausF.get(),tags->tausF.get()+*nTau_,sel_taus.get());
@@ -232,4 +248,5 @@ private:
   bool cleanJetsWithFOTaus_;
   float bTagL_,bTagM_;
   bool cleanWithRef_;
+  float fwdJetPt1_, fwdJetPt2_;
 };

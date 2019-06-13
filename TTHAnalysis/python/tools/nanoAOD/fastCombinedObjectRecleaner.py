@@ -4,9 +4,9 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from CMGTools.TTHAnalysis.tools.collectionSkimmer import CollectionSkimmer
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
 import ROOT, os
-
+from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
 class fastCombinedObjectRecleaner(Module):
-    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,btagL_thr,btagM_thr,jetCollection='Jet',jetBTag='btagDeepB',tauCollection='Tau',isMC=None):
+    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,jetPtsFwd,btagL_thr,btagM_thr,jetCollection='Jet',jetBTag='btagDeepB',tauCollection='Tau',isMC=None):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inlabel = inlabel
@@ -16,6 +16,7 @@ class fastCombinedObjectRecleaner(Module):
         self.cleanTausWithLooseLeptons = cleanTausWithLooseLeptons
         self.cleanJetsWithFOTaus = cleanJetsWithFOTaus
         self.jetPts = jetPts
+        self.jetPtsFwd = jetPtsFwd
         self.jetBTag = jetBTag
         self.btagL_thr = btagL_thr
         self.btagM_thr = btagM_thr
@@ -44,7 +45,7 @@ class fastCombinedObjectRecleaner(Module):
         self._outjetvars = [x%self.jc for x in ['ht%s%%dj','mht%s%%d','nB%sLoose%%d','nB%sMedium%%d','n%s%%d']]
         self.outjetvars=[]
         for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt+y,'I' if ('nB%s'%self.jc in x or 'n%s'%self.jc in x) else 'F') for x in self._outjetvars for y in self.systsJEC.values()])
-
+        self.outjetvars.extend([('nFwdJet'+self.systsJEC[y],'I') for y in self.systsJEC])
         self.branches = [var+self.label for var in self.outmasses]
         self.branches.extend([(var+self.label,_type) for var,_type in self.outjetvars])
         self.branches += [("LepGood_conePt","F",100,"nLepGood")]
@@ -60,6 +61,7 @@ class fastCombinedObjectRecleaner(Module):
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
         self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,self.btagL_thr,self.btagM_thr, True)
         for x in self.jetPts: self._worker.addJetPt(x)
+        self._worker.setFwdPt(self.jetPtsFwd[0], self.jetPtsFwd[1])
 
         if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ recleaner mass and veto calculator module"
@@ -96,6 +98,8 @@ class fastCombinedObjectRecleaner(Module):
 
     def analyze(self, event):
         # Init
+        wpL = _btagWPs["DeepCSV_%d_%s"%(event.year,"L")][1]
+        wpM = _btagWPs["DeepCSV_%d_%s"%(event.year,"M")][1]
         if self._ttreereaderversion != event._tree._ttreereaderversion:
             for x in self._helpers: x.initInputTree(event._tree)
             self.initReaders(event._tree)
@@ -108,13 +112,14 @@ class fastCombinedObjectRecleaner(Module):
 
 
         self._worker.clear()
-        self._worker.loadTags(tags,self.cleanTausWithLooseLeptons)
+        self._worker.loadTags(tags,self.cleanTausWithLooseLeptons, wpL, wpM)
         self._worker.run()
 
         for delta,varname in self.systsJEC.iteritems():
             for x in self._worker.GetJetSums(delta):
                 for var in self._outjetvars: 
                     self.wrappedOutputTree.fillBranch(var%x.thr+varname+self.label, getattr(x,var.replace('%d','').replace(self.jc,'Jet')))
+                self.wrappedOutputTree.fillBranch('nFwdJet'+varname+self.label,getattr(x,'nFwdJet'))
 
         self._workerMV.clear()
         self._workerMV.loadTags(tags)
