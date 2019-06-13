@@ -13,6 +13,8 @@ class EventVars2LSS(Module):
                               "mindr_lep2_jet",
                               "avg_dr_jet",
                               "MT_met_lep1",
+                              "MT_met_lep2",
+                              'mbb',
                               #"MT_met_leplep",
                               #"sum_abspz",
                               #"sum_sgnpz"
@@ -53,6 +55,14 @@ class EventVars2LSS(Module):
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
             elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
             elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
+            bmedium = filter(lambda x : x.btagDeepB > btagwp[event.year]['medium'], jetes)
+            if len(bmedium) >1: 
+                bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[var]), reverse = True)
+                b1 = bmedium[0].p4()
+                b2 = bmedium[1].p4()
+                b1.SetPtEtaPhiM(getattr(bmedium[0],'pt%s'%self.systsJEC[var]),bmedium[0].eta,bmedium[0].phi,bmedium[0].mass)
+                b2.SetPtEtaPhiM(getattr(bmedium[1],'pt%s'%self.systsJEC[var]),bmedium[1].eta,bmedium[1].phi,bmedium[1].mass)
+                ret['mbb'] = (b1+b2).Mass()
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
@@ -74,7 +84,8 @@ class EventVars2LSS(Module):
                 ret["avg_dr_jet"] = sumdr/ndr if ndr else 0;
             if nlep > 0:
                 ret["MT_met_lep1"] = sqrt( 2*leps[0].conePt*met*(1-cos(leps[0].phi-metphi)) )
-#            if nlep > 1:
+            if nlep > 1:
+                ret["MT_met_lep2"] = sqrt( 2*leps[1].conePt*met*(1-cos(leps[1].phi-metphi)) )
 #                px = leps[0].conePt*cos(leps[0].phi) + leps[1].conePt*cos(leps[1].phi) + met*cos(metphi) 
 #                py = leps[0].conePt*sin(leps[0].phi) + leps[1].conePt*sin(leps[1].phi) + met*sin(metphi) 
 #                ht = leps[0].conePt + leps[1].conePt + met
