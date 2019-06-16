@@ -5,4 +5,5 @@
     <class name="SetupIgProfDumpHook" transient="true" />
     <class name="CollectionSkimmer" transient="true" />
     <class name="CombinedObjectTags" transient="true" />
+    <class name="TensorFlowInterface" transient="true" />    
 </lcgdict>
