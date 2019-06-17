@@ -17,6 +17,8 @@ struct JetSumCalculatorOutput {
   int nBJetMedium; 
   int nJet;
   int nFwdJet;
+  float fwd1_pt;
+  float fwd1_eta;
 };
 
 class fastCombinedObjectRecleanerHelper {
@@ -109,6 +111,9 @@ public:
       sums.nBJetMedium = 0;
       sums.nJet = 0;
       sums.nFwdJet = 0;
+      sums.fwd1_pt = 0;
+      sums.fwd1_eta = 0;
+
       for (auto j : *_cj){
 	float pt = (*Jet_pt_)[j];
 	if (Jet_pt_JECUp_){
@@ -121,11 +126,19 @@ public:
 	}
 	float abseta = fabs((*Jet_eta_)[j]) ;
 	if (abseta > 2.7 && abseta < 3 ){
-	  if (pt  > fwdJetPt2_) sums.nFwdJet++;
+	  if (pt  > fwdJetPt2_){
+	    sums.nFwdJet++;
+	    if (pt > sums.fwd1_pt){
+	      sums.fwd1_pt = pt; sums.fwd1_eta = (*Jet_eta_)[j];
+	    }
+	  }
 	  continue;
 	}
 	else if (abseta > 2.4 && abseta < 5){
 	  if (pt > fwdJetPt1_) sums.nFwdJet++;
+	  if (pt > sums.fwd1_pt){
+	    sums.fwd1_pt = pt; sums.fwd1_eta = (*Jet_eta_)[j];
+	  }
 	  continue;
 	}
 	else if(abseta > 2.4) continue;

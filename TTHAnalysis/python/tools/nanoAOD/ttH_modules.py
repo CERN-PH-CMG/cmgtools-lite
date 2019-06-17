@@ -101,16 +101,18 @@ recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel=
                                        cleanJetsWithFOTaus=True,
                                        doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
                                        jetPts=[25,40],
-                                       btagL_thr=0.1522,
-                                       btagM_thr=0.4941,
+                                       jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
+                                       btagL_thr=99, # they are set at runtime 
+                                       btagM_thr=99,
                                        isMC = True)
 recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                          cleanTausWithLooseLeptons=True,
                                          cleanJetsWithFOTaus=True,
                                          doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
                                          jetPts=[25,40],
-                                         btagL_thr=0.1522,
-                                         btagM_thr=0.4941,
+                                         jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
+                                         btagL_thr=-99., # they are set at runtime  
+                                         btagM_thr=-99., # they are set at runtime  
                                          isMC = False)
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
@@ -224,9 +226,5 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
                 ]
 )
 
-from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
-higgsRecoTTH= lambda : HiggsRecoTTH(label="_Recl",
-                                    cut_BDT_rTT_score = 0.0,
-                                    cuts_mW_had = (60.,100.),
-                                    cuts_mH_vis = (80.,140.),
-                                    btagDeepCSVveto = 0.1522)
+from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
+finalMVA = lambda : finalMVA_DNN()
