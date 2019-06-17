@@ -24,18 +24,26 @@ class PlotFile:
         self._plots = []
         defaults = {}
         infile = open(fileName,'r')
+        iline = -1
         for line in infile:
+            iline += 1
             if re.match("\s*#.*", line) or len(line.strip())==0: continue
             while line.strip()[-1] == "\\":
                 line = line.strip()[:-1] + infile.next()
+                iline += 1
             extra = {}
             if ";" in line:
+                oldline = line
                 (line,more) = line.split(";")[:2]
                 more = more.replace("\\,",";")
                 for setting in [f.strip().replace(";",",") for f in more.split(',')]:
                     if "=" in setting: 
                         (key,val) = [f.strip() for f in setting.split("=")]
-                        extra[key] = eval(val)
+                        try:
+                            extra[key] = eval(val)
+                        except:
+                            print "ERROR at line %d of %s:\n\t%s\n" % (iline, fileName, oldline)
+                            raise
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
             field = [f.strip().replace(";",":") for f in line.replace("::",";;").replace("\\:",";").split(':')]
