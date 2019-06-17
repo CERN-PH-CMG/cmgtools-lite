@@ -17,13 +17,13 @@ class TFTool:
         
 
     def __call__(self, ev):
-        inp = {} 
+        inp = ROOT.std.map('string','double')()
         ret = {} 
         for key, var in self.vars.iteritems():
-            inp[key] = var(event) 
+            inp[key] = var(ev) 
         res = self.worker(inp)
         for cla in self.classes: 
-            ret['%s_%s'%(x,self.name)] = res[cla]
+            ret['%s_%s'%(self.name,cla)] = res[cla]
         
         return ret
 
