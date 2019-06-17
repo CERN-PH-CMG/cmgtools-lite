@@ -783,10 +783,10 @@ class MCAnalysis:
         if self._options.jobs == 0: 
             retlist = map(func, tasks)
         else:
-            from multiprocessing import Pool
+            from multiprocessing import Pool, cpu_count
             retlist = []
             for i in xrange(0,len(tasks),chunkTasks):
-                pool = Pool(self._options.jobs)
+                pool = Pool(min(self._options.jobs,cpu_count()))
                 retlist += pool.map(func, tasks[i:(i+chunkTasks)], 1)
                 pool.close()
                 pool.join()
