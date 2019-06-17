@@ -6,6 +6,7 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import decla
 
 from math import sqrt, cos
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
+from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class EventVars2LSS(Module):
     def __init__(self, label="", recllabel='Recl', doSystJEC=True):
@@ -20,7 +21,7 @@ class EventVars2LSS(Module):
                               #"sum_sgnpz"
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jecTotalUp", -1:"_jecTotalDown"} if doSystJEC else {0:""}
+        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown"} if doSystJEC else {0:""}
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
@@ -48,6 +49,8 @@ class EventVars2LSS(Module):
         leps = [all_leps[chosen[i]] for i in xrange(nFO)]
 
         for var in self.systsJEC:
+            # prepare output
+            ret = dict([(name,0.0) for name in self.namebranches])
             _var = var
             if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
@@ -55,22 +58,20 @@ class EventVars2LSS(Module):
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
             elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
             elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
-            bmedium = filter(lambda x : x.btagDeepB > btagwp[event.year]['medium'], jetes)
+            bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
             if len(bmedium) >1: 
                 bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[var]), reverse = True)
                 b1 = bmedium[0].p4()
                 b2 = bmedium[1].p4()
                 b1.SetPtEtaPhiM(getattr(bmedium[0],'pt%s'%self.systsJEC[var]),bmedium[0].eta,bmedium[0].phi,bmedium[0].mass)
                 b2.SetPtEtaPhiM(getattr(bmedium[1],'pt%s'%self.systsJEC[var]),bmedium[1].eta,bmedium[1].phi,bmedium[1].mass)
-                ret['mbb'] = (b1+b2).Mass()
+                ret['mbb'] = (b1+b2).M()
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
             met = getattr(event,metName+"_pt"+self.systsJEC[_var])
             metphi = getattr(event,metName+"_phi"+self.systsJEC[_var])
             njet = len(jets); nlep = len(leps)
-            # prepare output
-            ret = dict([(name,0.0) for name in self.namebranches])
             # fill output
             if njet >= 1:
                 ret["mindr_lep1_jet"] = min([deltaR(j,leps[0]) for j in jets]) if nlep >= 1 else 0;
