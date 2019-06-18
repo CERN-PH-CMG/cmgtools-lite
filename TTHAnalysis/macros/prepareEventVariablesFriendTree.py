@@ -92,6 +92,7 @@ parser.add_option("--checkchunks", dest="checkchunks",   action="store_true", de
 parser.add_option("--checkrunning", dest="checkrunning",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("--quiet", dest="quiet",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch queue or condor instead of locally");
+parser.add_option("-a", "--accounting-group", dest="accounting_group", default=None, help="Accounting group for condor jobs");
 parser.add_option("--maxruntime", "--time",  dest="maxruntime", type="int", default=360, help="Condor job wall clock time in minutes (default: 6h)");
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
@@ -367,8 +368,9 @@ use_x509userproxy = $ENV(X509_USER_PROXY)
 getenv = True
 request_memory = 2000
 +MaxRuntime = {maxruntime}
-
-""".format(runner = options.runner, logdir = logdir, maxruntime = options.maxruntime * 60, chunk = chunk))
+{accounting_group}
+""".format(runner = options.runner, logdir = logdir, maxruntime = options.maxruntime * 60, chunk = chunk,
+           accounting_group = '+AccountingGroup = "%s"'%options.accounting_group if options.accounting_group else ''))
 if options.queue:
     runner = ""
     super = ""
