@@ -269,6 +269,8 @@ class TreeToYield:
         return self._cname
     def fname(self):
         return self._fname
+    def basepath(self):
+        return self._basepath
     def hasOption(self,name):
         return (name in self._settings)
     def getOption(self,name,default=None):

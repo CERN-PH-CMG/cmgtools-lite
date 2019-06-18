@@ -293,13 +293,17 @@ for D in sorted(glob(args[0]+"/*")):
         if options.newOnly:
             if os.path.exists(fout):
                 f2 = ROOT.TFile.Open(fout)
-                t2 = f2.Get("Friends" if isNano else (options.treeDir+"/t"))
-                if t2.GetEntries() != entries:
-                    if not options.quiet: print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t2.GetEntries())
-                    f2.Close()
+                if (not f2) or f2.IsZombie() or f2.TestBit(tfile.kRecovered): 
+                    if f2: f2.Close()
+                    if not options.quiet: print "Component %s has to be remade, output tree is invalid or corrupted" % (short, entries, t2.GetEntries())
                 else:
-                    if not options.quiet: print "Component %s exists already and has matching number of entries (%d)" % (short, entries)
-                    continue
+                    t2 = f2.Get("Friends" if isNano else (options.treeDir+"/t"))
+                    if t2.GetEntries() != entries:
+                        if not options.quiet: print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t2.GetEntries())
+                        f2.Close()
+                    else:
+                        if not options.quiet: print "Component %s exists already and has matching number of entries (%d)" % (short, entries)
+                        continue
         chunk = options.chunkSize
         if entries < chunk:
             if not options.quiet: print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk (%d events)" % entries
