@@ -143,8 +143,7 @@ if preprocessor:
                 comp.preprocessor = preproc_mcv1
     if getHeppyOption("fast"):
         for comp in selectedComponents:
-            comp.preprocessor._cfgHasFilter = True
-            comp.preprocessor._inlineCustomize = ("""
+            comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = ("""
 process.selectEl = cms.EDFilter("PATElectronRefSelector",
     src = cms.InputTag("slimmedElectrons"),
     cut = cms.string("pt > 4.5 && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
@@ -166,7 +165,7 @@ process.skimNLeps = cms.EDFilter("PATLeptonCountFilter",
     maxNumber = cms.uint32(999),
 )
 process.nanoAOD_step.insert(0, cms.Sequence(process.selectEl + process.selectMu + process.skimNLeps))
-""")
+"""))
     if analysis == "frqcd":
         for comp in selectedComponents:
             comp.preprocessor = comp.preprocessor.clone(keepOutput = False, injectTriggerFilter = True, injectJSON = True)
