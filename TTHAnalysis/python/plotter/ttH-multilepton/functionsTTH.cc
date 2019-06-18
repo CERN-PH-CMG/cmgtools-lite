@@ -445,3 +445,10 @@ int hashBasedRunPeriod2017(int isData, int run, int lumi, int event){
   auto period = std::find_if(cumul_lumis_runPeriod2017.begin(),cumul_lumis_runPeriod2017.end(),[val](const float &y){return y>val;});
   return std::distance(cumul_lumis_runPeriod2017.begin(),period)-1;
 }
+
+float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, float scale_loose=1.0) {
+    float wploose[3]  = { 0.0614, 0.0521, 0.0494 };
+    float wpmedium[3] = { 0.3093, 0.3033, 0.2770 };
+    float x = std::min(std::max(0.f, jetpt - ptmin)/(ptmax-ptmin), 1.f); 
+    return x*wploose[year-2016]*scale_loose + (1-x)*wpmedium[year-2016];
+}
