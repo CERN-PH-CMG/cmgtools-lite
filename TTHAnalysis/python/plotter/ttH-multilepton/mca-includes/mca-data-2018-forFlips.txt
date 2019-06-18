@@ -1,0 +1,16 @@
+data : DoubleMuon_Run2018A_17Sep2018_forFlips
+data : DoubleMuon_Run2018B_17Sep2018_forFlips
+data : DoubleMuon_Run2018C_17Sep2018_forFlips
+data : DoubleMuon_Run2018D_PromptReco_v2_forFlips
+data : EGamma_Run2018A_17Sep2018_forFlips
+data : EGamma_Run2018B_17Sep2018_forFlips
+data : EGamma_Run2018C_17Sep2018_forFlips
+data : EGamma_Run2018D_PromptReco_v2_forFlips
+data : MuonEG_Run2018A_17Sep2018_forFlips
+data : MuonEG_Run2018B_17Sep2018_forFlips
+data : MuonEG_Run2018C_17Sep2018_forFlips
+data : MuonEG_Run2018D_PromptReco_v2_forFlips
+data : SingleMuon_Run2018A_17Sep2018_forFlips
+data : SingleMuon_Run2018B_17Sep2018_forFlips
+data : SingleMuon_Run2018C_17Sep2018_forFlips
+data : SingleMuon_Run2018D_PromptReco_v2_forFlips
