@@ -12,9 +12,13 @@ class CacheChecker:
         fromDAS   = createDataset("CMS", dataset, ".*root", readcache=False, run_range=run_range)
         filesCache = sorted(list(set(fromCache.listOfGoodFiles())))
         filesDAS   = sorted(list(set(fromDAS.listOfGoodFiles())))
-        if verbose: print "%s %r: files cache %d, dbs %d, match %s" % (
+        if verbose:
+            print "%s %r: files cache %d, dbs %d, match %s" % (
             dataset, run_range, len(filesCache), len(filesDAS), 
             "OK" if ( filesCache == filesDAS ) else "FAIL") 
+            if not ( filesCache == filesDAS ):
+                print 'Files in old cache not anymore on DAS:', [x for x in filesCache if x not in filesDAS]
+                print 'Files in DAS not in the old cache:', [x for x in filesDAS if x not in filesCache]
         return filesCache == filesDAS
 
 if __name__ == "__main__":

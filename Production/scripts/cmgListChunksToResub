@@ -90,6 +90,7 @@ for D in */; do
     # test if file to be tested for is present and whether bad pickle file flag has been set
     TOTEST=$D/${F}
     if [[ "$F" == "NanoAOD" ]]; then TOTEST=$D/$(basename $D).root; fi
+    if [[ "$F" == "NanoAODurl" ]]; then TOTEST=$D/$(basename $D).root.url; fi
     if test \! -s $TOTEST || $PCKBAD; then
         LSFDONE=true
         if ${LSFL}; then
