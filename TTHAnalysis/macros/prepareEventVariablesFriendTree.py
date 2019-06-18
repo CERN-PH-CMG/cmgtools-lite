@@ -443,7 +443,7 @@ if options.queue:
       subfile.close()
       print "Saved condor submit file to %s" % options.subfile
       if not options.pretend:
-         os.system("condor_submit "+cmd)
+         os.system("condor_submit "+options.subfile)
     else:
       for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
