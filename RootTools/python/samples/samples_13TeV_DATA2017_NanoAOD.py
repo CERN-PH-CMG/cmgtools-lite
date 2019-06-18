@@ -86,7 +86,89 @@ dataSamples_Run2017F_14Dec2018 = [JetHT_Run2017F_14Dec2018, HTMHT_Run2017F_14Dec
 # Summary of 14Dec2018
 dataSamples_14Dec2018 = dataSamples_Run2017B_14Dec2018 + dataSamples_Run2017C_14Dec2018 + dataSamples_Run2017D_14Dec2018 + dataSamples_Run2017E_14Dec2018 + dataSamples_Run2017F_14Dec2018
 
-dataSamples = dataSamples_14Dec2018
+# ----------------------------- Run2017B 1June2019 ----------------------------------------
+
+JetHT_Run2017B_1June2019 = kreator.makeDataComponent("JetHT_Run2017B_1June2019", "/JetHT/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+HTMHT_Run2017B_1June2019 = kreator.makeDataComponent("HTMHT_Run2017B_1June2019", "/HTMHT/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MET_Run2017B_1June2019 = kreator.makeDataComponent("MET_Run2017B_1June2019", "/MET/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleElectron_Run2017B_1June2019 = kreator.makeDataComponent("SingleElectron_Run2017B_1June2019", "/SingleElectron/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2017B_1June2019 = kreator.makeDataComponent("SingleMuon_Run2017B_1June2019", "/SingleMuon/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SinglePhoton_Run2017B_1June2019 = kreator.makeDataComponent("SinglePhoton_Run2017B_1June2019", "/SinglePhoton/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleEG_Run2017B_1June2019 = kreator.makeDataComponent("DoubleEG_Run2017B_1June2019", "/DoubleEG/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2017B_1June2019 = kreator.makeDataComponent("MuonEG_Run2017B_1June2019", "/MuonEG/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2017B_1June2019 = kreator.makeDataComponent("DoubleMuon_Run2017B_1June2019", "/DoubleMuon/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+Tau_Run2017B_1June2019 = kreator.makeDataComponent("Tau_Run2017B_1June2019", "/Tau/Run2017B-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2017B_1June2019 = [JetHT_Run2017B_1June2019, HTMHT_Run2017B_1June2019, MET_Run2017B_1June2019, SingleElectron_Run2017B_1June2019, SingleMuon_Run2017B_1June2019, SinglePhoton_Run2017B_1June2019, DoubleEG_Run2017B_1June2019, MuonEG_Run2017B_1June2019, DoubleMuon_Run2017B_1June2019, Tau_Run2017B_1June2019]
+
+# ----------------------------- Run2017C 1June2019 ----------------------------------------
+
+JetHT_Run2017C_1June2019 = kreator.makeDataComponent("JetHT_Run2017C_1June2019", "/JetHT/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+HTMHT_Run2017C_1June2019 = kreator.makeDataComponent("HTMHT_Run2017C_1June2019", "/HTMHT/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MET_Run2017C_1June2019 = kreator.makeDataComponent("MET_Run2017C_1June2019", "/MET/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleElectron_Run2017C_1June2019 = kreator.makeDataComponent("SingleElectron_Run2017C_1June2019", "/SingleElectron/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2017C_1June2019 = kreator.makeDataComponent("SingleMuon_Run2017C_1June2019", "/SingleMuon/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SinglePhoton_Run2017C_1June2019 = kreator.makeDataComponent("SinglePhoton_Run2017C_1June2019", "/SinglePhoton/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleEG_Run2017C_1June2019 = kreator.makeDataComponent("DoubleEG_Run2017C_1June2019", "/DoubleEG/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2017C_1June2019 = kreator.makeDataComponent("MuonEG_Run2017C_1June2019", "/MuonEG/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2017C_1June2019 = kreator.makeDataComponent("DoubleMuon_Run2017C_1June2019", "/DoubleMuon/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+Tau_Run2017C_1June2019 = kreator.makeDataComponent("Tau_Run2017C_1June2019", "/Tau/Run2017C-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2017C_1June2019 = [JetHT_Run2017C_1June2019, HTMHT_Run2017C_1June2019, MET_Run2017C_1June2019, SingleElectron_Run2017C_1June2019, SingleMuon_Run2017C_1June2019, SinglePhoton_Run2017C_1June2019, DoubleEG_Run2017C_1June2019, MuonEG_Run2017C_1June2019, DoubleMuon_Run2017C_1June2019, Tau_Run2017C_1June2019]
+
+
+# ----------------------------- Run2017D 1June2019 ----------------------------------------
+
+JetHT_Run2017D_1June2019 = kreator.makeDataComponent("JetHT_Run2017D_1June2019", "/JetHT/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+HTMHT_Run2017D_1June2019 = kreator.makeDataComponent("HTMHT_Run2017D_1June2019", "/HTMHT/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MET_Run2017D_1June2019 = kreator.makeDataComponent("MET_Run2017D_1June2019", "/MET/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleElectron_Run2017D_1June2019 = kreator.makeDataComponent("SingleElectron_Run2017D_1June2019", "/SingleElectron/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2017D_1June2019 = kreator.makeDataComponent("SingleMuon_Run2017D_1June2019", "/SingleMuon/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SinglePhoton_Run2017D_1June2019 = kreator.makeDataComponent("SinglePhoton_Run2017D_1June2019", "/SinglePhoton/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleEG_Run2017D_1June2019 = kreator.makeDataComponent("DoubleEG_Run2017D_1June2019", "/DoubleEG/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2017D_1June2019 = kreator.makeDataComponent("MuonEG_Run2017D_1June2019", "/MuonEG/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2017D_1June2019 = kreator.makeDataComponent("DoubleMuon_Run2017D_1June2019", "/DoubleMuon/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+Tau_Run2017D_1June2019 = kreator.makeDataComponent("Tau_Run2017D_1June2019", "/Tau/Run2017D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2017D_1June2019 = [JetHT_Run2017D_1June2019, HTMHT_Run2017D_1June2019, MET_Run2017D_1June2019, SingleElectron_Run2017D_1June2019, SingleMuon_Run2017D_1June2019, SinglePhoton_Run2017D_1June2019, DoubleEG_Run2017D_1June2019, MuonEG_Run2017D_1June2019, DoubleMuon_Run2017D_1June2019, Tau_Run2017D_1June2019]
+
+# ----------------------------- Run2017E 1June2019 ----------------------------------------
+
+JetHT_Run2017E_1June2019 = kreator.makeDataComponent("JetHT_Run2017E_1June2019", "/JetHT/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+#HTMHT_Run2017E_1June2019 = kreator.makeDataComponent("HTMHT_Run2017E_1June2019", "/HTMHT/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MET_Run2017E_1June2019 = kreator.makeDataComponent("MET_Run2017E_1June2019", "/MET/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleElectron_Run2017E_1June2019 = kreator.makeDataComponent("SingleElectron_Run2017E_1June2019", "/SingleElectron/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2017E_1June2019 = kreator.makeDataComponent("SingleMuon_Run2017E_1June2019", "/SingleMuon/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SinglePhoton_Run2017E_1June2019 = kreator.makeDataComponent("SinglePhoton_Run2017E_1June2019", "/SinglePhoton/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleEG_Run2017E_1June2019 = kreator.makeDataComponent("DoubleEG_Run2017E_1June2019", "/DoubleEG/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2017E_1June2019 = kreator.makeDataComponent("MuonEG_Run2017E_1June2019", "/MuonEG/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2017E_1June2019 = kreator.makeDataComponent("DoubleMuon_Run2017E_1June2019", "/DoubleMuon/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+Tau_Run2017E_1June2019 = kreator.makeDataComponent("Tau_Run2017E_1June2019", "/Tau/Run2017E-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2017E_1June2019 = [JetHT_Run2017E_1June2019,
+# HTMHT_Run2017E_1June2019, 
+MET_Run2017E_1June2019, SingleElectron_Run2017E_1June2019, SingleMuon_Run2017E_1June2019, SinglePhoton_Run2017E_1June2019, DoubleEG_Run2017E_1June2019, MuonEG_Run2017E_1June2019, DoubleMuon_Run2017E_1June2019, Tau_Run2017E_1June2019]
+
+
+# ----------------------------- Run2017F 1June2019 ----------------------------------------
+
+JetHT_Run2017F_1June2019 = kreator.makeDataComponent("JetHT_Run2017F_1June2019", "/JetHT/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+HTMHT_Run2017F_1June2019 = kreator.makeDataComponent("HTMHT_Run2017F_1June2019", "/HTMHT/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MET_Run2017F_1June2019 = kreator.makeDataComponent("MET_Run2017F_1June2019", "/MET/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleElectron_Run2017F_1June2019 = kreator.makeDataComponent("SingleElectron_Run2017F_1June2019", "/SingleElectron/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2017F_1June2019 = kreator.makeDataComponent("SingleMuon_Run2017F_1June2019", "/SingleMuon/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+SinglePhoton_Run2017F_1June2019 = kreator.makeDataComponent("SinglePhoton_Run2017F_1June2019", "/SinglePhoton/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleEG_Run2017F_1June2019 = kreator.makeDataComponent("DoubleEG_Run2017F_1June2019", "/DoubleEG/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2017F_1June2019 = kreator.makeDataComponent("MuonEG_Run2017F_1June2019", "/MuonEG/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2017F_1June2019 = kreator.makeDataComponent("DoubleMuon_Run2017F_1June2019", "/DoubleMuon/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+Tau_Run2017F_1June2019 = kreator.makeDataComponent("Tau_Run2017F_1June2019", "/Tau/Run2017F-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2017F_1June2019 = [JetHT_Run2017F_1June2019, HTMHT_Run2017F_1June2019, MET_Run2017F_1June2019, SingleElectron_Run2017F_1June2019, SingleMuon_Run2017F_1June2019, SinglePhoton_Run2017F_1June2019, DoubleEG_Run2017F_1June2019, MuonEG_Run2017F_1June2019, DoubleMuon_Run2017F_1June2019, Tau_Run2017F_1June2019]
+
+# Summary of 1June2019
+dataSamples_1June2019 = dataSamples_Run2017B_1June2019 + dataSamples_Run2017C_1June2019 + dataSamples_Run2017D_1June2019 + dataSamples_Run2017E_1June2019 + dataSamples_Run2017F_1June2019
+
+dataSamples = dataSamples_14Dec2018 + dataSamples_1June2019
 samples = dataSamples
 
 # ---------------------------------------------------------------------
