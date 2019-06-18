@@ -99,9 +99,20 @@ for pd, trigs in DatasetsAndTriggers:
 
 selectedComponents = mcSamples + dataSamples
 if getHeppyOption('selectComponents'):
-    selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
+    if getHeppyOption('selectComponents')=='MC':
+        selectedComponents = mcSamples
+    elif getHeppyOption('selectComponents')=='DATA':
+        selectedComponents = dataSamples
+    else:
+        selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
 autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)))
-configureSplittingFromTime(selectedComponents,100 if preprocessor else 10,4)
+if year==2018:
+    configureSplittingFromTime(mcSamples,150 if preprocessor else 10,8)
+    configureSplittingFromTime(dataSamples,50 if preprocessor else 5,8)
+else: # rerunning deepFlavor can take up to twice the time
+    configureSplittingFromTime(mcSamples,250 if preprocessor else 10,8) # warning: some samples take up to 400 ms per event
+    configureSplittingFromTime(dataSamples,80 if preprocessor else 5,8)
+    configureSplittingFromTime(byCompName(dataSamples,['Single']),50 if preprocessor else 5,8)
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
 # create and set preprocessor if requested
@@ -110,18 +121,18 @@ if preprocessor:
     preproc_cfg = {2016: ("mc94X2016","data94X2016"),
                    2017: ("mc94Xv2","data94Xv2"),
                    2018: ("mc102X","data102X_ABC","data102X_D")}
-    preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_tth/CMSSW_10_2_14"
+    preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_tth/CMSSW_10_2_15"
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
-        preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True)
-        preproc_data_D = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][2]),cmsswArea=preproc_cmsswArea,keepOutput=True)
+        preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True,injectTriggerFilter=True,injectJSON=True)
+        preproc_data_D = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][2]),cmsswArea=preproc_cmsswArea,keepOutput=True,injectTriggerFilter=True,injectJSON=True)
         for comp in selectedComponents:
             if comp.isData:
                 comp.preprocessor = preproc_data_D if '2018D' in comp.name else preproc_data_ABC
             else:
                 comp.preprocessor = preproc_mc
     else:
-        preproc_data = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True)
+        preproc_data = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True,injectTriggerFilter=True,injectJSON=True)
         for comp in selectedComponents:
             comp.preprocessor = preproc_data if comp.isData else preproc_mc
     if year==2017:
@@ -130,6 +141,32 @@ if preprocessor:
             if comp.isMC and "Fall17MiniAODv2" not in comp.dataset:
                 print "Warning: %s is MiniAOD v1, dataset %s" % (comp.name, comp.dataset)
                 comp.preprocessor = preproc_mcv1
+    if getHeppyOption("fast"):
+        for comp in selectedComponents:
+            comp.preprocessor._cfgHasFilter = True
+            comp.preprocessor._inlineCustomize = ("""
+process.selectEl = cms.EDFilter("PATElectronRefSelector",
+    src = cms.InputTag("slimmedElectrons"),
+    cut = cms.string("pt > 4.5 && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
+    filter = cms.bool(False),
+)
+process.selectMu = cms.EDFilter("PATMuonRefSelector",
+    src = cms.InputTag("slimmedMuons"),
+    cut = cms.string("pt > 3 && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
+    filter = cms.bool(False),
+)
+process.skimNLeps = cms.EDFilter("PATLeptonCountFilter",
+    electronSource = cms.InputTag("selectEl"),
+    muonSource = cms.InputTag("selectMu"),
+    tauSource = cms.InputTag(""),
+    countElectrons = cms.bool(True),
+    countMuons = cms.bool(True),
+    countTaus = cms.bool(False),
+    minNumber = cms.uint32(2),
+    maxNumber = cms.uint32(999),
+)
+process.nanoAOD_step.insert(0, cms.Sequence(process.selectEl + process.selectMu + process.skimNLeps))
+""")
     if analysis == "frqcd":
         for comp in selectedComponents:
             comp.preprocessor = comp.preprocessor.clone(keepOutput = False, injectTriggerFilter = True, injectJSON = True)
@@ -151,6 +188,10 @@ process.skim1El = cms.EDFilter("PATElectronRefSelector",
 )
 process.nanoAOD_step.insert(0, process.skim1El)
 """)
+if analysis == "main":
+    cropToLumi(byCompName(selectedComponents,["^(?!.*(TTH|TTW|TTZ)).*"]),1000.)
+    cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
+    cropToLumi(byCompName(selectedComponents,["DYJetsToLL"]),2.)
 if analysis == "frqcd":
     cropToLumi(selectedComponents, 1.0)
     cropToLumi(byCompName(selectedComponents,["QCD"]), 0.3)
