@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #from mcPlots import *
-from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
+from CMGTools.TTHAnalysis.plotter.mcAnalysis import MCAnalysis, CutsFile, addMCAnalysisOptions, scalarToVector
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from collections import defaultdict
-import ROOT
+import os
 
 def _runIt(args):
         (mysource,myoutpath,mycut,options) = args
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         from multiprocessing import Pool
         Pool(options.jobs).map(_runIt, tasks)
     if options.skimFriends and not (options.pretend or options.justcount):
-        skimFTrees = os.expandvars("$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/skimFTrees.py")
+        skimFTrees = os.path.expandvars("$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/skimFTrees.py")
         if not os.path.isfile(skimFTrees): raise RuntimeError("missing skimFTrees")
         for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
             for P in options.path:

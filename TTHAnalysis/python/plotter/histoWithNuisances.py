@@ -866,6 +866,62 @@ class SumWithNuisances(HistoWithNuisances):
         #print "postfit swn norm of %-40s: %8.2f +- %5.2f (%.3f)" % (self.central.GetName(), nominal, sqrt(sumw2/toys.numEntries()), sqrt(sumw2/toys.numEntries())/nominal)
         return sqrt(sumw2/toys.numEntries())
 
+
+class ParametricHistoWN(HistoWithNuisances):
+    def __init__(self,histo_central,binToFix=1,binRange=[-7,7],nuisancePrefixName=None):
+        HistoWithNuisances.__init__(self, histo_central)
+        self._binToFix = binToFix
+        self._binRange = binRange
+        self._nuisancePrefixName = nuisancePrefixName
+    # == API that needs trivial differences ==
+    def isSimple(self): return False
+    def isZero(self): return False
+    def Clone(self,newname):
+        return ParametricHistoWN(_cloneNoDir(self.central, newname), binToFix=self._binToFix, binRange=self._binRange, nuisancePrefixName = self._nuisancePrefixName)
+    def _canAdd(self,x): return False
+    def __iadd__(self,x): return SumWithNuisances(self.central.GetName(), [self, x])
+    def __add__(self,x): return SumWithNuisances(self.central.GetName(), [self, x])
+    # == API that is unsupported ==
+    def Reset(self): raise RuntimeError("NotSupported")
+    def printVariations(self): raise RuntimeError("NotSupported")
+    def addVariation(self,name,sign,histo_varied, clone=True): raise RuntimeError("NotSupported")
+    def addBinByBin(self, namePattern="{name}_bbb_{bin}", ycutoff=1e-3, relcutoff=1e-2, verbose=False, norm=False, conservativePruning=False): raise RuntimeError("NotSupported")
+    def isShapeVariation(self,name,tolerance=1e-5,debug=False): raise RuntimeError("NotSupported")
+    def regularizeVariation(self, var, minUnweightedEvents=12, minRatio=0.2, quiet=False, debug=False, binname="<unknown bin>"): raise RuntimeError("NotSupported")
+    def Add(self,other,scaleFactor=None): raise RuntimeError("NotSupported")
+    def projectionX(self,name,iy1,iy2): raise RuntimeError("NotSupported")
+    # == API that probably shouldn't be called ==
+    def _doPreFit(self):
+        print "WARNING: _doPreFit makes no sense on ParametricHistoWN %s" % (self.central.GetName())
+        HistoWithNuisances._doPreFit(self)
+    def writeToFile(self,tfile,writeVariations=True,takeOwnership=True):
+        print "WARNING: saving ParametricHistoWN %s to file is not fully supported" % (self.central.GetName())
+    # == Genuinely new API ==
+    def _makePdfAndNorm(self):
+        self.cropNegativeBins() # can't do with this
+        roofitContext = self._rooFit["context"]
+        w = roofitContext.workspace
+        nuisances = ROOT.RooArgList()
+        norm0 = self.central.Integral()
+        normfactor = ROOT.ProcessNormalization("%s_norm" % self.central.GetName(), "", norm0)
+        for i in xrange(1,self.central.GetNbinsX()+1):
+            binVar = "{n}_semipar_bin{i}".format(n = self._nuisancePrefixName or self.central.GetName(), i = i)
+            if w.function(binVar):
+                if not self._nuisancePrefixName: print "Warning: reusing %s in building %s" % (binVar, self.central.GetName())
+                arg = w.function(binVar)
+            else:
+                v0 = self.central.GetBinContent(i) / norm0 / self.central.GetXaxis().GetBinWidth(i);
+                arg = roofitContext.factory("expr::{binVar}(\"{val} * exp(@0)\", {binVar}_nuis[0,{nmin},{nmax}])".format(binVar=binVar, val=v0, nmin=self._binRange[0], nmax=self._binRange[1]))
+                if i == self._binToFix or v0 == 0 or self._binRange[0] == self._binRange[1]: 
+                    w.var(binVar+"_nuis").setConstant(True) 
+            nuisances.add(arg)
+        pdf = ROOT.RooParametricHist("%s_pdf" % self.central.GetName(), "", roofitContext.xvar, nuisances, self.central)
+        self._rooFit["norm"] = normfactor
+        self._rooFit["pdf"] = pdf
+        self._rooFit["nuisances"] = nuisances
+        self._rooFit["scaleFactors"] = {}
+
+
 def mergePlots(name,plots):
     # check for mergeability
     one = plots[0]

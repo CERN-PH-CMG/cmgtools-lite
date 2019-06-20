@@ -20,7 +20,9 @@ class CutsFile:
             if options:
                 for cr,cn,cv in options.cutsToAdd:
                     if re.match(cr,"entry point"): self._cuts.append((cn,cv))
+            iline = -1
             for line in file:
+              iline += 1
               try:
                 line = line.strip()
                 if len(line) == 0 or line[0] == '#': continue
@@ -30,6 +32,8 @@ class CutsFile:
                     line = line[:-1] + " " + file.next().strip()
                     line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
                     line = line.replace(r"\#","#")        ## and now we just unescape the remaining #'s
+                    iline += 1
+                line0 = line
                 extra = {}
                 if ";" in line:
                     (line,more) = line.split(";")[:2]
@@ -54,7 +58,7 @@ class CutsFile:
                     if options.upToCut and re.search(options.upToCut,name):
                         break
               except ValueError, e:
-                print "Error parsing cut line [%s]" % line.strip()
+                print "Error parsing cut line %d of %s [%s]" % (iline, txtfileOrCuts, line0.strip())
                 raise 
             if options:
                 for ci in options.cutsToInvert:  self.invert(ci)
