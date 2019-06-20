@@ -70,24 +70,28 @@ def conept_TTH(lep):
     if (abs(lep.pdgId)!=13 or lep.mediumId>0) and lep.mvaTTH > 0.90: return lep.pt
     else: return 0.90 * lep.pt * (1 + lep.jetRelIso)
 
+def smoothBFlav(jetpt,ptmin,ptmax,year,scale_loose=1.0):
+    wploose = (0.0614, 0.0521, 0.0494)
+    wpmedium = (0.3093, 0.3033, 0.2770)
+    x = min(max(0.0, jetpt - ptmin)/(ptmax-ptmin), 1.0)
+    return x*wploose[year-2016]*scale_loose + (1-x)*wpmedium[year-2016]
 
-def clean_and_FO_selection_TTH(lep):
-    return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or ttH_idEmu_cuts_E3(lep)) \
-        and (lep.mvaTTH>0.90 or \
-             (abs(lep.pdgId)==13 and lep.jetBTagDeepCSV<0.07 and lep.segmentComp>0.3 and 1/(1 + lep.jetRelIso)>0.60) or \
-             (abs(lep.pdgId)==11 and lep.jetBTagDeepCSV<0.07 and lep.mvaFall17V1noIso>0.5 and 1/(1 + lep.jetRelIso)>0.60)) 
+def clean_and_FO_selection_TTH(lep,year):
+    bTagCut = 0.3093 if year==2016 else 0.3033 if year==2017 else 0.2770
+    return lep.conept>10 and lep.jetBTagDeepFlav<bTagCut and (abs(lep.pdgId)!=11 or ttH_idEmu_cuts_E3(lep)) \
+        and (lep.mvaTTH>(0.85 if abs(lep.pdgId)==13 else 0.80) or \
+             (abs(lep.pdgId)==13 and lep.jetBTagDeepFlav< smoothBFlav(0.9*lep.pt*(1+lep.jetRelIso), 20, 45, year) and lep.jetRelIso < 0.50) or \
+             (abs(lep.pdgId)==11 and lep.mvaFall17V2noIso_WP80 and lep.jetRelIso < 0.70))
 
+tightLeptonSel = lambda lep,year : clean_and_FO_selection_TTH(lep,year) and (abs(lep.pdgId)!=13 or lep.mediumId>0) and lep.mvaTTH > (0.85 if abs(lep.pdgId)==13 else 0.80)
 
-tightLeptonSel = lambda lep : clean_and_FO_selection_TTH(lep) and (abs(lep.pdgId)!=13 or lep.mediumId>0) and lep.mvaTTH > 0.90
-
-from CMGTools.TTHAnalysis.tools.functionsTTH import tauID_oldDMdR0p3wLT2017v2_WP # FIXME get rid of this after validation
-foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tauID_oldDMdR0p3wLT2017v2_WP(tau.pt,tau.rawMVAoldDMdR032017v2,1) and tau.idDecayMode
-tightTauSel = lambda tau: tauID_oldDMdR0p3wLT2017v2_WP(tau.pt,tau.rawMVAoldDMdR032017v2,2)
+foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayMode and (int(tau.idMVAoldDMdR032017v2)>>1 & 1) # VLoose WP
+tightTauSel = lambda tau: (int(tau.idMVAoldDMdR032017v2)>>2 & 1) # Loose WP
 
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import CombinedObjectTaggerForCleaning
 from CMGTools.TTHAnalysis.tools.nanoAOD.fastCombinedObjectRecleaner import fastCombinedObjectRecleaner
 recleaner_step1 = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
-                                       #looseLeptonSel = lambda lep : lep.miniPFRelIso_all < 0.4 and lep.sip3d < 8,
+                                       looseLeptonSel = lambda lep : lep.miniPFRelIso_all < 0.4 and lep.sip3d < 8 and (abs(lep.pdgId)!=11 or lep.lostHits<=1),
                                        cleaningLeptonSel = clean_and_FO_selection_TTH,
                                        FOLeptonSel = clean_and_FO_selection_TTH,
                                        tightLeptonSel = tightLeptonSel,
