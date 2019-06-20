@@ -21,8 +21,8 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
 
         if "/BDT_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
             if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries(): raise RuntimeError
-            ROOT.gSystem.AddIncludePath(" -I/cvmfs/cms.cern.ch/slc7_amd64_gcc820/external/gsl/2.2.1/include ")
-            ROOT.gSystem.AddLinkedLibs(" -L/cvmfs/cms.cern.ch/slc7_amd64_gcc820/external/gsl/2.2.1/lib -lgsl -lgslcblas -lm ");
+            ROOT.gSystem.AddIncludePath(" -I/cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gsl/2.2.1-omkpbe2/include ")
+            ROOT.gSystem.AddLinkedLibs(" -L//cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gsl/2.2.1-omkpbe2/lib -lgsl -lgslcblas -lm ");
             ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDT_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
 
         algo = getattr(ROOT,algostring)
