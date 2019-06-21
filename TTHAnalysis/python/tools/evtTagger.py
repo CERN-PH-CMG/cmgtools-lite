@@ -1,13 +1,30 @@
-from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as NanoAODCollection 
+from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 
-class EvtTagger:
+
+
+class EvtTagger(Module):
     def __init__(self,label,sel):
         self.label = label
         self.sel = sel
+
+    # old interface
     def listBranches(self):
         biglist = [(self.label,"I")]
         return biglist
     def __call__(self,event):
+        return self.runIt(event)
+
+    # new interface
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        declareOutput(self,wrappedOutputTree, [(self.label,"I")])
+
+    def analyze(self, event):
+        writeOutput(self, self.runIt(event))
+        return True
+
+    def runIt(self,event):
         ret = {}
         good = True
         for sel in self.sel:

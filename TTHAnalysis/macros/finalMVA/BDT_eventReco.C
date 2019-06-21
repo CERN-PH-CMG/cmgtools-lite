@@ -1,3 +1,4 @@
+#include "CommonTools/MVAUtils/interface/TMVAZipReader.h"
 #include <tuple>
 #include <vector>
 #include <string>
@@ -7,13 +8,11 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include <DataFormats/Math/interface/deltaR.h>
 #include "TMVA/Reader.h"
-#include "CommonTools/Utils/interface/TMVAZipReader.h"
 #include <iostream>
 #include "TStopwatch.h"
 #include "TMath.h"
 #include <algorithm>
 
-#include "HadTopKinFit.cc" // providing the HadTopKinFit class
 
 enum BDT_EventReco_algoType {
   k_BDTv8_Hj = 0,
@@ -175,7 +174,7 @@ class BDT_EventReco {
   std::vector<float> CalcrTT(char* _x);
   float EvalScore(eTopP top);
   float EvalScore_httTT(eTopP top);
-  std::tuple<float,float> EvalKinFit(eTopP top);
+  // std::tuple<float,float> EvalKinFit(eTopP top);
 
   void setDebug(bool val){debug = val;};
 
@@ -253,15 +252,25 @@ class BDT_EventReco {
   float var_b_wcand_deltaR = -99;
   float var_topcand_mass = -99;
 
-  float var_httTT_CSV_b;
-  float var_httTT_qg_Wj2;
-  float var_httTT_pT_bWj1Wj2;
-  float var_httTT_pT_Wj2;
-  float var_httTT_m_Wj1Wj2;
-  float var_httTT_nllKinFit;
-  float var_httTT_pT_b_o_kinFit_pT_b;
-
-  HadTopKinFit *httTT_kinfitWorker = nullptr;
+  float var_httTT_btagDisc_b             = -99;   
+  float var_httTT_btagDisc_Wj1 		 = -99;
+  float var_httTT_btagDisc_Wj2		 = -99;
+  float var_httTT_qg_Wj1   		 = -99;
+  float var_httTT_qg_Wj2        	 = -99;
+  float var_httTT_m_bWj1Wj2   		 = -99;
+  float var_httTT_m_Wj1Wj2_div_m_bWj1Wj2 = -99;
+  float var_httTT_pT_Wj1Wj2		 = -99;
+  float var_httTT_dR_Wj1Wj2		 = -99;
+  float var_httTT_dR_bW			 = -99;
+  float var_httTT_m_bWj1    		 = -99;
+  float var_httTT_m_bWj2    		 = -99;
+  float var_httTT_mass_Wj1		 = -99;
+  float var_httTT_pT_Wj2	         = -99;
+  float var_httTT_mass_Wj2		 = -99;
+  float var_httTT_pT_b			 = -99;
+  float var_httTT_mass_b                 = -99;   
+ 
+  //HadTopKinFit *httTT_kinfitWorker = nullptr;
   ptvec httTT_kinfit_recBJet;
   ptvec httTT_kinfit_recWJet1;
   ptvec httTT_kinfit_recWJet2;
@@ -388,17 +397,28 @@ BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string we
 
     TMVAReader_httTT_ = std::make_shared<TMVA::Reader>( "!Color:!Silent" );
 
-    TMVAReader_httTT_->AddVariable("CSV_b",&var_httTT_CSV_b);
-    TMVAReader_httTT_->AddVariable("qg_Wj2",&var_httTT_qg_Wj2);
-    TMVAReader_httTT_->AddVariable("pT_bWj1Wj2",&var_httTT_pT_bWj1Wj2);
-    TMVAReader_httTT_->AddVariable("m_Wj1Wj2",&var_httTT_m_Wj1Wj2);
-    TMVAReader_httTT_->AddVariable("nllKinFit",&var_httTT_nllKinFit);
-    TMVAReader_httTT_->AddVariable("pT_b_o_kinFit_pT_b",&var_httTT_pT_b_o_kinFit_pT_b);
-    TMVAReader_httTT_->AddVariable("pT_Wj2",&var_httTT_pT_Wj2);
+    TMVAReader_httTT_->AddVariable("btagDisc_b",            &var_httTT_btagDisc_b            );	
+    TMVAReader_httTT_->AddVariable("btagDisc_Wj1",	  &var_httTT_btagDisc_Wj1 	   );	
+    TMVAReader_httTT_->AddVariable("btagDisc_Wj2",	  &var_httTT_btagDisc_Wj2	   );	
+    TMVAReader_httTT_->AddVariable("qg_Wj1",		  &var_httTT_qg_Wj1   		   );
+    TMVAReader_httTT_->AddVariable("qg_Wj2",		  &var_httTT_qg_Wj2        	   );
+    TMVAReader_httTT_->AddVariable("m_Wj1Wj2_div_m_bWj1Wj2", &var_httTT_m_Wj1Wj2_div_m_bWj1Wj2);
+    TMVAReader_httTT_->AddVariable("pT_Wj1Wj2",		  &var_httTT_pT_Wj1Wj2		   );
+    TMVAReader_httTT_->AddVariable("dR_Wj1Wj2",		  &var_httTT_dR_Wj1Wj2		   );
+    TMVAReader_httTT_->AddVariable("m_bWj1Wj2",		  &var_httTT_m_bWj1Wj2   	   );	
+    TMVAReader_httTT_->AddVariable("dR_bW",		  &var_httTT_dR_bW		   );	
+    TMVAReader_httTT_->AddVariable("m_bWj1",		  &var_httTT_m_bWj1    		   );
+    TMVAReader_httTT_->AddVariable("m_bWj2",		  &var_httTT_m_bWj2    		   );
+    TMVAReader_httTT_->AddVariable("mass_Wj1",		  &var_httTT_mass_Wj1		   );
+    TMVAReader_httTT_->AddVariable("pT_Wj2",		  &var_httTT_pT_Wj2	           );
+    TMVAReader_httTT_->AddVariable("mass_Wj2",		  &var_httTT_mass_Wj2		   );
+    TMVAReader_httTT_->AddVariable("pT_b",		  &var_httTT_pT_b		   );	
+    TMVAReader_httTT_->AddVariable("mass_b",		  &var_httTT_mass_b                );
 
+  
     reco::details::loadTMVAWeights(TMVAReader_httTT_.get(),"BDT",weight_file_name_httTT);
 
-    httTT_kinfitWorker = new HadTopKinFit(1,kinfit_file_name_httTT);
+    // httTT_kinfitWorker = new HadTopKinFit(1,kinfit_file_name_httTT);
 
   }
 
@@ -473,13 +493,23 @@ void BDT_EventReco::clear(){
   var_b_wcand_deltaR = -99;
   var_topcand_mass = -99;
 
-  var_httTT_CSV_b = -99;
-  var_httTT_qg_Wj2 = -99;
-  var_httTT_pT_bWj1Wj2 = -99;
-  var_httTT_pT_Wj2 = -99;
-  var_httTT_m_Wj1Wj2 = -99;
-  var_httTT_nllKinFit = -99;
-  var_httTT_pT_b_o_kinFit_pT_b = -99;
+  var_httTT_btagDisc_b             = -99;   
+  var_httTT_btagDisc_Wj1 	   = -99;	  
+  var_httTT_btagDisc_Wj2	   = -99;	  
+  var_httTT_qg_Wj1   		   = -99;	  
+  var_httTT_qg_Wj2                 = -99;	  
+  var_httTT_m_bWj1Wj2   	   = -99;	  
+  var_httTT_m_Wj1Wj2_div_m_bWj1Wj2 = -99;	  
+  var_httTT_pT_Wj1Wj2		   = -99;	  
+  var_httTT_dR_Wj1Wj2		   = -99;	  
+  var_httTT_dR_bW		   = -99;	  
+  var_httTT_m_bWj1    		   = -99;	  
+  var_httTT_m_bWj2    		   = -99;	  
+  var_httTT_mass_Wj1		   = -99;	  
+  var_httTT_pT_Wj2	           = -99;	  
+  var_httTT_mass_Wj2		   = -99;	  
+  var_httTT_pT_b		   = -99;	  
+  var_httTT_mass_b                 = -99;   
 
   nBMedium = 0;
 
@@ -773,32 +803,48 @@ float BDT_EventReco::EvalScore(eTopP top){
 float BDT_EventReco::EvalScore_httTT(eTopP top){
 
   if (top->hasScore_httTT) return top->score_httTT;
+  var_httTT_btagDisc_b = top->b->deepcsv();
+  var_httTT_btagDisc_Wj1 = top->j2->deepcsv();
+  var_httTT_btagDisc_Wj2 = top->j3->deepcsv();
+  var_httTT_qg_Wj1  = top->j2->qgl();   		 
+  var_httTT_qg_Wj2  = top->j3->qgl();       	 
+  var_httTT_m_bWj1Wj2 = (*(top->b->p4())+*(top->j2->p4())+*(top->j3->p4())).mass();
+  var_httTT_m_Wj1Wj2_div_m_bWj1Wj2  = (*(top->j2->p4())+*(top->j3->p4())).mass()/var_httTT_m_bWj1Wj2;
+  var_httTT_pT_Wj1Wj2 = (*(top->j2->p4())+*(top->j3->p4())).pt();		 
+  var_httTT_dR_Wj1Wj2 = dR(top->j2.get(),top->j3.get());
+  auto sum =  *(top->j2->p4())+ *(top->j3->p4());
+  var_httTT_dR_bW     = dR(top->b.get(),&sum);
+  var_httTT_m_bWj1 = (*(top->b->p4())+*(top->j2->p4())).mass();     		 
+  var_httTT_m_bWj2 = (*(top->b->p4())+*(top->j3->p4())).mass();     		     		 
+  var_httTT_mass_Wj1 = top->j2->mass();
+  var_httTT_pT_Wj2   = top->j3->pt();
+  var_httTT_mass_Wj2 = top->j3->mass();
+  var_httTT_pT_b     = top->b->pt();		 
+  var_httTT_mass_b   = top->b->mass();		                 
 
-  var_httTT_CSV_b = top->b->deepcsv();
-  var_httTT_qg_Wj2 = top->j3->qgl();
-  var_httTT_pT_bWj1Wj2 = (*(top->b->p4())+*(top->j2->p4())+*(top->j3->p4())).pt();
-  var_httTT_pT_Wj2 = top->j3->pt();
-  var_httTT_m_Wj1Wj2 = (*(top->j2->p4())+*(top->j3->p4())).mass();
-  auto kf = EvalKinFit(top);
-  var_httTT_nllKinFit = std::get<0>(kf);
-  if (std::get<1>(kf)!=0) var_httTT_pT_b_o_kinFit_pT_b = top->b->pt()/std::get<1>(kf);
-  else {
-    if (debug) std::cout << "ERROR: kinematic fit returned fitted b pt == 0. Will set var_httTT_pT_b_o_kinFit_pT_b to infinity." << std::endl;
-    var_httTT_pT_b_o_kinFit_pT_b = TMath::Infinity();
-  }
 
   float score = TMVAReader_httTT_->EvaluateMVA("BDT");
 
   if (debug) {
     std::cout << "httTT tagger on jets " << top->j1idx << " " << top->j2idx << " " << top->j3idx << std::endl;
 
-    std::cout << "var_httTT_CSV_b: " << var_httTT_CSV_b << std::endl;
-    std::cout << "var_httTT_qg_Wj2: " << var_httTT_qg_Wj2 << std::endl;
-    std::cout << "var_httTT_pT_bWj1Wj2: " << var_httTT_pT_bWj1Wj2 << std::endl;
-    std::cout << "var_httTT_pT_Wj2: " << var_httTT_pT_Wj2 << std::endl;
-    std::cout << "var_httTT_m_Wj1Wj2: " << var_httTT_m_Wj1Wj2 << std::endl;
-    std::cout << "var_httTT_nllKinFit: " << var_httTT_nllKinFit << std::endl;
-    std::cout << "var_httTT_pT_b_o_kinFit_pT_b: " << var_httTT_pT_b_o_kinFit_pT_b << std::endl;
+    std::cout << "var_httTT_btagDisc_b            :" << var_httTT_btagDisc_b               << std::endl;    
+    std::cout << "var_httTT_btagDisc_Wj1 	  :" << var_httTT_btagDisc_Wj1   	  << std::endl;
+    std::cout << "var_httTT_btagDisc_Wj2	  :" << var_httTT_btagDisc_Wj2	          << std::endl;
+    std::cout << "var_httTT_qg_Wj1   		  :" << var_httTT_qg_Wj1   	          << std::endl;
+    std::cout << "var_httTT_qg_Wj2                :" << var_httTT_qg_Wj2                   << std::endl;
+    std::cout << "var_httTT_m_bWj1Wj2   	  :" << var_httTT_m_bWj1Wj2   	          << std::endl;
+    std::cout << "var_httTT_m_Wj1Wj2_div_m_bWj1Wj2:" << var_httTT_m_Wj1Wj2_div_m_bWj1Wj2   << std::endl;
+    std::cout << "var_httTT_pT_Wj1Wj2		  :" << var_httTT_pT_Wj1Wj2		  << std::endl;
+    std::cout << "var_httTT_dR_Wj1Wj2		  :" << var_httTT_dR_Wj1Wj2		  << std::endl;
+    std::cout << "var_httTT_dR_bW		  :" << var_httTT_dR_bW  		  << std::endl;
+    std::cout << "var_httTT_m_bWj1    		  :" << var_httTT_m_bWj1    		  << std::endl;
+    std::cout << "var_httTT_m_bWj2    		  :" << var_httTT_m_bWj2    		  << std::endl;
+    std::cout << "var_httTT_mass_Wj1		  :" << var_httTT_mass_Wj1		  << std::endl;
+    std::cout << "var_httTT_pT_Wj2	          :" << var_httTT_pT_Wj2	                  << std::endl;
+    std::cout << "var_httTT_mass_Wj2		  :" << var_httTT_mass_Wj2		  << std::endl;
+    std::cout << "var_httTT_pT_b		  :" << var_httTT_pT_b		          << std::endl;
+    std::cout << "var_httTT_mass_b                :" << var_httTT_mass_b                   << std::endl;
     std::cout << "score: " << score << std::endl;
 
   }
@@ -809,13 +855,13 @@ float BDT_EventReco::EvalScore_httTT(eTopP top){
 
 };
 
-std::tuple<float,float> BDT_EventReco::EvalKinFit(eTopP top){
-  httTT_kinfit_recBJet = *(top->b);
-  httTT_kinfit_recWJet1 = *(top->j2);
-  httTT_kinfit_recWJet2 = *(top->j3);
-  httTT_kinfitWorker->fit(httTT_kinfit_recBJet,httTT_kinfit_recWJet1,httTT_kinfit_recWJet2);
-  return std::make_tuple(float(httTT_kinfitWorker->nll()),float(httTT_kinfitWorker->fittedBJet().Pt()));
-};
+// std::tuple<float,float> BDT_EventReco::EvalKinFit(eTopP top){
+//   httTT_kinfit_recBJet = *(top->b);
+//   httTT_kinfit_recWJet1 = *(top->j2);
+//   httTT_kinfit_recWJet2 = *(top->j3);
+//   //httTT_kinfitWorker->fit(httTT_kinfit_recBJet,httTT_kinfit_recWJet1,httTT_kinfit_recWJet2);
+//   return std::make_tuple(float(httTT_kinfitWorker->nll()),float(httTT_kinfitWorker->fittedBJet().Pt()));
+// };
 
 
 std::vector<float> BDT_EventReco::CalcHadTopTagger(char* _permlep, char* _x){
