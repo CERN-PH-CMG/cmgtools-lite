@@ -1,5 +1,6 @@
 import ROOT
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
+import inspect
 
 class CombinedObjectTaggerForCleaning(Module):
 
@@ -16,10 +17,13 @@ class CombinedObjectTaggerForCleaning(Module):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
 
-        self.looseLeptonSel = looseLeptonSel
-        self.cleanLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
-        self.fkbleLeptonSel = FOLeptonSel # applied on top of looseLeptonSel
-        self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
+        self.lepSelYearDependent = False
+        for func in [looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel]:
+            if len(inspect.getargspec(func)[0])>1: self.lepSelYearDependent=True
+        self.looseLeptonSel = (lambda lep,year: looseLeptonSel(lep)) if len(inspect.getargspec(looseLeptonSel)[0])==1 else looseLeptonSel
+        self.cleanLeptonSel = (lambda lep,year: cleaningLeptonSel(lep)) if len(inspect.getargspec(cleaningLeptonSel)[0])==1 else cleaningLeptonSel # applied on top of looseLeptonSel
+        self.fkbleLeptonSel = (lambda lep,year: FOLeptonSel(lep)) if len(inspect.getargspec(FOLeptonSel)[0])==1 else FOLeptonSel # applied on top of looseLeptonSel
+        self.tightLeptonSel = (lambda lep,year: tightLeptonSel(lep)) if len(inspect.getargspec(tightLeptonSel)[0])==1 else tightLeptonSel # applied on top of looseLeptonSel
 
         self.fkbleTauSel = FOTauSel
         self.tightTauSel = tightTauSel # applied on top of FOTauSel
@@ -57,8 +61,10 @@ class CombinedObjectTaggerForCleaning(Module):
         if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
         for lep in leps: lep.conept = self.coneptdef(lep)
 
+        year = event.year if self.lepSelYearDependent else -1 # to avoid trying to read event.year if not needed (old trees)
+
         for i,lep in enumerate(leps):
-            if self.looseLeptonSel(lep): tags.setLepFlags(i,True,self.cleanLeptonSel(lep),self.fkbleLeptonSel(lep),self.tightLeptonSel(lep),lep.conept)
+            if self.looseLeptonSel(lep,year): tags.setLepFlags(i,True,self.cleanLeptonSel(lep,year),self.fkbleLeptonSel(lep,year),self.tightLeptonSel(lep,year),lep.conept)
         for i,tau in enumerate(taus):
             if self.fkbleTauSel(tau): tags.setTauFlags(i,True,self.tightTauSel(tau))
         for i,jet in enumerate(jets):
