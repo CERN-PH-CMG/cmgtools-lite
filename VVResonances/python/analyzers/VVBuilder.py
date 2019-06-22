@@ -33,6 +33,12 @@ class VVBuilder(Analyzer):
         # btag reweighting
         self.btagSF = BTagEventWeights(
             'btagsf', os.path.expandvars(self.cfg_ana.btagCSVFile))
+        self.subjetBtagSF0 = BTagEventWeights(
+            'btagsf', os.path.expandvars(self.cfg_ana.subjetBtagCSVFile),0,[0,1,2],'incl')
+        self.subjetBtagSF1 = BTagEventWeights(
+            'btagsf', os.path.expandvars(self.cfg_ana.subjetBtagCSVFile),1,[0,1,2],'incl')
+
+
         puppiJecCorrWeightFile = os.path.expandvars(
             self.cfg_ana.puppiJecCorrFile)
         self.puppiJecCorr = ROOT.TFile.Open(puppiJecCorrWeightFile)
@@ -44,6 +50,9 @@ class VVBuilder(Analyzer):
 
     def declareHandles(self):
         super(VVBuilder, self).declareHandles()
+        self.handles['packed'] = AutoHandle(
+            'packedPFCandidates', 'std::vector<pat::PackedCandidate>')
+
         if self.cfg_comp.isMC:
             self.handles['packedGen'] = AutoHandle(
                 'packedGenParticles', 'std::vector<pat::PackedGenParticle>')
@@ -67,16 +76,25 @@ class VVBuilder(Analyzer):
         jet.softDropMassCor = self.getPUPPIMassWeight(jet)*jet.userFloat('ak8PFJetsPuppiSoftDropMass')
         jet.softDropMassBare =jet.userFloat('ak8PFJetsPuppiSoftDropMass')
 
-
+        
 
         jet.subJetTags = [-99.0] * 2
         jet.subJetCTagL = [-99.0] * 2
         jet.subJetCTagB = [-99.0] * 2
         jet.subJet_hadronFlavour = [-99.0] * 2
         jet.subJet_partonFlavour = [-99.0] * 2
+        jet.subJet_btagWeights0 = [1.0] * 2
+        jet.subJet_btagWeights1 = [1.0] * 2
+
 
         for i,o in enumerate(jet.subjets("SoftDropPuppi")):
             bTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorB)+o.bDiscriminator(self.cfg_ana.fDiscriminatorBB)
+            ##BTAG subject weights
+            if self.cfg_comp.isMC:
+                jet.subJet_btagWeights0[i]= self.subjetBtagSF0.getSF(o.pt(),
+                                                o.eta(), o.hadronFlavour(), bTag)
+                jet.subJet_btagWeights1[i]= self.subjetBtagSF1.getSF(o.pt(),
+                                                o.eta(), o.hadronFlavour(), bTag)
             cTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorC)
             lTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorL)
             jet.subJetTags[i] = bTag
@@ -84,7 +102,38 @@ class VVBuilder(Analyzer):
             jet.subJetCTagB[i] = cTag/(cTag+bTag)
             jet.subJet_partonFlavour[i] = o.partonFlavour()
             jet.subJet_hadronFlavour[i] = o.hadronFlavour()
-            
+
+    def softDropRECO(self, jet,event):
+        # if we already filled it exit
+        if hasattr(jet, 'softDrop_low'):
+            return          
+        # constituents = []
+        LVs = ROOT.std.vector("math::XYZTLorentzVector")()
+
+        # we take LVs around the jets and recluster
+        for p in event.packed:
+            if deltaR(p.eta(), p.phi(), jet.eta(), jet.phi()) < 1.2:
+                if p.puppiWeight() > 0:
+                    LVs.push_back(p.p4() * p.puppiWeight())
+
+        interface = ROOT.cmg.FastJetInterface(
+            LVs, -1.0, 0.8, 1, 0.01, 5.0, 4.4)
+        # make jets
+        interface.makeInclusiveJets(50.0)
+        outputJets = interface.get(True)
+        if len(outputJets) == 0:
+            return
+        interface.softDrop(True, 0, 0.0, 0.15, 0.8)
+        jet.softDrop_high = self.getPUPPIMassWeight(jet)*self.copyLV(interface.get(False))[0].mass()
+        interface = ROOT.cmg.FastJetInterface(
+            LVs, -1.0, 0.8, 1, 0.01, 5.0, 4.4)
+        interface.makeInclusiveJets(50.0)
+        outputJets = interface.get(True)
+        interface.softDrop(True, 0, 0.0, 0.05, 0.8)
+        jet.softDrop_low = self.getPUPPIMassWeight(jet)*self.copyLV(interface.get(False))[0].mass()
+
+
+
     def softDropGen(self, jet,event):
         # if we already filled it exit
         if hasattr(jet, 'genSoftDrop') or not self.cfg_comp.isMC:
@@ -110,6 +159,8 @@ class VVBuilder(Analyzer):
         # OK!Now save the area
         interface.softDrop(True, 0, 0.0, 0.1, 0.8)
         jet.genSoftDrop = self.copyLV(interface.get(False))[0]
+
+
 
 
     def topology(self, VV, jets, leptons):
@@ -149,6 +200,7 @@ class VVBuilder(Analyzer):
             if self.cfg_comp.isMC:
                 VV.btagWeight *= self.btagSF.getSF(j.pt(),
                                                    j.eta(), flavor, btag)
+
             # and systematics
             if btag > maxbtag:
                 maxbtag = btag
@@ -200,6 +252,7 @@ class VVBuilder(Analyzer):
             return output
         bestJet = max(fatJets, key=lambda x: x.pt())
         self.substructure(bestJet)
+        self.softDropRECO(bestJet,event)
         VV = Pair(bestW, bestJet)
         if deltaR(bestW.leg1.eta(), bestW.leg1.phi(), bestJet.eta(), bestJet.phi()) < ROOT.TMath.Pi() / 2.0:
             return output
@@ -260,7 +313,7 @@ class VVBuilder(Analyzer):
             return output
         bestJet = max(fatJets, key=lambda x: x.pt())
         self.substructure(bestJet)
-
+        self.softDropRECO(bestJet,event)
         VV = Pair(bestZ, bestJet)
 
         if self.cfg_comp.isMC:
@@ -288,6 +341,8 @@ class VVBuilder(Analyzer):
             return output
 
         self.substructure(fatJets[0])
+        self.softDropRECO(fatJets[0],event)
+
         VV = Pair(event.met, fatJets[0])
 
         # kinematics
@@ -391,8 +446,10 @@ class VVBuilder(Analyzer):
 
         # if MC create the stable particles for Gen Jet reco and substructure
         event.genParticleLVs = ROOT.std.vector("math::XYZTLorentzVector")()
+
         if self.cfg_comp.isMC:
             event.genPacked = self.handles['packedGen'].product()
+        event.packed = self.handles['packed'].product()
 
 
         LNuJJ = self.makeWV(event)

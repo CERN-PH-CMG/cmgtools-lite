@@ -53,7 +53,10 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2_hadronFlavour",   lambda x : x.subJet_hadronFlavour[1], int,"",-99,True),
     NTupleVariable("mergedVTruth",   lambda x : x.mergedTrue, int,"",-1,True),
     NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True),
-
+    NTupleVariable("s1_subJetBTagWeight0", lambda x : x.subJet_btagWeights0[0], float,"",-99,True),
+    NTupleVariable("s2_subjetBTagWeight0", lambda x : x.subJet_btagWeights0[1], float,"",-99,True),
+    NTupleVariable("s1_subJetBTagWeight1", lambda x : x.subJet_btagWeights1[0], float,"",-99,True),
+    NTupleVariable("s2_subjetBTagWeight1", lambda x : x.subJet_btagWeights1[1], float,"",-99,True),
 
 ])
 
@@ -82,6 +85,8 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2",  lambda x : x.leg2,FatJetType),
     # NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType),
     NTupleVariable("l2_softDrop_mass", lambda x: x.leg2.softDropMassCor, float),
+    NTupleVariable("l2_softDrop_mass_low", lambda x: x.leg2.softDrop_low, float),
+    NTupleVariable("l2_softDrop_mass_high", lambda x: x.leg2.softDrop_high, float),
     NTupleVariable("l2_softDrop_massBare", lambda x: x.leg2.softDropMassBare, float),
     NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
     NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass, float,"",-99,True),

@@ -90,8 +90,8 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-#selectedComponents = mcSamples+dataSamplesLNUJ
-selectedComponents = mcSamples
+#selectedComponents = mcSamples
+selectedComponents = dataSamplesLNUJ
 
 
 
@@ -117,7 +117,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 1
+test = 0
 if test==1:
     # test a single component, using a single thread.
 #    selectedComponents = [BulkGravToWWToWlepWhad_narrow_2000]
@@ -141,7 +141,7 @@ else:
     # full scale production
     # split samples in a smarter way
     from CMGTools.RootTools.samples.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 66, 3)  # means 70 ms per event, job to last 12h
+    configureSplittingFromTime(selectedComponents, 16, 6)  # means 70 ms per event, job to last 12h
     # print summary of components to process
     printSummary(selectedComponents)
 
