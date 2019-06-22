@@ -31,6 +31,31 @@ def autoAAA(selectedComponents,runOnlyRemoteSamples=False,forceAAA=False):
     else:
         return selectedComponents
 
+
+def runOnFNAL(selectedComponents,JSON):
+    newComp=[]
+    import re
+    from CMGTools.Production import changeComponentAccessMode
+    from CMGTools.Production.localityChecker import LocalityChecker
+
+    for comp in selectedComponents:
+        print comp.name
+        if comp.isData:
+            comp.json=JSON 
+        if len(comp.files)==0:
+            continue
+        #if it is data attach the local JSON file
+        if not hasattr(comp,'dataset'): continue
+        if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
+        if "/store/" not in comp.files[0]: continue
+        if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
+        changeComponentAccessMode.convertComponent(comp, "root://cms-xrd-global.cern.ch/%s")
+        if 'X509_USER_PROXY' not in os.environ:
+            raise RuntimeError, "X509_USER_PROXY not defined or not pointing to /afs"
+
+    return selectedComponents
+
+
 def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
     import PhysicsTools.HeppyCore.framework.config as cfg
     from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
@@ -65,8 +90,9 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-#selectedComponents = mcSamples+dataSamplesLNUJ
-selectedComponents =mcSamples+dataSamplesLNUJ
+#selectedComponents = mcSamples
+selectedComponents = dataSamplesLNUJ
+
 
 
 
@@ -91,7 +117,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 1
+test = 0
 if test==1:
     # test a single component, using a single thread.
 #    selectedComponents = [BulkGravToWWToWlepWhad_narrow_2000]
@@ -99,15 +125,15 @@ if test==1:
     selectedComponents = [WJetsToLNu_HT2500ToInf]
 #    selectedComponents = [BulkGravToZZToZhadZinv_narrow_1400]
     for c in selectedComponents:
-#        c.files = c.files[:1]
-        c.files = ['file:/tmp/bachtis/file.root']
+        c.files = c.files[:1]
+#        c.files = ['file:/tmp/bachtis/file.root']
         c.splitFactor = 1
 
 elif test==2:
     # test a single component, using a single thread.
     selectedComponents = [TTJets]
 elif test==3:
-    selectedComponents = [WJetsToLNu_HT2500toInf]
+    selectedComponents = [selectedComponents[0]]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
@@ -115,9 +141,9 @@ else:
     # full scale production
     # split samples in a smarter way
     from CMGTools.RootTools.samples.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 10, 3)  # means 40 ms per event, job to last 3h
+    configureSplittingFromTime(selectedComponents, 16, 6)  # means 70 ms per event, job to last 12h
     # print summary of components to process
     printSummary(selectedComponents)
 
-selectedComponents=autoAAA(selectedComponents)
+selectedComponents=runOnFNAL(selectedComponents,"$CMSSW_BASE/src/CMGTools/VVResonances/data/JSON2017.txt")
 config=autoConfig(selectedComponents,sequence)

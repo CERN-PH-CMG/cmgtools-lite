@@ -12,15 +12,13 @@ class LeptonIDOverloader( Analyzer ):
     def beginLoop(self, setup):
         super(LeptonIDOverloader,self).beginLoop(setup)
 
-
-    def heepID(self,lepton):
-
+    def heepID(self,lepton,electrons,tracks,packed):
         passId = self.heepIDNoIso(lepton)
         if not passId:
             return passId
         passIso = False
 #        if (self.handles['electrons'].isValid() and self.handles['lostTracks'].isValid() and self.handles['packed'].isValid()): ##Michalis -> For some reason this does not work in 94X
-        passIso = self.heepIDCalculator.iso(lepton.physObj, lepton.rho, self.handles['electrons'].product(), self.handles['lostTracks'].product(), self.handles['packed'].product())
+        passIso = self.heepIDCalculator.iso(lepton.physObj, lepton.rho, electrons, tracks,packed)
         return (passId and passIso)
 
     def declareHandles(self):
@@ -53,10 +51,12 @@ class LeptonIDOverloader( Analyzer ):
 
     def process(self, event):
         self.readCollections( event.input )
-
+        electrons = self.handles['electrons'].product()
+        lostTracks = self.handles['lostTracks'].product()
+        packed = self.handles['packed'].product()
         for lepton in event.selectedLeptons:
             if abs(lepton.pdgId())==11:
-                lepton.heepID = self.heepID(lepton)
+                lepton.heepID = self.heepID(lepton,electrons,lostTracks,packed)
                 lepton.heepIDNoIso = self.heepIDNoIso(lepton)
             else:
                 lepton.highPtID = self.muonIDHighPt(lepton)

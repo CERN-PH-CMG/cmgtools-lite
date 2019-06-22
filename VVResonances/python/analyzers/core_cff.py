@@ -355,6 +355,7 @@ vvAna = cfg.Analyzer(
     fDiscriminatorC = "pfDeepCSVJetTags:probc",
     fDiscriminatorL = "pfDeepCSVJetTags:probudsg",
     btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/DeepCSV_94XSF_V2_B_F.csv",
+    subjetBtagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/subjet_DeepCSV_94XSF_V4_B_F.csv",
     puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
 
 )
