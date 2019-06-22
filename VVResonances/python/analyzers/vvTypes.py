@@ -34,6 +34,10 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("tau2",   lambda x : x.userFloat('NjettinessAK8Puppi:tau2'), float),
     NTupleVariable("tau3",   lambda x : x.userFloat('NjettinessAK8Puppi:tau3'), float),
     NTupleVariable("tau4",   lambda x : x.userFloat('NjettinessAK8Puppi:tau4'), float),
+    NTupleVariable("N2b1",   lambda x : x.userFloat('ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2'), float),
+    NTupleVariable("N2b2",   lambda x : x.userFloat('ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2'), float),
+    NTupleVariable("N3b1",   lambda x : x.userFloat('ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3'), float),
+    NTupleVariable("N3b2",   lambda x : x.userFloat('ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3'), float),
     NTupleVariable("tau21_DDT", lambda x : tau21DDT(x), float),
     NTupleVariable("s1BTag",   lambda x : x.subJetTags[0], float),
     NTupleVariable("s2BTag",   lambda x : x.subJetTags[1], float),
@@ -49,7 +53,10 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2_hadronFlavour",   lambda x : x.subJet_hadronFlavour[1], int,"",-99,True),
     NTupleVariable("mergedVTruth",   lambda x : x.mergedTrue, int,"",-1,True),
     NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True),
-
+    NTupleVariable("s1_subJetBTagWeight0", lambda x : x.subJet_btagWeights0[0], float,"",-99,True),
+    NTupleVariable("s2_subjetBTagWeight0", lambda x : x.subJet_btagWeights0[1], float,"",-99,True),
+    NTupleVariable("s1_subJetBTagWeight1", lambda x : x.subJet_btagWeights1[0], float,"",-99,True),
+    NTupleVariable("s2_subjetBTagWeight1", lambda x : x.subJet_btagWeights1[1], float,"",-99,True),
 
 ])
 
@@ -78,6 +85,8 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2",  lambda x : x.leg2,FatJetType),
     # NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType),
     NTupleVariable("l2_softDrop_mass", lambda x: x.leg2.softDropMassCor, float),
+    NTupleVariable("l2_softDrop_mass_low", lambda x: x.leg2.softDrop_low, float),
+    NTupleVariable("l2_softDrop_mass_high", lambda x: x.leg2.softDrop_high, float),
     NTupleVariable("l2_softDrop_massBare", lambda x: x.leg2.softDropMassBare, float),
     NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
     NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass, float,"",-99,True),
