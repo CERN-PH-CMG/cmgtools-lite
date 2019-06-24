@@ -17,11 +17,11 @@ ttH)
     echo "echo 'Will read trees from $T'"
     # keep EOS as backup in case local cache is not complete
     echo $T | grep -q /eos || T="$T -P $T0"
-    CUTFILE="ttH-multilepton/qcd1l.txt"; ;;
+    CUTFILE="ttH-multilepton/lepton-fr/qcd1l.txt"; ;;
 susy*) echo "NOT UP TO DATE"; exit 1;;
 *) echo "You did not specify the analysis"; exit 1;;
 esac;
-BCORE=" --s2v --tree NanoAOD ttH-multilepton/mca-qcd1l-${YEAR}.txt ${CUTFILE} -P $T -l $L --AP "
+BCORE=" --s2v --tree NanoAOD ttH-multilepton/lepton-fr/mca-qcd1l-${YEAR}.txt ${CUTFILE} -P $T -l $L --AP "
 BCORE="${BCORE} -L ttH-multilepton/functionsTTH.cc   "; 
 BCORE="${BCORE} --Fs {P}/1_frFriends_v1"
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
@@ -43,27 +43,27 @@ case $trigger in
 Mu3_PFJet40)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}' -A 'entry point' recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt>45'  "; 
     if [[ "$YEAR" == "2017" ]]; then BCORE="${BCORE} --xf '(Single|Double)Muon_Run2017B.*' "; fi # trigger was missing in that run period
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu8)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}' -A 'entry point' recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu17)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}' -A 'entry point' recoptfortrigger 'LepGood_pt>17 && $conept > 25' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu20)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}' -A 'entry point' recoptfortrigger 'LepGood_pt>20 && $conept > 30' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 Mu27)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}' -A 'entry point' recoptfortrigger 'LepGood_pt>27 && $conept > 40' "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 #Mu50)
 #    BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}' -A 'entry point' recoptfortrigger 'LepGood_pt>50 && $conept > 75' "; 
-#    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+#    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
 #    ;;
 MuX_OR)
     if [[ "$YEAR" == "2016" ]] ; then
@@ -72,28 +72,28 @@ MuX_OR)
         BCORE="${BCORE} -E ^trigMu  -A 'entry point' conept '10 < $conept && $conept < 100' "; 
     fi;
     CONEPTVAR="ptJI90_mvaPt0${MVAWP}_coarsecomb"
-    PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw${trigger}_${YEAR}($conept,PV_npvsGood)' "
+    PUW="-L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'coneptw${trigger}_${YEAR}($conept,PV_npvsGood)' "
     ;;
 Ele8|Ele8_CaloIdM_TrackIdM_PFJet30)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_Ele8_CaloIdM_TrackIdM_PFJet30' -A 'entry point' recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle8_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puwEle8_${YEAR}(PV_npvsGood)' "
     ;;
 Ele17|Ele17_CaloIdM_TrackIdM_PFJet30)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_Ele17_CaloIdM_TrackIdM_PFJet30' -A 'entry point' recoptfortrigger 'LepGood_pt>17 && $conept > 25'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle17_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puwEle17_${YEAR}(PV_npvsGood)' "
     ;;
 Ele23|Ele23_CaloIdM_TrackIdM_PFJet30)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_Ele23_CaloIdM_TrackIdM_PFJet30' -A 'entry point' recoptfortrigger 'LepGood_pt>23 && $conept > 32'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwEle23_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puwEle23_${YEAR}(PV_npvsGood)' "
     ;;
 EleX_OR)
     BCORE="${BCORE} -E ^trigEl -A 'entry point' conept '15 < $conept && $conept < 100'  "; 
     CONEPTVAR="ptJI90_mvaPt0${MVAWP}_coarseelcomb"
-    PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw${trigger}_${YEAR}($conept,PV_npvsGood)' "
+    PUW="-L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'coneptw${trigger}_${YEAR}($conept,PV_npvsGood)' "
     ;;
 *)
     BCORE="${BCORE} -A 'entry point' trigger 'HLT_${trigger}'  "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
+    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
     ;;
 esac;
 
@@ -125,53 +125,53 @@ PLOTOPTS="--showRatio --maxRatioRange 0.0 1.99 --fixRatioRange  --legendColumns 
 
 case $what in
     nvtx)
-        echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE " 
+        echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE " 
         echo "echo; echo; ";
         echo "python ../tools/vertexWeightFriend.py _puw${trigger}_${YEAR} $PBASE/qcd1l_plots.root ";
         echo "echo; echo ' ---- Now you should put the normalization and weight into frPuReweight.cc defining a puw${trigger}_${YEAR} ----- ' ";
         ;;
     nvtx-closure)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
         ;;
     coneptw)
-        echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/make_fake_rates_xvars.txt --pdir $PBASE --sP ${CONEPTVAR}_nvtx $EWKONE " 
+        echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/lepton-fr/make_fake_rates_xvars.txt --pdir $PBASE --sP ${CONEPTVAR}_nvtx $EWKONE " 
         echo "echo; echo; ";
-        echo "python ttH-multilepton/frConePtWeights.py coneptw${trigger}_${YEAR} $PBASE/make_fake_rates_xvars.root ${CONEPTVAR}_nvtx  ";
+        echo "python ttH-multilepton/lepton-fr/frConePtWeights.py coneptw${trigger}_${YEAR} $PBASE/make_fake_rates_xvars.root ${CONEPTVAR}_nvtx  ";
         echo "echo; echo ' ---- Now you should put the normalization and weight into frPuReweight.cc defining a coneptw${trigger}_${YEAR} ----- ' ";
         ;;
     coneptw-closure)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/make_fake_rates_xvars.txt --pdir $PBASE --sP ${CONEPTVAR}_nvtx,$CONEPTVAR,nvtx $EWKONE " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/make_fake_rates_xvars.txt --pdir $PBASE --sP ${CONEPTVAR}_nvtx,$CONEPTVAR,nvtx $EWKONE " 
         ;;
     mc-yields)
         echo "python mcAnalysis.py -f -j 6 $BCORE $PUW ${EWKSPLIT} --sp 'QCD.*' --fom S/B --fom S/errSB -G " 
         ;;
     fit-*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit-/}  $PLOTOPTS " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit-/}  $PLOTOPTS " 
         ;;
     num-fit-*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit-/}  $PLOTOPTS -E num" 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit-/}  $PLOTOPTS -E num" 
         ;;
     num-mcshapes)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what ${EWKSPLIT/,data/} -E num --plotmode=nostack" 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what ${EWKSPLIT/,data/} -E num --plotmode=nostack" 
         ;;
     qcdflav-norm)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDNORM --showRatio $PLOTOPTS" 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what $QCDNORM --showRatio $PLOTOPTS" 
         ;;
     qcdflav-fit)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITEWK --preFitData ${what/flav-fit/}  $PLOTOPTS " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITEWK --preFitData ${what/flav-fit/}  $PLOTOPTS " 
         ;;
     flav-fit*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITQCD --preFitData ${what/flav-fit/}  $PLOTOPTS " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITQCD --preFitData ${what/flav-fit/}  $PLOTOPTS " 
         ;;
     flav3-fit*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITALL --preFitData ${what/flav3-fit/}  $PLOTOPTS " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITALL --preFitData ${what/flav3-fit/}  $PLOTOPTS " 
         ;;
     fakerates-*)
         fitVar=${what/fakerates-/}
         XVAR="ptJI90_mvaPt0${MVAWP}_coarselongbin"
         LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
         RANGES=" --showRatio  --ratioRange 0.00 2.99 "
-        STACK="python ttH-multilepton/stack_fake_rates_data.py "
+        STACK="python ttH-multilepton/lepton-fr/stack_fake_rates_data.py "
         ISCOMB=false
         ISWIDE=false
         case $lepton in  
@@ -197,7 +197,7 @@ case $what in
                            STACK="${STACK}  ${PBASE/EleX_Combined/Ele8}/fr_sub_eta_${E}.root:15-45"
                            STACK="${STACK}  ${PBASE/EleX_Combined/Ele17}/fr_sub_eta_${E}.root:25-100"
                            STACK="${STACK}  ${PBASE/EleX_Combined/Ele23}/fr_sub_eta_${E}.root:32-100"
-                           echo "python ttH-multilepton/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
+                           echo "python ttH-multilepton/lepton-fr/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
                        done;;
                    EleX_OR)
                        ISWIDE=true
@@ -236,7 +236,7 @@ case $what in
                            STACK="${STACK}  ${PBASE/MuX_Combined/Mu17}/fr_sub_eta_${E}.root:32-100"
                            STACK="${STACK}  ${PBASE/MuX_Combined/Mu20}/fr_sub_eta_${E}.root:32-100"
                            STACK="${STACK}  ${PBASE/MuX_Combined/Mu27}/fr_sub_eta_${E}.root:45-100"
-                           echo "python ttH-multilepton/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
+                           echo "python ttH-multilepton/lepton-fr/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
                        done;;
                    MuX_OR)
                        ISWIDE=true
@@ -244,7 +244,7 @@ case $what in
                        RANGES="${RANGES} --xcut 10 100 --xline 15 --xline 32 --xline 45 ";; 
                  esac;; # mu trigger
         esac; ## electron or muon
-        MCEFF="python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW $EWKONE  --groupBy cut ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt  "
+        MCEFF="python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW $EWKONE  --groupBy cut ttH-multilepton/lepton-fr/make_fake_rates_sels.txt ttH-multilepton/lepton-fr/make_fake_rates_xvars.txt  "
         MCEFF="$MCEFF --sp ${QCD}_red  "
         MCEFF="$MCEFF --sP ${NUM} --sP ${XVAR}  --sP $fitVar $fitVar  --ytitle 'Fake rate' "
         MCEFF="$MCEFF  " # ratio for fake rates
@@ -289,7 +289,7 @@ case $what in
         MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fqcd --algo=ifQCD "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_ifQCD.root --subSyst 1.0 $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_ifQCD.root --subSyst 1.0 $BG )"
-        STACK="python ttH-multilepton/stack_fake_rates_data.py $RANGES $LEGEND --comb-mode=midpoint" # :_fit
+        STACK="python ttH-multilepton/lepton-fr/stack_fake_rates_data.py $RANGES $LEGEND --comb-mode=midpoint" # :_fit
         PATT="${NUM}_vs_${XVAR}_${fitVar}_%s"
         for E in ${BARREL} ${ENDCAP}; do
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:${QCD}_red_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_ifQCD.root:$PATT:${QCD}_red_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:data_fit   )";

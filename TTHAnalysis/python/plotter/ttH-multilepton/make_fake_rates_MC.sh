@@ -30,7 +30,7 @@ susy)
 esac;
 
 
-BCORE=" --s2v --tree ${TREE} ttH-multilepton/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt"
+BCORE=" --s2v --tree ${TREE} ttH-multilepton/lepton-fr/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt"
 BCORE="${BCORE} -L ttH-multilepton/functionsTTH.cc"
 if [[ "$TREE" == "treeProducerSusyMultilepton" ]]; then
     BCORE="${BCORE} --mcc ttH-multilepton/validation/mcc-cmg_as_nanoaod.txt"
@@ -160,10 +160,10 @@ for WP in $WPs; do
 	    sVi*)    ptJI="ptJIMIX3";;
 	    sMi*)    ptJI="ptJIMIX4";;
 	esac
-        B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
+        B0="$BASE -P $T ttH-multilepton/lepton-fr/make_fake_rates_sels.txt ttH-multilepton/lepton-fr/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
         #B0="$B0 --legend=TR --showRatio --ratioRange 0.41 1.59   --yrange 0 0.20 " 
         B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99   --yrange 0 0.35 " 
-	B1="${PLOTTER} -P $T ttH-multilepton/make_fake_rates_plots.txt"
+	B1="${PLOTTER} -P $T ttH-multilepton/lepton-fr/make_fake_rates_plots.txt"
         B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
         JetDen="-A pt20 mll 'nLepGood == 1'"
         CommonDen="${JetDen} ${SelDen}"
