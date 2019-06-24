@@ -1,0 +1,138 @@
+# vim: syntax=sh
+QCDMu_red  : QCD_Pt20to30_Mu5  : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15); FillColor=ROOT.kPink-2, Label="QCD\#mu"
+QCDMu_red  : QCD_Pt30to50_Mu5  : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15); FillColor=ROOT.kPink-2, Label="QCD\#mu"
+QCDMu_red  : QCD_Pt50to80_Mu5  : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15); FillColor=ROOT.kPink-2, Label="QCD\#mu"
+QCDMu_red  : QCD_Pt80to120_Mu5 : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15); FillColor=ROOT.kPink-2, Label="QCD\#mu"
+QCDMu_red  : QCD_Pt120to170_Mu5: xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15); FillColor=ROOT.kPink-2, Label="QCD\#mu"
+
+QCDMu_bjets: QCD_Pt20to30_Mu5  : xsec : LepGood_genPartFlav == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
+QCDMu_bjets: QCD_Pt30to50_Mu5  : xsec : LepGood_genPartFlav == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
+QCDMu_bjets: QCD_Pt50to80_Mu5  : xsec : LepGood_genPartFlav == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
+QCDMu_bjets: QCD_Pt80to120_Mu5 : xsec : LepGood_genPartFlav == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
+QCDMu_bjets: QCD_Pt120to170_Mu5: xsec : LepGood_genPartFlav == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
+QCDMu_cjets: QCD_Pt20to30_Mu5  : xsec : LepGood_genPartFlav == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
+QCDMu_cjets: QCD_Pt30to50_Mu5  : xsec : LepGood_genPartFlav == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
+QCDMu_cjets: QCD_Pt50to80_Mu5  : xsec : LepGood_genPartFlav == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
+QCDMu_cjets: QCD_Pt80to120_Mu5 : xsec : LepGood_genPartFlav == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
+QCDMu_cjets: QCD_Pt120to170_Mu5: xsec : LepGood_genPartFlav == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
+QCDMu_ljets: QCD_Pt20to30_Mu5  : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
+QCDMu_ljets: QCD_Pt30to50_Mu5  : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
+QCDMu_ljets: QCD_Pt50to80_Mu5  : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
+QCDMu_ljets: QCD_Pt80to120_Mu5 : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
+QCDMu_ljets: QCD_Pt120to170_Mu5: xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
+
+QCDEl_red: QCD_Pt20to30_EMEnriched  : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt30to50_EMEnriched  : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt50to80_EMEnriched  : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt80to120_EMEnriched : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt120to170_EMEnriched: xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt20to30_bcToE       : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt30to80_bcToE       : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt80to170_bcToE      : xsec : (LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15) ; FillColor=ROOT.kPink-2, Label="QCDe"
+
+QCDEl_redNC: QCD_Pt20to30_EMEnriched  : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt30to50_EMEnriched  : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt50to80_EMEnriched  : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt80to120_EMEnriched : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt120to170_EMEnriched: xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt20to30_bcToE       : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt30to80_bcToE       : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt80to170_bcToE      : xsec : LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_conv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt120to170_EMEnriched : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt20to30_bcToE        : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt30to80_bcToE        : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt80to170_bcToE       : xsec : LepGood_genPartFlav == 22 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+
+
+
+QCDEl_bjets: QCD_Pt20to30_bcToE   : xsec : LepGood_genPartFlav == 5 ; FillColor=ROOT.kViolet+1, Label="QCDe\, b\#rightarrowl"
+QCDEl_bjets: QCD_Pt30to80_bcToE   : xsec : LepGood_genPartFlav == 5 ; FillColor=ROOT.kViolet+1, Label="QCDe\, b\#rightarrowl"
+QCDEl_bjets: QCD_Pt80to170_bcToE  : xsec : LepGood_genPartFlav == 5 ; FillColor=ROOT.kViolet+1, Label="QCDe\, b\#rightarrowl"
+QCDEl_cjets: QCD_Pt20to30_bcToE   : xsec : LepGood_genPartFlav == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl"
+QCDEl_cjets: QCD_Pt30to80_bcToE   : xsec : LepGood_genPartFlav == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl"
+QCDEl_cjets: QCD_Pt80to170_bcToE  : xsec : LepGood_genPartFlav == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl"
+
+QCDEl_ljets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt120to170_EMEnriched : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt20to30_bcToE        : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt30to80_bcToE        : xsec : LepGood_genPartFlav != 5 && LepGood_genPartFlav != 4 && LepGood_genPartFlav != 1 && LepGood_genPartFlav != 15 && LepGood_genPartFlav != 22; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+
+QCDEl_gjets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt120to170_EMEnriched : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt20to30_bcToE        : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt30to80_bcToE        : xsec : LepGood_genPartFlav == 22; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+
+
+WJets:  WJetsToLNu_LO         : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="W+jets", FillColor=ROOT.kAzure+1
+DYJets: DYJetsToLL_M10to50_LO : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Z+jets", FillColor=ROOT.kAzure+3
+DYJets: DYJetsToLL_M50_LO     : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Z+jets", FillColor=ROOT.kAzure+3 
+VJets:  WJetsToLNu_LO         : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="V+jets", FillColor=ROOT.kAzure+2
+VJets:  DYJetsToLL_M10to50_LO : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="V+jets", FillColor=ROOT.kAzure+2
+VJets:  DYJetsToLL_M50_LO     : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="V+jets", FillColor=ROOT.kAzure+2 
+Top:    TTSemi_pow            : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Top", FillColor=ROOT.kOrange+3
+Top:    TTLep_pow             : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Top", FillColor=ROOT.kOrange+3
+Top:    T_tch                 : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Top", FillColor=ROOT.kOrange+3
+Top:    TBar_tch              : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Top", FillColor=ROOT.kOrange+3
+Top:    T_tWch_noFullyHad     : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Top", FillColor=ROOT.kOrange+3
+Top:    TBar_tWch_noFullyHad  : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Top", FillColor=ROOT.kOrange+3
+EWK:  WJetsToLNu_LO           : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  DYJetsToLL_M10to50_LO   : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  DYJetsToLL_M50_LO       : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  TTSemi_pow              : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  TTLep_pow               : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  T_tch                   : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  TBar_tch                : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  T_tWch_noFullyHad       : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK:  TBar_tWch_noFullyHad    : xsec : (LepGood_genPartFlav == 1 || LepGood_genPartFlav == 15) ; Label="Prompt", FillColor=ROOT.kAzure+1
+
+## Options only
+QCDMu_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"
+QCDEl_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"
+data_sub         : - ; FillColor=ROOT.kGray+1, Label="Data - EWK"
+data_sub_prefit  : - ; FillColor=ROOT.kAzure+1, Label="(stat only)"
+data_sub_syst         : - ; FillColor=ROOT.kGray+1, Label="Data - EWK"
+data_sub_syst_prefit  : - ; FillColor=ROOT.kViolet+1, Label="Data - EWK"
+data_prefit      : - ; FillColor=ROOT.kBlack,   Label="Data"
+total            : - ; FillColor=ROOT.kBlue+1,  Label="QCD+EWK fit"
+total_prefit     : - ; FillColor=ROOT.kGreen+2, Label="QCD+EWK MC"
+data_fqcd        : - ; FillColor=ROOT.kGray+2,  Label="Data unfolded"
+data_fit         : - ; FillColor=ROOT.kGreen+2, Label="QCD sim fit"
+data_prefit      : - ; FillColor=ROOT.kBlack,   Label="Data"
+
+QCDMu_red_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Up"
+QCDEl_red_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Up"
+QCDEl_red_lDn : - ; FillColor=ROOT.kBlue+1, Label="Lin Up"
+QCDMu_red_lDn : - ; FillColor=ROOT.kBlue+1, Label="Lin Up"
+EWK_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Down"
+EWK_lDn : - ; FillColor=ROOT.kBlue+1, Label="Lin Down"
+
+QCDMu_red_qUp : - ; FillColor=ROOT.kRed-7, Label="Quad Up"
+QCDMu_red_qDn : - ; FillColor=ROOT.kRed+1, Label="Quad Up"
+QCDEl_red_qUp : - ; FillColor=ROOT.kRed-7, Label="Quad Up"
+QCDEl_red_qDn : - ; FillColor=ROOT.kRed+1, Label="Quad Up"
+EWK_qUp : - ; FillColor=ROOT.kRed-7, Label="Quad Down"
+EWK_qDn : - ; FillColor=ROOT.kRed+1, Label="Quad Down"
+
+QCDMu_red_sUp : - ; FillColor=ROOT.kGreen-0, Label="Stretch Up"
+QCDMu_red_sDn : - ; FillColor=ROOT.kGreen+3, Label="Stretch Up"
+QCDEl_red_sUp : - ; FillColor=ROOT.kGreen-0, Label="Stretch Up"
+QCDEl_red_sDn : - ; FillColor=ROOT.kGreen+3, Label="Stretch Up"
+EWK_sUp : - ; FillColor=ROOT.kGreen-0, Label="Stretch Down"
+EWK_sDn : - ; FillColor=ROOT.kGreen+3, Label="Stretch Down"
+
+QCDMu_red_pass : - ; FillColor=ROOT.kGreen+2, Label="Pass"
+QCDMu_red_fail : - ; FillColor=ROOT.kRed+0, Label="Fail"
+QCDEl_red_pass : - ; FillColor=ROOT.kGreen+2, Label="Pass"
+QCDEl_red_fail : - ; FillColor=ROOT.kRed+0, Label="Fail"
+EWK_pass : - ; FillColor=ROOT.kGreen+2, Label="Pass"
+EWK_fail : - ; FillColor=ROOT.kRed+0, Label="Fail"

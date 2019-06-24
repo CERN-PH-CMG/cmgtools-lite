@@ -12,13 +12,13 @@ from array import *
 def readGraphs(filename,pattern,keys):
     ret = {}
     slicefile = ROOT.TFile.Open(filename)
-    if not slicefile: raise RuntimeError, "Cannot open "+filename
+    if not slicefile: raise RuntimeError("Cannot open "+filename)
     for key in keys:
         plotname = pattern % key
         plot = slicefile.Get(plotname)
         if not plot: 
             slicefile.ls()
-            raise RuntimeError, "Cannot find "+plotname+" in "+filename
+            raise RuntimeError("Cannot find "+plotname+" in "+filename)
         ret[key] = plot.Clone()
     slicefile.Close()
     return ret
@@ -59,21 +59,34 @@ def combine(graphs,mode):
 
         
 
-def attrs(filename,process):
-    if "globalFit"  in filename:
-        if "QCD"      in process: return { 'Label':'QCD MC, cut',     'Color':ROOT.kPink-5,  '#':1, 'key':'QCD_cut'  }
-        if "DY"       in process: return { 'Label':'DY MC, cut',      'Color':ROOT.kPink-5,  '#':1, 'key':'DY_cut'  }
-        if "data_sub" in process: return { 'Label':'Data, cut & sub', 'Color':ROOT.kAzure+1, '#':2, 'key':'data_sub' }
-    elif "fitSimND" in filename or "fitGlobalSimND" in filename:
-        if "QCD"      in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2,  '#':0, 'key':'QCD'       }
-        if "DY"       in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,    '#':0, 'key':'DY'       }
-        if "data_fit" in process: return { 'Label':'Data, sim. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
-    elif "fQCD" in filename:
-        if "QCD"       in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2, '#':0, 'key':'QCD'       }
-        if "DY"        in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,   '#':0, 'key':'DY'       }
-        if "data_fqcd" in process: return { 'Label':'Data, unfolded', 'Color':ROOT.kGray+2, '#':4, 'key':'data_fqcd' }
-    else: raise RuntimeError, "No idea of the file"
-    raise RuntimeError, "No idea of the process"
+def attrs(filename,process, options):
+    if options.compStyle == 'default':
+        if "globalFit"  in filename:
+            if "QCD"      in process: return { 'Label':'QCD MC, cut',     'Color':ROOT.kPink-5,  '#':1, 'key':'QCD_cut'  }
+            if "DY"       in process: return { 'Label':'DY MC, cut',      'Color':ROOT.kPink-5,  '#':1, 'key':'DY_cut'  }
+            if "data_sub" in process: return { 'Label':'Data, cut & sub', 'Color':ROOT.kAzure+1, '#':2, 'key':'data_sub' }
+        elif "fitSimND" in filename or "fitGlobalSimND" in filename:
+            if "QCD"      in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2,  '#':0, 'key':'QCD'       }
+            if "DY"       in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,    '#':0, 'key':'DY'       }
+            if "data_fit" in process: return { 'Label':'Data, sim. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
+        elif "fitSemiParND" in filename:
+            if "QCD"      in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2,  '#':0, 'key':'QCD'       }
+            if "DY"       in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,    '#':0, 'key':'DY'       }
+            if "data_fit" in process: return { 'Label':'Data, fit',      'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
+        elif "fQCD" in filename:
+            if "QCD"       in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2, '#':0, 'key':'QCD'       }
+            if "DY"        in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,   '#':0, 'key':'DY'       }
+            if "data_fqcd" in process: return { 'Label':'Data, unfolded', 'Color':ROOT.kGray+2, '#':4, 'key':'data_fqcd' }
+        else: raise RuntimeError("No idea of the file: %s" % filename)
+        raise RuntimeError("No idea of the process: %s" % process)
+    elif options.compStyle == 'fitcomp':
+        if "QCD"  in process: return { 'Label':'QCD MC', 'Color':ROOT.kPink-2,  '#':0, 'key':'QCD' }
+        if "data" in process:
+            if  "globalFit"     in filename: return { 'Label':'Data, cut & sub',  'Color':ROOT.kGray+2,  '#':2, 'key':'data_sub' }
+            elif "fitSimND"     in filename: return { 'Label':'Data, templ. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
+            elif "fitSemiParND" in filename: return { 'Label':'Data, semip. fit', 'Color':ROOT.kAzure+2, '#':4, 'key':'data_fit'  }
+            else: raise RuntimeError("No idea of the file: %s" % filename)
+        raise RuntimeError("No idea of the process: %s" % process)
 
 def setattrs(graph, opts, xtitle):
     graph.SetLineColor(opts['Color'])
@@ -106,6 +119,8 @@ if __name__ == "__main__":
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
     parser.add_option("--comb-mode", dest="combMode", default="default", help="Comb. mode")
+    parser.add_option("--comp-style", dest="compStyle", default="default", help="Comparison style")
+    parser.add_option("--shiftPoints", dest="shiftPoints", type="float", default=0.4, help="Shift x coordinates of points by this fraction of the error bar in thew plot to make them more visible when stacking.")
     (options, args) = parser.parse_args()
     if not options.out: raise RuntimeError
     outdir = os.path.basename(options.out)
@@ -123,7 +138,7 @@ if __name__ == "__main__":
         processes = processes.split(",")
         graphs = readGraphs(filename, pattern, processes)
         for p in processes:
-            opts = attrs(filename, p)
+            opts = attrs(filename, p, options)
             setattrs(graphs[p], opts, options.xtitle)
             alleffs.append( ( opts['Label'], graphs[p] ) )
             graphs[p].order = opts['#']
