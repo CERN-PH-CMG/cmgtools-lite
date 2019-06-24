@@ -32,7 +32,7 @@ def addMCEfficiencyOptions(parser):
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
 
 
-def doLegend(rocs,options,textSize=0.035):
+def doLegend(rocs,options,textSize=0.035,header=None):
         lwidth = options.legendWidth
         if options.legend == "TR":
             (x1,y1,x2,y2) = (.93-lwidth, .98 - 1.2*textSize*max(len(rocs),3), .93, .98)
@@ -45,6 +45,7 @@ def doLegend(rocs,options,textSize=0.035):
         leg.SetShadowColor(0)
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
+        if header: leg.SetHeader(header.replace("\#", "#"))       
         for key,val in rocs:
             leg.AddEntry(val, key, "LP")
         leg.Draw()
@@ -126,7 +127,7 @@ def shiftEffsX(effs, amount=0.4):
         shiftedEffs.append((k,gc))
     return shiftedEffs
 
-def stackEffs(outname,x,effs,options):
+def stackEffs(outname,x,effs,options,legHeader=None):
     if effs[0][1].ClassName() == "TProfile2D": 
         return stackInXYSlices(outname,x,effs,options)
     if effs[0][1].ClassName() != "TGraphAsymmErrors": 
@@ -190,7 +191,7 @@ def stackEffs(outname,x,effs,options):
     for x in options.xlines:
         liner.DrawLine(x, frame.GetYaxis().GetXmin(), x, frame.GetYaxis().GetXmax())
 
-    leg = doLegend(effs,options,textSize=options.fontsize)
+    leg = doLegend(effs,options,textSize=options.fontsize,header=legHeader)
     if doRatio:
         p2.cd()
         keepme = doEffRatio(x,effs,frame,options)

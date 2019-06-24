@@ -677,7 +677,7 @@ class MCAnalysis:
             print "-"*((fmtlen+1)*len(table)+clen)
             for (cut,row) in fmttable:
                 print cfmt % cut,
-                print " ".join(row)
+                print " ".join(row),
                 print ""
         elif self._options.txtfmt in ("tsv","csv","dsv","ssv","md","jupyter"):
             sep = { 'tsv':"\t", 'csv':",", 'dsv':';', 'ssv':' ', 'md':' | ', 'jupyter':' | ' }[self._options.txtfmt]

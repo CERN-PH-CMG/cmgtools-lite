@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #from mcAnalysis import *
 from CMGTools.TTHAnalysis.plotter.mcEfficiencies import *
-import itertools
+import itertools, sys, os
+from math import sqrt, hypot, log
 
 def _h1NormWithError(h,normSyst):
     y = h.Integral()
@@ -35,7 +36,6 @@ def addStretchBands(hwn,amplitude,fineSlices=100,namePattern="{name}_stretch", n
     ytot = ref.Integral()
     if (ytot == 0): return 
     ax = ref.GetXaxis() 
-    xmin, xmax = ax.GetXmin(), ax.GetXmax()
     hi = ref.Clone(); hi.SetDirectory(None)
     lo = ref.Clone(); lo.SetDirectory(None)
     hi.Reset(); lo.Reset()
