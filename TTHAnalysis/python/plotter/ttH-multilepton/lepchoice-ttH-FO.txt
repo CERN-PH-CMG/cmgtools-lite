@@ -13,7 +13,7 @@ LepGood4_(\w+) : LepGood_\1[iLepFO_Recl[3]]; AlsoData
 nLepFO\b : nLepFO_Recl; AlsoData
 nLepTight\b : nLepTight_Recl; AlsoData
 nTauFO\b : nTauSel_Recl; AlsoData
-nTauTight\b : nTauSel_Recl_isTauTight; AlsoData
+nTauTight\b : Sum$(TauSel_Recl_idMVAoldDMdR032017v2>=4); AlsoData
 nJet25\b: nJet25_Recl; AlsoData
 htJet25j\b: htJet25j_Recl; AlsoData
 mhtJet25\b: mhtJet25_Recl; AlsoData
@@ -31,6 +31,7 @@ nBJetTight40\b: nBJetTight40_Recl; AlsoData
 #minMllAFOS\b: minMllAFOS_Recl; AlsoData
 #minMllAFSS\b: minMllAFSS_Recl; AlsoData
 #minMllSFOS\b: minMllSFOS_Recl; AlsoData
+met_pt\b: MET_pt; AlsoData
 dTakingEra\b : if3(isData,(run>=275657)+(run>=276315)+(run>=276831)+(run>=277772)+(run>=278820)+(run>=280919),-1); AlsoData # 2016B==0,C,D,E,F,G,H
 elLooseUnc_2lss_up\b : leptonSF_ttH_var(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2,1,0)*leptonSF_ttH_var(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2,1,0)
 elLooseUnc_2lss_dn\b : leptonSF_ttH_var(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2,-1,0)*leptonSF_ttH_var(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2,-1,0)
