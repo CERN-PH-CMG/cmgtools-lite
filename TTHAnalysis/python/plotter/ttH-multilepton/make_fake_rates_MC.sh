@@ -8,9 +8,18 @@ ttH)
     YEAR=$1; shift; 
     case $YEAR in 2016) L=35.9;; 2017) L=41.5;; 2018) L=59.7;; esac
     T=/eos/cms/store/cmst3/group/tthlep/gpetrucc/TREES_ttH_FR_nano_v5/$YEAR
+    test -d /tmp/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/tmp/$USER/TREES_ttH_FR_nano_v5/$YEAR -P $T"
+    test -d /data/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/data/$USER/TREES_ttH_FR_nano_v5/$YEAR -P $T"
     #hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_94X_FR_240518
     #hostname | grep -q cmsphys10 && T=/data/g/gpetrucc/TREES_94X_FR_240518
-    PBASE="plots/94X/${ANALYSIS}/lepMVA/v1.0-dev/fr-mc/$YEAR"
+    PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.0/fr-mc/$YEAR"
+    TREE="NanoAOD";
+    ;;
+old_ttH)
+    YEAR=2017;
+    T=/eos/cms/store/cmst3/group/tthlep/gpetrucc/TREES_94X_FR_240518
+    PBASE="plots/104X/ttH/lepMVA/dev-v1.1/fr-mc/$YEAR"
+    TREE="treeProducerSusyMultilepton";
     ;;
 susy) 
     echo "NOT UP TO DATE"; exit 1; 
@@ -21,7 +30,15 @@ susy)
 esac;
 
 
-BCORE=" --s2v --tree NanoAOD ttH-multilepton/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt"
+BCORE=" --s2v --tree ${TREE} ttH-multilepton/lepton-fr/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt"
+BCORE="${BCORE} -L ttH-multilepton/functionsTTH.cc"
+if [[ "$TREE" == "treeProducerSusyMultilepton" ]]; then
+    BCORE="${BCORE} --mcc ttH-multilepton/validation/mcc-cmg_as_nanoaod.txt"
+    BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
+else
+    BCORE="${BCORE} --Fs {P}/1_frFriends_v1"
+    BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
+fi
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'   "
 PLOTTER="python mcPlots.py $BCORE   "
 
@@ -34,45 +51,82 @@ if [[ "$2" == "--recoil" ]]; then
     RECOIL_VALUE="$4"
 fi;
 
-if [[ "$*" == "" ]]; then WPs="075ib1f30E2ptc30"; else WPs="$1"; fi;
+if [[ "$*" == "" ]]; then WPs="090iv01f60E3"; else WPs="$1"; fi;
 for WP in $WPs; do
-        MuIdDen=0; EleRecoPt=7; MuRecoPt=5; AwayJetPt=30; EleTC=0;
+        MuIdDen=0; EleRecoPt=7; MuRecoPt=5; AwayJetPt=30; EleTC=0; IDEMu=1
         SIP8="LepGood_sip3d < 8"; SIP4="LepGood_sip3d < 4"
-        VCSVT="LepGood_jetBTagCSV < 0.9535"
-        VCSVM="LepGood_jetBTagCSV < 0.8484"
-        VCSVL="LepGood_jetBTagCSV < 0.5426"
-        VCSVVL="LepGood_jetBTagCSV < 0.300"
-        VDCSVT="LepGood_jetBTagDeepCSV < 0.8001"
-        VDCSVM="LepGood_jetBTagDeepCSV < 0.4941"
-        VDCSVL="LepGood_jetBTagDeepCSV < 0.1522"
-        VDCSVVL="LepGood_jetBTagDeepCSV < 0.07"
-        VDCSVXL="LepGood_jetBTagDeepCSV < 0.05"
-        PTF30="LepGood_jetPtRatiov2 > 0.3"
-	ELEMVAPRESEL="(abs(LepGood_pdgId)!=11 || abs(LepGood_eta)<1.479 || LepGood_mvaIdSpring16GP>0.0)"
-	ELEMVAPRESEL2="(abs(LepGood_pdgId)!=11 || (abs(LepGood_eta)<1.479 && LepGood_mvaIdSpring16GP>0.0) || (abs(LepGood_eta)>1.479 && LepGood_mvaIdSpring16GP>0.3))"
-	OLDTRIGGERS="((abs(LepGood_pdgId)!=11 || HLT_BIT_HLT_Ele12_CaloIdM_TrackIdM_PFJet30_v) && (abs(LepGood_pdgId)!=13 || (HLT_FR_Mu8 && LepGood_pt<20) || (HLT_FR_Mu17 && LepGood_pt>=20)))"
+        case $YEAR in 
+            2016) # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
+                VDCSVT="LepGood_jetBTagDeepCSV < 0.8953"
+                VDCSVM="LepGood_jetBTagDeepCSV < 0.6321"
+                VDCSVL="LepGood_jetBTagDeepCSV < 0.2217"
+                VDCSVVL="LepGood_jetBTagDeepCSV < 0.07" ## ttH-specific
+                VDFT="LepGood_jetBTagDeepFlav < 0.7221 "
+                VDFM="LepGood_jetBTagDeepFlav < 0.3093"
+                VDFL="LepGood_jetBTagDeepFlav < 0.0614"
+                ;;
+            2017) # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+                VDCSVT="LepGood_jetBTagDeepCSV < 0.8001"
+                VDCSVM="LepGood_jetBTagDeepCSV < 0.4941"
+                VDCSVL="LepGood_jetBTagDeepCSV < 0.1522"
+                VDCSVVL="LepGood_jetBTagDeepCSV < 0.07" ## ttH-specific
+                VDFT="LepGood_jetBTagDeepFlav < 0.7489"
+                VDFM="LepGood_jetBTagDeepFlav < 0.3033"
+                VDFL="LepGood_jetBTagDeepFlav < 0.0521"
+                ;;
+            2018) # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+                VDCSVT="LepGood_jetBTagDeepCSV < 0.7527"
+                VDCSVM="LepGood_jetBTagDeepCSV < 0.4184"
+                VDCSVL="LepGood_jetBTagDeepCSV < 0.1241"
+                VDCSVVL="LepGood_jetBTagDeepCSV < 0.07" ## ttH-specific
+                VDFT="LepGood_jetBTagDeepFlav < 0.7264"
+                VDFM="LepGood_jetBTagDeepFlav < 0.2770"
+                VDFL="LepGood_jetBTagDeepFlav < 0.0494"
+                ;;
+        esac
+        PTF30="1/(1+LepGood_jetRelIso) > 0.3"
 	VETOCONVERSIONS="LepGood_mcPromptGamma==0"
         case $WP in 
             000*) WNUM="0.00" ;; 030*) WNUM="0.30" ;; 060*) WNUM="0.60" ;;
             075*) WNUM="0.75" ;; 080*) WNUM="0.80" ;; 085*) WNUM="0.85" ;;  090*) WNUM="0.90" ;;
 	    sM*) WNUM="if3(abs(LepGood_pdgId)==13,-0.2,0.5)";; sV*) WNUM="if3(abs(LepGood_pdgId)==13,0.45,0.75)";;
         esac
-        case $WP in # 090iv30f50E2
+        case $WP in
             0??)     SelDen="-A pt20 den '$SIP8'"; MuIdDen=1 ; Num="mvaPt_$WP" ; XVar="mvaPt${WP}";;
             0??i)    SelDen="-A pt20 den '$SIP8'"; Num="mvaPt_$WP" ; XVar="mvaPt${WP}";; 
-            0??iv00*) SelDen="-A pt20 den '$SIP8 && $VDCSVM && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $VDCSVL  && LepGood_segmentCompatibility > 0.3) || (abs(LepGood_pdgId)==11 && $VDCSVL))'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";;
-            0??iv01*) SelDen="-A pt20 den '$SIP8 && $VDCSVM && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $VDCSVVL && LepGood_segmentCompatibility > 0.3) || (abs(LepGood_pdgId)==11 && $VDCSVVL && LepGood_mvaIdFall17noIso > +0.5))'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";;
-	    RA5*)    SelDen="-A pt20 den '$SIP4'"; MuIdDen=1 ; Num="ra5_tight"; XVar="${WP}";;
+            # This below was the 2017 version
+            #0??ov010*) SelDen="-A pt20 den '$SIP8 && $VDCSVM && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $VDCSVVL && LepGood_segmentComp > 0.3) || (abs(LepGood_pdgId)==11 && $VDCSVVL && LepGood_mvaIdFall17noIso > +0.5))'"; Num="mvaPt_${WP%%o*}"i; XVar="mvaPt${WP%%o*}";;
+
+            0??v00*) SelDen="-A pt20 den '$SIP8 && $VDFM'"; MuIdDen=1 ; Num="mvaPt_${WP%%v*}"i; XVar="mvaPt${WP%%v*}";;
+            0??iv00*) SelDen="-A pt20 den '$SIP8 && $VDFM'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";;
+            0??iv01*) SelDen="-A pt20 den '$SIP8 && $VDFM && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $VDFL) || (abs(LepGood_pdgId)==11 && $VDFL))'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";;
+            0??iv070*) VSMOOTH="LepGood_jetBTagDeepFlav < smoothBFlav(0.9*LepGood_pt*(1+LepGood_jetRelIso), 20, 45, year)";
+                       SelDen="-A pt20 den '$SIP8 && $VDFM && PV_ndof > 100 && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $VSMOOTH) || (abs(LepGood_pdgId)==11 && $VSMOOTH))'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";; 
+            0??iv08WP80*) VSMOOTH="LepGood_jetBTagDeepFlav < smoothBFlav(0.9*LepGood_pt*(1+LepGood_jetRelIso), 20, 45, year)";
+                       SelDen="-A pt20 den '$SIP8 && $VDFM && PV_ndof > 100 && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $VSMOOTH) || (abs(LepGood_pdgId)==11 && LepGood_mvaFall17V2noIso_WP80))'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";; 
+            0??iRun2v1.0*) 
+                       IDEmu="LepGood_idEmu3"
+                       MUEXTRA="LepGood_jetBTagDeepFlav < smoothBFlav(0.9*LepGood_pt*(1+LepGood_jetRelIso), 20, 45, year) && LepGood_jetRelIso < 0.50";
+                       ELEXTRA="LepGood_mvaFall17V2noIso_WP80 && LepGood_jetRelIso < 0.70"
+                       SelDen="-A pt20 den '$SIP8 && $VDFM && PV_ndof > 100 && (LepGood_mvaTTH > $WNUM || (abs(LepGood_pdgId)==13 && $MUEXTRA) || (abs(LepGood_pdgId)==11 && $ELEXTRA))'"; Num="mvaPt_${WP%%i*}"i; XVar="mvaPt${WP%%i*}";; 
+
+ 	    RA5*)    SelDen="-A pt20 den '$SIP4'"; MuIdDen=1 ; Num="ra5_tight"; XVar="${WP}";;
 	    RA7*)    SelDen="-A pt20 den '$SIP4 && met_pt<20 && mt_2(LepGood_pt,LepGood_phi,met_pt,met_phi)<20'"; MuIdDen=1 ; MuRecoPt=10; EleRecoPt=10; AwayJetPt=40; Num="ra7_tight"; XVar="${WP}";;
 	    s?i*)   SelDen="-A pt20 den '$SIP8'"; Num="mvaSusy_${WP}" ; XVar="mvaSusy_${WP}";;
         esac
         case $WP in
-            *f30*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetPtRatiov2 > 0.30)' " ;;
-            *f40*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetPtRatiov2 > 0.40)' " ;;
-            *f45*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetPtRatiov2 > 0.45)' " ;;
-            *f50*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetPtRatiov2 > 0.50)' " ;;
-            *f60*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetPtRatiov2 > 0.60)' " ;;
-            *f65*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetPtRatiov2 > 0.65)' " ;;
+            *f30*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || 1/(1+LepGood_jetRelIso) > 0.30)' " ;;
+            *f40*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || 1/(1+LepGood_jetRelIso) > 0.40)' " ;;
+            *f45*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || 1/(1+LepGood_jetRelIso) > 0.45)' " ;;
+            *f50*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || 1/(1+LepGood_jetRelIso) > 0.50)' " ;;
+            *f60*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || 1/(1+LepGood_jetRelIso) > 0.60)' " ;;
+            *f65*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || 1/(1+LepGood_jetRelIso) > 0.65)' " ;;
+            *j40*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetRelIso < 0.40)' " ;;
+            *j50*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetRelIso < 0.50)' " ;;
+            *j60*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetRelIso < 0.60)' " ;;
+            *j70*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetRelIso < 0.70)' " ;;
+            *j80*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetRelIso < 0.80)' " ;;
+            *j90*) SelDen="$SelDen -A pt20 ptfden '(LepGood_mvaTTH > $WNUM || LepGood_jetRelIso < 0.90)' " ;;
         esac
 	case $WP in
 	    *X0*) Num="${Num%%X*}"; XVar="${XVar%%X*}";;
@@ -86,13 +140,9 @@ for WP in $WPs; do
 	    *X5*) SelDen="$SelDen -A pt20 vcsvle '(LepGood_mvaSUSY > ${WNUM} && LepGood_mediumMuonId>0) || (${VCSVL} && ${ELEMVAPRESEL} && $PTF30)'"; Num="${Num%%X*}"; XVar="${XVar%%X*}";;
 	esac
         case $WP in
-            *E)  SelDen="$SelDen -A pt20 eidden LepGood_idEmu "; XVar="${XVar%%E*}";;
-            *Eptc30) SelDen="$SelDen -A pt20 eidden '(abs(LepGood_pdgId) == 13 || LepGood_idEmu || LepGood_pt*if3(LepGood_mvaTTH>${WNUM}, 1.0, 0.90/LepGood_jetPtRatiov2) < 30)'"; XVar="${XVar%%E*}";;
-            *E2) SelDen="$SelDen -A pt20 eidden LepGood_idEmu2"; Num="${Num%%E*}"; XVar="${XVar%%E*}";;
-            *E2ptc30) SelDen="$SelDen -A pt20 eidden '(abs(LepGood_pdgId) == 13 || LepGood_idEmu2 || LepGood_pt*if3(LepGood_mvaTTH>${WNUM}, 1.0, 0.90/LepGood_jetPtRatiov2) < 30)'"; XVar="${XVar%%E*}";;
-            *E2b) SelDen="$SelDen -A pt20 eidden 'LepGood_idEmu2 && LepGood_mvaIdSpring16HZZ > -0.2'"; Num="${Num%%E*}"; XVar="${XVar%%E*}";;
-            *E3) SelDen="$SelDen -A pt20 eidden LepGood_idEmu3"; Num="${Num%%E*}"; XVar="${XVar%%E*}";;
-            *E0b) SelDen="$SelDen -A pt20 eidden 'LepGood_mvaIdSpring16GP > -1+1.5/pow(max(1,LepGood_pt/10),1.3)'"; Num="${Num%%E*}"; XVar="${XVar%%E*}";;
+            *E2) IDEMu="LepGood_idEmu2";;
+            *E2ptc30) IDEMu="LepGood_idEmu2 || LepGood_pt*if3(LepGood_mvaTTH>${WNUM}, 1.0, 0.90*(1+LepGood_jetRelIso)) < 30" ;;
+            *E3) IDEMu="LepGood_idEmu3";;
         esac
 	case $WP in
 	    *ptJ75*)    ptJI="ptJI75";;
@@ -101,25 +151,24 @@ for WP in $WPs; do
 	    *ptJ90*)    ptJI="ptJI90";;
 	    *ptJ95*)    ptJI="ptJI95";;
 	    090*)    ptJI="ptJI90";;
+	    085*)    ptJI="ptJI90";;
+	    080*)    ptJI="ptJI90";;
 	    075*)    ptJI="ptJI90";;
-	    #075*)    ptJI="ptJI80";;
 	    RA*)  ptJI="conePt";;
 	    sViX0*)    ptJI="ptJI85";;
 	    sMiX0*)    ptJI="ptJI85";;
 	    sVi*)    ptJI="ptJIMIX3";;
 	    sMi*)    ptJI="ptJIMIX4";;
 	esac
-        B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
-        #B0="$B0 --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
+        B0="$BASE -P $T ttH-multilepton/lepton-fr/make_fake_rates_sels.txt ttH-multilepton/lepton-fr/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
         #B0="$B0 --legend=TR --showRatio --ratioRange 0.41 1.59   --yrange 0 0.20 " 
-        B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99   --yrange 0 0.25 " 
-	B1="${PLOTTER} -P $T ttH-multilepton/make_fake_rates_plots.txt"
-	B1="${B1} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
+        B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99   --yrange 0 0.35 " 
+	B1="${PLOTTER} -P $T ttH-multilepton/lepton-fr/make_fake_rates_plots.txt"
         B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
         JetDen="-A pt20 mll 'nLepGood == 1'"
-        CommonDen="${JetDen} ${SelDen} -A pt20 fake 'LepGood_mcMatchId==0' "
-        MuDen="${CommonDen} -A pt20 mmuid 'LepGood_mediumMuonId>=${MuIdDen}' -A pt20 mpt 'LepGood_pt > ${MuRecoPt}' "
-        ElDen="${CommonDen} -I mu -A pt20 convveto 'LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge >= ${EleTC}' -A pt20 elpt 'LepGood_pt > ${EleRecoPt}'  "
+        CommonDen="${JetDen} ${SelDen}"
+        MuDen="${CommonDen} -A pt20 mmuid 'LepGood_mediumId>=${MuIdDen}' -A pt20 mpt 'LepGood_pt > ${MuRecoPt}' "
+        ElDen="${CommonDen} -I mu -A pt20 convveto 'LepGood_convVeto && LepGood_lostHits == 0 && LepGood_tightCharge >= ${EleTC} && ${IDEmu}' -A pt20 elpt 'LepGood_pt > ${EleRecoPt}'  "
         #for BVar in bAny; do # bMedium; do 
         #RVar=${AwayJetPt}; 
         #case $BVar in
@@ -221,12 +270,23 @@ for WP in $WPs; do
         echo "( $B0 $MuFakeVsPt -p TT_red,TT_bjets,TT_SS.*_red,TT_redCharmless -o $PBASE/$what/mu_ttbnb_${Me}_eta_12_24.root  -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
         echo "( $B0 $MuFakeVsPt -p TT_SS_red,TT_bjets,QCDMu_red,QCDMu_bjets -o $PBASE/$what/mu_bnb_${Me}_eta_00_12.root  -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
         echo "( $B0 $MuFakeVsPt -p TT_SS_red,TT_bjets,QCDMu_red,QCDMu_bjets -o $PBASE/$what/mu_bnb_${Me}_eta_12_24.root  -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
+        echo "( $B0 $MuFakeVsPt -p TT_SS_red,TT_SS.*_red,TT_bjets,QCDMu_red,QCDMu_bjets -o $PBASE/$what/mu_sum_${Me}_eta_00_12.root  -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
+        echo "( $B0 $MuFakeVsPt -p TT_SS_red,TT_SS.*_red,TT_bjets,QCDMu_red,QCDMu_bjets -o $PBASE/$what/mu_sum_${Me}_eta_12_24.root  -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_red,TT_bjets,QCDEl_red,QCDEl_bjets -o $PBASE/$what/el_bnb_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_red,TT_bjets,QCDEl_red,QCDEl_bjets -o $PBASE/$what/el_bnb_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC,QCDEl_bjets -o $PBASE/$what/el_bnbNC_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC,QCDEl_bjets -o $PBASE/$what/el_bnbNC_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,QCDEl_redNC_El17,QCDEl_bjets -o $PBASE/$what/el_bnbe_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red_El8,QCDEl_redNC_El8 -o $PBASE/$what/el_sum8_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red_El8,QCDEl_redNC_El8 -o $PBASE/$what/el_sum8_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red_El17,QCDEl_redNC_El17 -o $PBASE/$what/el_sum17_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red_El17,QCDEl_redNC_El17 -o $PBASE/$what/el_sum17_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red,QCDEl_redNC -o $PBASE/$what/el_sumnt_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red,QCDEl_redNC -o $PBASE/$what/el_sumnt_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,QCDEl_red_El17,QCDEl_redNC_El17 -o $PBASE/$what/el_sumold_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 ${ElFakeVsPt/TT_SS_redNC/TT_SS_redNC_pink} -p TT_SS_red_viol,TT_SS_redNC_pink,QCDEl_red_El17,QCDEl_redNC_El17 -o $PBASE/$what/el_sumold_${Me}_eta_15_25.root  -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
      
         PlotX="${B1/--plotmode=norm/}"; 
         PlotX="${PlotX/make_fake_rates_plots.txt/make_fake_rates_xvars.txt}"
@@ -234,8 +294,8 @@ for WP in $WPs; do
         ElNormPlot="$PlotX $ElDen ${BDen} --sP '${ptJI}_${XVar}_coarseelcomb'" 
         echo "( $MuNormPlot -p TT_SS_red --pdir $PBASE/$what   -o {O}/mu_ttnorm_${Me}_eta_00_12.root  -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
         echo "( $MuNormPlot -p TT_SS_red --pdir $PBASE/$what   -o {O}/mu_ttnorm_${Me}_eta_12_24.root  -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
-        echo "( $ElNormPlot -p TT_SS_red --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_00_15.root   -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
-        echo "( $ElNormPlot -p TT_SS_red --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_15_25.root   -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $ElNormPlot -p TT_SS_redNC_pink --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_00_15.root   -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $ElNormPlot -p TT_SS_redNC_pink --pdir $PBASE/$what -o {O}/el_ttnorm_${Me}_eta_15_25.root   -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
 
         CElFakeVsPt="$ElDen ${BDen} --sP '${ptJI}_${XVar}_coarse' --sp TT_conv --xcut 10 999"; BC="${B0/--yrange 0 0.??/--yrange 0 1.0}"
         echo "( $BC $CElFakeVsPt -p TT_conv,QCDEl_conv_El12 -o $PBASE/$what/el_conv_${Me}_eta_00_15.root  -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
@@ -251,12 +311,17 @@ for WP in $WPs; do
         #echo "( $B0 $ElFakeVsPt -p TT_red,TT_bjets,QCDEl_red,QCDEl_bjets -o $PBASE/$what/el_bnb4_${Me}_eta_08_15.root  -R pt20 eta 'abs(LepGood_eta)>0.8 && abs(LepGood_eta)<1.479' ${BG} )"
         #echo "( $B0 $ElFakeVsPt -p TT_red,TT_bjets,QCDEl_red,QCDEl_bjets -o $PBASE/$what/el_bnb4_${Me}_eta_15_20.root  -R pt20 eta 'abs(LepGood_eta)>1.479 && abs(LepGood_eta)<2.0' ${BG} )"
         #echo "( $B0 $ElFakeVsPt -p TT_red,TT_bjets,QCDEl_red,QCDEl_bjets -o $PBASE/$what/el_bnb4_${Me}_eta_20_25.root  -R pt20 eta 'abs(LepGood_eta)>2.000' ${BG} )"
-        for C in 15_17.5 17.5_22.5 20_30 45_999; do
-            conePtCut="-A pt20 conePt '${C%_*} < LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.90/LepGood_jetPtRatiov2) && LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.90/LepGood_jetPtRatiov2) < ${C#*_}' ";
+        for C in 15_17.5 17.5_22.5 20_30 45_60 45_999; do
+            conePtCut="-A pt20 conePt '${C%_*} < LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.9*(1+LepGood_jetRelIso)) && LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.9*(1+LepGood_jetRelIso)) < ${C#*_}' ";
             echo "( $B1 $MuDen ${BDen} ${conePtCut} --ratioDen TT_SS_red --ratioNums ".*" -p TT_SS_red,TT_bjets,QCDMu_red,QCDMu_bjets,QCDMu_ljets --pdir $PBASE/$what/mu_bnb_${Me}_eta_00_12_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)<1.2'   --sP 'lep_.*' ${BG} )"
             echo "( $B1 $MuDen ${BDen} ${conePtCut} --ratioDen TT_SS_red --ratioNums ".*" -p TT_SS_red,TT_bjets,QCDMu_red,QCDMu_bjets,QCDMu_ljets --pdir $PBASE/$what/mu_bnb_${Me}_eta_12_24_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)>1.2'   --sP 'lep_.*' ${BG} )"
             echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen TT_SS_red --ratioNums ".*" -p TT_SS_red,TT_bjets,QCDEl_red,QCDEl_bjets,QCDEl_ljets --pdir $PBASE/$what/el_bnb_${Me}_eta_00_15_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)<1.479' --sP 'lep_.*' ${BG} )"
             echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen TT_SS_red --ratioNums ".*" -p TT_SS_red,TT_bjets,QCDEl_red,QCDEl_bjets,QCDEl_ljets --pdir $PBASE/$what/el_bnb_${Me}_eta_15_25_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)>1.479' --sP 'lep_.*' ${BG} )"
+            echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen TT_SS_redNC_pink --ratioNums ".*" -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red_El17,QCDEl_redNC_El17 --pdir $PBASE/$what/el_sum_${Me}_eta_00_15_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)<1.479' --sP 'lep_.*' ${BG} )"
+            echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen TT_SS_redNC_pink --ratioNums ".*" -p TT_SS_red_viol,TT_SS_redNC_pink,TT_SSb._redNC,QCDEl_red_El17,QCDEl_redNC_El17 --pdir $PBASE/$what/el_sum_${Me}_eta_15_25_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)>1.479' --sP 'lep_.*' ${BG} )"
+            echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen TT_SS_redNC_pink --ratioNums ".*" -p TT_SS_red_viol,TT_SS_redNC_pink,QCDEl_red_El17,QCDEl_redNC_El17 --pdir $PBASE/$what/el_sumold_${Me}_eta_00_15_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)<1.479' --sP 'lep_.*' ${BG} )"
+            echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen TT_SS_redNC_pink --ratioNums ".*" -p TT_SS_red_viol,TT_SS_redNC_pink,QCDEl_red_El17,QCDEl_redNC_El17 --pdir $PBASE/$what/el_sumold_${Me}_eta_15_25_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)>1.479' --sP 'lep_.*' ${BG} )"
+            echo "( $B1 $MuDen ${BDen} ${conePtCut} --ratioDen TT_SS_redB --ratioNums ".*" -p TT_SS_red[BE],QCDMu_red[BE],QCDMu_bjets[BE] --pdir $PBASE/$what/mu_BE_${Me}_ptC_${C}/ -X pt20  --sP 'lep_.*' ${BG} )"
         done
 
        ##AwayJet pt variations
@@ -287,6 +352,12 @@ for WP in $WPs; do
        #echo "( $B0 $ElFakeVsPtB -p 'QCDEl_red,QCDEl_red_ajb.*' -o $PBASE/$what/el_qajb_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
        #echo "( $B0 $ElFakeVsPtB -p 'QCDEl_red,QCDEl_red_ajb.*' -o $PBASE/$what/el_qajb_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
 
+        ## Efficiencies 
+        #BE="${B0/--yrange 0 0.25/--yrange 0 1.25}"
+        #echo "( $BE $MuFakeVsPt -p TT_SS_red,TT_red,TT_fromW,TT_fromTau -o $PBASE/$what/mu_tteff_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2' -X jet -X mll  ${BG} )"
+
+        MuFakeVsPtB="$MuDen --sP '${ptJI}_${XVar}_fine' --sp TT_SS_red ${BDen} --xcut 10 999 --xline 15" 
+        ElFakeVsPtB="$ElDen --sP '${ptJI}_${XVar}_fine' --sp TT_SS_redNC ${BDen} --xcut 10 999 --xline 15" 
         # TTbar by composition
         echo "( $B0 $MuFakeVsPt -p TT_red,TT_SS.*_red -o $PBASE/$what/mu_ttvars_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
         echo "( $B0 $MuFakeVsPt -p TT_red,TT_SS.*_red -o $PBASE/$what/mu_ttvars_${Me}_eta_12_24.root -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
@@ -299,12 +370,16 @@ for WP in $WPs; do
         echo "( $B0 $MuFakeVsPt -p TT_red,TT_bjets,TT_ljets -o $PBASE/$what/mu_ftt_${Me}_eta_12_24.root -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_red,TT_bjets,TT_ljets,TT_ljetsNC -o $PBASE/$what/el_ftt_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p TT_red,TT_bjets,TT_ljets,TT_ljetsNC -o $PBASE/$what/el_ftt_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,TT_cjets,TT_ljetsNC -o $PBASE/$what/el_fttNC_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 $ElFakeVsPt -p TT_SS_redNC,TT_bjets,TT_cjets,TT_ljetsNC -o $PBASE/$what/el_fttNC_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
 
         #QCD by flavour
+        MuFakeVsPtB="$MuDen --sP '${ptJI}_${XVar}_fine' --sp QCDMu_red ${BDen} --xcut 10 999 --xline 15" 
+        ElFakeVsPtB="$ElDen --sP '${ptJI}_${XVar}_fine' --sp QCDEl_redNC ${BDen} --xcut 10 999 --xline 15" 
         echo "( $B0 $MuFakeVsPt -p QCDMu_red,QCDMu_bjets,QCDMu_ljets -o $PBASE/$what/mu_fqcd_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
         echo "( $B0 $MuFakeVsPt -p QCDMu_red,QCDMu_bjets,QCDMu_ljets -o $PBASE/$what/mu_fqcd_${Me}_eta_12_24.root -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
-        echo "( $B0 $ElFakeVsPt -p QCDEl_red,QCDEl_bjets,QCDEl_ljets  -o $PBASE/$what/el_fqcd_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
-        echo "( $B0 $ElFakeVsPt -p QCDEl_red,QCDEl_bjets,QCDEl_ljets  -o $PBASE/$what/el_fqcd_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        echo "( $B0 $ElFakeVsPt -p QCDEl_red,QCDEl_redNC,QCDEl_bjets,QCDEl_ljets  -o $PBASE/$what/el_fqcd_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 $ElFakeVsPt -p QCDEl_red,QCDEl_redNC,QCDEl_bjets,QCDEl_ljets  -o $PBASE/$what/el_fqcd_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
 
         # HLT
         #echo "( $B0 $MuFakeVsPt -p TT_red,QCDMu_red,QCDMu_red_Mu[0-9]+ -o $PBASE/$what/mu_hlt_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
@@ -325,7 +400,7 @@ for WP in $WPs; do
         echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt8,QCDEl_red_pt8,QCDEl_redNC_El8,QCDEl_red_El8 -o $PBASE/$what/el_hltid8_${Me}_eta_00_15.root -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPtH -p QCDEl_redNC_pt8,QCDEl_red_pt8,QCDEl_redNC_El8,QCDEl_red_El8 -o $PBASE/$what/el_hltid8_${Me}_eta_15_25.root -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
         for C in 30_50 45_999; do
-            conePtCut="-A pt20 conePt '${C%_*} < LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.90/LepGood_jetPtRatiov2) && LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.90/LepGood_jetPtRatiov2) < ${C#*_}' ";
+            conePtCut="-A pt20 conePt '${C%_*} < LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.9*(1+LepGood_jetRelIso)) && LepGood_pt*if3(LepGood_mvaTTH>${WNUM},1,0.9*(1+LepGood_jetRelIso)) < ${C#*_}' ";
             echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen QCDEl_red_pt17 --ratioNums '.*' -p QCDEl_red_pt17,QCDEl_red_El17,QCDEl_red_noEl17 --pdir $PBASE/$what/el_hltid_${Me}_eta_00_15_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)<1.479' --sP 'lep_id.*,idemu_.*' ${BG} )"
             echo "( $B1 $ElDen ${BDen} ${conePtCut} --ratioDen QCDEl_red_pt17 --ratioNums '.*' -p QCDEl_red_pt17,QCDEl_red_El17,QCDEl_red_noEl17 --pdir $PBASE/$what/el_hltid_${Me}_eta_15_25_ptC_${C}/ -R pt20 eta 'abs(LepGood_eta)>1.479' --sP 'lep_id.*,idemu_.*' ${BG} )"
         done

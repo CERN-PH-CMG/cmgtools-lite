@@ -61,6 +61,7 @@ if analysis == "main":
         "WWTo2L2Nu$", "WZTo3LNu_fxfx$",  "ZZTo4L$", "WW_DPS$", "WpWpJJ$",
         "GGHZZ4L$", "VHToNonbb_ll$",
         "WWW_ll$", "WWZ$", "WZG$", "WZZ$", "ZZZ$",
+        "THQ$", "THW$", "TTH_ctcvcp$",
     ])
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) if year == 2018 else

@@ -10,13 +10,13 @@ BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
-ttH) CUTFILE="ttH-multilepton/fr-z3l.txt"; XVAR="l3CPt"; NUM="mva090";;
+ttH) CUTFILE="ttH-multilepton/lepton-fr/fr-z3l.txt"; XVAR="l3CPt"; NUM="mva090";;
 susy_wpM) CUTFILE="susy-ewkino/fr-z3l-wpM.txt"; XVAR="ptJIMIX4"; NUM="mvaSusy_sMi";;
 susy_wpV) CUTFILE="susy-ewkino/fr-z3l-wpV.txt"; XVAR="ptJIMIX3"; NUM="mvaSusy_sVi";;
 *) echo "unknown analysis $ANALYSIS"; exit 1; ;;
 esac;
 
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ${CUTFILE} -P $T -l  36.5 --AP --mcc ttH-multilepton/mcc-eleIdEmu2.txt "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/lepton-fr/mca-fr-z3l.txt ${CUTFILE} -P $T -l  36.5 --AP --mcc ttH-multilepton/mcc-eleIdEmu2.txt "
 BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -X ^Trig -A Z1 ptcuts 'LepGood_pt[0]>25 && LepGood_pt[1]>15' " # no trigger selection
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
@@ -37,36 +37,36 @@ esac;
 
 FITEWK=" -p ZZ,WZ,DY,TT,data --peg-process ZZ WZ --flp ZZ,WZ,DY "
 FITDY=" --flp DY $SCALEWK "
-PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puwZ3l(nVert)' "
+PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puwZ3l(nVert)' "
 
 case $what in
     nvtx)
-        echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE --sP nvtx $EWKONE " 
+        echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE --sP nvtx $EWKONE " 
         echo "echo; echo; ";
         echo "python ../tools/vertexWeightFriend.py no $PBASE/fr-z3l_plots.root ";
         echo "echo; echo ' ---- Now you should put the normalization and weight into frPuReweight.cc defining puwZ3l ----- ' ";
         ;;
     nvtx-closure)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.8 1.2 " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.8 1.2 " 
         ;;
     fit*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit/} --sP ${what/fit/} --showRatio --maxRatioRange 0.0 1.99 $* " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit/} --sP ${what/fit/} --showRatio --maxRatioRange 0.0 1.99 $* " 
         ;;
     num-fit*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit/} --sP ${what/num-fit/} --showRatio --maxRatioRange 0.0 1.99 -E num $* " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit/} --sP ${what/num-fit/} --showRatio --maxRatioRange 0.0 1.99 -E num $* " 
         ;;
     prefit-num|prefit-den)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE -E ${what/prefit-/} --showRatio --maxRatioRange 0.0 1.99 --sP mZ1,mtW3,met_log,l3.* " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE -E ${what/prefit-/} --showRatio --maxRatioRange 0.0 1.99 --sP mZ1,mtW3,met_log,l3.* " 
         ;;
     scaled-num|scaled-den)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE $FITDY -E ${what/scaled-/} --showRatio --maxRatioRange 0.0 1.99 --sP mZ1,mtW3,met_log,l3.* --preFitData mtW3 " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE $FITDY -E ${what/scaled-/} --showRatio --maxRatioRange 0.0 1.99 --sP mZ1,mtW3,met_log,l3.* --preFitData mtW3 " 
         ;;
     cuts-num|cuts-den)
         CUTS="  -A 3l mt25 'met_pt < 25' "
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/fr-z3l_plots.txt --pdir $PBASE $FITDY -E ${what/cuts-/} --showRatio --maxRatioRange 0.0 1.99 --sP mtW3,met_log,l3CPt_c --preFitData mtW3 $CUTS " 
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/lepton-fr/fr-z3l_plots.txt --pdir $PBASE $FITDY -E ${what/cuts-/} --showRatio --maxRatioRange 0.0 1.99 --sP mtW3,met_log,l3CPt_c --preFitData mtW3 $CUTS " 
         ;;
     fakerates-old)
-        MCEFF="  python mcEfficiencies.py -f  $BCORE $PUW $SCALEWK --groupBy cut ttH-multilepton/fr-z3l_pass.txt  ttH-multilepton/fr-z3l_plots.txt  "
+        MCEFF="  python mcEfficiencies.py -f  $BCORE $PUW $SCALEWK --groupBy cut ttH-multilepton/lepton-fr/fr-z3l_pass.txt  ttH-multilepton/lepton-fr/fr-z3l_plots.txt  "
         MCEFF="$MCEFF  --sp DY --sP ${NUM} "
         case $lepton in
         el) MCEFF="$MCEFF --sP l3CPt_[c1]  " ;;
@@ -81,7 +81,7 @@ case $what in
         ;;
     fakerates-*)
         fitVar=${what/fakerates-/}
-        MCEFF="  python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW -p DY,VZ,data --groupBy cut ttH-multilepton/fr-z3l_pass.txt  ttH-multilepton/fr-z3l_plots.txt  "
+        MCEFF="  python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW -p DY,VZ,data --groupBy cut ttH-multilepton/lepton-fr/fr-z3l_pass.txt  ttH-multilepton/lepton-fr/fr-z3l_plots.txt  "
         MCEFF="$MCEFF --sp DY --sP ${NUM}  "
         MCEFF="$MCEFF --sP $fitVar $fitVar  --ytitle 'Fake rate' "
         case $lepton in
@@ -92,7 +92,7 @@ case $what in
         MCEFF="$MCEFF --fixRatioRange --maxRatioRange 0.5 1.79 " # ratio for other plots
         LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
         RANGES=" --showRatio  --ratioRange 0.00 2.99 "
-        STACK="python ttH-multilepton/stack_fake_rates_data.py "
+        STACK="python ttH-multilepton/lepton-fr/stack_fake_rates_data.py "
         case $lepton in  
            el) RANGES="$RANGES  --yrange 0 0.10 --xline 30 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140" ;;
            mu) RANGES="$RANGES  --yrange 0 0.10 --xline 20 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140" ;;
@@ -113,7 +113,7 @@ case $what in
         MCGO="$MCEFF --compare DY_prefit,data_fqcd --algo=fQCD "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fQCD.root --algo=fQCD  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fQCD.root --algo=fQCD  $BG )"
-        STACK="python ttH-multilepton/stack_fake_rates_data.py $RANGES $LEGEND "
+        STACK="python ttH-multilepton/lepton-fr/stack_fake_rates_data.py $RANGES $LEGEND "
         PATT="${NUM}_vs_${XVAR}_${fitVar}_%s"
         for E in ${BARREL} ${ENDCAP}; do
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:DY_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_fQCD.root:$PATT:DY_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:data_fit   )";

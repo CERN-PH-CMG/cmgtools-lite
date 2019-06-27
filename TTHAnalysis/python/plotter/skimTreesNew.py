@@ -82,12 +82,12 @@ if __name__ == "__main__":
         from multiprocessing import Pool
         Pool(options.jobs).map(_runIt, tasks)
     if options.skimFriends and not (options.pretend or options.justcount):
-        skimFTrees = os.path.expandvars("$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/skimFTrees.py")
-        if not os.path.isfile(skimFTrees): raise RuntimeError("missing skimFTrees")
+        skimFTrees = os.path.expandvars("$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/skimFTreesNew.py")
+        if not os.path.isfile(skimFTrees): raise RuntimeError("missing skimFTreesNew")
         for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
             for P in options.path:
                 d = D.replace("{P}",P)
                 if not os.path.exists(d): continue
-                os.system("python %s %s %s %s > /dev/null" % (skimFTrees, outdir, d, outdir))
+                os.system("python %s %s %s  > /dev/null" % (skimFTrees, outdir, d))
             print "Skimmed %s" % os.path.basename(D)
 

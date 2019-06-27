@@ -7,8 +7,9 @@ if len(sys.argv) < 3:
     sys.exit(1)
 elif len(sys.argv) == 3:
     sys.argv.append( sys.argv[1] + "/" + os.path.basename(sys.argv[2].rstrip("/")) )
-    print "Will write output to " % sys.argv[3]
-elif len(sys.argv) == 4:
+    print "Will write output to %s " % sys.argv[3]
+
+if len(sys.argv) == 4:
     dsets = [d.replace('_Friend.root','') for d in os.listdir(sys.argv[2]) if '_Friend' in d]
     if not dsets: raise RuntimeError("No friend trees found in %s" % sys.argv[2])
 else:
