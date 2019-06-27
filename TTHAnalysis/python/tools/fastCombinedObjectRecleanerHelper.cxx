@@ -69,7 +69,7 @@ public:
   void setJets(ruint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagCSV, rfloats *jetpt_JECUp, rfloats *jetpt_JECDown) {
     nJet_ = nJet; Jet_pt_ = jetPt; Jet_eta_ = jetEta; Jet_phi_ = jetPhi; Jet_btagCSV_ = jetbtagCSV; Jet_pt_JECUp_ = jetpt_JECUp; Jet_pt_JECDown_ = jetpt_JECDown;
     Jet_corr_ = NULL; Jet_corr_JECUp_ = NULL; Jet_corr_JECDown_ = NULL;
-    if (!nJet || !jetPt || !jetEta || !jetPhi || !jetbtagCSV || !jetpt_JECUp || !jetpt_JECDown) { std::cout << "ERROR: fastCombinedObjectRecleanerHelper initialized setJets with a null reader" << std::endl; }
+    if (!nJet || !jetPt || !jetEta || !jetPhi || !jetbtagCSV) { std::cout << "ERROR: fastCombinedObjectRecleanerHelper initialized setJets with a null reader" << std::endl; }
   }
 
   void addJetPt(int pt){
@@ -120,7 +120,7 @@ public:
 	  if (variation == 1)  pt = (*Jet_pt_JECUp_)[j];
 	  if (variation == -1) pt = (*Jet_pt_JECDown_)[j];
 	}
-	else{
+	else if (Jet_corr_JECUp_){
 	  if (variation==1) pt *= (*Jet_corr_JECUp_)[j] / (*Jet_corr_)[j];
 	  if (variation==-1) pt *= (*Jet_corr_JECDown_)[j] / (*Jet_corr_)[j];
 	}

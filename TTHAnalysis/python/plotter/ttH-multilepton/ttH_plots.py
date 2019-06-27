@@ -4,25 +4,31 @@ import re
 import os
 
 ODIR=sys.argv[1]
+YEAR=sys.argv[2]
+lumis = {
+'2016': '35.9',
+'2017': '41.4',
+'2018': '59.7',
+}
 
 dowhat = "plots" 
 #dowhat = "dumps" 
 #dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
-P0="/afs/cern.ch/work/p/peruzzi/tthtrees"
-if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data/peruzzi"
-if 'cmsphys10' in os.environ['HOSTNAME']: P0="/data1/g/gpetrucc"
-TREES = "--Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2"
-TREESONLYSKIM = "-P "+P0+"/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_noMEM_200618_v5 --Fs {P}/4_BDTv8_Hj_200618_v1 --Fs {P}/4_BDTrTT_Hj_200618_v1 --Fs {P}/4_BDThttTT_Hj_200618_v4"
-TREESONLYFULL = "-P "+P0+"/TREES_TTH_190418_Fall17 --Fs {P}/1_recleaner_230418_v2"
-TREESONLYMEMZVETO = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zveto_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_withMEM_200618_v5 --Fs {P}/4_BDTv8_Hj_200618_v1 --Fs {P}/4_BDTrTT_Hj_200618_v1 --Fs {P}/4_BDThttTT_Hj_200618_v4 --Fs {P}/4_MEM_v4 --FMCs {P}/4_MEM_JECs_v1"
-TREESONLYMEMZPEAK = "-P "+P0+"/TREES_TTH_190418_Fall17_skim_3l_2j_2b1B_Zpeak_presc --Fs {P}/1_recleaner_180518_v2 --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_withMEM_200618_v5 --Fs {P}/4_BDTv8_Hj_200618_v1 --Fs {P}/4_BDTrTT_Hj_200618_v1 --Fs {P}/4_BDThttTT_Hj_200618_v4 --Fs {P}/4_MEM_v4 --FMCs {P}/4_MEM_JECs_v1"
+P0="/eos/cms/store/cmst3/group/tthlep/peruzzi"
+#if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data1/peruzzi"
+#if 'cmsphys10' in os.environ['HOSTNAME']: P0="/data1/g/gpetrucc"
+TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH -F Friends {P}/3_recleaner_v1/{cname}_Friend.root --FMC Friends {P}/2_triggerSequence_v1/{cname}_Friend.root" # FIXME
+TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
+TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
+TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
+TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 
 def base(selection):
 
-    CORE=' '.join([TREES,TREESONLYSKIM])
-    CORE+=" -f -j 8 -l 41.4 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim "# --neg"
+    CORE=' '.join([TREESALL,TREESONLYSKIM])
+    CORE+=" -f -j 8 -l %s --s2v -L ttH-multilepton/functionsTTH.cc --tree NanoAOD --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim "%(lumis[YEAR],)# --neg"
     RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 2 --legendWidth 0.25 "
@@ -32,20 +38,20 @@ def base(selection):
 
     if selection=='2lss':
         GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
-        GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)'"%GO
+#        GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.52 ")
         if dowhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 ")
         GO += " --binname 2lss "
     elif selection=='3l':
         GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
-        GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)'"%GO
+#        GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.42 ")
         GO += " --binname 3l "
     elif selection=='4l':
         GO="%s ttH-multilepton/mca-4l-mc.txt ttH-multilepton/4l_tight.txt "%CORE
-        GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[3]],LepGood_pt[iLepFO_Recl[3]],LepGood_eta[iLepFO_Recl[3]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)'"%GO
+#        GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[3]],LepGood_pt[iLepFO_Recl[3]],LepGood_eta[iLepFO_Recl[3]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],nLepTight_Recl,0)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|3)lep_.*' --xP '^lep(1|2|3|4)_.*' --xP 'kinMVA_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 2 --legendWidth 0.3 ")
         if dowhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.0  2.99 --ratioYNDiv 505 ")
@@ -69,11 +75,11 @@ def sigprocs(GO,mylist):
 def runIt(GO,name,plots=[],noplots=[]):
     if '_74vs76' in name: GO = prep74vs76(GO)
     if dowhat == "plots":  
-        if not ('forcePlotChoice' in sys.argv[3:]): print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
-        else: print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join([x for x in sys.argv[3:] if x!='forcePlotChoice'])
-    elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
-    elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
-    elif dowhat == "ntuple": print 'echo %s; python mcNtuple.py'%name,GO,' '.join(sys.argv[3:])
+        if not ('forcePlotChoice' in sys.argv[4:]): print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[4:])
+        else: print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join([x for x in sys.argv[4:] if x!='forcePlotChoice'])
+    elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[4:])
+    elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[4:])
+    elif dowhat == "ntuple": print 'echo %s; python mcNtuple.py'%name,GO,' '.join(sys.argv[4:])
 def add(GO,opt):
     return '%s %s'%(GO,opt)
 def setwide(x):
@@ -85,11 +91,11 @@ def fulltrees(x):
 def doprescale3l(x,torun):
     return x.replace(TREESONLYSKIM,TREESONLYMEMZPEAK if any([(_y in torun) for _y in ['cr_wz','cr_ttz','cr_fourlep_onZ','_Zpeak']]) else TREESONLYMEMZVETO)
 
-allow_unblinding = True
+allow_unblinding = False
 
 if __name__ == '__main__':
 
-    torun = sys.argv[2]
+    torun = sys.argv[3]
 
     if (not allow_unblinding) and '_data' in torun and (not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*','3l.*_Zpeak.*']])): raise RuntimeError, 'You are trying to unblind!'
 
