@@ -1,4 +1,4 @@
-#Short recipe for CMGTools 
+# Short recipe for CMGTools 
 
 For the general recipe, [follow these instructions](https://twiki.cern.ch/twiki/bin/view/CMS/CMGToolsReleasesExperimental).
 
