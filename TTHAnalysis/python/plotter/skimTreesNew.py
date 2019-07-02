@@ -64,6 +64,8 @@ if __name__ == "__main__":
                 if options.doS2V: mycut  = scalarToVector(mycut)
                 fname2cuts[mysource].add(mycut)
             friends = ""
+            if len(options.friendTrees + options.friendTreesMC + options.friendTreesData) > 0:
+                raise RuntimeError("Sorry, only friends specified with --Fs, --FMCs, --FDs are supported")
             for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
                 friends += ",%s/%s_Friend.root" % (D.replace('{P}',tty.basepath()), tty.cname())
             if mysource in fname2friends:
@@ -74,7 +76,7 @@ if __name__ == "__main__":
     for fname,cuts in fname2cuts.iteritems():
         if len(cuts) > 1: mycut = "(" + (")||(".join(cuts)) + ")"
         else:             mycut = cuts.pop()
-        src = fname + fname2friends[mysource]
+        src = fname + fname2friends[fname]
         tasks.append((src,outdir,mycut,options))
     if options.jobs == 0: 
         map(_runIt, tasks)
