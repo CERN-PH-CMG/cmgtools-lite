@@ -34,9 +34,9 @@ class VVBuilder(Analyzer):
         self.btagSF = BTagEventWeights(
             'btagsf', os.path.expandvars(self.cfg_ana.btagCSVFile))
         self.subjetBtagSF0 = BTagEventWeights(
-            'btagsf', os.path.expandvars(self.cfg_ana.subjetBtagCSVFile),0,[0,1,2],'incl')
+            'btagsf', os.path.expandvars(self.cfg_ana.subjetBtagCSVFile),0,{0:'lt',1:'lt',2:'incl'})
         self.subjetBtagSF1 = BTagEventWeights(
-            'btagsf', os.path.expandvars(self.cfg_ana.subjetBtagCSVFile),1,[0,1,2],'incl')
+            'btagsf', os.path.expandvars(self.cfg_ana.subjetBtagCSVFile),1,{0:'lt',1:'lt',2:'incl'})
 
 
         puppiJecCorrWeightFile = os.path.expandvars(
@@ -95,6 +95,8 @@ class VVBuilder(Analyzer):
                                                 o.eta(), o.hadronFlavour(), bTag)
                 jet.subJet_btagWeights1[i]= self.subjetBtagSF1.getSF(o.pt(),
                                                 o.eta(), o.hadronFlavour(), bTag)
+                if jet.subJet_btagWeights0[i]==0:
+                    print(o.pt(),o.eta(),o.hadronFlavour(),bTag)
             cTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorC)
             lTag = o.bDiscriminator(self.cfg_ana.fDiscriminatorL)
             jet.subJetTags[i] = bTag
