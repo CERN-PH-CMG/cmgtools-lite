@@ -8,13 +8,13 @@ ROOT.gSystem.Load('libCondToolsBTau')
 
 
 class BTagEventWeights(object):
-    def __init__(self, name,csvfile,operatingPoint=3,flavours=[0,1,2],method = 'iterativeFit'):
+    def __init__(self, name,csvfile,operatingPoint=3,flavours={0:'iterativeFit',1:'iterativeFit',2:'iterativeFit'}):
 
         self.name = name
         self.csvfile = csvfile
         self.calibrator = ROOT.BTagCalibration(self.name, self.csvfile)
         self.reader=ROOT.BTagCalibrationReader(operatingPoint,'central')
-        for l in flavours:
+        for l,method in flavours.items():
             self.reader.load(self.calibrator,l,method)
 
 
