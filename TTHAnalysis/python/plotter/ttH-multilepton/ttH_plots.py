@@ -322,7 +322,7 @@ if __name__ == '__main__':
         x = x.replace('--maxRatioRange 0 3','--maxRatioRange 0.8 1.2')
         x = x.replace('--rebin 4','')
         if '_appl' in torun:
-            x = add(x,"-X TT")
+            x = add(x,"-X ^TT")
         if '_noeleid' in torun: 
             x = add(x,"-X eleID -E loose_eleID")
         if '_ss' not in torun:
