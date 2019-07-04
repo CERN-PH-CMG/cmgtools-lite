@@ -58,12 +58,22 @@ class MCAnalysis:
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
         self.variationsFile = UncertaintyFile(options.variationsFile,options) if options.variationsFile else None
-        self.readMca(samples,options)
-
+        if os.path.isfile(samples): 
+            self.readMca(open(samples,'r'),options)
+        elif os.path.isdir(samples) and options.tree == "NanoAOD":
+            options.path = [ samples ]
+            pseudo_samples = []
+            for f in glob(samples+"/*.root"):
+                cname = os.path.basename(f)[:-len(".root")]
+                if re.match(".*Run201\d[A-Z].*", cname):
+                    pseudo_samples.append( "%s_data : %s" % (cname, cname) )
+                else:
+                    pseudo_samples.append( "%s : %s : 1" % (cname, cname) )
+            self.readMca(pseudo_samples, options)
     def readMca(self,samples,options,addExtras={},selectProcesses=None):
         field_previous = None
         extra_previous = {}
-        for line in open(samples,'r'):
+        for line in samples:
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
             line = line.replace(r"\#","#")        ## and now we just unescape the remaining #'s
@@ -139,7 +149,7 @@ class MCAnalysis:
                 if 'Processes' in extra_to_pass: 
                     selectProcesses = extra_to_pass['Processes']
                     del extra_to_pass['Processes']
-                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass,selectProcesses=selectProcesses) # call readMca recursively on included mca files
+                self.readMca(open(extra['IncludeMca'],'r'),options,addExtras=extra_to_pass,selectProcesses=selectProcesses) # call readMca recursively on included mca files
                 continue
             # Customize with additional weight if requested
             if 'AddWeight' in extra:
