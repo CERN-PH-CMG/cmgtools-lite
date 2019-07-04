@@ -168,7 +168,7 @@ class TreeToYield:
             for cfile in settings['MCCorrections'].split(','): 
                 self._mcCorrSourceList.append( (cfile,MCCorrections(cfile)) )            
         if 'FakeRate' in settings:
-            self._FRSourceList.append( (settings['FakeRate'], FakeRate(settings['FakeRate'],self._options.lumi) ) )
+            self._FRSourceList.append( (settings['FakeRate'], FakeRate(settings['FakeRate'],self._options.lumi,year=self._options.year) ) )
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
