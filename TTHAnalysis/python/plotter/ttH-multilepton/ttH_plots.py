@@ -21,10 +21,10 @@ dowhat = "plots"
 P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
 #if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data1/peruzzi"
 if 'fanae' in os.environ['HOSTNAME']: 
-    nCores = 32
-    submit = 'sbatch -p cpupower -c %d --wrap "{command}"'%nCores
+    nCores = 22
+    submit = 'sbatch -p  short -c %d --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/userstorage/sscruz/NanoAOD/"
-TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH -F Friends {P}/3_recleaner_v1/{cname}_Friend.root -F Friends {P}/2_triggerSequence_v2/{cname}_Friend.root --FMCs {P}/4_btag " # FIXME
+TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH -F Friends {P}/3_recleaner_v1/{cname}_Friend.root -F Friends {P}/2_triggerSequence_v2/{cname}_Friend.root --FMCs {P}/4_btag -F Friends {P}/1_lepJetBTagDeepFlav_v1/{cname}_Friend.root" # FIXME
 TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
@@ -320,6 +320,11 @@ if __name__ == '__main__':
         x = base('2lss')
         x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
         x = x.replace('--maxRatioRange 0 3','--maxRatioRange 0.8 1.2')
+        x = x.replace('--rebin 4','')
+        if '_appl' in torun:
+            x = add(x,"-X TT")
+        if '_noeleid' in torun: 
+            x = add(x,"-X eleID -E loose_eleID")
         if '_ss' not in torun:
             x = fulltrees(x)
             x = add(x,"-I same-sign")
@@ -330,7 +335,7 @@ if __name__ == '__main__':
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt")
         for flav in ['mm','ee','em']:
-            plots = ['2lep_.*','tot_weight','era']
+            plots = ['lep1_.*','lep2_.*']# ,'2lep_.*','tot_weight','era']
             runIt(add(x,'-E ^%s -X ^4j'%flav),'%s/%s'%(torun,flav),plots)
 
     if 'cr_wz' in torun:
