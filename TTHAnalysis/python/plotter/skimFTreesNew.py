@@ -1,44 +1,55 @@
 import ROOT
-import os, sys
+import os, sys, re
 
+from optparse import OptionParser
+parser = OptionParser(usage="%prog [options] skimmed_trees_dir input_friends_dir [ out_dir [ dataset_name ... ] ]")
+parser.add_option("--pretend",    dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
+parser.add_option("--verbose",    dest="verbose", default=False, action="store_true",  help="More verbose output") 
+parser.add_option("--new","--skip-existing", dest="skipExisting", default=False, action="store_true",  help="Don't skim samples that already exist in the output directory") 
+(options, args) = parser.parse_args()
 
-if len(sys.argv) < 3:
+if len(args) < 2:
     print "usage: python skimFTrees.py BIGTREE_DIR FTREE_DIR [ outdir [ DATASET_NAME ... ] ]"
     sys.exit(1)
-elif len(sys.argv) == 3:
-    sys.argv.append( sys.argv[1] + "/" + os.path.basename(sys.argv[2].rstrip("/")) )
-    print "Will write output to %s " % sys.argv[3]
+elif len(args) == 2:
+    args.append( args[0] + "/" + os.path.basename(args[1].rstrip("/")) )
+    if options.verbose: print "Will write output to %s " % args[2]
 
-if len(sys.argv) == 4:
-    dsets = [d.replace('_Friend.root','') for d in os.listdir(sys.argv[2]) if '_Friend' in d]
-    if not dsets: raise RuntimeError("No friend trees found in %s" % sys.argv[2])
+if len(args) == 3:
+    dsets = [d.replace('_Friend.root','') for d in os.listdir(args[1]) if '_Friend' in d ]
+    if not dsets: raise RuntimeError("No friend trees found in %s" % args[1])
 else:
-    dsets = sys.argv[4:]
+    dsets = args[3:]
 
 for d in dsets[:]:
-    if not os.path.isfile(sys.argv[1]+"/"+d+".root"):
-        print "WARNING: dataset %s missing in %s" % (d, sys.argv[1])
+    if not os.path.isfile(args[0]+"/"+d+".root"):
+        print "WARNING: dataset %s missing in %s" % (d, args[0])
+        dsets.remove(d)
+    elif options.skipExisting and os.path.isfile(args[2]+"/"+d+"_Friend.root"):
+        if options.verbose: print "INFO: Skipping sample %s for which friend already exists" % d
         dsets.remove(d)
 
-out = sys.argv[3]
-if '{P}' in out: out = out.format(P = sys.argv[1])
-if not os.path.isdir(sys.argv[3]):
-    os.system("mkdir -p "+sys.argv[3])
+out = args[2]
+if '{P}' in out: out = out.format(P = args[0])
+if not os.path.isdir(args[2]):
+    os.system("mkdir -p "+args[2])
 
 for dset in dsets:
     print dset,
-    fsel = ROOT.TFile.Open(sys.argv[1]+'/'+dset+'.root')
-    if not fsel: raise RuntimeError("Error opening %s"  % sys.argv[1]+'/'+dset+'.root')
+    if options.pretend: 
+        print ""; continue
+    fsel = ROOT.TFile.Open(args[0]+'/'+dset+'.root')
+    if not fsel: raise RuntimeError("Error opening %s"  % args[0]+'/'+dset+'.root')
     elist = fsel.Get("skimTrees_elist")
     if not elist:
         fsel.ls()
-        raise RuntimeError("Can't find %s in %s"  % ("skimTrees_elist", sys.argv[1]+'/'+dset+'.root'))
-    f_f = ROOT.TFile.Open(sys.argv[2]+'/'+dset+'_Friend.root')
-    if not f_f: raise RuntimeError("Error opening %s"  % sys.argv[2]+'/'+dset+'_Friend.root')
+        raise RuntimeError("Can't find %s in %s"  % ("skimTrees_elist", args[0]+'/'+dset+'.root'))
+    f_f = ROOT.TFile.Open(args[1]+'/'+dset+'_Friend.root')
+    if not f_f: raise RuntimeError("Error opening %s"  % args[1]+'/'+dset+'_Friend.root')
     t_f = f_f.Get("Friends")
-    if not t_f: raise RuntimeError("Can't find %s in %s"  % ("Friends", sys.argv[2]+'/'+dset+'_Friend.root'))
+    if not t_f: raise RuntimeError("Can't find %s in %s"  % ("Friends", args[1]+'/'+dset+'_Friend.root'))
     t_f.SetEntryList(elist)
-    f2 = ROOT.TFile('%s/%s_Friend.root'%(sys.argv[3],dset),'recreate')
+    f2 = ROOT.TFile('%s/%s_Friend.root'%(args[2],dset),'recreate')
     f2.cd()
     t2 = t_f.CopyTree('1')
     f2.Write()
