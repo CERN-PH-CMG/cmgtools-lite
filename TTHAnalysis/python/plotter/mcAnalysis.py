@@ -106,6 +106,7 @@ class MCAnalysis:
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
+            if "years"  in extra and options.year and options.year not in extra['years'].split(','): continue
             if 'PostFix' in extra:
                 hasPlus = (field[0][-1]=='+')
                 if hasPlus: field[0] = field[0][:-1]
@@ -869,6 +870,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--scale-process", dest="processesToScale", type="string", default=[], nargs=2, action="append", help="--scale-process X Y make X scale by Y (equivalent to add it in the mca.txt)");
     parser.add_option("--process-norm-syst", dest="processesToSetNormSystematic", type="string", default=[], nargs=2, action="append", help="--process-norm-syst X Y sets the NormSystematic of X to be Y (for plots, etc. Overrides mca.txt)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
+    parser.add_option("--year", dest="year", type="string", default ="" , help="If non void, only processes of that contain that year or none are processed ")
     parser.add_option("--use-cnames",  dest="useCnames", action="store_true", help="Use component names instead of process names (for debugging)")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")

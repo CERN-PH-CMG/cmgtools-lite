@@ -419,31 +419,68 @@ float ttH_2lss_ifflavnb(int LepGood1_pdgId, int LepGood2_pdgId, int nBJetMedium2
 }
 
 
-std::vector<int> boundaries_runPeriod2017 = {297020,299337,302030,303435,304911};
-std::vector<double> lumis_runPeriod2017 = {4.802,9.629,4.235,9.268,13.433};
-bool cumul_lumis_runPeriod2017_isInit = false;
-std::vector<float> cumul_lumis_runPeriod2017;
 
-int runPeriod2017(int run){
-    auto period = std::find_if(boundaries_runPeriod2017.begin(),boundaries_runPeriod2017.end(),[run](const int &y){return y>run;});
-    return std::distance(boundaries_runPeriod2017.begin(),period)-1;
+
+std::vector<int> boundaries_runPeriod2016 = {272007,275657,276315,276831,277772,278820,280919};
+std::vector<int> boundaries_runPeriod2017 = {297020,299337,302030,303435,304911};
+std::vector<int> boundaries_runPeriod2018 = {315252,316998,319313,320394};
+
+std::vector<double> lumis_runPeriod2016 = {5.75, 2.573, 4.242, 4.025, 3.105, 7.576, 8.651};
+std::vector<double> lumis_runPeriod2017 = {4.802,9.629,4.235,9.268,13.433};
+std::vector<double> lumis_runPeriod2018 = {13.978 , 7.064 , 6.899 , 31.748};
+
+bool cumul_lumis_isInit = false;
+std::vector<float> cumul_lumis_runPeriod2016;
+std::vector<float> cumul_lumis_runPeriod2017;
+std::vector<float> cumul_lumis_runPeriod2018;
+
+int runPeriod(int run, int year){
+  std::vector<int> boundaries;
+  if (year == 2016)
+    boundaries = boundaries_runPeriod2016;
+  else if (year == 2017)
+    boundaries = boundaries_runPeriod2017;
+  else if (year == 2018)
+    boundaries = boundaries_runPeriod2018;
+  else{
+    std::cout << "Wrong year " << year << std::endl;
+    return -99;
+  }
+  auto period = std::find_if(boundaries.begin(),boundaries.end(),[run](const int &y){return y>run;});
+  return std::distance(boundaries.begin(),period)-1 + ( (year == 2017) ? 7 : 0 ) + ( (year == 2018) ? 12 : 0 ) ;
 }
 
-TRandom3 rand_generator_RunDependentMC2017(0);
-int hashBasedRunPeriod2017(int isData, int run, int lumi, int event){
-  if (isData) return runPeriod2017(run);
-  if (!cumul_lumis_runPeriod2017_isInit){
+TRandom3 rand_generator_RunDependentMC(0);
+int hashBasedRunPeriod2017(int isData, int run, int lumi, int event, int year){
+  if (isData) return runPeriod(run,year);
+  if (!cumul_lumis_isInit){
+    cumul_lumis_runPeriod2016.push_back(0);
     cumul_lumis_runPeriod2017.push_back(0);
-    float tot_lumi = std::accumulate(lumis_runPeriod2017.begin(),lumis_runPeriod2017.end(),float(0.0));
-    for (uint i=0; i<lumis_runPeriod2017.size(); i++) cumul_lumis_runPeriod2017.push_back(cumul_lumis_runPeriod2017.back()+lumis_runPeriod2017[i]/tot_lumi);
-    cumul_lumis_runPeriod2017_isInit = true;
+    cumul_lumis_runPeriod2018.push_back(0);
+    float tot_lumi_2016 = std::accumulate(lumis_runPeriod2016.begin(),lumis_runPeriod2016.end(),float(0.0));
+    float tot_lumi_2017 = std::accumulate(lumis_runPeriod2017.begin(),lumis_runPeriod2017.end(),float(0.0));
+    float tot_lumi_2018 = std::accumulate(lumis_runPeriod2018.begin(),lumis_runPeriod2018.end(),float(0.0));
+
+    for (uint i=0; i<lumis_runPeriod2016.size(); i++) cumul_lumis_runPeriod2016.push_back(cumul_lumis_runPeriod2016.back()+lumis_runPeriod2016[i]/tot_lumi_2016);
+    for (uint i=0; i<lumis_runPeriod2017.size(); i++) cumul_lumis_runPeriod2017.push_back(cumul_lumis_runPeriod2017.back()+lumis_runPeriod2017[i]/tot_lumi_2017);
+    for (uint i=0; i<lumis_runPeriod2018.size(); i++) cumul_lumis_runPeriod2018.push_back(cumul_lumis_runPeriod2018.back()+lumis_runPeriod2018[i]/tot_lumi_2018);
+    cumul_lumis_isInit = true;
   }
   Int_t x = 161248*run+2136324*lumi+12781432*event;
   unsigned int hash = TString::Hash(&x,sizeof(Int_t));
-  rand_generator_RunDependentMC2017.SetSeed(hash);
-  float val = rand_generator_RunDependentMC2017.Uniform();
-  auto period = std::find_if(cumul_lumis_runPeriod2017.begin(),cumul_lumis_runPeriod2017.end(),[val](const float &y){return y>val;});
-  return std::distance(cumul_lumis_runPeriod2017.begin(),period)-1;
+  rand_generator_RunDependentMC.SetSeed(hash);
+  float val = rand_generator_RunDependentMC.Uniform();
+  
+  vector<float> cumul;
+  if (year == 2016) cumul = cumul_lumis_runPeriod2016;
+  else if (year == 2017) cumul = cumul_lumis_runPeriod2017;
+  else if (year == 2018) cumul = cumul_lumis_runPeriod2018;
+  else{
+    std::cout << "Wrong year " << year << std::endl;
+    return -99;
+  }
+  auto period = std::find_if(cumul.begin(),cumul.end(),[val](const float &y){return y>val;});
+  return std::distance(cumul.begin(),period)-1 + ( (year == 2017) ? 7 : 0 ) + ( (year == 2018) ? 12 : 0 );
 }
 
 float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, float scale_loose=1.0) {
