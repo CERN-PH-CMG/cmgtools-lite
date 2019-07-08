@@ -43,8 +43,8 @@ def combine(graphs,mode):
         if mode in ("default","midpoint"): 
             yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if abs(g.GetX()[i]-x) <= 0.01 ]
             yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli if h+l != 0)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli if h+l != 0)
-            ymax = max(y+h for (y,h,l) in yhli)
-            ymin = min(y-l for (y,h,l) in yhli)
+            ymax = max(min(y+h,1) for (y,h,l) in yhli)
+            ymin = min(max(y-l,0) for (y,h,l) in yhli)
             if mode == "midpoint":
                 yavg = 0.5*(ymax+ymin)
         elif mode.startswith("main:"):
@@ -82,9 +82,9 @@ def attrs(filename,process, options):
     elif options.compStyle == 'fitcomp':
         if "QCD"  in process: return { 'Label':'QCD MC', 'Color':ROOT.kPink-2,  '#':0, 'key':'QCD' }
         if "data" in process:
-            if  "globalFit"     in filename: return { 'Label':'Data, cut & sub',  'Color':ROOT.kGray+2,  '#':2, 'key':'data_sub' }
-            elif "fitSimND"     in filename: return { 'Label':'Data, templ. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
-            elif "fitSemiParND" in filename: return { 'Label':'Data, semip. fit', 'Color':ROOT.kAzure+2, '#':4, 'key':'data_fit'  }
+            if  "globalFit"  in filename: return { 'Label':'Data, cut & sub',  'Color':ROOT.kGray+2,  '#':2, 'key':'data_sub' }
+            elif "SimND"     in filename: return { 'Label':'Data, templ. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
+            elif "SemiParND" in filename: return { 'Label':'Data, semip. fit', 'Color':ROOT.kAzure+2, '#':4, 'key':'data_fit'  }
             else: raise RuntimeError("No idea of the file: %s" % filename)
         raise RuntimeError("No idea of the process: %s" % process)
 

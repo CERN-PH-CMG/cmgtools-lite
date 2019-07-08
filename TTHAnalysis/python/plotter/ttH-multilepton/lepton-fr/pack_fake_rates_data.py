@@ -80,7 +80,10 @@ def makeVariants(h,altsrc=None,norm=None):
                 if altsrc == None:
                     err = h.GetBinError(bx,by)
                 else:
-                    err = fr0 * altsrc.GetBinError(bx,by)/altsrc.GetBinContent(bx,by)
+                    if altsrc.GetBinContent(bx,by) <= 0:
+                        print "Warning: in %s, pt %4.1f, eta %3.1f: nominal %.4f +- %.4f , alternate %.4f +- %.4f  "  % (hsyst.GetName(), x, y, fr0, err, altsrc.GetBinContent(bx,by), altsrc.GetBinError(bx,by))
+                    else:
+                        err = fr0 * altsrc.GetBinError(bx,by)/altsrc.GetBinContent(bx,by)
                 fr = func(x,y,fr0,err)
                 #print "Variation %-15s: pt %4.1f, eta %3.1f: nominal %.3f +- %.3f --> shifted %.3f "  % (hsyst.GetName(), x, y, fr0, err, fr)
                 hsyst.SetBinContent(bx, by, fr)
@@ -199,8 +202,8 @@ if __name__ == "__main__":
         h2d_mu_tt_norm = [ make2D(outfile,"norm_mu_TT", ptbins_mu, etabins_mu) ]
 
         Plots = "%s/%s/fr-meas/qcd1l/" % ( options.outdir, options.mvaVersionData)
-        readMany2D(XsQ, h2d_mu, "/".join([Plots, "mu", year,  "HLT_MuX_OR/fakerates-mtW1R/fr_sub_eta_%s_compF.root"]), "%s", etaslices_mu, (10,999) )
-        readMany2D(XsQ, h2d_el, "/".join([Plots, "el", year, "HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_compF.root"]), "%s", etaslices_el, (15,999) )
+        readMany2D(XsQ, h2d_mu, "/".join([Plots, "mu", year,  "HLT_MuX_OR/fakerates-mtW1R/fr_sub_eta_%s_compG.root"]), "%s", etaslices_mu, (10,999) )
+        readMany2D(XsQ, h2d_el, "/".join([Plots, "el", year, "HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_compG.root"]), "%s", etaslices_el, (15,999) )
 
         if options.fixLastBin:
             fixLastBin(-1, h2d_el[1], h2d_el[0])

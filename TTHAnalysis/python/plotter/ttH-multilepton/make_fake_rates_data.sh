@@ -25,6 +25,10 @@ BCORE=" --s2v --tree NanoAOD ttH-multilepton/lepton-fr/mca-qcd1l-${YEAR}.txt ${C
 BCORE="${BCORE} -L ttH-multilepton/functionsTTH.cc   "; 
 BCORE="${BCORE} --Fs {P}/1_frFriends_v1"
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
+if [[ "$YEAR" == "2017" ]]; then
+    BCORE="${BCORE} --mcc ttH-multilepton/mcc-METFixEE2017.txt "; 
+fi;
+
 
 
 BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
@@ -100,7 +104,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.0/fr-meas/qcd1l/$lepdir/$YEAR/HLT_$trigger/$what/$more"
+PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.1/fr-meas/qcd1l/$lepdir/$YEAR/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,Top,data"
@@ -265,22 +269,20 @@ case $what in
         #MCGO="$MCEFF --compare ${QCD}_red_prefit,${QCD}_red --algo=fitND "
         #echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_full.root   $BG )"
         #echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_full.root   $BG )"
-        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSimND --shapeSystSignal=l:0.15,s:0.05,b:0.02 --shapeSystBackground=l:0.07,s:0.02,b:0.02 --kappaBkg 1.1 --constrain theta_bkg --sigmaFBkg 0.05 --constrain fbkg "
+        case $lepton in el) CONSTRFSIG=0.05; CONSTRFBKG=0.10;; mu) CONSTRFSIG=0.075; CONSTRFBKG=0.03;; esac
+        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSimND --shapeSystSignal=l:0.15,s:0.05,b:0.02 --shapeSystBackground=l:0.07,s:0.02,b:0.02 --kappaBkg 1.1 --constrain theta_bkg --sigmaFBkg $CONSTRFBKG --constrain fbkg "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitSimND.root  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitSimND.root  $BG )"
-        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSemiParND --shapeSystBackground=l:0.07,s:0.02,b:0.02 --kappaBkg 1.1 --constrain theta_bkg --sigmaFBkg 0.05 --constrain fbkg "
+        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSemiParND --shapeSystBackground=l:0.07,s:0.02,b:0.02 --kappaBkg 1.1 --constrain theta_bkg --sigmaFBkg $CONSTRFBKG --constrain fbkg "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitSemiParND.root  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitSemiParND.root  $BG )"
         if $ISWIDE; then
-            MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitGlobalSimND --shapeSystSignal=l:0.15,s:0.05,b:0.02 --shapeSystBackground=l:0.07,s:0.02,b:0.02"
+            MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitGlobalSimND --shapeSystSignal=l:0.15,s:0.05,b:0.02 --shapeSystBackground=l:0.07,s:0.02,b:0.02 --regularize sf_sig 0.2 --regularize sf_bkg 0.1 --regularize fbkg $CONSTRFBKG  --regularize fsig $CONSTRFSIG"
             echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitGlobalSimND.root  $BG )"
             echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitGlobalSimND.root  $BG )"
-            REG=" --regularize theta_sig 0.5 --regularize theta_bkg 0.5 --regularize fsig 0.07 --regularize fbkg 0.04 "
-            echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitGlobalSimND_R1.root $REG $BG )"
-            echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitGlobalSimND_R1.root $REG $BG )"
-            REG=" --regularize theta_sig 0.25 --regularize theta_bkg 0.25 --regularize fsig 0.04 --regularize fbkg 0.02 "
-            echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitGlobalSimND_R2.root $REG $BG )"
-            echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitGlobalSimND_R2.root $REG $BG )"
+            MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitGlobalSemiParND  --shapeSystBackground=l:0.07,s:0.02,b:0.02 --regularize sf_sig 0.2 --regularize sf_bkg 0.1  --regularize fsig $CONSTRFSIG --constrain fbkg --sigmaFBkg $CONSTRFBKG"
+            echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitGlobalSemiParND.root  $BG )"
+            echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitGlobalSemiParND.root  $BG )"
         fi;
         #if ! $ISCOMB; then
         MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fqcd --algo=fQCD "
@@ -296,7 +298,7 @@ case $what in
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp1.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:${QCD}_red_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_ifQCD.root:$PATT:${QCD}_red_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSemiParND.root:$PATT:data_fit   )";
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_compF.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:data_sub_syst_prefit $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:${QCD}_red_prefit,data_fit     $PBASE/fr_sub_eta_${E}_fitSemiParND.root:$PATT:data_fit --comp-style fitcomp  )";
             if $ISWIDE; then
-                echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp2.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:${QCD}_red_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_ifQCD.root:$PATT:${QCD}_red_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitGlobalSimND_R2.root:$PATT:data_fit   )";
+                echo "( $STACK -o $PBASE/fr_sub_eta_${E}_compG.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:data_sub_syst_prefit $PBASE/fr_sub_eta_${E}_fitGlobalSimND.root:$PATT:${QCD}_red_prefit,data_fit     $PBASE/fr_sub_eta_${E}_fitGlobalSemiParND.root:$PATT:data_fit --comp-style fitcomp  )";
             fi;
         done
         #fi

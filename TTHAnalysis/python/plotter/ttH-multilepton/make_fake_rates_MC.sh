@@ -12,7 +12,7 @@ ttH)
     test -d /data/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/data/$USER/TREES_ttH_FR_nano_v5/$YEAR -P $T"
     #hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_94X_FR_240518
     #hostname | grep -q cmsphys10 && T=/data/g/gpetrucc/TREES_94X_FR_240518
-    PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.0/fr-mc/$YEAR"
+    PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.1/fr-mc/$YEAR"
     TREE="NanoAOD";
     ;;
 old_ttH)

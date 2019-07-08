@@ -13,3 +13,7 @@ ra7_tight: multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jet
 mvaSusy_sMi: LepGood_mvaSUSY > if3(abs(LepGood_pdgId)==13,-0.2,0.5) && (LepGood_mediumId > 0 || abs(LepGood_pdgId) == 11):  2,-0.5,1.5;   Title="MVA SUSY M + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
 mvaSusy_sVi: LepGood_mvaSUSY > if3(abs(LepGood_pdgId)==13,0.45,0.75) && (LepGood_mediumId > 0 || abs(LepGood_pdgId) == 11):  2,-0.5,1.5;   Title="MVA SUSY V + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
 isConv: LepGood_mcPromptGamma != 0:  2,-0.5,1.5;   Title="Is Conv (MC)", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+
+z2l_tight_1 : LepGood1_isLepTight:  2,-0.5,1.5;
+z2l_tight_2 : LepGood2_isLepTight:  2,-0.5,1.5;
+

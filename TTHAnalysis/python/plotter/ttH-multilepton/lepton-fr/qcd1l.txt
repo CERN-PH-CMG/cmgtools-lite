@@ -42,6 +42,8 @@ mva075_trigEl   : ( HLT_Ele8_CaloIdM_TrackIdM_PFJet30  && LepGood_pt >  8 && Lep
 
 #metFilters : Flag_goodVertices && Flag_globalTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadChargedCandidateFilter $DATA{&& Flag_eeBadScFilter} && Flag_ecalBadCalibFilter; Disable=True
 
+btagMR_M : LepGood_awayNBJetMedium25 > 0 && LepGood_awayNBJetMedium25 < 2 && LepGood_awayHTJet25 < 150 && MET_pt < 80; Disable=True
+btagMR_T : LepGood_awayNBJetTight25 > 0 && LepGood_awayNBJetMedium25 < 2 && LepGood_awayHTJet25 < 150 && MET_pt < 80; Disable=True
 
 awayBMedium : LepGood_awayJet_btagDeepFlavB > deepFlavB_WPMedium(year); Disable=True
 awayBTight : LepGood_awayJet_btagDeepFlavB > deepFlavB_WPTight(year); Disable=True
