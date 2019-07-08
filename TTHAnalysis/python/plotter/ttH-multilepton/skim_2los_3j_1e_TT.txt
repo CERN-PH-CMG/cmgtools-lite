@@ -1,6 +1,6 @@
 alwaystrue: 1
 lep: nLepFO>=2
 os: LepGood1_charge*LepGood2_charge < 0
-3j: nJetSel_Recl>=3
+3j: nJetSel_Recl + nFwdJet_Recl >=3
 1e: abs(LepGood1_pdgId)==11 || abs(LepGood2_pdgId)==11
 TT: LepGood1_isLepTight && LepGood2_isLepTight
