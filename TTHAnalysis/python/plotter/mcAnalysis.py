@@ -70,6 +70,14 @@ class MCAnalysis:
                 else:
                     pseudo_samples.append( "%s : %s : 1" % (cname, cname) )
             self.readMca(pseudo_samples, options)
+        if options.checkFriendsFirst:
+            print "Checking for all friend trees..."
+            ok = True
+            for ttys in self._allData.itervalues():
+                for tty in ttys:
+                    if not tty.checkFriendTrees():
+                        ok = False
+            if not ok: raise RuntimeError()
     def readMca(self,samples,options,addExtras={},selectProcesses=None):
         field_previous = None
         extra_previous = {}
@@ -884,6 +892,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--efr", "--external-fitResult", dest="externalFitResult", type="string", default=None, nargs=2, help="External fitResult")
     parser.add_option("--aefr", "--alt-external-fitResults", dest="altExternalFitResults", type="string", default=[], nargs=2, action="append", help="External fitResult")
     parser.add_option("--aefrl", "--alt-external-fitResult-labels", dest="altExternalFitResultLabels", type="string", default=[], nargs=1, action="append", help="External fitResult")
+    parser.add_option("--check-friends-first", dest="checkFriendsFirst", action="store_true", default=False, help="At start, check that all friends are available, and raise an error otherwise.");
 
 if __name__ == "__main__":
     from optparse import OptionParser
