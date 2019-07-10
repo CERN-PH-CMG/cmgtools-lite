@@ -57,8 +57,8 @@ TH2 * MUSF3 = 0;
 
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
-  TH2 **histo = 0, **hptr2 = 0;
-  TH2 * FR_temp = 0;
+    TH2 **histo = 0, **hptr2 = 0;
+    TH2 * FR_temp = 0;
     if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
     else if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
@@ -106,7 +106,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
         std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
         return 0;
     }
-
+    TDirectory *here = gDirectory;
     TFile *f = TFile::Open(file);
     if (*histo != 0) {
       if (std::string(name) != (*histo)->GetName()) {
@@ -138,6 +138,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
         if (hptr2) *hptr2 = *histo;
     }
     f->Close();
+    here->cd();
     return histo != 0;
 }
 
