@@ -137,7 +137,7 @@ if __name__ == '__main__':
             
         if '_closuretest' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
-            x = x.replace("--maxRatioRange 0.6  1.99 --ratioYNDiv 210", "--maxRatioRange 0.0 1.99 --fixRatioRange ")
+            x = x.replace("--maxRatioRange 0.6  1.99 --ratioYNDiv 210", "--maxRatioRange 0.0 2.49 --fixRatioRange ")
             x = x.replace("--legendColumns 3", "--legendColumns 2")
             x = add(x,"--AP --plotmode nostack --sP 2lep_catIndex_nosign --sP 2lep_catIndex --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV --sP nBJetMedium25 --sP 2lep_nJet25_from4")
             x = add(x,"-p TT_FR_QCD -p TT_FR_TT -p TT_fake --ratioDen TT_FR_QCD --ratioNums TT_fake,TT_FR_TT --errors ")
@@ -146,12 +146,12 @@ if __name__ == '__main__':
                 x = x.replace("--ratioNums TT_fake,TT_FR_TT","--ratioNums TT_fake")
                 x = add(x,"--fitRatio 1")
                 if '_unc' in torun:
-                    x = add(x,"--su CMS_ttHl16_Clos_[em]_norm")
+                    x = add(x,"--su CMS_ttHl_Clos_[em]_norm")
             else:
                 if '_uncfull' in torun:
-                    x = add(x,"--su 'CMS_ttHl16_FR.*' ")
+                    x = add(x,"--su 'CMS_ttHl_FR.*' ")
                 elif '_unc' in torun:
-                    x = add(x,"--su 'CMS_ttHl16_Clos_[em].*_norm' ")
+                    x = add(x,"--su 'CMS_ttHl_Clos_[em].*_norm' ")
             if '_mufake' in torun: x = add(x,"-A alwaystrue mufake '(abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0)'")
             if '_elfake' in torun: x = add(x,"-A alwaystrue elfake '(abs(LepGood1_pdgId)==11 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==11 && LepGood2_mcMatchId==0)'")
             if '_bloose' in torun: x = add(x,'-E ^BLoose ')
@@ -233,12 +233,12 @@ if __name__ == '__main__':
                 x = x.replace("--ratioNums TT_fake,TT_FR_TT","--ratioNums TT_fake")
                 x = add(x,"--fitRatio 1")
                 if '_unc' in torun:
-                    x = add(x,"--su CMS_ttHl16_Clos_[em]_norm")
+                    x = add(x,"--su CMS_ttHl_Clos_[em]_norm")
             else:
                 if '_uncfull' in torun:
-                    x = add(x,"--su 'CMS_ttHl16_FR.*' ")
+                    x = add(x,"--su 'CMS_ttHl_FR.*' ")
                 elif '_unc' in torun:
-                    x = add(x,"--su 'CMS_ttHl16_Clos_[em].*_norm' ")
+                    x = add(x,"--su 'CMS_ttHl_Clos_[em].*_norm' ")
             if '_mufake' in torun: x = add(x,"-A alwaystrue mufake '(abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0) || (abs(LepGood3_pdgId)==13 && LepGood3_mcMatchId==0)'")
             if '_elfake' in torun: x = add(x,"-A alwaystrue elfake '(abs(LepGood1_pdgId)==11 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==11 && LepGood2_mcMatchId==0) || (abs(LepGood3_pdgId)==11 && LepGood3_mcMatchId==0)'")
             if '_bloose' in torun: x = add(x,'-E ^BLoose ')
