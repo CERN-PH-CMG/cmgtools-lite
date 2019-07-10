@@ -82,7 +82,7 @@ def sigprocs(GO,mylist):
 def runIt(GO,name,plots=[],noplots=[]):
     if '_74vs76' in name: GO = prep74vs76(GO)
     if dowhat == "plots":  
-        if not ('forcePlotChoice' in sys.argv[4:]): print submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[4:])]))
+        if not ('forcePlotChoice' in sys.argv[4:]): print submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %r'%p for p in plots]),' '.join(['--xP %r'%p for p in noplots]),' '.join(sys.argv[4:])]))
         else: print 'python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join([x for x in sys.argv[4:] if x!='forcePlotChoice'])
     elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[4:])
     elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[4:])
@@ -290,7 +290,7 @@ if __name__ == '__main__':
             x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
-        x = add(x,"-R ^4j 3j 'nJet25==3'")
+        x = add(x,"-R ^4j 3j '(nJet25+nFwdJet)==3'")
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt")
 
