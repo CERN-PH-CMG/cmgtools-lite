@@ -122,6 +122,14 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl', doSystJEC=False)
 
+
+from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
+isMatchRightCharge = lambda : ObjTagger('isMatchRightCharge','LepGood', [lambda l,g : (l.genPartFlav==1 or l.genPartFlav == 15) and (g.pdgId*l.pdgId > 0) ], linkColl='GenPart',linkVar='genPartIdx')
+mcMatchId     = lambda : ObjTagger('mcMatchId','LepGood', [lambda l : (l.genPartFlav==1 or l.genPartFlav == 15) ])
+mcPromptGamma = lambda : ObjTagger('mcPromptGamma','LepGood', [lambda l : (l.genPartFlav==22)])
+mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
+
+
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016, jetmetUncertainties2017, jetmetUncertainties2018
 
 
@@ -130,7 +138,7 @@ def _fires(ev, path):
 
 triggerGroups=dict(
     Trigger_1e={
-        2016 : lambda ev : _fires(ev,'HLT_Ele27_WPTight_Gsf'), #or _fires(ev,'HLT_Ele25_eta2p1_WPTight_Gsf') or _fires(ev,'HLT_Ele27_eta2p1_WPLoose_Gsf'),
+        2016 : lambda ev : _fires(ev,'HLT_Ele27_WPTight_Gsf'),# or _fires(ev,'HLT_Ele25_eta2p1_WPTight_Gsf') or _fires(ev,'HLT_Ele27_eta2p1_WPLoose_Gsf'),
         2017 : lambda ev : _fires(ev,'HLT_Ele32_WPTight_Gsf') or _fires(ev,'HLT_Ele35_WPTight_Gsf'),
         2018 : lambda ev : _fires(ev,'HLT_Ele32_WPTight_Gsf'),
     },
@@ -207,7 +215,7 @@ Trigger_mme  = lambda : EvtTagger('Trigger_mme',[ lambda ev : triggerGroups['Tri
 Trigger_2lss = lambda : EvtTagger('Trigger_2lss',[ lambda ev : triggerGroups['Trigger_2lss'][ev.year](ev) ])
 Trigger_3l   = lambda : EvtTagger('Trigger_3l',[ lambda ev : triggerGroups['Trigger_3l'][ev.year](ev) ])
 
-triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss]
+triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss,Trigger_3l]
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl')
@@ -243,3 +251,5 @@ btagSF2018_dj = lambda : btagSFProducer("2018",'deepjet',collName="JetSel_Recl",
 from CMGTools.TTHAnalysis.tools.nanoAOD.BtagSFs import BtagSFs
 bTagSFs = lambda : BtagSFs("JetSel_Recl")
 
+from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors import lepScaleFactors
+leptonSFs = lambda : lepScaleFactors()
