@@ -2,18 +2,18 @@ LepGood1_isLepTight\b : LepGood_isLepTight_Recl[iLepFO_Recl[0]]; AlsoData
 LepGood2_isLepTight\b : LepGood_isLepTight_Recl[iLepFO_Recl[1]]; AlsoData
 LepGood3_isLepTight\b : LepGood_isLepTight_Recl[iLepFO_Recl[2]]; AlsoData
 LepGood4_isLepTight\b : LepGood_isLepTight_Recl[iLepFO_Recl[3]]; AlsoData
-LepGood1_isMatchRightCharge\b : (LepGood_genPartFlav[iLepFO_Recl[0]]==1 || LepGood_genPartFlav[iLepFO_Recl[0]]==15) && (GenPart_pdgId[LepGood_genPartIdx[iLepFO_Recl[0]]]*LepGood_pdgId[iLepFO_Recl[0]]>0); AlsoData
-LepGood2_isMatchRightCharge\b : (LepGood_genPartFlav[iLepFO_Recl[1]]==1 || LepGood_genPartFlav[iLepFO_Recl[1]]==15) && (GenPart_pdgId[LepGood_genPartIdx[iLepFO_Recl[1]]]*LepGood_pdgId[iLepFO_Recl[1]]>0); AlsoData
-LepGood3_isMatchRightCharge\b : (LepGood_genPartFlav[iLepFO_Recl[2]]==1 || LepGood_genPartFlav[iLepFO_Recl[2]]==15) && (GenPart_pdgId[LepGood_genPartIdx[iLepFO_Recl[2]]]*LepGood_pdgId[iLepFO_Recl[2]]>0); AlsoData
-LepGood4_isMatchRightCharge\b : (LepGood_genPartFlav[iLepFO_Recl[3]]==1 || LepGood_genPartFlav[iLepFO_Recl[3]]==15) && (GenPart_pdgId[LepGood_genPartIdx[iLepFO_Recl[3]]]*LepGood_pdgId[iLepFO_Recl[3]]>0); AlsoData
-LepGood1_mcMatchId\b : (LepGood_genPartFlav[iLepFO_Recl[0]]==1 || LepGood_genPartFlav[iLepFO_Recl[0]]==15); AlsoData
-LepGood2_mcMatchId\b : (LepGood_genPartFlav[iLepFO_Recl[1]]==1 || LepGood_genPartFlav[iLepFO_Recl[1]]==15); AlsoData
-LepGood3_mcMatchId\b : (LepGood_genPartFlav[iLepFO_Recl[2]]==1 || LepGood_genPartFlav[iLepFO_Recl[2]]==15); AlsoData
-LepGood4_mcMatchId\b : (LepGood_genPartFlav[iLepFO_Recl[3]]==1 || LepGood_genPartFlav[iLepFO_Recl[3]]==15); AlsoData
-LepGood1_mcPromptGamma\b  : (LepGood_genPartFlav[0] == 22); AlsoData
-LepGood2_mcPromptGamma\b  : (LepGood_genPartFlav[1] == 22); AlsoData
-LepGood3_mcPromptGamma\b  : (LepGood_genPartFlav[2] == 22); AlsoData
-LepGood4_mcPromptGamma\b  : (LepGood_genPartFlav[3] == 22); AlsoData
+LepGood1_isMatchRightCharge\b : LepGood_isMatchRightCharge[iLepFO_Recl[0]]
+LepGood2_isMatchRightCharge\b : LepGood_isMatchRightCharge[iLepFO_Recl[1]]
+LepGood3_isMatchRightCharge\b : LepGood_isMatchRightCharge[iLepFO_Recl[2]]
+LepGood4_isMatchRightCharge\b : LepGood_isMatchRightCharge[iLepFO_Recl[3]]
+LepGood1_mcMatchId\b : LepGood_mcMatchId[iLepFO_Recl[0]]
+LepGood2_mcMatchId\b : LepGood_mcMatchId[iLepFO_Recl[1]]
+LepGood3_mcMatchId\b : LepGood_mcMatchId[iLepFO_Recl[2]]
+LepGood4_mcMatchId\b : LepGood_mcMatchId[iLepFO_Recl[3]]
+LepGood1_mcPromptGamma\b  :  LepGood_mcPromptGamma[iLepFO_Recl[0]]
+LepGood2_mcPromptGamma\b  :  LepGood_mcPromptGamma[iLepFO_Recl[1]]
+LepGood3_mcPromptGamma\b  :  LepGood_mcPromptGamma[iLepFO_Recl[2]]
+LepGood4_mcPromptGamma\b  :  LepGood_mcPromptGamma[iLepFO_Recl[3]]
 LepGood1_(\w+) : LepGood_\1[iLepFO_Recl[0]]; AlsoData
 LepGood2_(\w+) : LepGood_\1[iLepFO_Recl[1]]; AlsoData
 LepGood3_(\w+) : LepGood_\1[iLepFO_Recl[2]]; AlsoData
