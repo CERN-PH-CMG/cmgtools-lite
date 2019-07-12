@@ -157,7 +157,19 @@ float fetchFR_i(float l1pt, float l1eta, int l1pdgId, int iFR)
 {
     return fetchFR_ii(l1pt,l1eta,l1pdgId,iFR,iFR);
 }
-   
+
+float fakeRateWeight_short_2lss_ii(float l1fr, int l1pass, float l2fr, int l2pass) {
+    if (l1pass && l2pass) return 0;
+    float ret = -1.0;
+    if (!l1pass) { 
+        ret *= -l1fr/(1.0f-l1fr);
+    }
+    if (!l2pass) {
+        ret *= -l2fr/(1.0f-l2fr);
+    }
+    return ret;
+}
+
 float fakeRateWeight_2lss_ii(float l1pt, float l1eta, int l1pdgId, bool l1pass,
                              float l2pt, float l2eta, int l2pdgId, bool l2pass, int iFRmu, int iFRel) {
     if (l1pass && l2pass) return 0;
