@@ -69,6 +69,8 @@ class FakeRate:
         if hist in _loads:
             if _loads[hist][0] != (fname,hname):
                 print "Conflicting load for %s: (%r, %r) from %r vs older %r from %r" % (hist, fname, hname, txtfilename, _loads[hist][0], _loads[hist][1])
+            else:
+                return True # no need to load multiple times
         else:
             _loads[hist] = ((fname,hname), txtfilename)
         ROOT.loadFRHisto(hist,fname,hname)

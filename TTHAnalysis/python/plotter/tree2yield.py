@@ -313,11 +313,11 @@ class TreeToYield:
             self._friends.append(tf)
         self._isInit = True
     def _close(self):
+        self._isInit = False
         self._tree = None
         self._friends = []
-        self._tfile.Close()
+        if self._tfile: self._tfile.Close()
         self._tfile = None
-        self._isInit = False
     def _listFriendTrees(self):
         friendOpts = self._options.friendTrees[:]
         friendOpts += (self._options.friendTreesData if self._isdata else self._options.friendTreesMC)
@@ -486,6 +486,7 @@ class TreeToYield:
         return stylePlot(plot,spec,self.getOption)
     def getPlot(self,plotspec,cut,fsplit=None,closeTreeAfter=False,noUncertainties=False):
         if self._isVariation == None and noUncertainties == False:
+            _wasclosed = not self._isInit
             nominal = self.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=False,noUncertainties=True)
             ret = HistoWithNuisances( nominal )
             variations = {}
@@ -502,7 +503,7 @@ class TreeToYield:
                 var.postProcess(nominal, up, down)
                 ret.addVariation(var.name, "up",   up)
                 ret.addVariation(var.name, "down", down)
-            if closeTreeAfter: self._close()
+            if closeTreeAfter and _wasclosed: self._close()
             return ret
         ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec, fsplit=fsplit, closeTreeAfter=closeTreeAfter)
         # fold overflow
