@@ -100,7 +100,7 @@ class fastCombinedObjectRecleaner(Module):
     def initWorkers(self):
         self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_jetIdx)
         self._worker.setTaus(getattr(self,'n%s'%self.tauc),getattr(self,'%s_pt'%self.tauc),getattr(self,'%s_eta'%self.tauc),getattr(self,'%s_phi'%self.tauc), getattr(self,'%s_jetIdx'%self.tauc))
-        self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt_nom'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc),
+        self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt_nom'%self.jc if self.isMC else '%s_pt'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc),
                              getattr(self,'%s_%s'%(self.jc,self.jetBTag)),getattr(self,'%s_pt_jesTotalUp'%self.jc) if self.isMC else None,getattr(self,'%s_pt_jesTotalDown'%self.jc) if self.isMC else None)
         self._workerMV.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_mass, self.LepGood_pdgId)
 
