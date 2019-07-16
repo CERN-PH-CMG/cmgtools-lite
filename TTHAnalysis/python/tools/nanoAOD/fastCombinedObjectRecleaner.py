@@ -32,12 +32,12 @@ class fastCombinedObjectRecleaner(Module):
         self.isMC = component.isMC
 
     def beginJob(self,histFile=None,histDirName=None):
-        self.vars = ["pt","eta","phi","mass"]
-        self.vars_leptons = ["pdgId",'jetIdx']
-        self.vars_taus = []
+        self.vars = ["eta","phi","mass"]
+        self.vars_leptons = ["pdgId",'jetIdx','pt']
+        self.vars_taus = ["pt"]
         self.vars_taus_int = ['jetIdx']
         self.vars_taus_uchar = ['idMVAoldDMdR032017v2']
-        self.vars_jets = ["btagDeepB","qgl",'btagDeepFlavB'] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
+        self.vars_jets = [("pt","pt_nom") if self.isMC else 'pt',"btagDeepB","qgl",'btagDeepFlavB'] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
         if self.isMC: self.vars_jets += ['pt_jesTotalUp','pt_jesTotalDown']
         self.vars_jets_int = (["hadronFlavour"] if self.isMC else [])
         self.vars_jets_nooutput = []
@@ -91,7 +91,10 @@ class fastCombinedObjectRecleaner(Module):
             if coll==self.tauc: _vars.extend(self.vars_taus+self.vars_taus_int+self.vars_taus_uchar)
             if coll==self.jc: _vars.extend(self.vars_jets+self.vars_jets_int+self.vars_jets_nooutput)
             for B in _vars:
-                setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
+                if type(B) == tuple:
+                    setattr(self,"%s_%s"%(coll,B[0]), tree.arrayReader("%s_%s"%(coll,B[1])))
+                else:
+                    setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
         return True
 
     def initWorkers(self):
