@@ -21,7 +21,7 @@ class EventVars2LSS(Module):
                               #"sum_sgnpz"
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown"} if doSystJEC else {0:""}
+        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : 'jerUp', -2:'jerDown'} if doSystJEC else {0:""}
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
