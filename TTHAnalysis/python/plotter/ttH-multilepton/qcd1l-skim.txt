@@ -1,5 +1,0 @@
-minimal: LepGood_awayJet_pt > 30
-veto: nLepGood == 1
-presel: LepGood_sip3d < 8 && LepGood_jetBTagDeepCSV < 0.4941
-hltDoubleMu: HLT_FR_Mu8 || HLT_FR_Mu17; Disable=True
-hltSingleMu: HLT_FR_Mu3_PFJet40 || HLT_FR_Mu20 || HLT_FR_Mu27 ; Disable=True

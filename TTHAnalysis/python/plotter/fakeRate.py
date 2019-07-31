@@ -10,7 +10,7 @@ from CMGTools.TTHAnalysis.plotter.cutsFile import CutsFile
 
 _loads = {}
 class FakeRate:
-    def __init__(self,filestring,lumi=None,loadFilesNow=True):
+    def __init__(self,filestring,lumi=None,loadFilesNow=True, year=None):
         files = filestring.split(",")
         self._weight = None
         self._mods = []
@@ -35,8 +35,11 @@ class FakeRate:
 	            data = "%s/src/CMGTools/TTHAnalysis/data/" % os.environ['CMSSW_BASE'];
                     fname = fields[2].replace("$DATA",data)
                     hname = fields[3] if len(fields) >= 4 else fields[1]
-                    if loadFilesNow: self._loadFile(fields[1],fname,hname) 
-                    else:            self._toLoad.append((fields[1],fname,hname))
+                    if len(fields) < 5 or year == None or year in fields[4].split(','):
+                        if loadFilesNow: 
+                            self._loadFile(fields[1],fname,hname,file) 
+                        else:
+                            self._toLoad.append((fields[1],fname,hname,file))
 	        elif fields[0] == 'norm-lumi-override':
 	            if self._weight is None: raise RuntimeError, "norm-lumi-override must follow weight declaration in fake rate file "+file
 	            if not lumi: raise RuntimeError, "lumi not set in options, cannot apply norm-lumi-override"
@@ -59,15 +62,17 @@ class FakeRate:
     def cutMods(self): 
         return self._cutMods
     def loadFiles(self):
-        for hist,fname,hname in self._toLoad:
-            self._loadFile(hist,fname,hname)
+        for hist,fname,hname,txtfilename in self._toLoad:
+            self._loadFile(hist,fname,hname,txtfilename)
         self._toLoad = []
-    def _loadFile(self,hist,fname,hname):
+    def _loadFile(self,hist,fname,hname,txtfilename):
         if hist in _loads:
-            if _loads[hist] != (fname,hname):
-                print "Conflicting load for %s: (%r, %r) vs older %s" % (hist, fname,hname, _loads[hist])
+            if _loads[hist][0] != (fname,hname):
+                print "Conflicting load for %s: (%r, %r) from %r vs older %r from %r" % (hist, fname, hname, txtfilename, _loads[hist][0], _loads[hist][1])
+            else:
+                return True # no need to load multiple times
         else:
-            _loads[hist] = (fname,hname)
+            _loads[hist] = ((fname,hname), txtfilename)
         ROOT.loadFRHisto(hist,fname,hname)
 
 

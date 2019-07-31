@@ -1,0 +1,55 @@
+# vim: syntax=sh
+
+minimal: LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0
+
+mu : abs(LepGood_pdgId)==13; Disable=True
+el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0 && LepGood_idEmu3; Disable=True
+nocv_el : abs(LepGood_pdgId)==11; Disable=True
+#invcv_el : !LepGood_convVeto; Disable=True
+dfM : LepGood_jetBTagDeepFlav < deepFlavB_WPMedium(year)
+
+pvdof : PV_ndof > 100
+
+mu_den_v1p0 : LepGood_mvaTTH > 0.85 || ( LepGood_jetBTagDeepFlav < smoothBFlav(0.9*LepGood_pt*(1+LepGood_jetRelIso), 20, 45, year) && LepGood_jetRelIso < 0.50 ) ; Disable=True
+el_den_v1p0 : LepGood_mvaTTH > 0.80 || ( LepGood_mvaFall17V2noIso_WP80 && LepGood_jetRelIso < 0.70 ) ; Disable=True
+
+num_v1p0 : if3( abs(LepGood_pdgId)==11 , LepGood_mvaTTH > 0.80, LepGood_mediumId > 0 && LepGood_mvaTTH > 0.85) ; Disable=True
+
+wSel : mt_2(MET_pt,MET_phi,LepGood_pt,LepGood_phi) > 50; Disable=True
+
+pt10 : LepGood_pt > 10; Disable=True
+
+trigMu   : ( HLT_Mu3_PFJet40 && LepGood_awayJet_pt > 45 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) < 32  ) || \
+             ( HLT_Mu8  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 15 ) || \
+             ( HLT_Mu17 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32 ) || \
+             ( HLT_Mu20 && LepGood_pt > 20 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32 ) || \
+             ( HLT_Mu27 && LepGood_pt > 27 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 45 ); Disable=True
+2016_trigMu : ( HLT_Mu3_PFJet40 && LepGood_awayJet_pt > 45 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) < 32  ) || \
+              ( HLT_Mu8  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 15 ) || \
+              ( HLT_Mu17 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32 ); Disable=True
+mva075_trigMu   : ( HLT_Mu3_PFJet40 && LepGood_awayJet_pt > 45 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) < 32  ) || \
+             ( HLT_Mu8  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 15  ) || \
+             ( HLT_Mu17 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32  ) || \
+             ( HLT_Mu20 && LepGood_pt > 20 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32 ) || \
+             ( HLT_Mu27 && LepGood_pt > 27 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 45 ); Disable=True
+trigEl   : ( HLT_Ele8_CaloIdM_TrackIdM_PFJet30  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.80, 1.0, 0.9*(1+LepGood_jetRelIso)) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.80, 1.0, 0.9*(1+LepGood_jetRelIso)) < 45  ) || \
+           ( HLT_Ele17_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.80, 1.0, 0.9*(1+LepGood_jetRelIso)) > 25 ) || \
+           ( HLT_Ele23_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 23 && LepGood_pt*if3(LepGood_mvaTTH>0.80, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32 ); Disable=True
+
+mva075_trigEl   : ( HLT_Ele8_CaloIdM_TrackIdM_PFJet30  && LepGood_pt >  8 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 15 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) < 45  ) || \
+           ( HLT_Ele17_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 17 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 25 ) || \
+           ( HLT_Ele23_CaloIdM_TrackIdM_PFJet30 && LepGood_pt > 23 && LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso)) > 32 ); Disable=True
+
+#metFilters : Flag_goodVertices && Flag_globalTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && Flag_BadChargedCandidateFilter $DATA{&& Flag_eeBadScFilter} && Flag_ecalBadCalibFilter; Disable=True
+
+btagMR_M : LepGood_awayNBJetMedium25 > 0 && LepGood_awayNBJetMedium25 < 2 && LepGood_awayHTJet25 < 150 && MET_pt < 80; Disable=True
+btagMR_T : LepGood_awayNBJetTight25 > 0 && LepGood_awayNBJetMedium25 < 2 && LepGood_awayHTJet25 < 150 && MET_pt < 80; Disable=True
+
+awayBMedium : LepGood_awayJet_btagDeepFlavB > deepFlavB_WPMedium(year); Disable=True
+awayBTight : LepGood_awayJet_btagDeepFlavB > deepFlavB_WPTight(year); Disable=True
+topVeto : MET_pt < 60 && LepGood_awayJet_pt < 100; Disable=True
+
+barrel : abs(LepGood_eta) <= (1.2 + 0.279 *(abs(LepGood_pdgId)==11)); Disable=True
+#early_runs : run <= 275125
+#awayJetMatch: abs(LepGood_awayJet_eta - Jet_eta) < 0.001 && abs(LepGood_awayJet_pt - Jet_pt) < 0.001
+#awayJetRawPt50 : Jet_rawPt > 80

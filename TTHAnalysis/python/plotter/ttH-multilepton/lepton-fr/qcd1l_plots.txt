@@ -1,0 +1,67 @@
+# vim: syntax=sh
+* ; LegendCutoff=1e-6
+pt : LepGood_pt : 40,0,100; XTitle="lepton p_{T}  (GeV)", Logy, YMin=0.9, MoreY=200
+eta : LepGood_eta : 20,-2.5,2.5; XTitle="lepton #eta", MoreY=3
+conePt:  LepGood_pt*if3(if3(abs(LepGood_pdgId) == 11,LepGood_mvaTTH>0.80,LepGood_mvaTTH>0.85&&LepGood_mediumId > 0), 1.0, 0.9*(1+LepGood_jetRelIso))  : 20,0,100; XTitle="lepton p_{T}^{cone} [GeV]", Logy, YMin=0.9, MoreY=200
+
+sip3d:  LepGood_sip3d       : 20,0,8; XTitle="lepton sip3d", MoreY=1.8
+miniRelIso:  LepGood_miniPFRelIso_all       : 20,0,0.4; XTitle="lepton miniRelIso", Logy, MoreY=20
+#dxy:  LepGood_dxy       : 20,-0.1,0.1; XTitle="lepton dxy", Logy
+#dz:  LepGood_dz       : 20,-0.1,0.1; XTitle="lepton dz", Logy
+#jetPtRatio:  1/(1+LepGood_jetRelIso)   : 20,0.0,0.8; XTitle="lepton p_{T}(l)/p_{T}(j)", MoreY=1.8
+jetRelIso:  LepGood_jetRelIso   : 20,-0.2,1.3; XTitle="lep jet rel iso", MoreY=1.8
+#jetPtRel:  LepGood_jetPtRelv2     : 20,0,25; XTitle="lepton p_{T}^{rel}(j) (GeV)"
+#jetBTagCSV:  LepGood_jetBTagCSV     : 20,0,1; XTitle="lepton's jet b-tag", Legend='TR', Logy, MoreY=20
+#jetBTagDeepB:  LepGood_jetBTagDeepCSV     : 20,0,1; XTitle="lepton's jet b-tag", Legend='TR', Logy, MoreY=20
+jetBTagDeepFlavB:  LepGood_jetBTagDeepFlav : 20,0,1; XTitle="lepton's jet b-tag", Legend='TR', Logy, MoreY=20
+#jetBTagDeepFlavC:  LepGood_jetBTagDeepFlavC : 20,0,1; XTitle="lepton's jet c-tag", Legend='TR', Logy, MoreY=20
+mvaTTH:  LepGood_mvaTTH  : 20,-1,1; XTitle="lepton mva score", Legend='TL', Logy, MoreY=20
+#mvaSUSY:  LepGood_mvaSUSY  : 20,-1,1; XTitle="lepton mva score", Legend='TL', Logy, MoreY=20
+idVar: if3(abs(LepGood_pdgId)==13,LepGood_segmentComp,-0.05*log((1-LepGood_mvaFall17V2noIso)/(1+LepGood_mvaFall17V2noIso))): 20,0,1; Logy, MoreY=200, YMin=0.9, XTitle="Segm comp/EleId unrol", Legend='TL'
+
+awayJet_pt : LepGood_awayJet_pt : 20,0,200; XTitle="away jet p_{T}  (GeV)", Logy, YMin=0.9, MoreY=200
+#awayJet_pt_1 : LepGood_awayJet_pt : 20,0,200; XTitle="away jet p_{T}  (GeV)", Logy, YMin=0.9, MoreY=20
+awayJet_eta : LepGood_awayJet_eta : 20,-2.5,2.5; XTitle="away jet #eta", MoreY=2.5
+#awayJet_btagCSVV2 : LepGood_awayJet_btagCSVV2 : 20,0,1; XTitle="away jet b-tag", Logy, YMin=0.9, MoreY=20
+#awayJet_btagDeepB : Jet_btagDeepB[LepGood_awayJet_index] : 20,0,1; XTitle="away jet b-tag", Logy, YMin=0.9, MoreY=20
+#awayJet_btagDeepC : Jet_btagDeepC[LepGood_awayJet_index] : 20,0,1; XTitle="away jet b-tag", Logy, YMin=0.9, MoreY=20
+awayJet_btagDeepFlavB : Jet_btagDeepFlavB[LepGood_awayJet_index] : 20,0,1; XTitle="away jet b-tag", Logy, YMin=0.9, MoreY=40
+awayJet_btagDeepFlavC : Jet_btagDeepFlavC[LepGood_awayJet_index] : 20,0,1; XTitle="away jet b-tag", Logy, YMin=0.9, MoreY=20
+#awayNBJetLoose25 : LepGood_awayNBJetLoose25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(bjet\, p_{T} > 25\, DFL)", MoreY=2
+#awayNBJetMedium25 : LepGood_awayNBJetMedium25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(bjet\, p_{T} > 25\, DFM)", MoreY=2
+#awayNBJetTight25 : LepGood_awayNBJetTight25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(bjet\, p_{T} > 25\, DFT)", MoreY=2
+awayNBJetLoose25_log : LepGood_awayNBJetLoose25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(bjet\, p_{T} > 25\, DFL)", Logy, MoreY=100
+awayNBJetMedium25_log : LepGood_awayNBJetMedium25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(bjet\, p_{T} > 25\, DFM)", Logy, MoreY=100
+awayNBJetTight25_log : LepGood_awayNBJetTight25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(bjet\, p_{T} > 25\, DFT)", Logy, MoreY=100
+#awayNJet25 : LepGood_awayNJet25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 25)", MoreY=2
+#awayNJet30 : LepGood_awayNJet30 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 30)", MoreY=2
+#awayNJet40 : LepGood_awayNJet40 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 40)", MoreY=2
+#awayNJet60 : LepGood_awayNJet60 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 60)", MoreY=2
+awayNJet25_log : LepGood_awayNJet25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 25)", Logy, MoreY=100
+#awayNJet30_log : LepGood_awayNJet30 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 30)", Logy, MoreY=100
+awayNJet40_log : LepGood_awayNJet40 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 40)", Logy, MoreY=100
+#awayNJet60_log : LepGood_awayNJet60 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="away N(jet\, p_{T} > 60)", Logy, MoreY=100
+#awayHTJet25 : LepGood_awayHTJet25 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 25)", MoreY=2
+#awayHTJet30 : LepGood_awayHTJet30 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 30)", MoreY=2
+#awayHTJet40 : LepGood_awayHTJet40 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 40)", MoreY=2
+#awayHTJet60 : LepGood_awayHTJet60 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 60)", MoreY=2
+awayHTJet25_log: LepGood_awayHTJet25 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 25)", Logy, MoreY=100
+#awayHTJet30_log: LepGood_awayHTJet30 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 30)", Logy, MoreY=100
+awayHTJet40_log: LepGood_awayHTJet40 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 40)", Logy, MoreY=100
+#awayHTJet60_log: LepGood_awayHTJet60 : 30,0,450; XTitle="away H_{T}(jet\, p_{T} > 60)", Logy, MoreY=100
+
+#awayJet_rawPt : Jet_rawPt : 20,0,200; XTitle="away jet p_{T} - raw  (GeV)"
+
+ptBalance : LepGood_awayJet_pt/(LepGood_pt*(1+LepGood_jetRelIso)) : 30,0,5 ; XTitle="p_{T}(away jet) / p_{T}(lepton jet)", Logy, YMin=0.9, MoreY=20
+ptBalance_1 : LepGood_awayJet_pt/(LepGood_pt*(1+LepGood_jetRelIso)) : 30,0,3 ; XTitle="p_{T}(away jet) / p_{T}(lepton jet)"
+dPhi : abs(deltaPhi(LepGood_phi, Jet_phi[LepGood_awayJet_index])) : 30,0,3.14 ; XTitle="#Delta#phi(lep\, away jet)"
+dEta : abs(LepGood_eta-LepGood_awayJet_eta) : 30,0,5; XTitle="#Delta#eta(lep\, away jet)"
+
+met : MET_pt : 30,0,140; XTitle="E_{T}^{miss} (GeV)", Logy, YMin=0.9, MoreY=100
+#met_1 : MET_pt : 30,0,140; XTitle="E_{T}^{miss} (GeV)"
+nvtx : PV_npvsGood: 60,-0.5,59.5; XTitle="N(vtx)"
+#PVdof : PV_ndof: 60,20,200; XTitle="N(vtx)"
+mtW1 : mt_2(MET_pt,MET_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)", Logy, YMin=0.9, MoreY=100
+#mtW1_1 : mt_2(MET_pt,MET_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)" 
+mtW1R : mt_2(MET_pt,MET_phi,35,LepGood_phi) : 40,0,160; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)", Logy, YMin=0.9, MoreY=100
+ptW : pt_2(MET_pt,MET_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="p_{T}(l\, E_{T}^{miss}) (GeV)", Logy, YMin=0.9, MoreY=100

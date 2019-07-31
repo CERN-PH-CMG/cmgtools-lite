@@ -90,6 +90,7 @@ parser.add_option("--justcount", dest="justcount",   action="store_true", defaul
 parser.add_option("--justtrivial", dest="justtrivial",   action="store_true", default=False, help="Don't run anything");
 parser.add_option("--checkchunks", dest="checkchunks",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("--checkrunning", dest="checkrunning",   action="store_true", default=False, help="Check chunks that have been produced");
+parser.add_option("--checkaliens", dest="checkaliens",   action="store_true", default=False, help="Check for aliens (existing files in friends dir corresponding to no input samples)");
 parser.add_option("--quiet", dest="quiet",   action="store_true", default=False, help="Check chunks that have been produced");
 parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch queue or condor instead of locally");
 parser.add_option("-a", "--accounting-group", dest="accounting_group", default=None, help="Accounting group for condor jobs");
@@ -245,6 +246,17 @@ if options.checkrunning:
         else:
             done_chunks[m.group(1)].add(int(m.group(2)))
     print "Found %d chunks running" % (nrunning)
+if options.checkaliens:
+    pattern = re.compile( (options.outPattern % "(\\w+)") + r"\.root")
+    for fname in glob(args[1] + "/" + (options.outPattern % "*") + ".root"):
+        m = re.match(pattern, os.path.basename(fname))
+        if not m: 
+            print "Extra alien friend found? %s" % fname
+            continue
+        totest = args[0] + "/" + m.group(1) + (".root" if isNano else "")
+        if not os.path.exists(totest):
+            print "Alien friend found? %s with no %s" % (fname, totest)
+            continue
 jobs = []
 for D in sorted(glob(args[0]+"/*")):
     if isNano:
@@ -293,7 +305,7 @@ for D in sorted(glob(args[0]+"/*")):
         if options.newOnly:
             if os.path.exists(fout):
                 f2 = ROOT.TFile.Open(fout)
-                if (not f2) or f2.IsZombie() or f2.TestBit(tfile.kRecovered): 
+                if (not f2) or f2.IsZombie() or f2.TestBit(ROOT.TFile.kRecovered): 
                     if f2: f2.Close()
                     if not options.quiet: print "Component %s has to be remade, output tree is invalid or corrupted" % (short, entries, t2.GetEntries())
                 else:

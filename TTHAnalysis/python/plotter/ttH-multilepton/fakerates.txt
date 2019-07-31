@@ -1,0 +1,94 @@
+## FR_<lep>_i  0, 1, 2 = Data   2016, 2017, 2018;
+##             3, 4, 5 = TT  MC 2016, 2017, 2018
+##             6, 7, 8 = QCD MC 2016, 2017, 2018
+## 
+##            10 + X = norm up
+##            20 + X = norm down
+##            30 + X = pt1
+##            40 + X = pt2
+##            50 + X = eta up
+##            60 + X = eta down
+## 
+## 
+#### See below for how the fake rate variation files are coded
+# Nominal
+for Y in 201{6,7,8}; do for X in QCD data_comb; do  
+   O=0; fr="frdata"; if [[ "$X" == "QCD" ]]; then O=6; fr="frmc"; fi;
+   echo "$Y $X ($O, $fr)"
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}:#FR_mu_i0$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}:#" \
+   #    -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_NC:#FR_el_i0$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_NC:#" \
+   #     -i ttH-multilepton/fakerate-vars/*$fr*txt; 
+done; done
+# Muons
+for Y in 201{6,7,8}; do for X in QCD data_comb; do  
+   O=0; fr="frdata"; if [[ "$X" == "QCD" ]]; then O=6; fr="frmc"; fi;
+   echo "$Y $X ($O, $fr)"
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_up:#FR_mu_i1$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_up:#" -i ttH-multilepton/fakerate-vars/*$fr*-m-up.txt; 
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_down:#FR_mu_i2$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_down:#" -i ttH-multilepton/fakerate-vars/*$fr*-m-down.txt; 
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_pt1:#FR_mu_i3$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_pt1:#" -i ttH-multilepton/fakerate-vars/*$fr*-m-pt1.txt; 
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_pt2:#FR_mu_i4$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_pt2:#" -i ttH-multilepton/fakerate-vars/*$fr*-m-pt2.txt; 
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_be1:#FR_mu_i5$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_be1:#" -i ttH-multilepton/fakerate-vars/*$fr*-m-be1.txt; 
+   #sed -e "s#FR_mu_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_be2:#FR_mu_i6$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva085_mu_${X}_be2:#" -i ttH-multilepton/fakerate-vars/*$fr*-m-be2.txt; 
+
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((10+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-up.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((20+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-down.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((30+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-pt1.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((40+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-pt2.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((50+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-be1.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((60+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-be2.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$((60+$O))+(year-2016),$O+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-be2.txt; 
+
+   LEP0="LepGood_conePt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[0]]"; TIGHT0="LepGood_isLepTight_Recl[iLepFO_Recl[0]]"
+   LEP1="LepGood_conePt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],LepGood_pdgId[iLepFO_Recl[1]]"; TIGHT1="LepGood_isLepTight_Recl[iLepFO_Recl[1]]"
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$((10+$O))+(year-2016),$O+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$((10+$O))+(year-2016),$O+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-up.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$((20+$O))+(year-2016),$O+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$((20+$O))+(year-2016),$O+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-down.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$((30+$O))+(year-2016),$O+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$((30+$O))+(year-2016),$O+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-pt1.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$((40+$O))+(year-2016),$O+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$((40+$O))+(year-2016),$O+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-pt2.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$((50+$O))+(year-2016),$O+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$((50+$O))+(year-2016),$O+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-be1.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$((60+$O))+(year-2016),$O+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$((60+$O))+(year-2016),$O+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-m-be2.txt; 
+
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$((10+$O))+(year-2016),$O+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-m-up.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$((20+$O))+(year-2016),$O+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-m-down.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$((30+$O))+(year-2016),$O+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-m-pt1.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$((40+$O))+(year-2016),$O+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-m-pt2.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$((50+$O))+(year-2016),$O+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-m-be1.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$((60+$O))+(year-2016),$O+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-m-be2.txt; 
+
+done; done
+# Electrons
+for Y in 201{6,7,8}; do for X in QCD_NC data_comb_NC; do 
+   O=0; fr="frdata"; if [[ "$X" == "QCD_NC" ]]; then O=6; fr="frmc"; fi;
+   echo "$Y $X ($O, $fr)"
+   #sed -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_up:#FR_el_i1$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_up:#" -i ttH-multilepton/fakerate-vars/*$fr*-e-up.txt; 
+   #sed -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_down:#FR_el_i2$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_down:#" -i ttH-multilepton/fakerate-vars/*$fr*-e-down.txt; 
+   #sed -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_pt1:#FR_el_i3$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_pt1:#" -i ttH-multilepton/fakerate-vars/*$fr*-e-pt1.txt; 
+   #sed -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_pt2:#FR_el_i4$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_pt2:#" -i ttH-multilepton/fakerate-vars/*$fr*-e-pt2.txt; 
+   #sed -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_be1:#FR_el_i5$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_be1:#" -i ttH-multilepton/fakerate-vars/*$fr*-e-be1.txt; 
+   #sed -e "s#FR_el_i.. : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_be2:#FR_el_i6$(( $Y - 2016 + $O )) : \$DATA/fakerate/fr_$Y.root : FR_mva080_el_${X}_be2:#" -i ttH-multilepton/fakerate-vars/*$fr*-e-be2.txt; 
+
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$O+(year-2016),$((10+$O))+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-up.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$O+(year-2016),$((20+$O))+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-down.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$O+(year-2016),$((30+$O))+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-pt1.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$O+(year-2016),$((40+$O))+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-pt2.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$O+(year-2016),$((50+$O))+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-be1.txt; 
+   #sed -e "s#fakeRateWeight_2lss_i(#fakeRateWeight_2lss_ii(#" -e "s#,[0-9]\+) *\$#,$O+(year-2016),$((60+$O))+(year-2016))#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-be2.txt; 
+
+   LEP0="LepGood_conePt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[0]]"; TIGHT0="LepGood_isLepTight_Recl[iLepFO_Recl[0]]"
+   LEP1="LepGood_conePt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],LepGood_pdgId[iLepFO_Recl[1]]"; TIGHT1="LepGood_isLepTight_Recl[iLepFO_Recl[1]]"
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$O+(year-2016),$((10+$O))+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$O+(year-2016),$((10+$O))+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-up.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$O+(year-2016),$((20+$O))+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$O+(year-2016),$((20+$O))+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-down.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$O+(year-2016),$((30+$O))+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$O+(year-2016),$((30+$O))+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-pt1.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$O+(year-2016),$((40+$O))+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$O+(year-2016),$((40+$O))+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-pt2.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$O+(year-2016),$((50+$O))+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$O+(year-2016),$((50+$O))+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-be1.txt; 
+   sed -e "s#fakeRateWeight_2lss_ii(.*#fakeRateWeight_short_2lss_ii(fetchFR_ii($LEP0,$O+(year-2016),$((60+$O))+(year-2016)), $TIGHT0, fetchFR_ii($LEP1,$O+(year-2016),$((60+$O))+(year-2016)), $TIGHT1)#" -i ttH-multilepton/fakerate-vars/fakeRate-2lss-*$fr*-e-be2.txt; 
+
+
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$O+(year-2016),$((10+$O))+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-e-up.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$O+(year-2016),$((20+$O))+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-e-down.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$O+(year-2016),$((30+$O))+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-e-pt1.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$O+(year-2016),$((40+$O))+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-e-pt2.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$O+(year-2016),$((50+$O))+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-e-be1.txt; 
+   #sed -e "s#fetchFR_i(#fetchFR_ii(#" -e "s#,[0-9]\+), LepGood_isLepTight_Recl#,$O+(year-2016),$((60+$O))+(year-2016)), LepGood_isLepTight_Recl#" -i ttH-multilepton/fakerate-vars/fakeRate-3l-*$fr*-e-be2.txt; 
+
+
+done; done

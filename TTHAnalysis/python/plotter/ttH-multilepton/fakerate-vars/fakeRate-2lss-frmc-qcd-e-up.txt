@@ -1,5 +1,9 @@
 cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[0\]\]: 1
 cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[1\]\]: 1
-weight: fakeRateWeight_2lss_i(LepGood_conePt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[0]],LepGood_isLepTight_Recl[iLepFO_Recl[0]], LepGood_conePt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_isLepTight_Recl[iLepFO_Recl[1]],18)
-load-histo: FR_mu_i18 : $DATA/fakerate/FR_data_ttH_mva.root : FR_mva090_mu_QCD
-load-histo: FR_el_i18 : $DATA/fakerate/FR_data_ttH_mva.root : FR_mva090_el_QCD_NC_up
+weight: fakeRateWeight_short_2lss_ii(fetchFR_ii(LepGood_conePt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[0]],6+(year-2016),16+(year-2016)), LepGood_isLepTight_Recl[iLepFO_Recl[0]], fetchFR_ii(LepGood_conePt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],LepGood_pdgId[iLepFO_Recl[1]],6+(year-2016),16+(year-2016)), LepGood_isLepTight_Recl[iLepFO_Recl[1]])
+load-histo: FR_mu_i06 : $DATA/fakerate/fr_2016.root : FR_mva085_mu_QCD: 2016
+load-histo: FR_mu_i07 : $DATA/fakerate/fr_2017.root : FR_mva085_mu_QCD: 2017
+load-histo: FR_mu_i08 : $DATA/fakerate/fr_2018.root : FR_mva085_mu_QCD: 2018
+load-histo: FR_el_i16 : $DATA/fakerate/fr_2016.root : FR_mva080_el_QCD_NC_up: 2016
+load-histo: FR_el_i17 : $DATA/fakerate/fr_2017.root : FR_mva080_el_QCD_NC_up: 2017
+load-histo: FR_el_i18 : $DATA/fakerate/fr_2018.root : FR_mva080_el_QCD_NC_up: 2018

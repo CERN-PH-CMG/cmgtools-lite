@@ -1,8 +1,12 @@
 cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[0\]\]: 1
 cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[1\]\]: 1
 cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[2\]\]: 1
-weight: fakeRateWeight_3l(fetchFR_i(LepGood_conePt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[0]],28), LepGood_isLepTight_Recl[iLepFO_Recl[0]], \
-                          fetchFR_i(LepGood_conePt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],LepGood_pdgId[iLepFO_Recl[1]],28), LepGood_isLepTight_Recl[iLepFO_Recl[1]], \
-                          fetchFR_i(LepGood_conePt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],LepGood_pdgId[iLepFO_Recl[2]],28), LepGood_isLepTight_Recl[iLepFO_Recl[2]] )
-load-histo: FR_mu_i28 : $DATA/fakerate/FR_data_ttH_mva.root : FR_mva090_mu_QCD_up
-load-histo: FR_el_i28 : $DATA/fakerate/FR_data_ttH_mva.root : FR_mva090_el_QCD_NC
+weight: fakeRateWeight_3l(fetchFR_ii(LepGood_conePt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[0]],16+(year-2016),6+(year-2016)), LepGood_isLepTight_Recl[iLepFO_Recl[0]], \
+                          fetchFR_ii(LepGood_conePt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],LepGood_pdgId[iLepFO_Recl[1]],16+(year-2016),6+(year-2016)), LepGood_isLepTight_Recl[iLepFO_Recl[1]], \
+                          fetchFR_ii(LepGood_conePt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],LepGood_pdgId[iLepFO_Recl[2]],16+(year-2016),6+(year-2016)), LepGood_isLepTight_Recl[iLepFO_Recl[2]] )
+load-histo: FR_mu_i16 : $DATA/fakerate/fr_2016.root : FR_mva085_mu_QCD_up: 2016
+load-histo: FR_mu_i17 : $DATA/fakerate/fr_2017.root : FR_mva085_mu_QCD_up: 2017
+load-histo: FR_mu_i18 : $DATA/fakerate/fr_2018.root : FR_mva085_mu_QCD_up: 2018
+load-histo: FR_el_i06 : $DATA/fakerate/fr_2016.root : FR_mva080_el_QCD_NC: 2016
+load-histo: FR_el_i07 : $DATA/fakerate/fr_2017.root : FR_mva080_el_QCD_NC: 2017
+load-histo: FR_el_i08 : $DATA/fakerate/fr_2018.root : FR_mva080_el_QCD_NC: 2018

@@ -1,0 +1,10 @@
+# vim: syntax=sh
+data : DoubleMuon_Run2017B_1June2019; FillColor=ROOT.kBlack, Label="Data", MCCorrections="ttH-multilepton/lepton-fr/mcc-2017B-no-HLT_Mu3_PFJet40.txt"
+data : DoubleMuon_Run2017C_1June2019+DoubleMuon_Run2017D_1June2019+DoubleMuon_Run2017E_1June2019+DoubleMuon_Run2017F_1June2019; FillColor=ROOT.kBlack, Label="Data"
+# no SingleElectron_Run2017B_1June2019: no triggers, no data
+data : SingleElectron_Run2017C_1June2019+SingleElectron_Run2017D_1June2019+SingleElectron_Run2017E_1June2019+SingleElectron_Run2017F_1June2019; FillColor=ROOT.kBlack, Label="Data"
+data : SingleMuon_Run2017B_1June2019; FillColor=ROOT.kBlack, Label="Data", MCCorrections="ttH-multilepton/lepton-fr/mcc-2017B-no-HLT_Mu3_PFJet40.txt"
+data : SingleMuon_Run2017C_1June2019+SingleMuon_Run2017D_1June2019+SingleMuon_Run2017E_1June2019+SingleMuon_Run2017F_1June2019; FillColor=ROOT.kBlack, Label="Data"
+
+incl_mc : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt"
+
