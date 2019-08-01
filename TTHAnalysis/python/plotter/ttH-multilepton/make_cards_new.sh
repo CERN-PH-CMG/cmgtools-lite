@@ -6,8 +6,8 @@ case $HOSTNAME in
     cmsco01.cern.ch) ORIGIN=/data/peruzzi; J=8 ;;
     cmsphys10) ORIGIN=/data1/g/gpetrucc; J=8 ;;
     gpetrucc-vm2.cern.ch) ORIGIN=/data/gpetrucc; J=4 ;;
-    fanae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=88;;
-    gae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=88;;
+    fanae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=6;;
+    gae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=6;;
     *)
         ORIGIN=/afs/cern.ch/work/p/peruzzi; J=1
         test -d /tmp/$USER/TREES_TTH_190418_Fall17_skim2lss3l && ORIGIN=/tmp/$USER;;
@@ -31,7 +31,7 @@ OPTIONS=" --tree NanoAOD --s2v -j $J -l ${LUMI} -f --WA prescaleFromSkim"
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
-T2L="-P $ORIGIN/NanoTrees_TTH_300519_v5pre_skim2LSS/${YEAR} --xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH -F Friends {P}/3_recleaner_v2/{cname}_Friend.root -F Friends {P}/2_triggerSequence_v2/{cname}_Friend.root --FMCs {P}/4_btag_v2 -F Friends {P}/1_lepJetBTagDeepFlav_v1/{cname}_Friend.root --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" #FIXME
+T2L="-P $ORIGIN/NanoTrees_TTH_300519_v5pre_skim2LSS/${YEAR} --xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH -F Friends {P}/3_recleaner_v2/{cname}_Friend.root -F Friends {P}/2_triggerSequence_v2/{cname}_Friend.root --FMCs {P}/4_btag_v2 -F Friends {P}/1_lepJetBTagDeepFlav_v1/{cname}_Friend.root --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0 --FMCs {P}/0_jmeUnc_v1 "
 T3L=${T2L}
 T4L=${T2L}
 
