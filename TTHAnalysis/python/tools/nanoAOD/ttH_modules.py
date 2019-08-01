@@ -120,7 +120,9 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          isMC = False)
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
-eventVars = lambda : EventVars2LSS('','Recl', doSystJEC=False)
+eventVars_2016_2018 = lambda : EventVars2LSS('','Recl', doSystJEC=False)
+eventVars_2017 = lambda : EventVars2LSS('','Recl', doSystJEC=False, metName="METFixEE2017")
+
 
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
