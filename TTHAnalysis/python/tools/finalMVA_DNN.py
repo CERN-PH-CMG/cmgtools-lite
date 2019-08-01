@@ -134,6 +134,15 @@ class finalMVA_DNN(Module):
         self.outVars.extend( ['DNN_2lss_jerDown_' + x for x in cats_2lss])
 
 
+        vars_2lss_unclUp = vars_2lss
+        vars_2lss_unclUp['lep1_mT'             ] =  lambda ev : ev.MT_met_lep1_unclustEnUp
+        vars_2lss_unclUp['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_unclustEnUp
+
+        vars_2lss_unclDown = vars_2lss
+        vars_2lss_unclDown['lep1_mT'             ] =  lambda ev : ev.MT_met_lep1_unclustEnDown
+        vars_2lss_unclDown['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
+
+
         worker_2lss = TFTool('DNN_2lss', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
                                    vars_2lss, cats_2lss)
         worker_2lss_jesTotalUp = TFTool('DNN_2lss_jesTotalUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
@@ -144,8 +153,13 @@ class finalMVA_DNN(Module):
                                           vars_2lss_jerUp, cats_2lss)
         worker_2lss_jerDown      = TFTool('DNN_2lss_jerDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
                                           vars_2lss_jerDown, cats_2lss)
+
+        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
+                                          vars_2lss_unclUp, cats_2lss)
+        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
+                                          vars_2lss_unclDown, cats_2lss)
         
-        self._MVAs = [worker_2lss, worker_2lss_jesTotalUp,worker_2lss_jesTotalDown, worker_2lss_jerUp,worker_2lss_jerDown] 
+        self._MVAs = [worker_2lss, worker_2lss_jesTotalUp,worker_2lss_jesTotalDown, worker_2lss_jerUp,worker_2lss_jerDown, worker_2lss_unclUp,worker_2lss_unclDown] 
 
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):

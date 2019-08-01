@@ -18,10 +18,14 @@ class EventVars2LSS(Module):
                               'mbb',
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : 'jerUp', -2:'jerDown', 3 : '_unclustEnUp', -3 : '_unclustEnDown' } if doSystJEC else {0:""}
+        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : '_jerUp', -2:'_jerDown'} if doSystJEC else {0:""}
+        print self.systsJEC
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
+        if len(self.systsJEC) > 1: 
+            self.branches.extend([br+self.label+'_unclustEnUp' for br in self.namebranches if 'met' in br])
+            self.branches.extend([br+self.label+'_unclustEnDown' for br in self.namebranches if 'met' in br])
         self.metName = metName
 
     # old interface (CMG)
@@ -89,6 +93,18 @@ class EventVars2LSS(Module):
                 ret["MT_met_lep1"] = sqrt( 2*leps[0].conePt*met*(1-cos(leps[0].phi-metphi)) )
             if nlep > 1:
                 ret["MT_met_lep2"] = sqrt( 2*leps[1].conePt*met*(1-cos(leps[1].phi-metphi)) )
+
+            if not _var and hasattr(event, '%s_pt_unclustEnUp'%metName):
+                met_up = getattr(event,metName+"_pt_unclustEnUp")
+                metphi_up = getattr(event,metName+"_phi_unclustEnUp")
+                met_down = getattr(event,metName+"_pt_unclustEnDown")
+                metphi_down = getattr(event,metName+"_phi_unclustEnDown")
+                if nlep > 0:
+                    allret["MT_met_lep1" + self.label + '_unclustEnUp'] = sqrt( 2*leps[0].conePt*met_up*(1-cos(leps[0].phi-metphi_up)) )
+                    allret["MT_met_lep1" + self.label + '_unclustEnDown'] = sqrt( 2*leps[0].conePt*met_down*(1-cos(leps[0].phi-metphi_down)) )
+                if nlep > 1:
+                    allret["MT_met_lep1" + self.label + '_unclustEnUp'] = sqrt( 2*leps[1].conePt*met_up*(1-cos(leps[1].phi-metphi_up)) )
+                    allret["MT_met_lep1" + self.label + '_unclustEnDown'] = sqrt( 2*leps[1].conePt*met_down*(1-cos(leps[1].phi-metphi_down)) )
 
             for br in self.namebranches:
                 allret[br+self.label+self.systsJEC[var]] = ret[br]
