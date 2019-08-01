@@ -120,9 +120,9 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          isMC = False)
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
-eventVars_2016_2018 = lambda : EventVars2LSS('','Recl', doSystJEC=False)
-eventVars_2017 = lambda : EventVars2LSS('','Recl', doSystJEC=False, metName="METFixEE2017")
-
+eventVars_2016 = lambda : EventVars2LSS('','Recl')
+eventVars_2017 = lambda : EventVars2LSS('','Recl', metName="METFixEE2017")
+eventVars_2018 = lambda : EventVars2LSS('','Recl')
 
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
@@ -219,8 +219,6 @@ Trigger_3l   = lambda : EvtTagger('Trigger_3l',[ lambda ev : triggerGroups['Trig
 
 triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss,Trigger_3l]
 
-from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
-eventVars = lambda : EventVars2LSS('','Recl')
 
 from CMGTools.TTHAnalysis.tools.BDT_eventReco_cpp import BDT_eventReco
 
