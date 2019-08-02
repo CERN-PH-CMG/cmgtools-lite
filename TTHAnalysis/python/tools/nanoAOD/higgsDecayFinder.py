@@ -25,7 +25,7 @@ class higgsDecayFinder( Module ):
     def analyze(self, event):
         genParts = [ g for g in Collection(event, self.genCollection) ]
         if not any( map(lambda x : x.pdgId == 25, genParts)):
-            self.out.fillBranch('GenHiggsDecayMode',-1)
+            self.out.fillBranch('GenHiggsDecayMode',0)
             return True
         decay = None
         for g in genParts:
@@ -33,12 +33,15 @@ class higgsDecayFinder( Module ):
             decay = self.getHiggsDecay(genParts.index(g), genParts)
 
         if not decay                     : self.out.fillBranch('GenHiggsDecayMode',-1); return True 
-        if 23 in decay  and 22 in decay  : self.out.fillBranch('GenHiggsDecayMode',22); return True
-        elif decay == [23,23]            : self.out.fillBranch('GenHiggsDecayMode',23); return True
-        elif decay == [24,24]            : self.out.fillBranch('GenHiggsDecayMode',24); return True
-        elif decay == [15,15]            : self.out.fillBranch('GenHiggsDecayMode',15); return True 
-        elif decay == [13,13]            : self.out.fillBranch('GenHiggsDecayMode',13); return True 
+        
+        if   decay == [22,22]                    : self.out.fillBranch('GenHiggsDecayMode',22); return True
+        elif decay == [22,23] or decay ==[23,22] : self.out.fillBranch('GenHiggsDecayMode',2223); return True
+        elif decay == [23,23]                    : self.out.fillBranch('GenHiggsDecayMode',23); return True
+        elif decay == [23,23]                    : self.out.fillBranch('GenHiggsDecayMode',23); return True
+        elif decay == [24,24]                    : self.out.fillBranch('GenHiggsDecayMode',24); return True
+        elif decay == [15,15]                    : self.out.fillBranch('GenHiggsDecayMode',15); return True 
+        elif decay == [13,13]                    : self.out.fillBranch('GenHiggsDecayMode',13); return True 
         else: 
-            self.out.fillBranch('GenHiggsDecayMode',0); return True 
+            self.out.fillBranch('GenHiggsDecayMode',-1); return True 
         
 
