@@ -253,3 +253,6 @@ bTagSFs = lambda : BtagSFs("JetSel_Recl")
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors import lepScaleFactors
 leptonSFs = lambda : lepScaleFactors()
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
+higgsDecay = lambda : higgsDecayFinder()
