@@ -13,7 +13,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
     def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = []):
 
         self.inputlabel = '_'+recllabel
-        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown"}
+        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : 'jerUp', -2:'jerDown'}
         self.selection = selection
 
         if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries():
@@ -124,13 +124,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
 
             jetptcut = 25
-            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
-
-            if (_var==0): jetcorr = [1 for x in jets]
-            elif (_var==1): jetcorr = [x.corr_JECUp/x.corr for x in jets]
-            elif (_var==-1): jetcorr = [x.corr_JECDown/x.corr for x in jets]
+            jets = filter(lambda x : getattr(x, 'pt%s'%self.systsJEC[_var]) > jetptcut, jets)
 
             res = [-100]*len(self.branches)
 
@@ -142,7 +136,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
 
             if good:
                 self.run.clear()
-                for i,j in enumerate(jets): self.run.addJet(j.pt*jetcorr[i],j.eta,j.phi,j.mass,0,j.btagDeepB,0,0,0,0,0,j.qgl)
+                for i,j in enumerate(jets): self.run.addJet(geattr(j,'pt%s'%self.systsJEC[_var]),j.eta,j.phi,j.mass,0,j.btagDeepB,0,0,0,0,0,j.qgl)
                 for l in leps: self.run.addLep(l.conePt,l.eta,l.phi,l.mass)
                 res = self.run.EvalMVA()
 

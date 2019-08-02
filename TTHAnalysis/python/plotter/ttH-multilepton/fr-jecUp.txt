@@ -1,4 +1,5 @@
-change: met_pt\b: met_jecUp_pt
+change: MET_pt\b: MET_pt_jesTotalUp
+change: METFixEE2017_pt\b: METFixEE2017_pt_jesTotalUp
 change: nJet25_Recl\b: nJet25_jecUp_Recl
 change: htJet25j_Recl\b: htJet25j_jecUp_Recl
 change: mhtJet25_Recl\b: mhtJet25_jecUp_Recl
@@ -11,6 +12,10 @@ change: nBJetTight25_Recl\b: nBJetTight25_jecUp_Recl
 change: nBJetLoose40_Recl\b: nBJetLoose40_jecUp_Recl
 change: nBJetMedium40_Recl\b: nBJetMedium40_jecUp_Recl
 change: nBJetTight40_Recl\b: nBJetTight40_jecUp_Recl
+change: DNN_2lss_predictions_ttH\b: DNN_2lss_jesTotalUp_predictions_ttH
+change: DNN_2lss_predictions_ttW\b: DNN_2lss_jesTotalUp_predictions_ttW
+change: DNN_2lss_predictions_rest\b: DNN_2lss_jesTotalUp_predictions_rest
+change: DNN_2lss_predictions_tH\b: DNN_2lss_jesTotalUp_predictions_tH
 change: kinMVA_2lss_ttbar\b : kinMVA_2lss_ttbar_jecUp
 change: kinMVA_2lss_ttbar_withBDTv8\b : kinMVA_2lss_ttbar_withBDTv8_jecUp
 change: kinMVA_2lss_ttbar_withBDTrTT\b : kinMVA_2lss_ttbar_withBDTrTT_jecUp

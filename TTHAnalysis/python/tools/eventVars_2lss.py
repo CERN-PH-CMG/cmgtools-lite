@@ -9,22 +9,23 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class EventVars2LSS(Module):
-    def __init__(self, label="", recllabel='Recl', doSystJEC=True):
+    def __init__(self, label="", recllabel='Recl', doSystJEC=True, metName="MET"):
         self.namebranches = [ "mindr_lep1_jet",
                               "mindr_lep2_jet",
                               "avg_dr_jet",
                               "MT_met_lep1",
                               "MT_met_lep2",
                               'mbb',
-                              #"MT_met_leplep",
-                              #"sum_abspz",
-                              #"sum_sgnpz"
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown"} if doSystJEC else {0:""}
+        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : '_jerUp', -2:'_jerDown'} if doSystJEC else {0:""}
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
+        if len(self.systsJEC) > 1: 
+            self.branches.extend([br+self.label+'_unclustEnUp' for br in self.namebranches if 'met' in br])
+            self.branches.extend([br+self.label+'_unclustEnDown' for br in self.namebranches if 'met' in br])
+        self.metName = metName
 
     # old interface (CMG)
     def listBranches(self):
@@ -36,7 +37,7 @@ class EventVars2LSS(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         declareOutput(self, wrappedOutputTree, self.branches)
     def analyze(self, event):
-        writeOutput(self, self.run(event, NanoAODCollection, "MET"))
+        writeOutput(self, self.run(event, NanoAODCollection, self.metName))
         return True
 
     # logic of the algorithm
@@ -69,8 +70,6 @@ class EventVars2LSS(Module):
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
-            met = getattr(event,metName+"_pt"+self.systsJEC[_var])
-            metphi = getattr(event,metName+"_phi"+self.systsJEC[_var])
             njet = len(jets); nlep = len(leps)
             # fill output
             if njet >= 1:
@@ -83,22 +82,28 @@ class EventVars2LSS(Module):
                         ndr   += 1
                         sumdr += deltaR(j,j2)
                 ret["avg_dr_jet"] = sumdr/ndr if ndr else 0;
+
+            
+
+            met = getattr(event,metName+"_pt"+self.systsJEC[_var])
+            metphi = getattr(event,metName+"_phi"+self.systsJEC[_var])
+
             if nlep > 0:
                 ret["MT_met_lep1"] = sqrt( 2*leps[0].conePt*met*(1-cos(leps[0].phi-metphi)) )
             if nlep > 1:
                 ret["MT_met_lep2"] = sqrt( 2*leps[1].conePt*met*(1-cos(leps[1].phi-metphi)) )
-#                px = leps[0].conePt*cos(leps[0].phi) + leps[1].conePt*cos(leps[1].phi) + met*cos(metphi) 
-#                py = leps[0].conePt*sin(leps[0].phi) + leps[1].conePt*sin(leps[1].phi) + met*sin(metphi) 
-#                ht = leps[0].conePt + leps[1].conePt + met
-#                ret["MT_met_leplep"] = sqrt(max(0,ht**2 - px**2 - py**2))
-#            if nlep >= 1:
-#                sumapz, sumspz = 0,0
-#                for o in leps[:2] + jets:
-#                    pz = o.conePt*sinh(o.eta) if o in leps else o.pt*sinh(o.eta)
-#                    sumspz += pz
-#                    sumapz += abs(pz); 
-#                ret["sum_abspz"] = sumapz
-#                ret["sum_sgnpz"] = sumspz
+
+            if not _var and hasattr(event, '%s_pt_unclustEnUp'%metName):
+                met_up = getattr(event,metName+"_pt_unclustEnUp")
+                metphi_up = getattr(event,metName+"_phi_unclustEnUp")
+                met_down = getattr(event,metName+"_pt_unclustEnDown")
+                metphi_down = getattr(event,metName+"_phi_unclustEnDown")
+                if nlep > 0:
+                    allret["MT_met_lep1" + self.label + '_unclustEnUp'] = sqrt( 2*leps[0].conePt*met_up*(1-cos(leps[0].phi-metphi_up)) )
+                    allret["MT_met_lep1" + self.label + '_unclustEnDown'] = sqrt( 2*leps[0].conePt*met_down*(1-cos(leps[0].phi-metphi_down)) )
+                if nlep > 1:
+                    allret["MT_met_lep2" + self.label + '_unclustEnUp'] = sqrt( 2*leps[1].conePt*met_up*(1-cos(leps[1].phi-metphi_up)) )
+                    allret["MT_met_lep2" + self.label + '_unclustEnDown'] = sqrt( 2*leps[1].conePt*met_down*(1-cos(leps[1].phi-metphi_down)) )
 
             for br in self.namebranches:
                 allret[br+self.label+self.systsJEC[var]] = ret[br]
