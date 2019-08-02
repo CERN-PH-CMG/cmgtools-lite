@@ -231,6 +231,7 @@ CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.24' 
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.35' 
 
+# FIXME!!
 CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_ee.*_2016    : templateSymm ; Normalize=False, AddWeight='1.3' 
 CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss_mm.*_2016    : templateSymm ; Normalize=False, AddWeight='1.3' 
 CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_em.*_2016    : templateSymm ; Normalize=False, AddWeight='1.15' 
