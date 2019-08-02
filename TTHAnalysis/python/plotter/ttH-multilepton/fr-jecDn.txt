@@ -12,6 +12,10 @@ change: nBJetTight25_Recl\b: nBJetTight25_jecDown_Recl
 change: nBJetLoose40_Recl\b: nBJetLoose40_jecDown_Recl
 change: nBJetMedium40_Recl\b: nBJetMedium40_jecDown_Recl
 change: nBJetTight40_Recl\b: nBJetTight40_jecDown_Recl
+change: DNN_2lss_predictions_ttH\b: DNN_2lss_jesTotalDown_predictions_ttH
+change: DNN_2lss_predictions_ttW\b: DNN_2lss_jesTotalDown_predictions_ttW
+change: DNN_2lss_predictions_rest\b: DNN_2lss_jesTotalDown_predictions_rest
+change: DNN_2lss_predictions_tH\b: DNN_2lss_jesTotalDown_predictions_tH
 change: kinMVA_2lss_ttbar\b : kinMVA_2lss_ttbar_jecDown
 change: kinMVA_2lss_ttbar_withBDTv8\b : kinMVA_2lss_ttbar_withBDTv8_jecDown
 change: kinMVA_2lss_ttbar_withBDTrTT\b : kinMVA_2lss_ttbar_withBDTrTT_jecDown
