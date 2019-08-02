@@ -19,7 +19,6 @@ class EventVars2LSS(Module):
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : '_jerUp', -2:'_jerDown'} if doSystJEC else {0:""}
-        print self.systsJEC
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
