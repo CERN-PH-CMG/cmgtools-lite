@@ -40,7 +40,7 @@ public:
           ruint * unsigned_;
   };
   
-  fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets, bool cleanJetsWithFOTaus, float bTagL, float bTagM, bool cleanWithRef=false) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16), cleanJetsWithFOTaus_(cleanJetsWithFOTaus), bTagL_(bTagL), bTagM_(bTagM), cleanWithRef_(cleanWithRef) {
+  fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets, bool cleanJetsWithFOTaus, float bTagL, float bTagM, bool cleanWithRef=false) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16), cleanJetsWithFOTaus_(cleanJetsWithFOTaus), bTagL_(bTagL), bTagM_(bTagM), cleanWithRef_(cleanWithRef), deltaR2cut_taus(0.09) {
     _ct.reset(new std::vector<int>);
     _cj.reset(new std::vector<int>);
 }
@@ -198,7 +198,7 @@ public:
       bool ok = true;
       for (int iL = 0, nL = *nLep_; iL < nL; ++iL) {
 	if (!(sel_leps.get()[iL] || sel_leps_extrafortau.get()[iL])) continue;
-	if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Tau_eta_)[iT], (*Tau_phi_)[iT]) < deltaR2cut) {
+	if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Tau_eta_)[iT], (*Tau_phi_)[iT]) < deltaR2cut_taus) {
 	  ok = false;
 	  break;
 	}
@@ -238,7 +238,7 @@ public:
 	}
       }
       for (int iJ = 0, nJ = *nJet_; iJ < nJ; ++iJ) {
-	if (good[iJ] && sel_jets[iJ]) {
+	if (good[iJ] && sel_jets[iJ] && fabs((*Jet_eta_)[iJ]) < 2.4) {
 	  clean_jets_.push_back(iJ);
 	  _cj->push_back(iJ);
 	}
@@ -257,6 +257,7 @@ private:
   rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagCSV_, *Jet_corr_, *Jet_corr_JECUp_, *Jet_corr_JECDown_, *Jet_pt_JECUp_, *Jet_pt_JECDown_, *Jet_pt_JERUp_, *Jet_pt_JERDown_;
   rints    *Lep_jet_, *Tau_jet_;
   float deltaR2cut;
+  float deltaR2cut_taus;
   std::set<int> _jetptcuts;
   std::unique_ptr<std::vector<int> > _ct;
   std::unique_ptr<std::vector<int> > _cj;

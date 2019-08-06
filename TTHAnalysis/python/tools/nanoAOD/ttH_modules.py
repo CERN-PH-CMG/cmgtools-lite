@@ -15,7 +15,7 @@ ttH_skim_cut = ("nMuon + nElectron >= 2 &&" +
 
 
 muonSelection     = lambda l : abs(l.eta) < 2.4 and l.pt > conf["muPt" ] and l.miniPFRelIso_all < conf["miniRelIso"] and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"]
-electronSelection = lambda l : abs(l.eta) < 2.5 and l.pt > conf["elePt"] and l.miniPFRelIso_all < conf["miniRelIso"] and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"] and getattr(l, conf["eleId"])
+electronSelection = lambda l : abs(l.eta) < 2.5 and l.pt > conf["elePt"] and l.miniPFRelIso_all < conf["miniRelIso"] and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"] and getattr(l, conf["eleId"]) and l.isCleanFromMuons
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttHPrescalingLepSkimmer import ttHPrescalingLepSkimmer
 # NB: do not wrap lepSkim a lambda, as we modify the configuration in the cfg itself 
@@ -25,6 +25,10 @@ lepSkim = ttHPrescalingLepSkimmer(5,
                 minLeptons = 2, requireSameSignPair = True,
                 jetSel = lambda j : j.pt > 25 and abs(j.eta) < 2.4 and j.jetId > 0, 
                 minJets = 4, minMET = 70)
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.electronMuonCleaner import electronMuonCleaner
+elClean = electronMuonCleaner( muonSel = muonSelection, deltaR = 0.3)
+
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.collectionMerger import collectionMerger
 lepMerge = collectionMerger(input = ["Electron","Muon"], 
                             output = "LepGood", 
@@ -38,7 +42,7 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.yearTagger import yearTag
 from CMGTools.TTHAnalysis.tools.nanoAOD.xsecTagger import xsecTag
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepJetBTagAdder import lepJetBTagCSV, lepJetBTagDeepCSV, lepJetBTagDeepFlav, lepJetBTagDeepFlavC
 
-ttH_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, xsecTag, lepJetBTagCSV, lepJetBTagDeepCSV, lepJetBTagDeepFlav, lepMasses]
+ttH_sequence_step1 = [elClean, lepSkim, lepMerge, autoPuWeight, yearTag, xsecTag, lepJetBTagCSV, lepJetBTagDeepCSV, lepJetBTagDeepFlav, lepMasses]
 
 #==== 
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
@@ -79,7 +83,7 @@ def smoothBFlav(jetpt,ptmin,ptmax,year,scale_loose=1.0):
 
 def clean_and_FO_selection_TTH(lep,year):
     bTagCut = 0.3093 if year==2016 else 0.3033 if year==2017 else 0.2770
-    return lep.conept>10 and lep.jetBTagDeepFlav<bTagCut and (abs(lep.pdgId)!=11 or ttH_idEmu_cuts_E3(lep)) \
+    return lep.conept>10 and lep.jetBTagDeepFlav<bTagCut and (abs(lep.pdgId)!=11 or (ttH_idEmu_cuts_E3(lep) and lep.convVeto and lep.lostHits == 0)) \
         and (lep.mvaTTH>(0.85 if abs(lep.pdgId)==13 else 0.80) or \
              (abs(lep.pdgId)==13 and lep.jetBTagDeepFlav< smoothBFlav(0.9*lep.pt*(1+lep.jetRelIso), 20, 45, year) and lep.jetRelIso < 0.50) or \
              (abs(lep.pdgId)==11 and lep.mvaFall17V2noIso_WP80 and lep.jetRelIso < 0.70))
@@ -119,6 +123,8 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          btagM_thr=-99., # they are set at runtime  
                                          isMC = False)
 
+
+
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars_2016 = lambda : EventVars2LSS('','Recl')
 eventVars_2017 = lambda : EventVars2LSS('','Recl', metName="METFixEE2017")
@@ -130,6 +136,8 @@ isMatchRightCharge = lambda : ObjTagger('isMatchRightCharge','LepGood', [lambda 
 mcMatchId     = lambda : ObjTagger('mcMatchId','LepGood', [lambda l : (l.genPartFlav==1 or l.genPartFlav == 15) ])
 mcPromptGamma = lambda : ObjTagger('mcPromptGamma','LepGood', [lambda l : (l.genPartFlav==22)])
 mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
+
+countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idMVAoldDMdR032017v2&4])
 
 
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016, jetmetUncertainties2017, jetmetUncertainties2018
@@ -256,3 +264,7 @@ leptonSFs = lambda : lepScaleFactors()
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
 higgsDecay = lambda : higgsDecayFinder()
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.synchTools import SynchTuples
+synchTuples = lambda : SynchTuples()
+
