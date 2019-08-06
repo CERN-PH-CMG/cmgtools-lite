@@ -237,6 +237,25 @@ if test == "94X-MC":
     lepSkim.minMET = 0
     lepSkim.prescaleFactor = 0
     selectedComponents = [TTLep_pow]
+if test == "synch-2016":
+    TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16NanoAODv5-PUMoriond17_Nano1June2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM", "CMS", ".*root", 1 )
+    TTLep_pow.files = ["/pool/ciencias/userstorage/sscruz/NanoAOD/NanoTrees_TTH_300519_v5pre/pre_synch/preprocessing_synch_2016.root"]
+    POSTPROCESSOR.modules.remove(lepSkim)
+    POSTPROCESSOR.cut='1'
+    selectedComponents = [TTLep_pow]
+if test == "synch-2018":
+    TTLep_pow =  kreator.makeMCComponentFromLocal("TTLep_pow", "/ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM", "/pool/ciencias/userstorage/sscruz/NanoAOD/NanoTrees_TTH_300519_v5pre/pre_synch/")
+    TTLep_pow.files = ["/pool/ciencias/userstorage/sscruz/NanoAOD/NanoTrees_TTH_300519_v5pre/pre_synch/preprocessing_synch_2018.root"]
+    POSTPROCESSOR.modules.remove(lepSkim)
+    POSTPROCESSOR.cut='1'
+    selectedComponents = [TTLep_pow]
+if test == "synch-2017":
+    TTLep_pow = kreator.makeMCComponentFromLocal("TTLep_pow", "/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17NanoAODv5-PU2017_12Apr2018_Nano1June2019_new_pmx_102X_mc2017_realistic_v7-v1/NANOAODSIM","/pool/ciencias/userstorage/sscruz/NanoAOD/NanoTrees_TTH_300519_v5pre/pre_synch/")
+    TTLep_pow.files = ["/pool/ciencias/userstorage/sscruz/NanoAOD/NanoTrees_TTH_300519_v5pre/pre_synch/preprocessing_synch_2017.root"]
+    POSTPROCESSOR.modules.remove(lepSkim)
+    POSTPROCESSOR.cut='1'
+    selectedComponents = [TTLep_pow]
+
 elif test == "94X-MC-miniAOD":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
     TTLep_pow.files = [ 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
