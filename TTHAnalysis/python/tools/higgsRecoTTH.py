@@ -42,8 +42,8 @@ class HiggsRecoTTH(Module):
         ret = {}        
 
         for var in self.systsJEC:
-            score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
-            
+            #score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
+            score = 1
             candidates=[]
             
             if score>self.cut_BDT_rTT_score:
@@ -52,7 +52,7 @@ class HiggsRecoTTH(Module):
                 j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
-
+                ##jetsNoTopNoB = [j for i,j in enumerate(jets) if j.btagDeepB<self.btagDeepCSVveto]
                 for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                     for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
                         j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
