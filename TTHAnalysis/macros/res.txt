@@ -1,0 +1,6 @@
+Will use the nanoAOD postprocessor
+   TTHnobb_pow.root   MC  single chunk (395087 events)
+
+
+I have 1 task(s) to process
+slurmstepd: error: *** JOB 13686643 ON mb-sab086 CANCELLED AT 2019-08-07T16:46:12 ***
