@@ -42,7 +42,7 @@ class fastCombinedObjectRecleaner(Module):
         self.vars_jets_int = (["hadronFlavour"] if self.isMC else [])
         self.vars_jets_nooutput = []
 
-        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown", 2:"_jerUp", -2: "_jerDown"} 
+        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2:"_jerUp", -2: "_jerDown"}  if self.isMC else { 0: ""}
 
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS']
         self._outjetvars = [x%self.jc for x in ['ht%s%%dj','mht%s%%d','nB%sLoose%%d','nB%sMedium%%d','n%s%%d']]
