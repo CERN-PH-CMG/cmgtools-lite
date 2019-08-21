@@ -11,6 +11,7 @@ struct LeptonPairInfo {
   int i;
   int j;
   float m;
+  float dR;
   int isOS;
   int isSF;
 };
@@ -38,14 +39,14 @@ public:
           rcount & operator=(ruint *src) { unsigned_ = src; return *this; }  
           int operator*() const { return signed_ ? **signed_ : int(**unsigned_); }
       private:
-          rint * signed_;
+          rint  * signed_;
           ruint * unsigned_;
   };
 
   typedef math::PtEtaPhiMLorentzVectorD ptvec;
   typedef math::XYZTLorentzVectorD crvec;
   
-  fastCombinedObjectRecleanerMassVetoCalculator(CollectionSkimmer &skim_lepsF, CollectionSkimmer &skim_lepsT, bool doVetoZ, bool doVetoLMf, bool doVetoLMt) : skim_lepsF_(skim_lepsF), skim_lepsT_(skim_lepsT), doVetoZ_(doVetoZ), doVetoLMf_(doVetoLMf), doVetoLMt_(doVetoLMt){}
+  fastCombinedObjectRecleanerMassVetoCalculator(CollectionSkimmer &skim_lepsF, CollectionSkimmer &skim_lepsT, bool doVetoZ, bool doVetoLMf, bool doVetoLMt) : skim_lepsF_(skim_lepsF), skim_lepsT_(skim_lepsT), doVetoZ_(doVetoZ), doVetoLMf_(doVetoLMf), doVetoLMt_(doVetoLMt), cleanElectrons_(0.3){}
   
   void setLeptons(rint *nLep, rfloats *lepPt, rfloats *lepEta, rfloats *lepPhi, rfloats *lepMass, rints *lepPdgId) {
     nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi; Lep_mass_ = lepMass; Lep_pdgid_ = lepPdgId;
@@ -58,6 +59,9 @@ public:
 
   float Mass(int i, int j){
     return (leps_p4[i]+leps_p4[j]).M();
+  }
+  float DeltaR(int i, int j){
+    return leps_p4[i].DeltaR(leps_p4[j]);
   }
 
   MassVetoCalculatorOutput GetPairMasses(){
@@ -88,6 +92,7 @@ public:
 	pair.i = i;
 	pair.j = j;
 	pair.m = Mass(i,j);
+	pair.dR = DeltaR(i,j);
 	pair.isOS = ((*Lep_pdgid_)[i]*(*Lep_pdgid_)[j]<0);
 	pair.isSF = (abs((*Lep_pdgid_)[i])==abs((*Lep_pdgid_)[j]));
 	pairs.push_back(pair);
@@ -99,6 +104,12 @@ public:
     for (auto p: pairs){
       if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
       if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
+      if (cleanElectrons_ > 0 && !p.isSF && p.dR < cleanElectrons_){
+	if (abs((*Lep_pdgid_)[i]) == 11)
+	  veto_FO.insert(p.i); veto_tight.insert(p.i);
+	else
+	  veto_FO.insert(p.j); veto_tight.insert(p.j);
+      }
     }
     for (auto i: veto_FO) leps_fo.erase(std::remove(leps_fo.begin(),leps_fo.end(),i),leps_fo.end());
     for (auto i: veto_tight) leps_tight.erase(std::remove(leps_tight.begin(),leps_tight.end(),i),leps_tight.end());
@@ -152,4 +163,6 @@ private:
   bool doVetoZ_;
   bool doVetoLMf_;
   bool doVetoLMt_;
+  float cleanElectrons_;
+
 };
