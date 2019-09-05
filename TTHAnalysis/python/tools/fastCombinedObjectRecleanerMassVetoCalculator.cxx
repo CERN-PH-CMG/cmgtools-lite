@@ -6,6 +6,7 @@
 #include "CMGTools/TTHAnalysis/interface/CollectionSkimmer.h"
 #include "CMGTools/TTHAnalysis/interface/CombinedObjectTags.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+#include "Math/VectorUtil.h"
 
 struct LeptonPairInfo {
   int i;
@@ -18,10 +19,13 @@ struct LeptonPairInfo {
 
 struct MassVetoCalculatorOutput {
   float mZ1;
+  float mZ2;
   float minMllAFAS;
   float minMllAFOS;
   float minMllAFSS;
   float minMllSFOS;
+  float m4l;
+  LeptonPairInfo* pair_mZ1;
 };
 
 class fastCombinedObjectRecleanerMassVetoCalculator {
@@ -61,22 +65,39 @@ public:
     return (leps_p4[i]+leps_p4[j]).M();
   }
   float DeltaR(int i, int j){
-    return leps_p4[i].DeltaR(leps_p4[j]);
+    return ROOT::Math::VectorUtil::DeltaR<crvec,crvec>(leps_p4[i],leps_p4[j]);
   }
 
   MassVetoCalculatorOutput GetPairMasses(){
     MassVetoCalculatorOutput output;
     output.mZ1 = -1;
+    output.mZ2 = -1;
     output.minMllAFAS = -1;
     output.minMllAFOS = -1;
     output.minMllAFSS = -1;
     output.minMllSFOS = -1;
+    output.pair_mZ1   = NULL;
     for (auto p : pairs){
-      if ((output.mZ1<0 || fabs(p.m-91)<fabs(output.mZ1-91)) && p.isOS && p.isSF) output.mZ1 = p.m;
+
+      if ((output.mZ1<0 || fabs(p.m-91)<fabs(output.mZ1-91)) && p.isOS && p.isSF){
+	output.mZ1 = p.m;
+	LeptonPairInfo pair = p;
+	output.pair_mZ1 = &pair;
+      }
+
       if (output.minMllAFAS<0 || p.m<output.minMllAFAS) output.minMllAFAS = p.m;
       if ((output.minMllAFOS<0 || p.m<output.minMllAFOS) && p.isOS) output.minMllAFOS = p.m;
       if ((output.minMllAFSS<0 || p.m<output.minMllAFSS) && !(p.isOS)) output.minMllAFSS = p.m;
       if ((output.minMllSFOS<0 || p.m<output.minMllSFOS) && p.isOS && p.isSF) output.minMllSFOS = p.m;
+
+    }
+    for (auto p : pairs){
+      if (output.pair_mZ1 != NULL && (output.pair_mZ1->i != p.i) && (output.pair_mZ1->j != p.i) && (output.pair_mZ1->i != p.j) && (output.pair_mZ1->j != p.j)){
+	if (fabs(p.m - 91) < fabs(output.mZ2-91) && p.isOS && p.isSF){
+	  output.mZ2 = p.m;
+	  output.m4l = ( leps_p4[p.i] + leps_p4[p.j] + leps_p4[output.pair_mZ1->i] + leps_p4[output.pair_mZ1->j] ).M();
+	}
+      }
     }
     return output;
   }
@@ -105,10 +126,12 @@ public:
       if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
       if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
       if (cleanElectrons_ > 0 && !p.isSF && p.dR < cleanElectrons_){
-	if (abs((*Lep_pdgid_)[i]) == 11)
+	if (abs((*Lep_pdgid_)[p.i]) == 11){
 	  veto_FO.insert(p.i); veto_tight.insert(p.i);
-	else
+	}
+	else{
 	  veto_FO.insert(p.j); veto_tight.insert(p.j);
+	}
       }
     }
     for (auto i: veto_FO) leps_fo.erase(std::remove(leps_fo.begin(),leps_fo.end(),i),leps_fo.end());
