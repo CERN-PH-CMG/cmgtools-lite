@@ -44,7 +44,7 @@ class fastCombinedObjectRecleaner(Module):
 
         self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2:"_jerUp", -2: "_jerDown"}  if self.isMC else { 0: ""}
 
-        self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS']
+        self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS','mZ2','m4l']
         self._outjetvars = [x%self.jc for x in ['ht%s%%dj','mht%s%%d','nB%sLoose%%d','nB%sMedium%%d','n%s%%d']]
         self.outjetvars=[]
         for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt+y,'I' if ('nB%s'%self.jc in x or 'n%s'%self.jc in x) else 'F') for x in self._outjetvars for y in self.systsJEC.values()])
