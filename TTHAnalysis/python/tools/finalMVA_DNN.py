@@ -5,7 +5,7 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.tools.tfTool import TFTool
 import os 
-
+from copy import deepcopy
 
 class finalMVA_DNN(Module):
     def __init__(self):
@@ -40,7 +40,7 @@ class finalMVA_DNN(Module):
         cats_2lss = ['predictions_ttH', 'predictions_ttW', 'predictions_rest', 'predictions_tH']
         self.outVars.extend( ['DNN_2lss_' + x for x in cats_2lss])
 
-        vars_2lss_jesTotalUp = vars_2lss
+        vars_2lss_jesTotalUp = deepcopy(vars_2lss)
         vars_2lss_jesTotalUp['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jesTotalUp
         vars_2lss_jesTotalUp['ptmiss'              ] =  lambda ev : ev.MET_pt_jesTotalUp
         vars_2lss_jesTotalUp['mbb_medium'          ] =  lambda ev : ev.mbb_jesTotalUp
@@ -63,7 +63,7 @@ class finalMVA_DNN(Module):
         vars_2lss_jesTotalUp['mvaOutput_Hj_tagger' ] =  lambda ev : ev.BDThttTT_eventReco_Hj_score_jesTotalUp
         self.outVars.extend( ['DNN_2lss_jesTotalUp_' + x for x in cats_2lss])
 
-        vars_2lss_jesTotalDown = vars_2lss
+        vars_2lss_jesTotalDown = deepcopy(vars_2lss)
         vars_2lss_jesTotalDown['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jesTotalDown
         vars_2lss_jesTotalDown['ptmiss'              ] =  lambda ev : ev.MET_pt_jesTotalDown
         vars_2lss_jesTotalDown['mbb_medium'          ] =  lambda ev : ev.mbb_jesTotalDown
@@ -87,7 +87,7 @@ class finalMVA_DNN(Module):
         self.outVars.extend( ['DNN_2lss_jesTotalDown_' + x for x in cats_2lss])
 
 
-        vars_2lss_jerUp = vars_2lss
+        vars_2lss_jerUp = deepcopy(vars_2lss)
         vars_2lss_jerUp['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jerUp
         vars_2lss_jerUp['ptmiss'              ] =  lambda ev : ev.MET_pt_jerUp
         vars_2lss_jerUp['mbb_medium'          ] =  lambda ev : ev.mbb_jerUp
@@ -110,7 +110,7 @@ class finalMVA_DNN(Module):
         vars_2lss_jerUp['mvaOutput_Hj_tagger' ] =  lambda ev : ev.BDThttTT_eventReco_Hj_score_jerUp
         self.outVars.extend( ['DNN_2lss_jerUp_' + x for x in cats_2lss])
 
-        vars_2lss_jerDown = vars_2lss
+        vars_2lss_jerDown = deepcopy(vars_2lss)
         vars_2lss_jerDown['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jerDown
         vars_2lss_jerDown['ptmiss'              ] =  lambda ev : ev.MET_pt_jerDown
         vars_2lss_jerDown['mbb_medium'          ] =  lambda ev : ev.mbb_jerDown
@@ -134,11 +134,11 @@ class finalMVA_DNN(Module):
         self.outVars.extend( ['DNN_2lss_jerDown_' + x for x in cats_2lss])
 
 
-        vars_2lss_unclUp = vars_2lss
+        vars_2lss_unclUp = deepcopy(vars_2lss)
         vars_2lss_unclUp['lep1_mT'             ] =  lambda ev : ev.MT_met_lep1_unclustEnUp
         vars_2lss_unclUp['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_unclustEnUp
 
-        vars_2lss_unclDown = vars_2lss
+        vars_2lss_unclDown = deepcopy(vars_2lss)
         vars_2lss_unclDown['lep1_mT'             ] =  lambda ev : ev.MT_met_lep1_unclustEnDown
         vars_2lss_unclDown['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
 
@@ -170,6 +170,9 @@ class finalMVA_DNN(Module):
         myvars = [event.iLepFO_Recl[0],event.iLepFO_Recl[1],event.iLepFO_Recl[2]]
         ret = []
         for worker in self._MVAs:
+            name = worker.name
+            if not hasattr(event,"nJet25_jesDown_Recl") and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue
             ret.extend( [(x,y) for x,y in worker(event).iteritems()])
+            
         writeOutput(self, dict(ret))
         return True
