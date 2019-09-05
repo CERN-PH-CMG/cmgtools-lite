@@ -823,8 +823,9 @@ float BDT_EventReco::EvalScore_httTT(eTopP top){
   var_httTT_mass_b   = top->b->mass();		                 
 
 
-  float score = TMVAReader_httTT_->EvaluateMVA("BDT");
 
+  float score = TMVAReader_httTT_->EvaluateMVA("BDT");
+  score = 1. / (1. + std::sqrt((1. - score) / (1. + score)));
   if (debug) {
     std::cout << "httTT tagger on jets " << top->j1idx << " " << top->j2idx << " " << top->j3idx << std::endl;
 
