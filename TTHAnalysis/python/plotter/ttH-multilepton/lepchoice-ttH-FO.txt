@@ -36,6 +36,7 @@ nBJetMedium40\b: nBJetMedium40_Recl; AlsoData
 nBJetTight40\b: nBJetTight40_Recl; AlsoData
 nFwdJet\b : nFwdJet_Recl; AlsoData
 mZ1\b: mZ1_Recl; AlsoData
+mZ2\b: mZ2_Recl; AlsoData
 minMllAFAS\b: minMllAFAS_Recl; AlsoData
 minMllAFOS\b: minMllAFOS_Recl; AlsoData
 minMllAFSS\b: minMllAFSS_Recl; AlsoData
