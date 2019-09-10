@@ -1,5 +1,6 @@
 alwaystrue: 1
 trigger: Trigger_2lss
+filters: Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && (Flag_ecalBadCalibFilter || (year == 2016))  $DATA{&& Flag_eeBadScFilter}
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
 pt2515: LepGood1_conePt>25 && LepGood2_conePt>15
