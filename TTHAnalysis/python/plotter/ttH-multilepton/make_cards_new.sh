@@ -56,6 +56,8 @@ CATPOSTFIX=""
 FUNCTION_2L="OurBin2l(kinMVA_2lss_ttbar_withBDTrTT,kinMVA_2lss_ttV_withHj_rTT) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]"
 #FUNCTION_3L="OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) [0.5,1.5,2.5,3.5,4.5,5.5,6.5]"
 FUNCTION_3L="OurBin3l(kinMVA_3l_ttbar_withMEM,kinMVA_3l_ttV_withMEM) [0.5,1.5,2.5,3.5,4.5,5.5,6.5]"
+FUNCTION_CR_3L="ttH_3l_clasifier(nJet25,nBJetMedium25) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]"
+FUNCTION_CR_4L="ttH_4l_clasifier(nJet25,nBJetMedium25,mZ2) [0.5,1.5,2.5,3.5,4.5]"
 FUNCTION_SVA_2L="mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass) [10.0,50.0,70.0,80.0,90.0,110.0,140.0,190.0,400.0]"
 FUNCTION_SVA_3L="mass_3_cheap(LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,LepGood2_phi-LepGood1_phi,LepGood3_pt,LepGood3_eta,LepGood3_phi-LepGood1_phi) [26.0,107.0,146.0,193.0,261.0,400.0]"
 ONEBIN="1 1,0.5,1.5"
@@ -181,10 +183,39 @@ if [[ "$1" == "all" || "$1" == "4l" || "$1" == "4l_crzz"  ]]; then
         CATPOSTFIX="_crzz";
     fi;
 
-    echo "4l${CATPOSTFIX}";
+    "4l${CATPOSTFIX}";
     python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt ${ONEBIN} $SYSTS $OPT_4L --binname ttH_4l${CATPOSTFIX}_${YEAR} --year ${YEAR};
 
    echo "Done at $(date)"
 fi
 
+if [[ "$1" == "all" || "$1" == "cr_4l"  ]]; then
+    OPT_4L="${T4L} ${OPTIONS} -W puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l"
+    CATPOSTFIX=""
+
+
+    OPT_4L="${OPT_4L} -I ^Zveto -X ^2j -X ^2b1B -E ^underflowVeto4l" 
+    CATPOSTFIX="_cr";
+
+
+    echo "4l${CATPOSTFIX}";
+    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt ${FUNCTION_CR_4L} $SYSTS $OPT_4L --binname ttH${CATPOSTFIX}_${YEAR} --year ${YEAR};
+
+   echo "Done at $(date)"
+fi
+
+if [[ "$1" == "all" || "$1" == "cr_3l" ]]; then
+    OPT_3L="${T3L} ${OPTIONS} -W puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l"
+    CATPOSTFIX="_cr"
+    OPT_3L="${OPT_3L} -I ^Zveto -X ^2j -X ^2b1B -E ^underflowVeto3l"
+    echo "cr_3l";
+    CATFUNC="ttH_3l_ifflav(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)"
+    CATBINS="[0.5,1.5,2.5,3.5,4.5]"
+    CATNAMES="$(echo {eee,eem,emm,mmm}${CATPOSTFIX} | sed 's/ /,/g')"
+
+
+    python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_CR_3L} $SYSTS $OPT_3L --binname ttH_cr_3l_${YEAR} --categorize $CATFUNC $CATBINS $CATNAMES --year ${YEAR};
+
+    echo "Done at $(date)"
+fi
 
