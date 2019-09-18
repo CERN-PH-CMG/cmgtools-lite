@@ -18,6 +18,7 @@ muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepG
 2b1B: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
 
 tauveto: nTauTight==0
+promptmatch : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge
 
 # some cuts that are off by default but can be turned on with -E
 tightMVA070: LepGood1_mvaTTH>0.70 && LepGood2_mvaTTH>0.70 ; Disable=True
@@ -28,13 +29,12 @@ tightMVA090: LepGood1_mvaTTH>0.90 && LepGood2_mvaTTH>0.90 ; Disable=True
 tightMVA095: LepGood1_mvaTTH>0.95 && LepGood2_mvaTTH>0.95 ; Disable=True
 1B: nBJetMedium25 >= 1 ; Disable=True
 2B: nBJetMedium25 >= 2 ; Disable=True
-1j: nJet25+nFwdJet-nBJetLoose25 ; Disable=True
-
 BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 2j: nJet25>=2 ; Disable=True
 x3j: nJet25==3 ; Disable=True
 6j: nJet25>=6 ; Disable=True
+1j: nJet25+nFwdJet-nBJetLoose25 ; Disable=True
 vetoTTH: !(nJet25>=4 && (nBJetLoose25 >= 2 || nBJetMedium25 >= 1)) ; Disable=True
 
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True

@@ -238,9 +238,10 @@ public:
 	}
       }
       for (int iJ = 0, nJ = *nJet_; iJ < nJ; ++iJ) {
-	if (good[iJ] && sel_jets[iJ] && fabs((*Jet_eta_)[iJ]) < 2.4) {
-	  clean_jets_.push_back(iJ);
+	if (good[iJ] && sel_jets[iJ]) {
 	  _cj->push_back(iJ);
+	  if(((*Jet_eta_)[iJ]) < 2.4)
+	    clean_jets_.push_back(iJ); // only to count fwd jets
 	}
       }
     }

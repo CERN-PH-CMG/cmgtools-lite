@@ -28,36 +28,43 @@ class SynchTuples(Module):
         self.jetVars = [ 'pt','eta','phi','E','deepJet','QGdiscr']
         self.fwdJetVars = [ 'pt','eta']
         self.vars_2lss = {'avg_dr_jet'          : lambda ev : ev.avg_dr_jet,
-                          'ptmiss'              : lambda ev : ev.MET_pt, 
-                          'mbb_medium'          : lambda ev : ev.mbb,
-                          'jet1_pt'             : lambda ev : ev.JetSel_Recl_pt[0] if ev.nJetSel_Recl > 0 else 0,
-                          'jet2_pt'             : lambda ev : ev.JetSel_Recl_pt[1] if ev.nJetSel_Recl > 1 else 0,
-                          'jet3_pt'             : lambda ev : ev.JetSel_Recl_pt[2] if ev.nJetSel_Recl > 2 else 0,
-                          'jet4_pt'             : lambda ev : ev.JetSel_Recl_pt[3] if ev.nJetSel_Recl > 3 else 0,
+                          #'ptmiss'              : lambda ev : ev.MET_pt, 
+                          'mbb'                 : lambda ev : ev.mbb,
+                          #'jet1_pt'             : lambda ev : ev.JetSel_Recl_pt[0] if ev.nJetSel_Recl > 0 else 0,
+                          #'jet2_pt'             : lambda ev : ev.JetSel_Recl_pt[1] if ev.nJetSel_Recl > 1 else 0,
+                          #'jet3_pt'             : lambda ev : ev.JetSel_Recl_pt[2] if ev.nJetSel_Recl > 2 else 0,
+                          #'jet4_pt'             : lambda ev : ev.JetSel_Recl_pt[3] if ev.nJetSel_Recl > 3 else 0,
                           'max_lep_eta'         : lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])])) if ev.nLepFO_Recl > 1 else 0,
-                          'lep1_mT'             : lambda ev : ev.MT_met_lep1,
-                          'lep1_conept'         : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[0])], 
-                          'lep1_min_dr_jet'     : lambda ev : ev.mindr_lep1_jet,
-                          'lep2_mT'             : lambda ev : ev.MT_met_lep2,
-                          'lep2_conept'         : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[1])],
-                          'lep2_min_dr_jet'     : lambda ev : ev.mindr_lep2_jet,
-                          'nJetForward'         : lambda ev : ev.nFwdJet_Recl,
-                          'jetForward1_pt'      : lambda ev : ev.FwdJet1_pt_Recl,
-                          'jetForward1_eta_abs' : lambda ev : abs(ev.FwdJet1_eta_Recl),
-                          'res-HTT_CSVsort4rd'  : lambda ev : ev.BDThttTT_eventReco_mvaValue,
-                          'HadTop_pt_CSVsort4rd': lambda ev : ev.BDThttTT_eventReco_HadTop_pt,
+                          'mT_lep1'             : lambda ev : ev.MT_met_lep1,
+                          #'lep1_conept'         : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[0])], 
+                          'mindr_lep1_jet'     : lambda ev : ev.mindr_lep1_jet,
+                          'mT_lep2'             : lambda ev : ev.MT_met_lep2,
+                          #'lep2_conept'         : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[1])],
+                          'mindr_lep2_jet'     : lambda ev : ev.mindr_lep2_jet,
+                          #'nJetForward'         : lambda ev : ev.nFwdJet_Recl,
+                          #'jetForward1_pt'      : lambda ev : ev.FwdJet1_pt_Recl,
+                          #'jetForward1_eta_abs' : lambda ev : abs(ev.FwdJet1_eta_Recl),
+                          'HTT'  : lambda ev : ev.BDThttTT_eventReco_mvaValue,
+                          'HadTop_pt': lambda ev : ev.BDThttTT_eventReco_HadTop_pt,
                           'nJet'                : lambda ev : ev.nJet25_Recl,
                           'nBJetLoose'          : lambda ev : ev.nBJetLoose25_Recl,
                           'nBJetMedium'         : lambda ev : ev.nBJetMedium25_Recl,
                           'nElectron'           : lambda ev : abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[0])]) == 11 + abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[1])]) == 11 if ev.nLepFO_Recl > 1 else 0,
                           'sum_lep_charge'      : lambda ev : ev.LepGood_charge[int(ev.iLepFO_Recl[0])] + ev.LepGood_charge[int(ev.iLepFO_Recl[1])] if ev.nLepFO_Recl > 1 else 0,
                           'mvaOutput_Hj_tagger' : lambda ev : ev.BDThttTT_eventReco_Hj_score, 
+                          'mvaOutput_2lss_ttH_tH_4cat_onlyTHQ_v4_ttH' : lambda ev : ev.DNN_2lss_predictions_ttH,
+                          'mvaOutput_2lss_ttH_tH_4cat_onlyTHQ_v4_ttW' : lambda ev : ev.DNN_2lss_predictions_ttW,
+                          'mvaOutput_2lss_ttH_tH_4cat_onlyTHQ_v4_rest' : lambda ev : ev.DNN_2lss_predictions_rest,
+                          'mvaOutput_2lss_ttH_tH_4cat_onlyTHQ_v4_tH' : lambda ev : ev.DNN_2lss_predictions_tH,
                       }
+
+        
         
         self.vars = ['mu%d_%s'%(i,x) for i in range(1,5) for x in (self.muVars+self.lepVars)] + ['ele%d_%s'%(i,x) for i in range(1,5) for x in (self.elVars+self.lepVars)] 
         self.vars.extend( [ 'tau%d_%s'%(i,x) for i in range(1,3) for x in self.tauVars] + ['jet%d_%s'%(i,x) for i in range(1,5) for x in self.jetVars] + ['jetFwd1_%s'%(x) for x in self.fwdJetVars] )
         self.vars.extend( self.generalVars  + self.floatGeneralVars)  
         self.vars.extend( [ x for x in self.vars_2lss])
+
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
