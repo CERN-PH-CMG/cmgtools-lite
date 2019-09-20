@@ -173,6 +173,5 @@ class finalMVA_DNN(Module):
             name = worker.name
             if not hasattr(event,"nJet25_jesDown_Recl") and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue
             ret.extend( [(x,y) for x,y in worker(event).iteritems()])
-            
         writeOutput(self, dict(ret))
         return True

@@ -6,7 +6,7 @@ conf = dict(
         sip3d = 8, 
         dxy =  0.05, 
         dz = 0.1, 
-        eleId = "mvaFall17V2noIso_WPL"
+        eleId = "mvaFall17V2noIso_WPL",
 )
 
 ttH_skim_cut = ("nMuon + nElectron >= 2 &&" + 
@@ -15,7 +15,7 @@ ttH_skim_cut = ("nMuon + nElectron >= 2 &&" +
 
 
 muonSelection     = lambda l : abs(l.eta) < 2.4 and l.pt > conf["muPt" ] and l.miniPFRelIso_all < conf["miniRelIso"] and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"]
-electronSelection = lambda l : abs(l.eta) < 2.5 and l.pt > conf["elePt"] and l.miniPFRelIso_all < conf["miniRelIso"] and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"] and getattr(l, conf["eleId"]) 
+electronSelection = lambda l : abs(l.eta) < 2.5 and l.pt > conf["elePt"] and l.miniPFRelIso_all < conf["miniRelIso"] and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"] and getattr(l, conf["eleId"])
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttHPrescalingLepSkimmer import ttHPrescalingLepSkimmer
 # NB: do not wrap lepSkim a lambda, as we modify the configuration in the cfg itself 
@@ -25,8 +25,6 @@ lepSkim = ttHPrescalingLepSkimmer(5,
                 minLeptons = 2, requireSameSignPair = True,
                 jetSel = lambda j : j.pt > 25 and abs(j.eta) < 2.4 and j.jetId > 0, 
                 minJets = 4, minMET = 70)
-
-
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.collectionMerger import collectionMerger
 lepMerge = collectionMerger(input = ["Electron","Muon"], 
                             output = "LepGood", 
@@ -121,11 +119,8 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          btagM_thr=-99., # they are set at runtime  
                                          isMC = False)
 
-
-
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl')
-
 
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
@@ -135,7 +130,6 @@ mcPromptGamma = lambda : ObjTagger('mcPromptGamma','LepGood', [lambda l : (l.gen
 mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idMVAoldDMdR032017v2&4])
-
 
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016, jetmetUncertainties2017, jetmetUncertainties2018
 
@@ -261,7 +255,3 @@ leptonSFs = lambda : lepScaleFactors()
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
 higgsDecay = lambda : higgsDecayFinder()
-
-from CMGTools.TTHAnalysis.tools.nanoAOD.synchTools import SynchTuples
-synchTuples = lambda : SynchTuples()
-

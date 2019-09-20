@@ -43,7 +43,7 @@ public:
           rcount & operator=(ruint *src) { unsigned_ = src; return *this; }  
           int operator*() const { return signed_ ? **signed_ : int(**unsigned_); }
       private:
-          rint  * signed_;
+          rint * signed_;
           ruint * unsigned_;
   };
 
