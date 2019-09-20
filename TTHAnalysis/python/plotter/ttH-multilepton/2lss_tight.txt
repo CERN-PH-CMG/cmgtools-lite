@@ -28,7 +28,6 @@ tightMVA090: LepGood1_mvaTTH>0.90 && LepGood2_mvaTTH>0.90 ; Disable=True
 tightMVA095: LepGood1_mvaTTH>0.95 && LepGood2_mvaTTH>0.95 ; Disable=True
 1B: nBJetMedium25 >= 1 ; Disable=True
 2B: nBJetMedium25 >= 2 ; Disable=True
-
 BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 2j: nJet25>=2 ; Disable=True
