@@ -5,12 +5,12 @@ ttH_hmm+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGoo
 ttH_hzg+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==22); FillColor=ROOT.kOrange+10
 #ttH_hot+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode!=24) && (GenHiggsDecayMode!=24) && (GenHiggsDecayMode!=22) && (GenHiggsDecayMode!=15) && (GenHiggsDecayMode!=13); FillColor=ROOT.kOrange+10
 
-tHq_hww	: THQ_LHE : 123798.0/25.69875024*0.07096 : LHEweight_wgt[893]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kRed
-tHq_hzz	: THQ_LHE : 123798.0/25.69875024*0.07096 : LHEweight_wgt[893]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kRed
-tHq_htt	: THQ_LHE : 123798.0/25.69875024*0.07096 : LHEweight_wgt[893]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kRed
-tHW_hww	: THW_LHE : 49936.0/3.21369648*0.01561 : LHEweight_wgt[1091]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kBlue
-tHW_hzz	: THW_LHE : 49936.0/3.21369648*0.01561 : LHEweight_wgt[1091]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue
-tHW_htt	: THW_LHE : 49936.0/3.21369648*0.01561 : LHEweight_wgt[1091]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue
+tHq_hww	: THQ : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kRed
+tHq_hzz	: THQ : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kRed
+tHq_htt	: THQ : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kRed
+tHW_hww	: THW : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kBlue
+tHW_hzz	: THW : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue
+tHW_htt	: THW : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue
 
 VH_hww : VHToNonbb_ll : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==24) ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 VH_hzz : VHToNonbb_ll : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==23) ; FillColor=ROOT.kAzure-9, years="2017\,2018"
