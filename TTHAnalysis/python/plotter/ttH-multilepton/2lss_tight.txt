@@ -1,5 +1,6 @@
 alwaystrue: 1
 trigger: Trigger_2lss
+filters: Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && (Flag_ecalBadCalibFilter || (year == 2016))  $DATA{&& Flag_eeBadScFilter}
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
 pt2515: LepGood1_conePt>25 && LepGood2_conePt>15
@@ -27,14 +28,11 @@ tightMVA090: LepGood1_mvaTTH>0.90 && LepGood2_mvaTTH>0.90 ; Disable=True
 tightMVA095: LepGood1_mvaTTH>0.95 && LepGood2_mvaTTH>0.95 ; Disable=True
 1B: nBJetMedium25 >= 1 ; Disable=True
 2B: nBJetMedium25 >= 2 ; Disable=True
-1j: nJet25+nFwdJet-nBJetLoose25 ; Disable=True
-
 BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 2j: nJet25>=2 ; Disable=True
 x3j: nJet25==3 ; Disable=True
 6j: nJet25>=6 ; Disable=True
-vetoTTH: !(nJet25>=4 && (nBJetLoose25 >= 2 || nBJetMedium25 >= 1)) ; Disable=True
 
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True

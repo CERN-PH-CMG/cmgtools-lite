@@ -9,7 +9,7 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class EventVars2LSS(Module):
-    def __init__(self, label="", recllabel='Recl', doSystJEC=True, metName="MET"):
+    def __init__(self, label="", recllabel='Recl', doSystJEC=True):
         self.namebranches = [ "mindr_lep1_jet",
                               "mindr_lep2_jet",
                               "avg_dr_jet",
@@ -25,7 +25,6 @@ class EventVars2LSS(Module):
         if len(self.systsJEC) > 1: 
             self.branches.extend([br+self.label+'_unclustEnUp' for br in self.namebranches if 'met' in br])
             self.branches.extend([br+self.label+'_unclustEnDown' for br in self.namebranches if 'met' in br])
-        self.metName = metName
 
     # old interface (CMG)
     def listBranches(self):
@@ -37,11 +36,11 @@ class EventVars2LSS(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         declareOutput(self, wrappedOutputTree, self.branches)
     def analyze(self, event):
-        writeOutput(self, self.run(event, NanoAODCollection, self.metName))
+        writeOutput(self, self.run(event, NanoAODCollection))
         return True
 
     # logic of the algorithm
-    def run(self,event,Collection,metName):
+    def run(self,event,Collection):
         allret = {}
 
         all_leps = [l for l in Collection(event,"LepGood")]
@@ -61,11 +60,11 @@ class EventVars2LSS(Module):
             elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
             bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
             if len(bmedium) >1: 
-                bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[var]), reverse = True)
+                bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)
                 b1 = bmedium[0].p4()
                 b2 = bmedium[1].p4()
-                b1.SetPtEtaPhiM(getattr(bmedium[0],'pt%s'%self.systsJEC[var]),bmedium[0].eta,bmedium[0].phi,bmedium[0].mass)
-                b2.SetPtEtaPhiM(getattr(bmedium[1],'pt%s'%self.systsJEC[var]),bmedium[1].eta,bmedium[1].phi,bmedium[1].mass)
+                b1.SetPtEtaPhiM(getattr(bmedium[0],'pt%s'%self.systsJEC[_var]),bmedium[0].eta,bmedium[0].phi,bmedium[0].mass)
+                b2.SetPtEtaPhiM(getattr(bmedium[1],'pt%s'%self.systsJEC[_var]),bmedium[1].eta,bmedium[1].phi,bmedium[1].mass)
                 ret['mbb'] = (b1+b2).M()
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
@@ -83,7 +82,7 @@ class EventVars2LSS(Module):
                         sumdr += deltaR(j,j2)
                 ret["avg_dr_jet"] = sumdr/ndr if ndr else 0;
 
-            
+            metName = 'METFixEE2017' if event.year == 2017 else 'MET'
 
             met = getattr(event,metName+"_pt"+self.systsJEC[_var])
             metphi = getattr(event,metName+"_phi"+self.systsJEC[_var])
@@ -106,7 +105,7 @@ class EventVars2LSS(Module):
                     allret["MT_met_lep2" + self.label + '_unclustEnDown'] = sqrt( 2*leps[1].conePt*met_down*(1-cos(leps[1].phi-metphi_down)) )
 
             for br in self.namebranches:
-                allret[br+self.label+self.systsJEC[var]] = ret[br]
+                allret[br+self.label+self.systsJEC[_var]] = ret[br]
 	 	
 	return allret
 
