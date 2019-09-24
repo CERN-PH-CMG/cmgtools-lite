@@ -136,7 +136,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
 
             if good:
                 self.run.clear()
-                for i,j in enumerate(jets): self.run.addJet(geattr(j,'pt%s'%self.systsJEC[_var]),j.eta,j.phi,j.mass,0,j.btagDeepB,0,0,0,0,0,j.qgl)
+                for i,j in enumerate(jets): self.run.addJet(getattr(j,'pt%s'%self.systsJEC[_var]),j.eta,j.phi,j.mass,0,j.btagDeepB,0,0,0,0,0,j.qgl)
                 for l in leps: self.run.addLep(l.conePt,l.eta,l.phi,l.mass)
                 res = self.run.EvalMVA()
 

@@ -11,7 +11,7 @@ class HiggsRecoTTH(Module):
         self.label = label
         self.branches = []
         self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown"} if doSystJEC else {0:""}
-        for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["minDRlj","visHmass","Wmass","lepIdx","j1Idx","j2Idx"]])
+        for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["minDRlj","visHmass","Wmass","lepIdx","j1Idx","j2Idx","pTHvis"]])
         self.cut_BDT_rTT_score = cut_BDT_rTT_score
         self.cuts_mW_had = cuts_mW_had
         self.cuts_mH_vis = cuts_mH_vis
@@ -42,8 +42,7 @@ class HiggsRecoTTH(Module):
         ret = {}        
 
         for var in self.systsJEC:
-            #score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
-            score = 1
+            score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
             candidates=[]
             
             if score>self.cut_BDT_rTT_score:
@@ -52,7 +51,6 @@ class HiggsRecoTTH(Module):
                 j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
-                ##jetsNoTopNoB = [j for i,j in enumerate(jets) if j.btagDeepB<self.btagDeepCSVveto]
                 for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                     for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
                         j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
@@ -64,9 +62,10 @@ class HiggsRecoTTH(Module):
                         Wconstr.SetPtEtaPhiM(W.Pt(),W.Eta(),W.Phi(),80.4)
                         Hvisconstr = lep+Wconstr
                         mHvisconstr = Hvisconstr.M()
+                        pTHvisconstr = Hvisconstr.Pt()
                         if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
                         mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
-                        candidates.append((mindR,mHvisconstr,mW,_lep,_j1,_j2))
+                        candidates.append((mindR,mHvisconstr,mW,_lep,_j1,_j2,pTHvisconstr))
                         
             best = min(candidates) if len(candidates) else None
 
@@ -77,4 +76,5 @@ class HiggsRecoTTH(Module):
             ret["Hreco_lepIdx%s"  %self.systsJEC[var]] = best[3] if best else -99
             ret["Hreco_j1Idx%s"   %self.systsJEC[var]] = best[4] if best else -99
             ret["Hreco_j2Idx%s"   %self.systsJEC[var]] = best[5] if best else -99
+            ret["Hreco_pTHvis%s"  %self.systsJEC[var]] = best[6] if best else -99
         return ret
