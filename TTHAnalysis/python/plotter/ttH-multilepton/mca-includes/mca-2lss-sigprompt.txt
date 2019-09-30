@@ -1,8 +1,8 @@
 ttH+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
 
-tHq	: THQ_LHE : 123798.0/25.69875024*0.07096 : LHEweight_wgt[893]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kRed
-tHW	: THW_LHE : 49936.0/3.21369648*0.01561 : LHEweight_wgt[1091]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kBlue
-TTWW	: TTWW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen
+tHq	: THQ_LHE : 123798.0/25.69875024*0.07096 : LHEweight_wgt[893]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kRed 
+tHW	: THW_LHE : 49936.0/3.21369648*0.01561 : LHEweight_wgt[1091]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kBlue 
+TTWW	: TTWW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen 
 
 TTW     : TTWToLNu_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2017\,2018"
 TTW     : TTW_LO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016"
@@ -20,21 +20,21 @@ EWK 	: WJetsToLNu_LO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRig
 #EWK	: W3JetsToLNu_LO_skimSameSign : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
 #EWK	: W4JetsToLNu_LO_skimSameSign : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
 EWK     : ZZTo4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
-EWK     : DYJetsToLL_M10to50_LO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-4
-EWK     : DYJetsToLL_M50 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-4
+EWK     : DYJetsToLL_M10to50_LO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-4 
+EWK     : DYJetsToLL_M50 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-4 
 
-
-Rares: GGHZZ4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: VHToNonbb_ll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+##--all below are my comments
+Rares: GGHZZ4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9 
+#Rares: VHToNonbb_ll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018" 
 Rares: TTTT : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: TTTW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: TTWH : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: TZQToLL : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+Rares: TTTW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9 
+Rares: TTWH : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9 
+#Rares: TZQToLL : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 Rares: tWll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: WW_DPS : 0.1729 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+#Rares: WW_DPS : 0.1729 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018" 
 Rares: WpWpJJ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: WWW_ll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+#Rares: WWW_ll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 Rares: WWZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-Rares: WZG : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+#Rares: WZG : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 Rares: WZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: ZZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9

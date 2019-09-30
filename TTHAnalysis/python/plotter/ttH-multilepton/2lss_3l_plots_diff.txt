@@ -1,0 +1,32 @@
+# vim: syntax=sh
+## 2 bins
+##-------
+#2lep_2DpT_2bins: Hreco_pTHvis\:Hreco_pTHgen : [0,100,350]*[0,100,350] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+#2lep_2DpT_2bins_text: Hreco_pTHvis\:Hreco_pTHgen : [0,120,350]*[0,120,350] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
+
+#2lep_pTHvis_2bins_no_overflow:  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350]; XTitle="pT of reconstructed Higgs (GeV)", Legend='TL', MoreY=1.8, IncludeOverflows=False
+#2lep_pTHgen_2bins_no_overflow:  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,350]; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.4, IncludeOverflows=False
+
+## 3 bins
+##-------
+#2lep_2DpT_3bins: Hreco_pTHvis\:Hreco_pTHgen : [0,50,100,350]*[0,50,100,350] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+#2lep_2DpT_3bins_text: Hreco_pTHvis\:Hreco_pTHgen : [0,120,200,350]*[0,120,200,350] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
+#2lep_pTHvis_3bins_no_overflow:  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)", Legend='TL', MoreY=1.8, IncludeOverflows=False
+#2lep_pTHgen_3bins_no_overflow:  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,200,350]; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.4, IncludeOverflows=False
+
+## "normal" binning
+## --------------
+2lep_pTHvis_no_overflow:  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350; XTitle="pT of reconstructed Higgs (GeV)", Legend='TL', MoreY=1.8, IncludeOverflows=False
+#2lep_pTHgen_no_overflow:  if3(nLepFO>1, Hreco_pTHgen,-99) : 50,0,350; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.4, IncludeOverflows=False
+
+#2lep_2DpT: Hreco_pTHvis\:Hreco_pTHgen : [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+#2lep_2DpT_text: Hreco_pTHvis\:Hreco_pTHgen : [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
+#2lep_2DpT_diffbin: Hreco_pTHvis\:Hreco_pTHgen : [50,150,250,350,500,650,750,850]*[50,150,250,350,500,650,750,850,1000] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+#2lep_2DpT_diffbin_text: Hreco_pTHvis\:Hreco_pTHgen : [50,150,250,350,500,650,750,850]*[50,150,250,350,500,650,750,850,1000] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
+#2lep_nHiggs_prompt: if3(nLepFO>1, Hreco_nHiggs_status_prompt, -99) : 10,0,10; XTitle="number of prompt Higgs" , Legend= 'TL', MoreY=1.4, IncludeOverflows=False
+#2lep_nHiggs_isHP: if3(nLepFO>1, Hreco_nHiggs_status_isHP, -99) : 20,0,20; XTitle="number of hard process Higgs" , Legend= 'TL', MoreY=1.4, IncludeOverflows=False
+#2lep_nHiggs_fromHP: if3(nLepFO>1, Hreco_nHiggs_status_fromHP, -99) : 20,0,20; XTitle="number of Higgs from hard processes" , Legend= 'TL', MoreY=1.4, IncludeOverflows=False
