@@ -9,6 +9,7 @@ lumis = {
 '2016': '35.9',
 '2017': '41.4',
 '2018': '59.7',
+'all' : '35.9,41.4,59.7',
 }
 
 
@@ -26,16 +27,16 @@ if 'fanae' in os.environ['HOSTNAME']:
     submit = 'sbatch -p  short -c %d --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/userstorage/sscruz/NanoAOD/"
 TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" 
-TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
-TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre_skim2LSS/%s "%(YEAR,)
-TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
-TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
+YEARDIR=YEAR if YEAR != 'all' else ''
+TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEARDIR,)
+TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre_skim2LSS/%s "%(YEARDIR,)
+TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEARDIR,)
+TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEARDIR,)
 
 def base(selection):
 
     CORE=' '.join([TREESALL,TREESONLYSKIM])
-    CORE+=" -f -j %d -l %s --s2v -L ttH-multilepton/functionsTTH.cc --tree NanoAOD --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim --year %s "%(nCores, lumis[YEAR],YEAR)# --neg"
-    if YEAR == 2017: CORE += " --mcc ttH-multilepton/mcc-METFixEE2017.txt"
+    CORE+=" -f -j %d -l %s --s2v -L ttH-multilepton/functionsTTH.cc --tree NanoAOD --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim --year %s  --mcc ttH-multilepton/mcc-METFixEE2017.txt"%(nCores, lumis[YEAR],YEAR if YEAR!='all' else '2016,2017,2018')# --neg"
     RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 2 --legendWidth 0.25 "
