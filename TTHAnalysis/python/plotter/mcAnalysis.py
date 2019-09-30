@@ -58,6 +58,34 @@ class MCAnalysis:
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
         self.variationsFile = UncertaintyFile(options.variationsFile,options) if options.variationsFile else None
+        if ',' in options.year:
+            self._subMcas = []
+            rankoffset = 0
+            for year in options.year.split(','):
+                suboptions = deepcopy(options)
+                suboptions.year = year
+                suboptions.lumi = options.lumi.split(',')[ options.year.split(',').index(year)]
+                suboptions.path = [ path  + '/' + year for path in options.path ]
+                self._subMcas.append( MCAnalysis(samples, suboptions))
+                for pname,tty in self._subMcas[-1]._allData.iteritems():
+                    if pname in self._allData:
+                        self._allData[pname].extend( tty )
+                    else:
+                        self._allData[pname] = tty
+                for tty in self._subMcas[-1]._data: self._data.append(tty)
+                for tty in self._subMcas[-1]._signals: self._signals.append(tty)
+                for tty in self._subMcas[-1]._backgrounds: self._backgrounds.append(tty)
+                for key, issig in self._subMcas[-1]._isSignal.iteritems():
+                    if key not in self._isSignal: self._isSignal[key] = issig
+                for key, rank in self._subMcas[-1]._rank.iteritems():
+                    self._rank[key] = rank + rankoffset
+                for key, opt in self._subMcas[-1]._optionsOnlyProcesses:
+                    self._optionsOnlyProcesses[key] = opt
+                for proc in self._subMcas[-1]._groupsToNormalize:
+                    self._groupsToNormalize.append(proc)
+            rankoffset = len( self._rank )
+            return
+
         if os.path.isfile(samples): 
             self.readMca(open(samples,'r'),options)
         elif os.path.isdir(samples) and options.tree == "NanoAOD":
