@@ -418,8 +418,6 @@ float ttH_2lss_ifflavnb(int LepGood1_pdgId, int LepGood2_pdgId, int nBJetMedium2
   return 0; // avoid warning
 }
 
-
-
 float ttH_3l_ifflav(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood3_pdgId){
   if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && abs(LepGood3_pdgId)==11) return 1;
   if ((abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 35)       return 2;
@@ -427,7 +425,6 @@ float ttH_3l_ifflav(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood3_pdgId){
   if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && abs(LepGood3_pdgId)==13) return 4;
   return -1;
 }
-
 
 std::vector<int> boundaries_runPeriod2016 = {272007,275657,276315,276831,277772,278820,280919};
 std::vector<int> boundaries_runPeriod2017 = {297020,299337,302030,303435,304911};
@@ -524,4 +521,3 @@ float ttH_3l_clasifier(float nJet25,float nBJetMedium25){
   if ((nJet25>4)*(nBJetMedium25>1))       return 12;
   else return -1;
 }
-

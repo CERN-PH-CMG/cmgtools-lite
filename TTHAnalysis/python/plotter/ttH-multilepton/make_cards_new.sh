@@ -183,7 +183,7 @@ if [[ "$1" == "all" || "$1" == "4l" || "$1" == "4l_crzz"  ]]; then
         CATPOSTFIX="_crzz";
     fi;
 
-    "4l${CATPOSTFIX}";
+    echo "4l${CATPOSTFIX}";
     python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt ${ONEBIN} $SYSTS $OPT_4L --binname ttH_4l${CATPOSTFIX}_${YEAR} --year ${YEAR};
 
    echo "Done at $(date)"
@@ -212,7 +212,6 @@ if [[ "$1" == "all" || "$1" == "cr_3l" ]]; then
     CATFUNC="ttH_3l_ifflav(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)"
     CATBINS="[0.5,1.5,2.5,3.5,4.5]"
     CATNAMES="$(echo {eee,eem,emm,mmm}${CATPOSTFIX} | sed 's/ /,/g')"
-
 
     python makeShapeCardsNew.py ${DOFILE} ttH-multilepton/mca-3l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_CR_3L} $SYSTS $OPT_3L --binname ttH_cr_3l_${YEAR} --categorize $CATFUNC $CATBINS $CATNAMES --year ${YEAR};
 
