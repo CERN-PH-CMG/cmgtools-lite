@@ -200,7 +200,7 @@ if __name__ == '__main__':
                 runIt(add(x,'-E ^%s'%cat).replace("--binname 2lss","--binname %s" % cat[1:-4]),'%s/%s'%(torun,cat))
 
 
-    if '3l_' in torun:
+    if '3l_' in torun and not('cr') in torun:
         x = base('3l')
         if '_appl' in torun: x = add(x,'-I ^TTT ')
         if '_1fo' in torun:
@@ -272,7 +272,7 @@ if __name__ == '__main__':
                 runIt(add(x,' -E ^B%s'%("Tight" if "bt" in flav else "Loose")).replace("--binname 3l","--binname 3l_%s" % flav[:2]),'%s/%s'%(torun,flav))
 
 
-    if '4l_' in torun:
+    if '4l_' in torun and not 'cr' in torun:
         x = base('4l')
         if '_appl' in torun: x = add(x,'-I ^TTTT ')
         if '_relax' in torun: x = add(x,'-X ^TTTT ')
@@ -385,7 +385,7 @@ if __name__ == '__main__':
             runIt(x,'%s/4j'%torun,plots)
         else:
             runIt(x,'%s'%torun,plots)
-
+  
     if 'cr_fourlep_onZ' in torun:
         x = base('4l').replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
         if '_data' not in torun: x = add(x, "--xp data ")
@@ -417,5 +417,30 @@ if __name__ == '__main__':
                 x = add(x,"--flp WZ")
         plots = ['lep4_pt','met','mZ1','4lep_m4l_noRecl','4lep_mZ2_noRecl','minMllAFAS','tot_weight','4lep_nJet25']
         runIt(x,'%s'%torun,plots)
-
+    if 'cr_3l' in torun:
+        x = base('3l')
+        x = add(x,"-I 'Zveto' -X ^2j -X ^2b1B -E ^underflowVeto3l")
+        if '_data' in torun: 
+            x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
+        if '_frdata' in torun:
+            x = promptsub(x)
+            if not '_data' in torun: raise RuntimeError
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
+        plots = ['cr_3l']
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
+        runIt(x,'%s'%torun,plots)
+    if 'cr_4l' in torun:
+        x = base('4l')
+        x = add(x,"-I ^Zveto -X ^2b1B -X ^2j -E ^underflowVeto4l ")
+        if '_data' in torun: 
+            x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
+        if '_frdata' in torun:
+            x = promptsub(x)
+            raise RuntimeError, 'Fakes estimation not implemented for 4l'
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
+        plots = ['cr_4l']
+        runIt(x,'%s'%torun,plots)
+       
         

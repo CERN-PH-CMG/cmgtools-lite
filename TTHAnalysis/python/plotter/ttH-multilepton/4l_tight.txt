@@ -24,3 +24,4 @@ gt2b: nBJetLoose25 >= 2 ; Disable=True
 BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 Bveto: nBJetMedium25 == 0 ; Disable=True
+underflowVeto4l: ttH_4l_clasifier(nJet25, nBJetMedium25, mZ2) > 0 ; Disable=True
