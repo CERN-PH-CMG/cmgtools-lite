@@ -289,7 +289,7 @@ class TreeToYield:
         _mcCorrList = mcCorrList if mcCorrList != None else self._mcCorrs
         ret = self.adaptDataMCExpr(expr)
         for mcc in _mcCorrList:
-            ret = mcc(ret,self._name,self._cname,cut,self._isdata)
+            ret = mcc(ret,self._name,self._cname,cut,self._isdata, self._options.year)
         return ret
     def _init(self):
         if "root://" in self._fname:
