@@ -16,7 +16,6 @@ muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepG
 
 4j: nJet25>=4
 2b1B: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
-match : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge
 tauveto: nTauTight==0
 
 # some cuts that are off by default but can be turned on with -E
