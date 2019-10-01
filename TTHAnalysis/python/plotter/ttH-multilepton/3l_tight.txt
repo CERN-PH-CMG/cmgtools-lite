@@ -34,8 +34,6 @@ b3l_bt_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25
 b3l_bt_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2 ; Disable=True
 3lep_prompt: (!isData) && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; Disable=True
 underflowVeto3l: ttH_3l_clasifier(nJet25, nBJetMedium25) > 0 ; Disable=True
-
-
 #chanels
 eee : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 33 ; Disable=True
 eem :(abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 35 ; Disable=True
