@@ -143,13 +143,13 @@ def doTinyCmsPrelim(textLeft="_default_",textRight="_default_",hasExpo=False,tex
     if textLeft  == "_default_": textLeft  = options.lspam
     if textRight == "_default_": textRight = options.rspam
     if lumi      == None       : lumi      = options.lumi if ',' not in options.lumi else sum( map( lambda x : float(x), options.lumi.split(',')))
-    if   lumi > 3.54e+1: lumitext = "%.0f fb^{-1}" % lumi
-    elif lumi > 3.54e+0: lumitext = "%.1f fb^{-1}" % lumi
-    elif lumi > 3.54e-1: lumitext = "%.2f fb^{-1}" % lumi
-    elif lumi > 3.54e-2: lumitext = "%.0f pb^{-1}" % (lumi*1000)
-    elif lumi > 3.54e-3: lumitext = "%.1f pb^{-1}" % (lumi*1000)
-    else               : lumitext = "%.2f pb^{-1}" % (lumi*1000)
-    lumitext = "%.1f fb^{-1}" % lumi
+    if   lumi > 3.54e+1: lumitext = "%.0f fb^{-1}" % float(lumi)
+    elif lumi > 3.54e+0: lumitext = "%.1f fb^{-1}" % float(lumi)
+    elif lumi > 3.54e-1: lumitext = "%.2f fb^{-1}" % float(lumi)
+    elif lumi > 3.54e-2: lumitext = "%.0f pb^{-1}" % (float(lumi)*1000)
+    elif lumi > 3.54e-3: lumitext = "%.1f pb^{-1}" % (float(lumi)*1000)
+    else               : lumitext = "%.2f pb^{-1}" % (float(lumi)*1000)
+    lumitext = "%.1f fb^{-1}" % float(lumi)
     textLeft = textLeft.replace("%(lumi)",lumitext)
     textRight = textRight.replace("%(lumi)",lumitext)
     if textLeft not in ['', None]:
