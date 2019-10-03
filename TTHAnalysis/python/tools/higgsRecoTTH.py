@@ -32,6 +32,42 @@ class HiggsRecoTTH(Module):
 
     # code
     def run(self,event,Collection):
+    # status flag for gen particles
+        statusFlagsMap={
+        'isHardProcess' : 7,
+        'isPrompt'      : 0
+        }
+    # define variables and gen collections
+        genjet = Collection(event,"GenJet","nGenJet")
+        genpar = Collection(event,"GenPart","nGenPart")
+        nHiggs = 0
+        nHiggs_good = 0 # "good" Higgs is a one that is hard process, see statusFlags
+        ngenjets = 0
+        gencandid = []
+    # loop over gen particles
+        for part in genpar:
+            if not part.statusFlags &(1<< statusFlagsMap['isPrompt']): continue # cutting out all particles from non-prompt decays, i.e. choosing prompt: decays not coming from hadron, muon or a tau
+            if not part.genPartIdxMother == 25: continue # cutting out all particles coming from a non-Higgs chain 
+            if part.pdgId == 25:
+               nHiggs +=1
+               if part.statusFlags &(1<< statusFlagsMap['isHardProcess']):
+                  #print "making sure that the Higgs is a hard process" 
+                  nHiggs_good +=1
+    # some statements that can be used later
+    # --------------------------------------
+            #if part.genPartIdxMother == 24 or part.genPartIdxMother == -24: # if the gen particle's mother is W+ or W- then it is interesting
+            #if part.pdgId not in range(1, 8): continue  # if the gen particle is not a quark then it is not interesting, we want to reconstruct jets
+            #if not jet.partonFlavour == 5 and not jet.partonFlavour == -5: #that excludes b-jets but it is not necessary
+    # loop over gen jets  
+            for jet in genjet:
+                if jet.p4().Pt() < 30 or abs(jet.p4().Eta()) > 2.5: continue # bit extreme cuts, I think supposed to be 24 and 2.4
+                eta_jet_gen = jet.p4().Eta()
+                phi_jet_gen = jet.p4().Phi()
+                gencandid.append((eta_jet_gen,phi_jet_gen)) 
+                ngenjets +=1
+                print "jet flavour = " + str(jet.partonFlavour) + " and mass = " + str(jet.p4().M()) + " GeV and pT = " + str(jet.p4().Pt())
+        print gencandid 
+        print "number of jets in event = " + str(ngenjets)       
         
         nleps = getattr(event,"nLepGood")
         nFO = getattr(event,"nLepFO"+self.label)
@@ -52,8 +88,8 @@ class HiggsRecoTTH(Module):
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
                 for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
-                    if not len(lepsFO)==2: continue
-                    if not lepsFO[0].charge==lepsFO[1].charge: continue 
+                    #if not len(lepsFO)==2: continue
+                    #if not lepsFO[0].charge==lepsFO[1].charge: continue 
                     for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
                         j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
                         j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())

@@ -18,7 +18,7 @@
 
 ## "normal" binning
 ## --------------
-
+#a module indep variable just for testing purposes
 lep1_pt: 	 LepGood1_pt					 : 40,0,200; XTitle="Leading lepton p_{T} (GeV)"
 2lep_pTHvis_no_overflow:  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350; XTitle="pT of reconstructed Higgs (GeV)", Legend='TL', MoreY=1.8, IncludeOverflows=False
 #2lep_pTHgen_no_overflow:  if3(nLepFO>1, Hreco_pTHgen,-99) : 50,0,350; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.4, IncludeOverflows=False
