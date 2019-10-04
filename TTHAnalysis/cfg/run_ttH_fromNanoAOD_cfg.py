@@ -49,20 +49,27 @@ elif year == 2016:
 
 DatasetsAndTriggers = []
 if analysis == "main":
-    mcSamples = byCompName(mcSamples_, [
-        "WJetsToLNu_LO$", "DYJetsToLL_M10to50_LO$", "DYJetsToLL_M50$",
-        "TTJets_SingleLeptonFromT$", "TTJets_SingleLeptonFromTbar$", "TTJets_DiLepton$",
-        "T_sch_lep$", "T_tch$", "TBar_tch$", "T_tWch_noFullyHad$", "TBar_tWch_noFullyHad$",
-        "TTGJets$", "TGJets_lep",
-        "TTWToLNu_fxfx$", "TTZToLLNuNu_amc$", "TTZToLLNuNu_m1to10$",
-        "TT[WZ]_LO$",
-        "TTHnobb_pow$",
-        "TZQToLL$", "tWll$", "TTTT$", "TTWW$",
-        "WWTo2L2Nu$", "WZTo3LNu_fxfx$",  "ZZTo4L$", "WW_DPS$", "WpWpJJ$",
-        "GGHZZ4L$", "VHToNonbb_ll$",
-        "WWW_ll$", "WWZ$", "WZG$", "WZZ$", "ZZZ$",
-        "THQ$", "THW$", "TTH_ctcvcp$",
-    ])
+    mcSamples = byCompName(mcSamples_, ["%s(|_PS)$"%dset for dset in [
+        # single boson
+        "WJetsToLNu_LO", "DYJetsToLL_M10to50_LO", "DYJetsToLL_M50",
+        # ttbar + single top + tW
+        "TTJets_SingleLeptonFromT", "TTJets_SingleLeptonFromTbar", "TTJets_DiLepton",
+        "T_sch_lep", "T_tch", "TBar_tch", "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
+        # conversions
+        "TTGJets", "TGJets_lep", "WGToLNuG", "ZGTo2LG",
+        # ttV
+        "TTWToLNu_fxfx", "TTZToLLNuNu_amc", "TTZToLLNuNu_m1to10",
+        # ttH + tHq/tHW
+        "TTHnobb_fxfx", "THQ_ctcvcp", "THW_ctcvcp", "TTH_ctcvcp",
+        # top + V rare processes
+        "TZQToLL", "tWll", "TTTT", "TTWW",
+        # diboson + DPS + WWss
+        "WWTo2L2Nu", "WZTo3LNu_pow", "WZTo3LNu_fxfx", "ZZTo4L", "WW_DPS", "WWTo2L2Nu_DPS", "WpWpJJ",
+        # triboson
+        "WWW", "WWW_ll", "WWZ", "WZG", "WZZ", "ZZZ",
+        # other Higgs processes
+        "GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
+    ]])
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) if year == 2018 else
                                 ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
@@ -122,7 +129,7 @@ if preprocessor:
     preproc_cfg = {2016: ("mc94X2016","data94X2016"),
                    2017: ("mc94Xv2","data94Xv2"),
                    2018: ("mc102X","data102X_ABC","data102X_D")}
-    preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_tth/CMSSW_10_2_15"
+    preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_tth/CMSSW_10_2_16_UL"
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
         preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True,injectTriggerFilter=True,injectJSON=True)
