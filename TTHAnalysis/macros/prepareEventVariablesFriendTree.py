@@ -98,7 +98,7 @@ parser.add_option("--maxruntime", "--time",  dest="maxruntime", type="int", defa
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 parser.add_option("--sub", "--subfile", dest="subfile", type="string", default="condor.sub", help="Subfile for condor (default: condor.sub)");
-parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
+parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo, uclouvain)");
 parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new version of treeReAnalyzer");
@@ -228,6 +228,8 @@ if options.checkrunning:
     nrunning = 0
     if options.queue == "condor":
         running = subprocess.check_output(["condor_q", "-nobatch","-wide"])
+    elif options.queue == "cp3":
+        running = subprocess.check_output(["squeue", "-u", os.environ["USER"]])
     else:
         running = subprocess.check_output(["bjobs", "-ww"])
     tomatch = re.compile(r"\s{self}\s.(?:.*\s)?{input}\s.*\s*{output}\s(?:.*\s)?-d\s+(\w+)\s+-c\s+(\d+)\b".format(self=sys.argv[0], input=args[0], output=args[1]))
@@ -400,6 +402,9 @@ if options.queue:
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
+    elif options.env == "uclouvain":
+        options.subfile="slurm_submitter_of_stuff_"
+        super = "sbatch --partition cp3 "
     else: # Use lxbatch by default
         runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
@@ -410,6 +415,15 @@ if options.queue:
                 tree=options.tree, data=args[0], output=theoutput)
     if not isNano: basecmd += " -T %s " % options.treeDir
 
+    if options.queue == "cp3":
+        basecmd = "python {dir}/{self} -j 0 -N {chunkSize} -t {tree} {data} {output}".format(
+                dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
+                self=sys.argv[0], chunkSize=options.chunkSize,
+                tree=options.tree, data=args[0], output=theoutput)
+        if not isNano: basecmd = "python {dir}/{self} -j 0 -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
+                dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
+                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
+                tree=options.tree, data=args[0], output=theoutput)
     writelog = ""
     logdir   = ""
     if options.logdir: logdir = options.logdir.rstrip("/")
@@ -465,6 +479,22 @@ if options.queue:
                 cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             elif options.env == "oviedo":
                 cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post} ".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if options.queue == "cp3" and options.env == "uclouvain":
+                full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
+                subfile = open(full_subfile, "w")
+                subfile.write("""#! /bin/bash
+#SBATCH --ntasks=8
+
+""")
+
+                dacmd = "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+                subfile.write("""srun -N1 -n1 -c1 --exclusive {cmd} &
+wait
+
+""".format(cmd=dacmd))
+                subfile.close()
+                print "Saved slurm submit file to %s" % full_subfile
+                cmd = "{super} {subfile}".format(super=super, subfile=full_subfile)
             if fs:
                 cmd += " --fineSplit %d --subChunk %d" % (fs[1], fs[0])
         else:
@@ -475,6 +505,21 @@ if options.queue:
                 cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             elif options.env == "oviedo":
                 cmd = "{super} {base} -d {data} {post} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if options.queue == "cp3" and options.env == "uclouvain":
+                full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
+                subfile = open(full_subfile, "w")
+                subfile.write("""#! /bin/bash
+#SBATCH --ntasks=8
+
+""")
+                dacmd = "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+                subfile.write("""srun -N1 -n1 -c1 --exclusive {cmd} &
+wait
+
+""".format(cmd=dacmd))
+                subfile.close()
+                print "Saved slurm submit file to %s" % full_subfile
+                cmd = "{super} {subfile}".format(super=super, subfile=full_subfile)
         print cmd
         if not options.pretend:
             os.system(cmd)
