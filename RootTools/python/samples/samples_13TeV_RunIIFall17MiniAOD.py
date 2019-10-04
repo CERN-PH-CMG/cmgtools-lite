@@ -372,7 +372,7 @@ TTW_LO = kreator.makeMCComponent("TTW_LO", "/ttWJets_TuneCP5_13TeV_madgraphMLM_p
 TTW_LO_ext = kreator.makeMCComponent("TTW_LO_ext", "/ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v2/MINIAODSIM", "CMS", ".*root",  0.6105 )
 
 TTZToLLNuNu_amc = kreator.makeMCComponent("TTZToLLNuNu_amc", "/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM", "CMS", ".*root", 0.2529, fracNegWeights=0.264)
-TTZToLLNuNu_amc_psw = kreator.makeMCComponent("TTZToLLNuNu_amc_psw", "/TTZToLLNuNu_M-10_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 0.2529, fracNegWeights=0.264)
+TTZToLLNuNu_amc_PS = kreator.makeMCComponent("TTZToLLNuNu_amc_PS", "/TTZToLLNuNu_M-10_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root", 0.2529, fracNegWeights=0.264)
 TTZ_LO = kreator.makeMCComponent("TTZ_LO", "/ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM", "CMS", ".*root",  0.5297/0.692)
 TTZ_LO_ext = kreator.makeMCComponent("TTZ_LO_ext", "/ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v3/MINIAODSIM", "CMS", ".*root",  0.5297/0.692)
 
@@ -397,7 +397,7 @@ TTH_ctcvcp = kreator.makeMCComponent("TTH_ctcvcp", "/TTH_4f_ctcvcp_TuneCP5_13TeV
 
 TTXs = [ TTGJets, TTGJets_ext, TGJets_lep,
          TTWToLNu_fxfx, TTWToLNu_fxfx_PS, TTW_LO, TTW_LO_ext,
-         TTZToLLNuNu_amc, TTZToLLNuNu_amc_psw, TTZ_LO, TTZ_LO_ext, TTZToLLNuNu_m1to10, 
+         TTZToLLNuNu_amc, TTZToLLNuNu_amc_PS, TTZ_LO, TTZ_LO_ext, TTZToLLNuNu_m1to10, 
          TZQToLL, tWll, THQ_ctcvcp, THW_ctcvcp, TTH_ctcvcp,
          TTH_pow, TTHnobb_fxfx, TTHnobb_pow, TTHnobb_pow_ext, TTHtautau_pow,  ]
 
