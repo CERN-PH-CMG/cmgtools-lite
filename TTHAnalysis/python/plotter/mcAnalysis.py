@@ -61,10 +61,12 @@ class MCAnalysis:
         if ',' in options.year:
             self._subMcas = []
             rankoffset = 0
-            for year in options.year.split(','):
+            years, lumis = options.year.spilt(','), options.lumi.spilt(',')
+            if len(years) != len(lumis): raise RuntimeError("Mismatch between number of years and of luminosities")
+            for year,lumi in zip(years,lumis):
                 suboptions = deepcopy(options)
                 suboptions.year = year
-                suboptions.lumi = options.lumi.split(',')[ options.year.split(',').index(year)]
+                suboptions.lumi = options.lumi.split(',')[ lumi ]
                 suboptions.path = [ path  + '/' + year for path in options.path ]
                 self._subMcas.append( MCAnalysis(samples, suboptions))
                 for pname,tty in self._subMcas[-1]._allData.iteritems():
