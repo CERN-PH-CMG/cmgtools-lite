@@ -33,7 +33,7 @@ else:
     elif year == 2016:
         from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import dataSamples_1June2019 as allData
-autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False))) # must be done before mergeExtensions
+autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
 mcSamples_, _ = mergeExtensions(mcSamples_)
 
 # Triggers
@@ -113,14 +113,16 @@ if getHeppyOption('selectComponents'):
         selectedComponents = dataSamples
     else:
         selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
-autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)))
+autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it")
 if year==2018:
-    configureSplittingFromTime(mcSamples,150 if preprocessor else 10,8)
-    configureSplittingFromTime(dataSamples,50 if preprocessor else 5,8)
-else: # rerunning deepFlavor can take up to twice the time
-    configureSplittingFromTime(mcSamples,250 if preprocessor else 10,8) # warning: some samples take up to 400 ms per event
-    configureSplittingFromTime(dataSamples,80 if preprocessor else 5,8)
-    configureSplittingFromTime(byCompName(dataSamples,['Single']),50 if preprocessor else 5,8)
+    configureSplittingFromTime(byCompName(mcSamples,['^(?!(TTJets_Single|T_|TBar_)).*']),150 if preprocessor else 10,12)
+    configureSplittingFromTime(byCompName(mcSamples,['^(TTJets_Single|T_|TBar_).*']),70 if preprocessor else 10,12)
+    configureSplittingFromTime(dataSamples,50 if preprocessor else 5,12)
+else: # rerunning deepFlavor can take up to twice the time, some samples take up to 400 ms per event
+    configureSplittingFromTime(byCompName(mcSamples,['^(?!(TTJets_Single|T_|TBar_)).*']),300 if preprocessor else 10,12)
+    configureSplittingFromTime(byCompName(mcSamples,['^(TTJets_Single|T_|TBar_).*']),150 if preprocessor else 10,12)
+    configureSplittingFromTime(dataSamples,100 if preprocessor else 5,12)
+    configureSplittingFromTime(byCompName(dataSamples,['Single']),50 if preprocessor else 5,12)
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
 # create and set preprocessor if requested
