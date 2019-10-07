@@ -66,7 +66,7 @@ class MCAnalysis:
             for year,lumi in zip(years,lumis):
                 suboptions = deepcopy(options)
                 suboptions.year = year
-                suboptions.lumi = options.lumi.split(',')[ lumi ]
+                suboptions.lumi = lumi
                 suboptions.path = [ path  + '/' + year for path in options.path ]
                 self._subMcas.append( MCAnalysis(samples, suboptions))
                 for pname,tty in self._subMcas[-1]._allData.iteritems():
