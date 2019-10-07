@@ -43,6 +43,9 @@ nBJetMedium25:	nBJetMedium25				: [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p
 2lep_MT2llv:    mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,MET_pt,MET_phi) : 40,0,200 ; XTitle="M_{T2} (GeV)"
 2lep_catIndex: ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle="", MoreY=2.0, \
     xBinLabels="#splitline{ee}{ #minus}\,#splitline{ee}{ +}\,#splitline{e#mu}{bl#minus}\,#splitline{e#mu}{bl+}\,#splitline{e#mu}{bt#minus}\,#splitline{e#mu}{bt+}\,#splitline{#mu#mu}{bl#minus}\,#splitline{#mu#mu}{bl+}\,#splitline{#mu#mu}{bt#minus}\,#splitline{#mu#mu}{bt+}"
+
+2lep_catIndex_v2: ttH_catIndex_2lss_v2(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]; XTitle="", MoreY=2.0,  xBinLabels="#splitline{ee}{ bl#minus}\,#splitline{ee}{bl+}\,#splitline{ee}{ bt#minus}\,#splitline{ee}{bt+}\,#splitline{e#mu}{bl#minus}\,#splitline{e#mu}{bl+}\,#splitline{e#mu}{bt#minus}\,#splitline{e#mu}{bt+}\,#splitline{#mu#mu}{bl#minus}\,#splitline{#mu#mu}{bl+}\,#splitline{#mu#mu}{bt#minus}\,#splitline{#mu#mu}{bt+}"
+
 2lep_catIndex_nosign: ttH_catIndex_2lss_nosign(LepGood1_pdgId,LepGood2_pdgId,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="", xBinLabels="ee\,e#mu bl\,e#mu bt\,#mu#mu bl\,#mu#mu bt", MoreY=2.0, XLabel="final state"
 
 nT_2lep_conePt: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_conePt,LepGood1_conePt),-99) : 60,0,80; XTitle="Lepton cone p_{T} (GeV) in TL ev."
@@ -315,3 +318,6 @@ jet4_eta: 	 abs(JetSel_Recl_eta[3])		: 40,0,2.5; XTitle="4th jet |#eta|"
 #rec3j_j2j3_lowestCSV:  min(JetSel_Recl_btagCSV[2],JetSel_Recl_btagCSV[1]): 40,0,1.0; XTitle="lowest b-tag of j2\, j3"
 
 
+#Control regions
+cr_3l: ttH_3l_clasifier(nJet25, nBJetMedium25): [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]; XTitle="nJet nBJet clasification",Logy, YMin=0.1 , YMax=5.0e3,  XNDdiv=505, IncludeOverflows=False, xBinLabels="1j\,2j\,3j\,>3j\,2j\,3j\,4j\,>4j\,2j\,3j\,4j\,>4j"
+cr_4l: ttH_4l_clasifier(nJet25, nBJetMedium25,mZ2): [0.5,1.5,2.5,3.5,4.5]; XTitle="4l Control Region", Logy, YMin=0.1 ,  XNDdiv=505, IncludeOverflows=False, xBinLabels="1\,2\,3\,4"

@@ -418,8 +418,13 @@ float ttH_2lss_ifflavnb(int LepGood1_pdgId, int LepGood2_pdgId, int nBJetMedium2
   return 0; // avoid warning
 }
 
-
-
+float ttH_3l_ifflav(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood3_pdgId){
+  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && abs(LepGood3_pdgId)==11) return 1;
+  if ((abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 35)       return 2;
+  if ((abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 37)       return 3;
+  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && abs(LepGood3_pdgId)==13) return 4;
+  return -1;
+}
 
 std::vector<int> boundaries_runPeriod2016 = {272007,275657,276315,276831,277772,278820,280919};
 std::vector<int> boundaries_runPeriod2017 = {297020,299337,302030,303435,304911};
@@ -488,4 +493,31 @@ float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, float scale_l
     float wpmedium[3] = { 0.3093, 0.3033, 0.2770 };
     float x = std::min(std::max(0.f, jetpt - ptmin)/(ptmax-ptmin), 1.f); 
     return x*wploose[year-2016]*scale_loose + (1-x)*wpmedium[year-2016];
+}
+
+float ttH_4l_clasifier(float nJet25,float nBJetMedium25,float mZ2){
+ 
+  if ( abs(mZ2-91.2) < 10 && abs(mZ2 -91.2)<10) return 1;
+  if ((abs(mZ2-91.2) > 10) && nJet25==0) return 2;
+  if ( (abs(mZ2-91.2) > 10) && nJet25>=0 && nBJetMedium25==1) return 3;
+  if ( (abs(mZ2-91.2) > 10) && nJet25>=1 && nBJetMedium25>1) return 4;
+
+  else return -1;
+}
+
+float ttH_3l_clasifier(float nJet25,float nBJetMedium25){
+
+  if ((nJet25 == 1)*(nBJetMedium25 == 0)) return 1;
+  if ((nJet25 == 2)*(nBJetMedium25 == 0)) return 2;
+  if ((nJet25 == 3)*(nBJetMedium25 == 0)) return 3;
+  if ((nJet25>3)*(nBJetMedium25 == 0))    return 4;
+  if ((nJet25 == 2)*(nBJetMedium25 == 1)) return 5;
+  if ((nJet25 == 3)*(nBJetMedium25 == 1)) return 6;
+  if ((nJet25 == 4)*(nBJetMedium25 == 1)) return 7;
+  if ((nJet25>4)*(nBJetMedium25 == 1))    return 8;
+  if ((nJet25 == 2)*(nBJetMedium25>1))    return 9;
+  if ((nJet25 == 3)*(nBJetMedium25>1))    return 10;
+  if ((nJet25 == 4)*(nBJetMedium25>1))    return 11;
+  if ((nJet25>4)*(nBJetMedium25>1))       return 12;
+  else return -1;
 }
