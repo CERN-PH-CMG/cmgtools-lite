@@ -12,10 +12,24 @@ $alias : FRData : data_fakes|.*_promptsub
 $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 
 ### Uncertainties
+# lumi from https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
+lumi_13TeV_2016		: $PromptFromMC : .*_2016 : normSymm : 1.022
+lumi_13TeV_2017		: $PromptFromMC : .*_2017 : normSymm : 1.020
+lumi_13TeV_2018		: $PromptFromMC : .*_2018 : normSymm : 1.015
+lumi_13TeV_xyfactor     : $PromptFromMC : .*_2016 : normSymm : 1.009
+lumi_13TeV_xyfactor     : $PromptFromMC : .*_2017 : normSymm : 1.008
+lumi_13TeV_xyfactor     : $PromptFromMC : .*_2018 : normSymm : 1.02
+lumi_13TeV_lengthscale  : $PromptFromMC : .*_2017 : normSymm : 1.003
+lumi_13TeV_lengthscale  : $PromptFromMC : .*_2018 : normSymm : 1.002
+lumi_13TeV_deflect      : $PromptFromMC : .*_2016 : normSymm : 1.009
+lumi_13TeV_deflect      : $PromptFromMC : .*_2017 : normSymm : 1.008
+lumi_13TeV_dynbeta      : $PromptFromMC : .*_2016 : normSymm : 1.005
+lumi_13TeV_dynbeta      : $PromptFromMC : .*_2017 : normSymm : 1.005
+lumi_13TeV_beamcurr     : $PromptFromMC : .*_2017 : normSymm : 1.003
+lumi_13TeV_beamcurr     : $PromptFromMC : .*_2018 : normSymm : 1.002
+lumi_13TeV_ghosts       : $PromptFromMC : .*_2016 : normSymm : 1.004
+lumi_13TeV_ghosts       : $PromptFromMC : .*_2017 : normSymm : 1.001
 
-lumi_13TeV_2016		: $PromptFromMC : .*_2016 : normSymm : 1.023
-lumi_13TeV_2017		: $PromptFromMC : .*_2017 : normSymm : 1.023
-lumi_13TeV_2018		: $PromptFromMC : .*_2018 : normSymm : 1.023
 
 # lepton efficiencies
 CMS_ttHl_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['muLooseUnc_2lss_up'\,'muLooseUnc_2lss_dn']
