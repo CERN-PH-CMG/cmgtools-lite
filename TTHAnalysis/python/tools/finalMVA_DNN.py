@@ -11,7 +11,7 @@ class finalMVA_DNN(Module):
     def __init__(self):
         self.outVars = []
         vars_2lss = {'avg_dr_jet'          : lambda ev : ev.avg_dr_jet,
-                     'ptmiss'              : lambda ev : ev.MET_pt, 
+                     'ptmiss'              : lambda ev : ev.MET_pt if ev.year != 2017 else ev.METFixEE2017_pt, 
                      'mbb_medium'          : lambda ev : ev.mbb,
                      'jet1_pt'             : lambda ev : ev.JetSel_Recl_pt[0] if ev.nJetSel_Recl > 0 else 0,
                      'jet2_pt'             : lambda ev : ev.JetSel_Recl_pt[1] if ev.nJetSel_Recl > 1 else 0,
@@ -25,14 +25,14 @@ class finalMVA_DNN(Module):
                      'lep2_conept'         : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[1])],
                      'lep2_min_dr_jet'     : lambda ev : ev.mindr_lep2_jet,
                      'nJetForward'         : lambda ev : ev.nFwdJet_Recl,
-                     'jetForward1_pt'      : lambda ev : ev.FwdJet1_pt_Recl,
-                     'jetForward1_eta_abs' : lambda ev : abs(ev.FwdJet1_eta_Recl),
+                     'jetForward1_pt'      : lambda ev : ev.FwdJet1_pt_Recl if ev.nFwdJet_Recl else 0,
+                     'jetForward1_eta_abs' : lambda ev : abs(ev.FwdJet1_eta_Recl)  if ev.nFwdJet_Recl else -1,
                      'res-HTT_CSVsort4rd'  : lambda ev : ev.BDThttTT_eventReco_mvaValue,
                      'HadTop_pt_CSVsort4rd': lambda ev : ev.BDThttTT_eventReco_HadTop_pt,
                      'nJet'                : lambda ev : ev.nJet25_Recl,
                      'nBJetLoose'          : lambda ev : ev.nBJetLoose25_Recl,
                      'nBJetMedium'         : lambda ev : ev.nBJetMedium25_Recl,
-                     'nElectron'           : lambda ev : abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[0])]) == 11 + abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[1])]) == 11 if ev.nLepFO_Recl > 1 else 0,
+                     'nElectron'           : lambda ev : int(abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[0])]) == 11 + abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[1])]) == 11 if ev.nLepFO_Recl > 1 else 0),
                      'sum_lep_charge'      : lambda ev : ev.LepGood_charge[int(ev.iLepFO_Recl[0])] + ev.LepGood_charge[int(ev.iLepFO_Recl[1])] if ev.nLepFO_Recl > 1 else 0,
                      'mvaOutput_Hj_tagger' : lambda ev : ev.BDThttTT_eventReco_Hj_score, 
         }
@@ -42,7 +42,7 @@ class finalMVA_DNN(Module):
 
         vars_2lss_jesTotalUp = deepcopy(vars_2lss)
         vars_2lss_jesTotalUp['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jesTotalUp
-        vars_2lss_jesTotalUp['ptmiss'              ] =  lambda ev : ev.MET_pt_jesTotalUp
+        vars_2lss_jesTotalUp['ptmiss'              ] =  lambda ev : ev.MET_pt_jesTotalUp if ev.year != 2017 else ev.METFixEE2017_pt_jesTotalUp
         vars_2lss_jesTotalUp['mbb_medium'          ] =  lambda ev : ev.mbb_jesTotalUp
         vars_2lss_jesTotalUp['jet1_pt'             ] =  lambda ev : ev.JetSel_Recl_jesTotalUp_pt[0] if ev.nJetSel_Recl > 0 else 0
         vars_2lss_jesTotalUp['jet2_pt'             ] =  lambda ev : ev.JetSel_Recl_jesTotalUp_pt[1] if ev.nJetSel_Recl > 1 else 0
@@ -52,9 +52,9 @@ class finalMVA_DNN(Module):
         vars_2lss_jesTotalUp['lep1_min_dr_jet'     ] =  lambda ev : ev.mindr_lep1_jet_jesTotalUp
         vars_2lss_jesTotalUp['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_jesTotalUp
         vars_2lss_jesTotalUp['lep2_min_dr_jet'     ] =  lambda ev : ev.mindr_lep2_jet_jesTotalUp
-        vars_2lss_jesTotalUp['nJetForward'         ] =  lambda ev : ev.nFwdJet_jecUp_Recl
-        vars_2lss_jesTotalUp['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jecUp_Recl
-        vars_2lss_jesTotalUp['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jecUp_Recl)
+        vars_2lss_jesTotalUp['nJetForward'         ] =  lambda ev : ev.nFwdJet_jecUp_Recl 
+        vars_2lss_jesTotalUp['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jecUp_Recl if ev.nFwdJet_jecUp_Recl else 0
+        vars_2lss_jesTotalUp['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jecUp_Recl)  if ev.nFwdJet_jecUp_Recl else -1
         vars_2lss_jesTotalUp['res-HTT_CSVsort4rd'  ] =  lambda ev : ev.BDThttTT_eventReco_mvaValue_jesTotalUp
         vars_2lss_jesTotalUp['HadTop_pt_CSVsort4rd'] =  lambda ev : ev.BDThttTT_eventReco_HadTop_pt_jesTotalUp
         vars_2lss_jesTotalUp['nJet'                ] =  lambda ev : ev.nJet25_jecUp_Recl
@@ -65,7 +65,7 @@ class finalMVA_DNN(Module):
 
         vars_2lss_jesTotalDown = deepcopy(vars_2lss)
         vars_2lss_jesTotalDown['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jesTotalDown
-        vars_2lss_jesTotalDown['ptmiss'              ] =  lambda ev : ev.MET_pt_jesTotalDown
+        vars_2lss_jesTotalDown['ptmiss'              ] =  lambda ev : ev.MET_pt_jesTotalDown if ev.year != 2017 else ev.METFixEE2017_pt_jesTotalDown
         vars_2lss_jesTotalDown['mbb_medium'          ] =  lambda ev : ev.mbb_jesTotalDown
         vars_2lss_jesTotalDown['jet1_pt'             ] =  lambda ev : ev.JetSel_Recl_jesTotalDown_pt[0] if ev.nJetSel_Recl > 0 else 0
         vars_2lss_jesTotalDown['jet2_pt'             ] =  lambda ev : ev.JetSel_Recl_jesTotalDown_pt[1] if ev.nJetSel_Recl > 1 else 0
@@ -76,8 +76,8 @@ class finalMVA_DNN(Module):
         vars_2lss_jesTotalDown['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_jesTotalDown
         vars_2lss_jesTotalDown['lep2_min_dr_jet'     ] =  lambda ev : ev.mindr_lep2_jet_jesTotalDown
         vars_2lss_jesTotalDown['nJetForward'         ] =  lambda ev : ev.nFwdJet_jecDown_Recl
-        vars_2lss_jesTotalDown['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jecDown_Recl
-        vars_2lss_jesTotalDown['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jecDown_Recl)
+        vars_2lss_jesTotalDown['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jecDown_Recl if ev.nFwdJet_jecDown_Recl else 0
+        vars_2lss_jesTotalDown['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jecDown_Recl)  if ev.nFwdJet_jecDown_Recl else -1
         vars_2lss_jesTotalDown['res-HTT_CSVsort4rd'  ] =  lambda ev : ev.BDThttTT_eventReco_mvaValue_jesTotalDown
         vars_2lss_jesTotalDown['HadTop_pt_CSVsort4rd'] =  lambda ev : ev.BDThttTT_eventReco_HadTop_pt_jesTotalDown
         vars_2lss_jesTotalDown['nJet'                ] =  lambda ev : ev.nJet25_jecDown_Recl
@@ -89,7 +89,7 @@ class finalMVA_DNN(Module):
 
         vars_2lss_jerUp = deepcopy(vars_2lss)
         vars_2lss_jerUp['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jerUp
-        vars_2lss_jerUp['ptmiss'              ] =  lambda ev : ev.MET_pt_jerUp
+        vars_2lss_jerUp['ptmiss'              ] =  lambda ev : ev.MET_pt_jerUp if ev.year != 2017 else ev.METFixEE2017_pt_jerUp
         vars_2lss_jerUp['mbb_medium'          ] =  lambda ev : ev.mbb_jerUp
         vars_2lss_jerUp['jet1_pt'             ] =  lambda ev : ev.JetSel_Recl_jerUp_pt[0] if ev.nJetSel_Recl > 0 else 0
         vars_2lss_jerUp['jet2_pt'             ] =  lambda ev : ev.JetSel_Recl_jerUp_pt[1] if ev.nJetSel_Recl > 1 else 0
@@ -100,8 +100,8 @@ class finalMVA_DNN(Module):
         vars_2lss_jerUp['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_jerUp
         vars_2lss_jerUp['lep2_min_dr_jet'     ] =  lambda ev : ev.mindr_lep2_jet_jerUp
         vars_2lss_jerUp['nJetForward'         ] =  lambda ev : ev.nFwdJet_jerUp_Recl
-        vars_2lss_jerUp['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jerUp_Recl
-        vars_2lss_jerUp['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jerUp_Recl)
+        vars_2lss_jerUp['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jerUp_Recl if ev.nFwdJet_jerUp_Recl else 0
+        vars_2lss_jerUp['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jerUp_Recl) if ev.nFwdJet_jerUp_Recl else -1
         vars_2lss_jerUp['res-HTT_CSVsort4rd'  ] =  lambda ev : ev.BDThttTT_eventReco_mvaValue_jerUp
         vars_2lss_jerUp['HadTop_pt_CSVsort4rd'] =  lambda ev : ev.BDThttTT_eventReco_HadTop_pt_jerUp
         vars_2lss_jerUp['nJet'                ] =  lambda ev : ev.nJet25_jerUp_Recl
@@ -112,7 +112,7 @@ class finalMVA_DNN(Module):
 
         vars_2lss_jerDown = deepcopy(vars_2lss)
         vars_2lss_jerDown['avg_dr_jet'          ] =  lambda ev : ev.avg_dr_jet_jerDown
-        vars_2lss_jerDown['ptmiss'              ] =  lambda ev : ev.MET_pt_jerDown
+        vars_2lss_jerDown['ptmiss'              ] =  lambda ev : ev.MET_pt_jerDown if ev.year != 2017 else ev.METFixEE2017_pt_jerDown
         vars_2lss_jerDown['mbb_medium'          ] =  lambda ev : ev.mbb_jerDown
         vars_2lss_jerDown['jet1_pt'             ] =  lambda ev : ev.JetSel_Recl_jerDown_pt[0] if ev.nJetSel_Recl > 0 else 0
         vars_2lss_jerDown['jet2_pt'             ] =  lambda ev : ev.JetSel_Recl_jerDown_pt[1] if ev.nJetSel_Recl > 1 else 0
@@ -123,8 +123,8 @@ class finalMVA_DNN(Module):
         vars_2lss_jerDown['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_jerDown
         vars_2lss_jerDown['lep2_min_dr_jet'     ] =  lambda ev : ev.mindr_lep2_jet_jerDown
         vars_2lss_jerDown['nJetForward'         ] =  lambda ev : ev.nFwdJet_jerDown_Recl
-        vars_2lss_jerDown['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jerDown_Recl
-        vars_2lss_jerDown['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jerDown_Recl)
+        vars_2lss_jerDown['jetForward1_pt'      ] =  lambda ev : ev.FwdJet1_pt_jerDown_Recl if ev.nFwdJet_jerDown_Recl  else 0
+        vars_2lss_jerDown['jetForward1_eta_abs' ] =  lambda ev : abs(ev.FwdJet1_eta_jerDown_Recl) if ev.nFwdJet_jerDown_Recl  else -1
         vars_2lss_jerDown['res-HTT_CSVsort4rd'  ] =  lambda ev : ev.BDThttTT_eventReco_mvaValue_jerDown
         vars_2lss_jerDown['HadTop_pt_CSVsort4rd'] =  lambda ev : ev.BDThttTT_eventReco_HadTop_pt_jerDown
         vars_2lss_jerDown['nJet'                ] =  lambda ev : ev.nJet25_jerDown_Recl
@@ -142,22 +142,23 @@ class finalMVA_DNN(Module):
         vars_2lss_unclDown['lep1_mT'             ] =  lambda ev : ev.MT_met_lep1_unclustEnDown
         vars_2lss_unclDown['lep2_mT'             ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
 
+        varorder = ['avg_dr_jet', 'ptmiss', 'mbb_medium', 'jet1_pt', 'jet2_pt', 'jet3_pt', 'jet4_pt', 'max_lep_eta', 'lep1_mT', 'lep1_conept', 'lep1_min_dr_jet', 'lep2_mT', 'lep2_conept', 'lep2_min_dr_jet', 'nJetForward', 'jetForward1_pt', 'jetForward1_eta_abs', 'res-HTT_CSVsort4rd', 'HadTop_pt_CSVsort4rd', 'nJet', 'nBJetLoose', 'nBJetMedium', 'nElectron', 'sum_lep_charge', 'mvaOutput_Hj_tagger']
 
         worker_2lss = TFTool('DNN_2lss', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                   vars_2lss, cats_2lss)
+                                   vars_2lss, cats_2lss, varorder)
         worker_2lss_jesTotalUp = TFTool('DNN_2lss_jesTotalUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                        vars_2lss_jesTotalUp, cats_2lss)
+                                        vars_2lss_jesTotalUp, cats_2lss, varorder)
         worker_2lss_jesTotalDown = TFTool('DNN_2lss_jesTotalDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                        vars_2lss_jesTotalDown, cats_2lss)
+                                        vars_2lss_jesTotalDown, cats_2lss, varorder)
         worker_2lss_jerUp        = TFTool('DNN_2lss_jerUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                          vars_2lss_jerUp, cats_2lss)
+                                          vars_2lss_jerUp, cats_2lss, varorder)
         worker_2lss_jerDown      = TFTool('DNN_2lss_jerDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                          vars_2lss_jerDown, cats_2lss)
+                                          vars_2lss_jerDown, cats_2lss, varorder)
 
         worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                          vars_2lss_unclUp, cats_2lss)
+                                          vars_2lss_unclUp, cats_2lss, varorder)
         worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_model_2lss_ttH_tH_4cat_onlyTHQ_notEnrich_v4.pb',
-                                          vars_2lss_unclDown, cats_2lss)
+                                          vars_2lss_unclDown, cats_2lss, varorder)
         
         self._MVAs = [worker_2lss, worker_2lss_jesTotalUp,worker_2lss_jesTotalDown, worker_2lss_jerUp,worker_2lss_jerDown, worker_2lss_unclUp,worker_2lss_unclDown] 
 
@@ -172,6 +173,10 @@ class finalMVA_DNN(Module):
         for worker in self._MVAs:
             name = worker.name
             if not hasattr(event,"nJet25_jesDown_Recl") and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue
+            #if not ('_jes' in name or  '_jer' in name or '_uncl' in name) and event.event == 259935: worker.debug=True
             ret.extend( [(x,y) for x,y in worker(event).iteritems()])
+            #if not ('_jes' in name or  '_jer' in name or '_uncl' in name) and event.event == 259935: worker.debug=False
+
+            
         writeOutput(self, dict(ret))
         return True
