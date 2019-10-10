@@ -61,7 +61,7 @@ class MCAnalysis:
         if ',' in options.year:
             self._subMcas = []
             rankoffset = 0
-            years, lumis = options.year.spilt(','), options.lumi.spilt(',')
+            years, lumis = options.year.split(','), options.lumi.split(',')
             if len(years) != len(lumis): raise RuntimeError("Mismatch between number of years and of luminosities")
             for year,lumi in zip(years,lumis):
                 suboptions = deepcopy(options)
