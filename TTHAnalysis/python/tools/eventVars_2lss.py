@@ -58,7 +58,7 @@ class EventVars2LSS(Module):
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
             elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
             elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
-            bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
+            bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
             if len(bmedium) >1: 
                 bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)
                 b1 = bmedium[0].p4()
