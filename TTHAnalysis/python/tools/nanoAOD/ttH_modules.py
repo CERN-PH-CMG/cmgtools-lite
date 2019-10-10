@@ -86,8 +86,8 @@ def clean_and_FO_selection_TTH(lep,year):
 
 tightLeptonSel = lambda lep,year : clean_and_FO_selection_TTH(lep,year) and (abs(lep.pdgId)!=13 or lep.mediumId>0) and lep.mvaTTH > (0.85 if abs(lep.pdgId)==13 else 0.80)
 
-foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayMode and (int(tau.idMVAoldDMdR032017v2)>>1 & 1) # VLoose WP
-tightTauSel = lambda tau: (int(tau.idMVAoldDMdR032017v2)>>2 & 1) # Loose WP
+foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayMode and (int(tau.idDeepTau2017v2p1VSjet)>>1 & 1) # VVLoose WP
+tightTauSel = lambda tau: (int(tau.idDeepTau2017v2p1VSjet)>>2 & 1) # VLoose WP
 
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import CombinedObjectTaggerForCleaning
 from CMGTools.TTHAnalysis.tools.nanoAOD.fastCombinedObjectRecleaner import fastCombinedObjectRecleaner
@@ -118,6 +118,21 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          btagL_thr=-99., # they are set at runtime  
                                          btagM_thr=-99., # they are set at runtime  
                                          isMC = False)
+
+
+foTauSel_old = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayMode and (int(tau.idMVAoldDMdR032017v2)>>1 & 1) # VLoose WP
+
+tightTauSel_old = lambda tau: (int(tau.idMVAoldDMdR032017v2)>>2 & 1) # Loose WP
+recleaner_step1_old = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
+                                                               looseLeptonSel = lambda lep : lep.miniPFRelIso_all < 0.4 and lep.sip3d < 8 and (abs(lep.pdgId)!=11 or lep.lostHits<=1),
+                                                               cleaningLeptonSel = clean_and_FO_selection_TTH,
+                                                               FOLeptonSel = clean_and_FO_selection_TTH,
+                                                               tightLeptonSel = tightLeptonSel,
+                                                               FOTauSel = foTauSel_old,
+                                                               tightTauSel = tightTauSel_old,
+                                                               selectJet = lambda jet: jet.jetId > 0, # pt and eta cuts are (hard)coded in the step2 
+                                                               coneptdef = lambda lep: conept_TTH(lep))
+
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl')
@@ -253,5 +268,37 @@ bTagSFs = lambda : BtagSFs("JetSel_Recl")
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors import lepScaleFactors
 leptonSFs = lambda : lepScaleFactors()
 
+scaleFactorSequence_2016 = [leptonSFs,btagSF2016_dj,bTagSFs] 
+scaleFactorSequence_2017 = [leptonSFs,btagSF2017_dj,bTagSFs] 
+scaleFactorSequence_2018 = [leptonSFs,btagSF2018_dj,bTagSFs]
+
+
 from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
 higgsDecay = lambda : higgsDecayFinder()
+
+# from CMGTools.TTHAnalysis.tools.synchTools import SynchTuples
+# synchTuples = lambda : SynchTuples()
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.topRecoSemiLept import TopRecoSemiLept
+topRecoSemiLept = lambda : TopRecoSemiLept(['kWHadMass','kWLepMass','kTopLepMass','kTopHadMass'])
+topRecoSemiLept_nohadmass = lambda : TopRecoSemiLept(['kWHadMass','kWLepMass','kTopLepMass'])
+
+# instructions to friend trees  code 
+
+# 0_jmeUnc_v1
+# mc only (per year) 
+# jetmetUncertainties2016 
+# jetmetUncertainties2017
+# jetmetUncertainties2018
+
+# 3_recleaner_v0 (recleaner, also containing mc matching and trigger bits) 
+# recleaner_step1,recleaner_step2_mc,mcMatch_seq,higgsDecay,triggerSequence (MC)
+# recleaner_step1,recleaner_step2_data,triggerSequence (data)
+
+# 4_leptonSFs_v0 (lepton, trigger and btag scale factors, to run after recleaning) 
+# mc only (per year)
+# scaleFactorSequence_2016
+# scaleFactorSequence_2017
+# scaleFactorSequence_2018
+
+# 5_evtVars_v0
