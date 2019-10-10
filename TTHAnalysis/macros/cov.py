@@ -6,6 +6,7 @@ from root_numpy import root2array, tree2array
 ## open the files and get the tree
 ## -------------------------------
 f = ROOT.TFile.Open("./2016/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("./TTHnobb_pow_Friend.root")
 #f = ROOT.TFile.Open("./2017/evVarFriend_TTH_amc_2017.root")
 #f = ROOT.TFile.Open("./2018/evVarFriend_TTH_amc_2018.root")
 t = f.Get("Friends")
