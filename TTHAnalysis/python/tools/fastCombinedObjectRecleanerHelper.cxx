@@ -137,9 +137,11 @@ public:
 	  continue;
 	}
 	else if (abseta > 2.4 && abseta < 5){
-	  if (pt > fwdJetPt1_) sums.nFwdJet++;
-	  if (pt > sums.fwd1_pt){
-	    sums.fwd1_pt = pt; sums.fwd1_eta = (*Jet_eta_)[j];
+	  if (pt > fwdJetPt1_){
+	    sums.nFwdJet++;
+	    if (pt > sums.fwd1_pt){
+	      sums.fwd1_pt = pt; sums.fwd1_eta = (*Jet_eta_)[j];
+	    }
 	  }
 	  continue;
 	}
