@@ -18,7 +18,12 @@ class EventVars2LSS(Module):
                               'mbb',
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
-        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2 : '_jerUp', -2:'_jerDown'} if doSystJEC else {0:""}
+        self.systsJEC = {0:"",\
+                         1:"_jesTotalCorrUp"  , -1:"_jesTotalCorrDown",\
+                         2:"_jesTotalUnCorrUp", -2: "_jesTotalUnCorrDown",\
+                         3:"_jerUp", -3: "_jerDown",\
+                     } if doSystJEC else {0:""}
+
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
@@ -56,8 +61,13 @@ class EventVars2LSS(Module):
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
+            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalCorrUp>jetptcut, jets)
+            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalCorrDown>jetptcut, jets)
+            elif (_var==2): jets = filter(lambda x : x.pt_jesTotalUnCorrUp>jetptcut, jets)
+            elif (_var==-2): jets = filter(lambda x : x.pt_jesTotalUnCorrDown>jetptcut, jets)
+            elif (_var==3): jets = filter(lambda x : x.pt_jerUp>jetptcut, jets)
+            elif (_var==-3): jets = filter(lambda x : x.pt_jerDown>jetptcut, jets)
+            else: raise RuntimeError("Wrong variation %d"%d)
             bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
             if len(bmedium) >1: 
                 bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)

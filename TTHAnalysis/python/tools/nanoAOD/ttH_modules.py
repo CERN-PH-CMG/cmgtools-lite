@@ -120,19 +120,6 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          isMC = False)
 
 
-foTauSel_old = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayMode and (int(tau.idMVAoldDMdR032017v2)>>1 & 1) # VLoose WP
-
-tightTauSel_old = lambda tau: (int(tau.idMVAoldDMdR032017v2)>>2 & 1) # Loose WP
-recleaner_step1_old = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
-                                                               looseLeptonSel = lambda lep : lep.miniPFRelIso_all < 0.4 and lep.sip3d < 8 and (abs(lep.pdgId)!=11 or lep.lostHits<=1),
-                                                               cleaningLeptonSel = clean_and_FO_selection_TTH,
-                                                               FOLeptonSel = clean_and_FO_selection_TTH,
-                                                               tightLeptonSel = tightLeptonSel,
-                                                               FOTauSel = foTauSel_old,
-                                                               tightTauSel = tightTauSel_old,
-                                                               selectJet = lambda jet: jet.jetId > 0, # pt and eta cuts are (hard)coded in the step2 
-                                                               coneptdef = lambda lep: conept_TTH(lep))
-
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl')
@@ -144,10 +131,12 @@ mcMatchId     = lambda : ObjTagger('mcMatchId','LepGood', [lambda l : (l.genPart
 mcPromptGamma = lambda : ObjTagger('mcPromptGamma','LepGood', [lambda l : (l.genPartFlav==22)])
 mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 
-countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idMVAoldDMdR032017v2&4])
+countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016, jetmetUncertainties2017, jetmetUncertainties2018
+from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016All,jetmetUncertainties2017All,jetmetUncertainties2018All
+from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetCorrelator import jetMetCorrelations2016,jetMetCorrelations2017,jetMetCorrelations2018
 
+jme2018 = [jetmetUncertainties2018All,jetMetCorrelations2018]
 
 def _fires(ev, path):
     return getattr(ev,path) if hasattr(ev,path) else False
@@ -279,9 +268,6 @@ higgsDecay = lambda : higgsDecayFinder()
 # from CMGTools.TTHAnalysis.tools.synchTools import SynchTuples
 # synchTuples = lambda : SynchTuples()
 
-from CMGTools.TTHAnalysis.tools.nanoAOD.topRecoSemiLept import TopRecoSemiLept
-topRecoSemiLept = lambda : TopRecoSemiLept(['kWHadMass','kWLepMass','kTopLepMass','kTopHadMass'])
-topRecoSemiLept_nohadmass = lambda : TopRecoSemiLept(['kWHadMass','kWLepMass','kTopLepMass'])
 
 # instructions to friend trees  code 
 
