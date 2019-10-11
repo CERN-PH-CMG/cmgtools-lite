@@ -24,14 +24,14 @@ P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
 nCores = 8
 if 'fanae' in os.environ['HOSTNAME']: 
     nCores = 22
-    submit = 'sbatch -p  short -c %d --wrap "{command}"'%nCores
+    submit = 'sbatch -c %d  --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/userstorage/sscruz/NanoAOD/"
-TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" 
+TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/3_recleaner_v0 --FMCs {P}/4_scaleFactors --Fs {P}/5_tauCount_v0" 
 YEARDIR=YEAR if YEAR != 'all' else ''
-TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEARDIR,)
-TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre_skim2LSS/%s "%(YEARDIR,)
-TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEARDIR,)
-TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEARDIR,)
+TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_091019_v6pre%s "%(YEARDIR,)
+TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)
+TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
+TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
 
 def base(selection):
 
