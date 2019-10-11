@@ -237,7 +237,7 @@ class MCAnalysis:
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             genWeightName = extra["genWeightName"] if "genWeightName" in extra else "genWeight"
-            genSumWeightName = extra["genSumWeightName"] if "genSumWeightName" in extra else "genEventSumw"
+            genSumWeightName = extra["genSumWeightName"] if "genSumWeightName" in extra else "genEventSumw_"
             is_w = -1
             pname0 = pname
             for cname in cnames:
