@@ -39,7 +39,7 @@ for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
-    scanpoints.append( [ match.group( p ) for p in options.parameters ] ) 
+    scanpoints.append( [ match.group( p ) for p in options.params.split(',') ] ) 
 scanpoints = list(set(scanpoints)) # remove duplicates
 
 report={}
@@ -64,11 +64,11 @@ if options.savefile:
     savefile.Close()
 
 for scanpoint in scanpoints: 
-    pointname = ['_'.join( [ '%s_%s'%(x,y) for x,y in zip(parameters,scanpoint)])]
+    pointname = ['_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])]
     listSignals = [] 
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
-        if scanpoint != [match.group(p) for p in options.parameters]: continue
+        if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
     
     if options.asimov:
         if options.asimov in ("s","sig","signal","s+b"):
