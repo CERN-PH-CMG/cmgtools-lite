@@ -39,8 +39,9 @@ for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
-    scanpoints.append( [ match.group( p ) for p in options.params.split(',') ] ) 
-scanpoints = list(dict.fromkeys(scanpoints)) # remove duplicates
+    point = [ match.group( p ) for p in options.params.split(',') ]
+    if point not in scanpoints: scanpoints.append(  point ) 
+
 
 report={}
 if options.infile:
@@ -64,7 +65,7 @@ if options.savefile:
     savefile.Close()
 
 for scanpoint in scanpoints: 
-    pointname = ['_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])]
+    pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     listSignals = [] 
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
@@ -169,7 +170,7 @@ for scanpoint in scanpoints:
       # make a new list with only the ones that have an effect
       nuisances = sorted(systs.keys())
     
-      datacard = open(outdir+'_'+pointname+binname+".card.txt", "w"); 
+      datacard = open(outdir+pointname+binname+".card.txt", "w"); 
       datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
       datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % pointname + binname)
       datacard.write('##----------------------------------\n')
@@ -201,5 +202,5 @@ for scanpoint in scanpoints:
           workspace.WriteTObject(h,h.GetName())
       workspace.Close()
     
-      print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname)
+      print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+pointname+binname)
     
