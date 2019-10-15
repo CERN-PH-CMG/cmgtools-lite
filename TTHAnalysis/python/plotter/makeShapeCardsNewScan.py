@@ -41,7 +41,6 @@ for psig in mca.listSignals(True):
         raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ]
     if point not in scanpoints: scanpoints.append( point ) 
-
 report={}
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
