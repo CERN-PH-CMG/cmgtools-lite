@@ -16,19 +16,9 @@ $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 lumi_13TeV_2016		: $PromptFromMC : .*_2016 : normSymm : 1.022
 lumi_13TeV_2017		: $PromptFromMC : .*_2017 : normSymm : 1.020
 lumi_13TeV_2018		: $PromptFromMC : .*_2018 : normSymm : 1.015
-lumi_13TeV_xyfactor     : $PromptFromMC : .*_2016 : normSymm : 1.009
-lumi_13TeV_xyfactor     : $PromptFromMC : .*_2017 : normSymm : 1.008
-lumi_13TeV_xyfactor     : $PromptFromMC : .*_2018 : normSymm : 1.02
-lumi_13TeV_lengthscale  : $PromptFromMC : .*_2017 : normSymm : 1.003
-lumi_13TeV_lengthscale  : $PromptFromMC : .*_2018 : normSymm : 1.002
-lumi_13TeV_deflect      : $PromptFromMC : .*_2016 : normSymm : 1.009
-lumi_13TeV_deflect      : $PromptFromMC : .*_2017 : normSymm : 1.008
-lumi_13TeV_dynbeta      : $PromptFromMC : .*_2016 : normSymm : 1.005
-lumi_13TeV_dynbeta      : $PromptFromMC : .*_2017 : normSymm : 1.005
-lumi_13TeV_beamcurr     : $PromptFromMC : .*_2017 : normSymm : 1.003
-lumi_13TeV_beamcurr     : $PromptFromMC : .*_2018 : normSymm : 1.002
-lumi_13TeV_ghosts       : $PromptFromMC : .*_2016 : normSymm : 1.004
-lumi_13TeV_ghosts       : $PromptFromMC : .*_2017 : normSymm : 1.001
+lumi_13TeV_corr		: $PromptFromMC : .*_2016 : normSymm : 1.014
+lumi_13TeV_corr		: $PromptFromMC : .*_2017 : normSymm : 1.013
+lumi_13TeV_corr		: $PromptFromMC : .*_2018 : normSymm : 1.021
 
 
 # lepton efficiencies
@@ -66,9 +56,19 @@ CMS_ttHl18_trigger      : $PromptFromMC : .*2lss.*_2018 : templateAsymm; AddWeig
 CMS_ttHl18_trigger      : $PromptFromMC : .*3l.*_2018   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l']
 CMS_ttHl18_trigger      : $PromptFromMC : .*4l.*_2018   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l']
 
-CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
-	AddWeights=['btagSF_shape_up_jes/btagSF_shape'\,'btagSF_shape_down_jes/btagSF_shape']
+CMS_scale_j_2016	: $PromptFromMC : .*_2016 : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jecCorrUp.txt'\,'ttH-multilepton/fr-jecCorrDn.txt'], \
+	AddWeights=['btagSF_shape_up_jesUnCorr/btagSF_shape'\,'btagSF_shape_down_jesUnCorr/btagSF_shape']
+CMS_scale_j_2017	: $PromptFromMC : .*_2017 : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jecCorrUp.txt'\,'ttH-multilepton/fr-jecCorrDn.txt'], \
+	AddWeights=['btagSF_shape_up_jesUnCorr/btagSF_shape'\,'btagSF_shape_down_jesUnCorr/btagSF_shape']
+CMS_scale_j_2018	: $PromptFromMC : .*_2018 : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jecCorrUp.txt'\,'ttH-multilepton/fr-jecCorrDn.txt'], \
+	AddWeights=['btagSF_shape_up_jesUnCorr/btagSF_shape'\,'btagSF_shape_down_jesUnCorr/btagSF_shape']
+CMS_scale_j_corr	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jecCorrUp.txt'\,'ttH-multilepton/fr-jecCorrDn.txt'], \
+	AddWeights=['btagSF_shape_up_jesCorr/btagSF_shape'\,'btagSF_shape_down_jesCorr/btagSF_shape']
+
 #CMS_ttHl_JER	: $PromptFromMC : .* : templateAsymm; \
 #        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
 
