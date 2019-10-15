@@ -134,6 +134,7 @@ def haddNano(odir, idirs, firstTime=True):
             haddNano(odir+"_sub%d" % len(newlist), sublist, firstTime=False)
             newlist.append(odir+"_sub%d.root" % len(newlist))
         haddNano(odir, newlist, firstTime=False)
+        for newlistitem in newlist: os.remove(newlistitem)
         return
 
     try:
