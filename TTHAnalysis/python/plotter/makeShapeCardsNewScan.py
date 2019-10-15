@@ -42,6 +42,8 @@ for psig in mca.listSignals(True):
     point = [ match.group( p ) for p in options.params.split(',') ]
     if point not in scanpoints: scanpoints.append( point ) 
 report={}
+
+
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
     for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
