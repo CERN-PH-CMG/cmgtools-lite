@@ -40,7 +40,7 @@ for psig in mca.listSignals(True):
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
     scanpoints.append( [ match.group( p ) for p in options.params.split(',') ] ) 
-scanpoints = list(set(scanpoints)) # remove duplicates
+scanpoints = list(dict.fromkeys(scanpoints)) # remove duplicates
 
 report={}
 if options.infile:
