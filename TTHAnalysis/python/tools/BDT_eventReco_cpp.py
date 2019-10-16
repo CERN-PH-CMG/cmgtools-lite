@@ -27,8 +27,9 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
 
         algo = getattr(ROOT,algostring)
         hj2017 = ("2017" in weightfile_hj)
+        hjLegacy = ("legacy" in weightfile_hj)
 
-        self.run = ROOT.BDT_EventReco(weightfile_bloose,weightfile_btight,weightfile_hj,hj2017,weightfile_hjj,weightfile_rTT,weightfile_httTT,kinfitfile_httTT,algo,csv_looseWP,csv_mediumWP)
+        self.run = ROOT.BDT_EventReco(weightfile_bloose,weightfile_btight,weightfile_hj,hj2017,hjlegacy,weightfile_hjj,weightfile_rTT,weightfile_httTT,kinfitfile_httTT,algo,csv_looseWP,csv_mediumWP)
         self.run.setDebug(False)
 
         if algo==ROOT.k_BDTv8_Hj:
@@ -136,7 +137,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
 
             if good:
                 self.run.clear()
-                for i,j in enumerate(jets): self.run.addJet(getattr(j,'pt%s'%self.systsJEC[_var]),j.eta,j.phi,j.mass,0,j.btagDeepB,0,0,0,0,0,j.qgl)
+                for i,j in enumerate(jets): self.run.addJet(getattr(j,'pt%s'%self.systsJEC[_var]),j.eta,j.phi,j.mass,0,j.btagDeepB, j.btagDeepFlavB,0,0,0,0,0,j.qgl)
                 for l in leps: self.run.addLep(l.conePt,l.eta,l.phi,l.mass)
                 res = self.run.EvalMVA()
             for i,x in enumerate(res): out["BDT%s_eventReco_%s"%(self.prefix,self.branches[i])+self.systsJEC[var]] = res[i]
