@@ -5,6 +5,7 @@ import os
 
 ODIR=sys.argv[1]
 YEAR=sys.argv[2]
+Tag =sys.argv[3]
 lumis = {
 '2016': '35.9',
 '2017': '41.4',
@@ -24,7 +25,11 @@ if 'fanae' in os.environ['HOSTNAME']:
     nCores = 22
     submit = 'sbatch -p  short -c %d --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/userstorage/sscruz/NanoAOD/"
-TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0 --Fs {P}/6_BDThtt --Fs /home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/macros/2016"
+TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0 --Fs {P}/6_BDThtt --Fs /nfs/user/elfaham/104X/%s/%s"%(YEAR,Tag)
+
+
+
+
 TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre_skim2LSS/%s "%(YEAR,)
 TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
@@ -40,7 +45,8 @@ def base(selection):
     LEGEND=" --legendColumns 2 --legendWidth 0.25 "
     LEGEND2=" --legendFontSize 0.042 "
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
-    if dowhat == "plots": CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+"  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
+    #if dowhat == "plots": CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+"  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
+    if dowhat == "plots": CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
 
     if selection=='2lss':
         GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE

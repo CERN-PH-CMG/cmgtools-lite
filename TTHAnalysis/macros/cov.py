@@ -3,29 +3,47 @@ import ROOT
 import numpy as np
 from root_numpy import root2array, tree2array
 
-## open the files and get the tree
-## -------------------------------
-f = ROOT.TFile.Open("./2016_no_top_tagger_new/TTHnobb_pow_Friend.root")
-#f = ROOT.TFile.Open("./TTHnobb_pow_Friend.root")
-#f = ROOT.TFile.Open("./2017/evVarFriend_TTH_amc_2017.root")
-#f = ROOT.TFile.Open("./2018/evVarFriend_TTH_amc_2018.root")
+## open the files and get the tree. Make sure of the path!
+## ------------------------------------------------------
+#f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2016/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2016/2lss_Top-tagged/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2017/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2017/2lss_Top-tagged/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2018/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
+f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2018/2lss_Top-tagged/TTHnobb_pow_Friend.root")
 t = f.Get("Friends")
 
 ## select branches and apply selection: only events of which visible pT is constructed
 ## -----------------------------------------------------------------------------------
+
 array1 = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis >= 0 ')
 array2 = tree2array(t, branches=['Hreco_pTHgen'], selection ='Hreco_pTHvis >= 0 ')
 array3 = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis < 0  ')
 
 
+array4 = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons >= 1 ')
+array5 = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons >= 0 ')
+
+
 print ("length of vis array   = "   + str(len(array1))) 
-print ("length of gen array   = "   + str(len(array2))) 
+#print ("length of gen array   = "   + str(len(array2))) 
 print ("length of unvis array = "   + str(len(array3)))
+
+print ("length of matchedpartons 1 or more = "   + str(len(array4)))
+print ("length of matchedpartons 0 or 1 or more  = "   + str(len(array5)))
+
+
 a = len(array1)
 b = len(array3)
 c = (a/(a+b))*100
-#/(len(array1)+len(array3))
 print ("fraction of reconstruced events is " + str(c) + "% of the total number of events")
+
+
+d = len(array4)
+e = len(array5)
+c = (d/e)*100
+print ("fraction of reconstructed events in which at least one parton is matched to a jet " + str(c) + "% of the total number of reconstructed events")
+
 ## set the arrays to float type
 ## ----------------------------
 X = np.asarray(array1 ,float)
