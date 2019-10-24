@@ -36,13 +36,17 @@ class fastCombinedObjectRecleaner(Module):
         self.vars_leptons = ["pdgId",'jetIdx','pt']
         self.vars_taus = ["pt"]
         self.vars_taus_int = ['jetIdx']
-        self.vars_taus_uchar = ['idMVAoldDMdR032017v2']
+        self.vars_taus_uchar = ['idMVAoldDMdR032017v2','idDeepTau2017v2p1VSjet']
         self.vars_jets = [("pt","pt_nom") if self.isMC else 'pt',"btagDeepB","qgl",'btagDeepFlavB'] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
-        if self.isMC: self.vars_jets += ['pt_jesTotalUp','pt_jesTotalDown','pt_jerUp','pt_jerDown']
+        if self.isMC: self.vars_jets += ['pt_jesTotalCorrUp','pt_jesTotalCorrDown','pt_jesTotalUnCorrUp','pt_jesTotalUnCorrDown','pt_jerUp','pt_jerDown']
         self.vars_jets_int = (["hadronFlavour"] if self.isMC else [])
         self.vars_jets_nooutput = []
 
-        self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown", 2:"_jerUp", -2: "_jerDown"}  if self.isMC else { 0: ""}
+        self.systsJEC = {0:"",\
+                         1:"_jesTotalCorrUp"  , -1:"_jesTotalCorrDown",\
+                         2:"_jesTotalUnCorrUp", -2: "_jesTotalUnCorrDown",\
+                         3:"_jerUp", -3: "_jerDown",\
+        }  if self.isMC else { 0: ""}
 
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS','mZ2','m4l']
         self._outjetvars = [x%self.jc for x in ['ht%s%%dj','mht%s%%d','nB%sLoose%%d','nB%sMedium%%d','n%s%%d']]
@@ -101,7 +105,9 @@ class fastCombinedObjectRecleaner(Module):
         self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_jetIdx)
         self._worker.setTaus(getattr(self,'n%s'%self.tauc),getattr(self,'%s_pt'%self.tauc),getattr(self,'%s_eta'%self.tauc),getattr(self,'%s_phi'%self.tauc), getattr(self,'%s_jetIdx'%self.tauc))
         self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc),
-                             getattr(self,'%s_%s'%(self.jc,self.jetBTag)),getattr(self,'%s_pt_jesTotalUp'%self.jc) if self.isMC else None,getattr(self,'%s_pt_jesTotalDown'%self.jc) if self.isMC else None,
+                             getattr(self,'%s_%s'%(self.jc,self.jetBTag)),
+                             getattr(self,'%s_pt_jesTotalCorrUp'%self.jc) if self.isMC else None,getattr(self,'%s_pt_jesTotalCorrDown'%self.jc) if self.isMC else None,
+                             getattr(self,'%s_pt_jesTotalUnCorrUp'%self.jc) if self.isMC else None,getattr(self,'%s_pt_jesTotalUnCorrDown'%self.jc) if self.isMC else None,
                              getattr(self,'%s_pt_jerUp'%self.jc) if self.isMC else None,getattr(self,'%s_pt_jerDown'%self.jc) if self.isMC else None
         )
         

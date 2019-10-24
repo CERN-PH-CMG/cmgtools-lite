@@ -8,15 +8,17 @@ if "/mcCorrections_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/mcCorrections.cc+" % os.environ['CMSSW_BASE']);
 
 class SimpleCorrection:
-    def __init__(self,find,replace,procMatch=None,componentMatch=None,onlyForCuts=False,alsoData=False):
+    def __init__(self,find,replace,procMatch=None,componentMatch=None,onlyForCuts=False,alsoData=False, year=None):
         self._find    = re.compile(find)
         self._replace = replace
         self._procMatch = re.compile(procMatch) if procMatch else None
         self._componentMatch = re.compile(componentMatch) if componentMatch else None
         self._onlyForCuts = onlyForCuts
         self.alsoData = alsoData
-    def __call__(self,expr,process,component,iscut,isdata):
+        self.year = year
+    def __call__(self,expr,process,component,iscut,isdata, year):
         if isdata and not self.alsoData: return expr
+        if self.year and self.year != year: return expr
         if self._procMatch and not re.match(self._procMatch, process): return expr
         if self._componentMatch and not re.match(self._componentMatch, component   ): return expr
         if self._onlyForCuts and not iscut: return expr
@@ -46,11 +48,12 @@ class MCCorrections:
                                     procMatch=(extra['Process'] if 'Process' in extra else None),
                                     componentMatch=(extra['Component'] if 'Component' in extra else None),
                                     onlyForCuts=('OnlyForCuts' in extra),
-                                    alsoData=('AlsoData' in extra)) )
-    def __call__(self,expr,process,component,iscut,isdata):
+                                    alsoData=('AlsoData' in extra), 
+                                    year=(extra['year'] if 'year' in extra else None)) )
+    def __call__(self,expr,process,component,iscut,isdata,year):
         ret = expr
         for c in self._corrections:
-            ret = c(ret,process,component,iscut,isdata)
+            ret = c(ret,process,component,iscut,isdata, year)
         return ret
     def __str__(self): 
         return "MCCorrections('%s')" % self._file

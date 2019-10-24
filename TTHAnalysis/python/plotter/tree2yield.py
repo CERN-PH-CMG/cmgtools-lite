@@ -168,7 +168,7 @@ class TreeToYield:
             for cfile in settings['MCCorrections'].split(','): 
                 self._mcCorrSourceList.append( (cfile,MCCorrections(cfile)) )            
         if 'FakeRate' in settings:
-            self._FRSourceList.append( (settings['FakeRate'], FakeRate(settings['FakeRate'],self._options.lumi,year=self._options.year) ) )
+            self._FRSourceList.append( (settings['FakeRate'], FakeRate(settings['FakeRate'],float(self._options.lumi),year=self._options.year) ) )
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
@@ -289,7 +289,7 @@ class TreeToYield:
         _mcCorrList = mcCorrList if mcCorrList != None else self._mcCorrs
         ret = self.adaptDataMCExpr(expr)
         for mcc in _mcCorrList:
-            ret = mcc(ret,self._name,self._cname,cut,self._isdata)
+            ret = mcc(ret,self._name,self._cname,cut,self._isdata, self._options.year)
         return ret
     def _init(self):
         if "root://" in self._fname:
@@ -542,7 +542,7 @@ class TreeToYield:
     def getWeightForCut(self,cut):
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
-            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
+            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,float(self._options.lumi), self._scaleFactor, self.adaptExpr(cut,cut=True))
         else:
             cut = self.adaptExpr(cut,cut=True)
         if self._weightStringAll != "1":
@@ -631,7 +631,7 @@ class TreeToYield:
         if not self._isInit: self._init()
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
-            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
+            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,float(self._options.lumi), self._scaleFactor, self.adaptExpr(cut,cut=True))
         else: cut = self.adaptExpr(cut,cut=True)
         if self._options.doS2V: cut  = scalarToVector(cut)
         if self._weightStringAll != "1": cut = "(%s)*(%s)" % (self._weightStringAll, cut)
@@ -683,7 +683,7 @@ def _treeSum(tree,expr):
     return histo.GetBinContent(1)
 
 def addTreeToYieldOptions(parser):
-    parser.add_option("-l", "--lumi",           dest="lumi",   type="float", default="19.7", help="Luminosity (in 1/fb)");
+    parser.add_option("-l", "--lumi",           dest="lumi",   type="string", default="19.7", help="Luminosity (in 1/fb)");
     parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events), note weights are still used if a fake rate file is given");
     parser.add_option("--uf", "--unweight-forced",  dest="forceunweight", action="store_true", default=False, help="Do not use weight even if a fake rate file is given.");
     parser.add_option("-W", "--weightString",   dest="weightString", type="string", default="1", help="Use weight (in MC events)");
