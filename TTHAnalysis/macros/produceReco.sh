@@ -5,6 +5,8 @@
 ## THQ THW have no friends in most of the Friend dirs --> removed from command line
 ## the only sample from below that has a friend in higgs decay is TTHnobb (the signal) so I have a seperate command line for that
 ## -------------------------------------------------------------------------------------------------------------------------------- ##
+##commit test
+
 if [ "$1" == "bkg_16_TopTagged" ]; then
 for i in TBar_tch TBar_tWch_noFullyHad TGJets_lep T_sch_lep T_tch TTGJets TTJets_DiLepton TTJets_SingleLeptonFromTbar TTJets_SingleLeptonFromT TTTT T_tWch_noFullyHad TTW_LO TTZ_LO TTZToLLNuNu_m1to10 tWll  WJetsToLNu_LO WpWpJJ WWTo2L2Nu WWZ WZTo3LNu_fxfx WZZ ZZTo4L ZZZ DYJetsToLL_M10to50_LO DYJetsToLL_M50 GGHZZ4L
 do
