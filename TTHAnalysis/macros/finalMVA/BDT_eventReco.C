@@ -40,7 +40,7 @@ class BDT_EventReco_Jet : public eObj {
     _csv = -0.2;
     _qgl = -0.2;
   };
-  BDT_EventReco_Jet(float pt,float eta, float phi, float mass, float csv, float deepcsv, float cvsl, float cvsb, float ptD, float axis1, int mult, float qgl): eObj(pt,eta,phi,mass),
+  BDT_EventReco_Jet(float pt,float eta, float phi, float mass, float csv, float deepcsv, float deepjet, float cvsl, float cvsb, float ptD, float axis1, int mult, float qgl): eObj(pt,eta,phi,mass),
     _deepcsv(deepcsv), _cvsl(cvsl), _cvsb(cvsb), _ptD(ptD), _axis1(std::exp(-axis1)), _mult(mult) {
   // pass axis1 = -log(sqrt(...)), training uses definition of axis1 without -log
     _csv = std::max(float(-0.1),csv);
@@ -49,6 +49,7 @@ class BDT_EventReco_Jet : public eObj {
   ~BDT_EventReco_Jet(){};
   float csv() const {return _csv;}
   float deepcsv() const {return _deepcsv;}
+  float deepjet() const {return _deepjet;}
   float cvsl() const {return _cvsl;}
   float cvsb() const {return _cvsb;}
   float ptD() const {return _ptD;}
@@ -59,6 +60,7 @@ class BDT_EventReco_Jet : public eObj {
  private:
   float _csv;
   float _deepcsv = 0;
+  float _deepjet = 0;
   float _cvsl = 0;
   float _cvsb = 0;
   float _ptD = 0;
@@ -160,8 +162,8 @@ class BDT_EventReco {
   ~BDT_EventReco(){
     clear();
   };
-  void addJet(float pt,float eta, float phi, float mass, float csv, float deepcsv, float cvsl, float cvsb, float ptD, float axis1, int mult, float qgl){
-    jets.push_back(std::make_shared<eJet>(pt,eta,phi,mass,csv,deepcsv,cvsl,cvsb,ptD,axis1,mult,qgl));
+  void addJet(float pt,float eta, float phi, float mass, float csv, float deepcsv, float deepjet, float cvsl, float cvsb, float ptD, float axis1, int mult, float qgl){
+    jets.push_back(std::make_shared<eJet>(pt,eta,phi,mass,csv,deepcsv, deepjet,cvsl,cvsb,ptD,axis1,mult,qgl));
     if (csv>csv_medium_working_point) nBMedium+=1;
   };
   void addLep(float pt,float eta, float phi, float mass){
@@ -297,12 +299,13 @@ class BDT_EventReco {
   bool hj2017training = false;
 };
 
-BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
+BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
 
   algo = _algo;
   csv_loose_working_point = csv_looseWP;
   csv_medium_working_point = csv_mediumWP;
   hj2017training = hj2017;
+  hjLegacyTraining = hjlegacy;
 
   if (algo==k_BDTv8_Hj) {
 
@@ -325,7 +328,14 @@ BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string we
   }
 
   TMVAReader_Hj_ = std::make_shared<TMVA::Reader>( "!Color:!Silent" );
-  if (hj2017training) {
+  if (hjLegacyTraining) {
+      TMVAReader_Hj_->AddVariable( "Jet25_bDiscriminator", &iv1_2);
+      TMVAReader_Hj_->AddVariable( "Jet25_pt", &iv1_5);
+      TMVAReader_Hj_->AddVariable( "Jet25_lepdrmin", &iv1_1);
+      TMVAReader_Hj_->AddVariable( "Jet25_lepdrmax", &iv1_4);
+      TMVAReader_Hj_->AddVariable( "Jet25_qg", &iv1_3);
+  }
+  else if (hj2017training) {
       TMVAReader_Hj_->AddVariable( "Jet25_lepdrmin", &iv1_1);
       TMVAReader_Hj_->AddVariable( "max(Jet25_bDiscriminator,0.)", &iv1_2);
       TMVAReader_Hj_->AddVariable( "max(Jet25_qg,0.)", &iv1_3);
@@ -995,12 +1005,13 @@ std::vector<float> BDT_EventReco::CalcHjTagger(char* _permlep, char* _x, std::ve
       float dr_lep1 = dR(lep_fromHig.get(),jet_fromHiggs->p4());
 	
       iv1_1 = std::min(dr_lep0,dr_lep1);
-      iv1_2 = std::max(hj2017training ? jet_fromHiggs->deepcsv() : jet_fromHiggs->csv(),float(0));
+      iv1_2 = std::max(hjLegacyTraining ? jet_fromHiggs->deepjet() : (hj2017training ? jet_fromHiggs->deepcsv() : jet_fromHiggs->csv()) ,float(0));
       iv1_3 = std::max(jet_fromHiggs->qgl(),float(0));
       iv1_4 = std::max(dr_lep0,dr_lep1);
       iv1_5 = jet_fromHiggs->Pt();
 	
       Hj_value[i] = TMVAReader_Hj_->EvaluateMVA("BDTG method");
+      Hj_value[i] = 1. / (1. + std::sqrt((1. - Hj_value[i]) / (1. + Hj_value[i])));
 	
     }
 

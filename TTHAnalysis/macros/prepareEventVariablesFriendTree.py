@@ -107,6 +107,7 @@ parser.add_option("-t", "--tree", dest="tree", default='NanoAOD', help="Pattern 
 parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename")
 parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to MC only. Can use {name}, {cname} patterns in the treename")
 parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename")
+parser.add_option("--name",   dest="name",     type="string", default="Friender", help="Name for batch jobs");
 # options that are different between old CMGTools and nanoAOD-tools
 if isNano: # new nanoAOD-tools options
     # importing of modules
@@ -399,7 +400,7 @@ if options.queue:
     elif options.env == "oviedo":
         if options.queue != "":
             options.queue = "batch" 
-        super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
+        super  = "qsub -q {queue} -N {name}".format(queue = options.queue, name=options.name)
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
     elif options.env == "uclouvain":
