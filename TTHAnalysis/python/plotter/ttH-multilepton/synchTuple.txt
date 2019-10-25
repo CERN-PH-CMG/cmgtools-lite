@@ -1,0 +1,337 @@
+tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0, type='l'
+nEvent: event : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  , type='l'
+ls: luminosityBlock:1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0	     , type='l'
+run: run: 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0      , type='l'
+
+
+n_presel_mu         : n_presel_mu	 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_fakeablesel_mu    : n_fakeablesel_mu   : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_mvasel_mu	    : n_mvasel_mu	 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_presel_ele	    : n_presel_ele	 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_fakeablesel_ele   : n_fakeablesel_ele  : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_mvasel_ele	    : n_mvasel_ele	 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_presel_tau	    : n_presel_tau	 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_presel_jet        : n_presel_jet       : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+n_presel_jetFwd     : n_presel_fwdjet    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+
+
+
+
+
+mu1_conept: mu1_conept: 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_pt                   : mu1_pt                   : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_eta			 : mu1_eta		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_phi			 : mu1_phi		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_E			 : mu1_E		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_charge		 : mu1_charge		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_miniRelIso		 : mu1_miniRelIso	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_miniIsoCharged	 : mu1_miniIsoCharged	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_miniIsoNeutral	 : mu1_miniIsoNeutral	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_PFRelIso04		 : mu1_PFRelIso04	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_jetNDauChargedMVASel : mu1_jetNDauChargedMVASel : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_jetPtRel		 : mu1_jetPtRel		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_jetPtRatio		 : mu1_jetPtRatio	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_jetCSV		 : mu1_jetCSV		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_sip3D		 : mu1_sip3D		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_dxy			 : mu1_dxy		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_dxyAbs		 : mu1_dxyAbs		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_dz			 : mu1_dz		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_segmentCompatibility : mu1_segmentCompatibility : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_leptonMVA		 : mu1_leptonMVA	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_mediumID		 : mu1_mediumID		    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_dpt_div_pt		 : mu1_dpt_div_pt	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu1_isfakeablesel	 : mu1_isfakeablesel	    : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu1_ismvasel             : mu1_ismvasel             : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+
+mu2_pt                   : mu2_pt                   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_conept		 : mu2_conept		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_eta			 : mu2_eta		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_phi			 : mu2_phi		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_E			 : mu2_E		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_charge		 : mu2_charge		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_miniRelIso		 : mu2_miniRelIso	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_miniIsoCharged	 : mu2_miniIsoCharged	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_miniIsoNeutral	 : mu2_miniIsoNeutral	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_PFRelIso04		 : mu2_PFRelIso04	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_jetNDauChargedMVASel : mu2_jetNDauChargedMVASel : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_jetPtRel		 : mu2_jetPtRel		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_jetPtRatio		 : mu2_jetPtRatio	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_jetCSV		 : mu2_jetCSV		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_sip3D		 : mu2_sip3D		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_dxy			 : mu2_dxy		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_dxyAbs		 : mu2_dxyAbs		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_dz			 : mu2_dz		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_segmentCompatibility : mu2_segmentCompatibility : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_leptonMVA		 : mu2_leptonMVA	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_mediumID		 : mu2_mediumID		    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_dpt_div_pt		 : mu2_dpt_div_pt	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mu2_isfakeablesel	 : mu2_isfakeablesel	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mu2_ismvasel             : mu2_ismvasel             : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+ele1_pt                   : ele1_pt                   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_conept		  : ele1_conept		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_eta  		  : ele1_eta  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_phi  		  : ele1_phi  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_E  		  : ele1_E  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_charge  		  : ele1_charge  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_miniRelIso  	  : ele1_miniRelIso  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_miniIsoCharged  	  : ele1_miniIsoCharged       : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_miniIsoNeutral  	  : ele1_miniIsoNeutral       : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_PFRelIso04 	  : ele1_PFRelIso04 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_jetNDauChargedMVASel : ele1_jetNDauChargedMVASel : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_jetPtRel  		  : ele1_jetPtRel  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_jetPtRatio  	  : ele1_jetPtRatio  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_jetCSV  		  : ele1_jetCSV  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_sip3D  		  : ele1_sip3D  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_dxy  		  : ele1_dxy  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_dxyAbs 		  : ele1_dxyAbs 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_dz  		  : ele1_dz  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_ntMVAeleID  	  : ele1_ntMVAeleID  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_leptonMVA  	  : ele1_leptonMVA  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_isChargeConsistent   : ele1_isChargeConsistent   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_passesConversionVeto : ele1_passesConversionVeto : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_nMissingHits  	  : ele1_nMissingHits  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_sigmaEtaEta 	  : ele1_sigmaEtaEta 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_HoE 		  : ele1_HoE 		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_deltaEta 		  : ele1_deltaEta 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_deltaPhi 		  : ele1_deltaPhi 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_OoEminusOoP 	  : ele1_OoEminusOoP 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele1_isfakeablesel  	  : ele1_isfakeablesel        : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele1_ismvasel             : ele1_ismvasel             : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+ele2_pt                   : ele2_pt                   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_conept		  : ele2_conept		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_eta  		  : ele2_eta  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_phi  		  : ele2_phi  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_E  		  : ele2_E  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_charge  		  : ele2_charge  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_miniRelIso  	  : ele2_miniRelIso  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_miniIsoCharged  	  : ele2_miniIsoCharged       : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_miniIsoNeutral  	  : ele2_miniIsoNeutral       : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_PFRelIso04 	  : ele2_PFRelIso04 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_jetNDauChargedMVASel : ele2_jetNDauChargedMVASel : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_jetPtRel  		  : ele2_jetPtRel  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_jetPtRatio  	  : ele2_jetPtRatio  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_jetCSV  		  : ele2_jetCSV  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_sip3D  		  : ele2_sip3D  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_dxy  		  : ele2_dxy  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_dxyAbs 		  : ele2_dxyAbs 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_dz  		  : ele2_dz  		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_ntMVAeleID  	  : ele2_ntMVAeleID  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_leptonMVA  	  : ele2_leptonMVA  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_isChargeConsistent   : ele2_isChargeConsistent   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0, type='i'
+ele2_passesConversionVeto : ele2_passesConversionVeto : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_nMissingHits  	  : ele2_nMissingHits  	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_sigmaEtaEta 	  : ele2_sigmaEtaEta 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_HoE 		  : ele2_HoE 		      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_deltaEta 		  : ele2_deltaEta 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_deltaPhi 		  : ele2_deltaPhi 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_OoEminusOoP 	  : ele2_OoEminusOoP 	      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ele2_isfakeablesel  	  : ele2_isfakeablesel        : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+ele2_ismvasel             : ele2_ismvasel             : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+ 
+jet1_pt      : jet1_pt      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_eta     : jet1_eta     : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_phi     : jet1_phi     : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_E       : jet1_E       : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_CSV     : jet1_CSV     : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_DeepCSV : jet1_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_DeepJet : jet1_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet1_QGdiscr : jet1_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jet2_pt  : jet2_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_eta : jet2_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_phi : jet2_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_E   : jet2_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_CSV : jet2_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_DeepCSV : jet2_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_DeepJet : jet2_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet2_QGdiscr : jet2_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jet3_pt  : jet3_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_eta : jet3_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_phi : jet3_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_E   : jet3_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_CSV : jet3_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_DeepCSV : jet3_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_DeepJet : jet3_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet3_QGdiscr : jet3_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jet4_pt  : jet4_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_eta : jet4_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_phi : jet4_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_E   : jet4_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_CSV : jet4_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_DeepCSV : jet4_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_DeepJet : jet4_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jet4_QGdiscr : jet4_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jetFwd1_pt  : fwdjet1_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_eta : fwdjet1_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_phi : fwdjet1_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_E   : fwdjet1_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_CSV : fwdjet1_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_DeepCSV : fwdjet1_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_DeepJet : fwdjet1_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd1_QGdiscr : fwdjet1_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jetFwd2_pt  : fwdjet2_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_eta : fwdjet2_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_phi : fwdjet2_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_E   : fwdjet2_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_CSV : fwdjet2_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_DeepCSV : fwdjet2_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_DeepJet : fwdjet2_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd2_QGdiscr : fwdjet2_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jetFwd3_pt  : fwdjet3_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_eta : fwdjet3_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_phi : fwdjet3_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_E   : fwdjet3_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_CSV : fwdjet3_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_DeepCSV : fwdjet3_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_DeepJet : fwdjet3_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd3_QGdiscr : fwdjet3_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+jetFwd4_pt  : fwdjet4_pt  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_eta : fwdjet4_eta : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_phi : fwdjet4_phi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_E   : fwdjet4_E   : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_CSV : fwdjet4_CSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_DeepCSV : fwdjet4_DeepCSV : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_DeepJet : fwdjet4_DeepJet : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+jetFwd4_QGdiscr : fwdjet4_QGdiscr : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+
+
+
+PFMET    : PFMET    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+PFMETphi : PFMETphi : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+MHT      : MHT	    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+metLD    : metLD    : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+lep1_conePt: LepGood1_conept                                          : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+lep2_conePt: LepGood2_conept					      : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+lep3_conePt: (LepGood3_conept)*(nLepFO > 2) -9999 *(nLepFO<3) : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mindr_lep1_jet : mindr_lep1_jet: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mindr_lep2_jet : mindr_lep2_jet: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mindr_lep3_jet : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+MT_met_lep1: MT_met_lep1 : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+max_lep_eta : max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+avg_dr_jet : avg_dr_jet: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+
+mindr_tau1_jet : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+mindr_tau2_jet : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+max_dr_lep_tau   : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+min_dr_lep_tau	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+min_dr_lep_jet	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+dr_leps		 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+dr_taus		 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+dR_lep_tau_ss	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+dr_lep1_tau	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+dr_lep2_tau	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+max_lep_eta	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mT_lep1		 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mT_lep2		 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mTauTauVis	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mTauTauVis1	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mTauTauVis2	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mbb		 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mbb_loose	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+cosThetaS_hadTau : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+HTT		 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+HadTop_pt	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+Hj_tagger	 : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+nBJetLoose       : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+
+mvaOutput_plainKin_ttV              : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_plainKin_ttbar	    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_1l_2tau_HTT_SUM_VT	    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2l_2tau_plainKin_1B_VT    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2l_2tau_plainKin_SUM_VT   : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_ttV		    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_ttbar                : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_1tau_plainKin_ttbar  : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_1tau_plainKin_ttV    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_1tau_plainKin_1B_M   : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_1tau_plainKin_SUM_M  : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_1tau_HTT_SUM_M	    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_2lss_1tau_HTTMEM_SUM_M    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_3l_ttV		    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_3l_ttbar		    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_3l_1tau_plainKin_SUM_M    : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+mvaOutput_3l_1tau_plainKin_1B_M     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+FR_weight            : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+triggerSF_weight     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+leptonSF_weight	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tauSF_weight	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+bTagSF_weight	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+PU_weight	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+MC_weight	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+Integral_ttH	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+Integral_ttZ	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+Integral_ttZ_Zll     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+Integral_ttbar	     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+integration_type     : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+memOutput_LR         : -9999 :  2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0 
+
+
+tau1_pt                                          : tau1_pt : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_eta					 : tau1_eta: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_phi					 : tau1_phi: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_E						 : tau1_E  : 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_charge					 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_dxy					 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_dz						 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_decayModeFindingOldDMs			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_decayModeFindingNewDMs			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byCombinedIsolationDeltaBetaCorr3Hits	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byLooseCombinedIsolationDeltaBetaCorr3Hits	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byMediumCombinedIsolationDeltaBetaCorr3Hits : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byTightCombinedIsolationDeltaBetaCorr3Hits	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byLooseCombinedIsolationDeltaBetaCorr3HitsdR: -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byMediumCombinedIsolationDeltaBetaCorr3Hitsd: -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byTightCombinedIsolationDeltaBetaCorr3HitsdR: -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byVLooseIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_rawMVArun2v1DBdR03oldDMwLT			 : tau1_rawMVArun2v1DBdR03oldDMwLT: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_againstMuonLoose3				 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_againstMuonTight3				 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_againstElectronVLooseMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_againstElectronLooseMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_againstElectronMediumMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau1_againstElectronTightMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+
+tau2_pt						 : tau2_pt: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_eta					 : tau2_eta: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_phi					 : tau2_phi: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_E						 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_charge					 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_dxy					 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_dz						 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_decayModeFindingOldDMs			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_decayModeFindingNewDMs			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byCombinedIsolationDeltaBetaCorr3Hits	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byLooseCombinedIsolationDeltaBetaCorr3Hits	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byMediumCombinedIsolationDeltaBetaCorr3Hits : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byTightCombinedIsolationDeltaBetaCorr3Hits	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byLooseCombinedIsolationDeltaBetaCorr3HitsdR: -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byMediumCombinedIsolationDeltaBetaCorr3Hitsd: -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byTightCombinedIsolationDeltaBetaCorr3HitsdR: -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byVLooseIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byLooseIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byMediumIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byTightIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_byVTightIsolationMVArun2v1DBdR03oldDMwLT	 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_rawMVArun2v1DBdR03oldDMwLT			 : tau2_rawMVArun2v1DBdR03oldDMwLT: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_againstMuonLoose3				 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_againstMuonTight3				 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_againstElectronVLooseMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_againstElectronLooseMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_againstElectronMediumMVA6			 : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
+tau2_againstElectronTightMVA6                    : -9999: 2,0.5,2.5; XTitle = "Selected events", Legend='TR', MoreY=2.0  
