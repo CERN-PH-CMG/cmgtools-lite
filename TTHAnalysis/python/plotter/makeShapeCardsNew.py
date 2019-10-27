@@ -70,7 +70,6 @@ else:
 
 if options.categ:
     allreports = dict()
-  
     catlabels = options.categ[2].split(",")
     if len(catlabels) != report["data_obs"].GetNbinsY(): raise RuntimeError("Mismatch between category labels and bins")
     for ic,lab in enumerate(catlabels):
@@ -115,7 +114,7 @@ for binname, report in allreports.iteritems():
                     raise RuntimeError("Nuisance %s should be lnU but has shape effect on %s" % (name,p))
                 #print "Nuisance %s has a shape effect on process %s" % (name, p)
                 #if "templstat" not in name and not isShape:
-                #h.isShapeVariation(name,debug=True)
+                #    h.isShapeVariation(name,debug=True)
                 isShape = True
             variants = list(h.getVariation(name))
             for hv,d in zip(variants, ('up','down')):
