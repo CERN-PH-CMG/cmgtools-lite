@@ -5,25 +5,28 @@ ttH_hmm+    : TTHnobb_fxfx : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mc
 ttH_hzg+    : TTHnobb_fxfx : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 && (GenHiggsDecayMode==22); FillColor=ROOT.kOrange+10
 #ttH_hot+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 && (GenHiggsDecayMode!=24) && (GenHiggsDecayMode!=23) && (GenHiggsDecayMode!=22) && (GenHiggsDecayMode!=15) && (GenHiggsDecayMode!=13); FillColor=ROOT.kOrange+10
 
-tHq_hww	: THQ_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24); FillColor=ROOT.kRed
-tHq_hzz	: THQ_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23); FillColor=ROOT.kRed
-tHq_htt	: THQ_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15); FillColor=ROOT.kRed
-tHW_hww	: THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24); FillColor=ROOT.kBlue
-tHW_hzz	: THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue
-tHW_htt	: THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue
+tHq_hww	: THQ_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24); FillColor=ROOT.kRed, sumgenweightname = "LHEReweightingSumw_[11]"
+tHq_hzz	: THQ_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23); FillColor=ROOT.kRed, sumgenweightname = "LHEReweightingSumw_[11]"
+tHq_htt	: THQ_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15); FillColor=ROOT.kRed, sumgenweightname = "LHEReweightingSumw_[11]"
+tHW_hww	: THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24); FillColor=ROOT.kBlue, sumgenweightname = "LHEReweightingSumw_[11]"
+tHW_hzz	: THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue, sumgenweightname = "LHEReweightingSumw_[11]"
+tHW_htt	: THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue, sumgenweightname = "LHEReweightingSumw_[11]"
 
 VH_hww : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)  ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 VH_hzz : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)  ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 VH_htt : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)  ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+VH_hww : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)  ; FillColor=ROOT.kAzure-9, years="2016"
+VH_hzz : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)  ; FillColor=ROOT.kAzure-9, years="2016"
+VH_htt : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)  ; FillColor=ROOT.kAzure-9, years="2016"
 
 
 
 TTWW	: TTWW : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kGreen-5, Label="ttWW  "
 
-TTW     : TTWToLNu_fxfx : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, years="2017\,2018"
-TTW     : TTW_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, years="2016"
-TTZ     : TTZToLLNuNu_amc : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2, Label="ttZ   ", years="2017\,2018"
-TTZ     : TTZ_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2, Label="ttZ   ", years="2016"
+TTW     : TTWToLNu_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"
+TTW     : TTWToLNu_fxfx+TTWToLNu_fxfx_PS : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2017"
+TTZ     : TTZToLLNuNu_amc : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2, Label="ttZ ", years="2016\,2018"
+TTZ     : TTZToLLNuNu_amc+TTZToLLNuNu_amc_PS : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2, Label="ttZ   ", years="2017"
 TTZ     : TTZToLLNuNu_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 TTZ	: TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
 TTZ   	: TTJets_SingleLeptonFromT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
@@ -36,10 +39,12 @@ ZZ: DYJetsToLL_M50 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Le
 Rares: WZTo3LNu_fxfx : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
 Rares: WJetsToLNu_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
 Rares: GGHZZ4L : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
-Rares: TTTT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
+Rares: TTTT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9, years="2016\,2018"
+Rares: TTTT+TTTT_PS : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017"
 Rares: TTTW : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
 Rares: TTWH : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
 Rares: TZQToLL : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9, years="2017\,2018"
+Rares: TZQToLL+TZQToLL_PS : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years= "2016"
 Rares: tWll : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
 Rares: WW_DPS : 0.1729 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9, years="2017\,2018"
 Rares: WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
