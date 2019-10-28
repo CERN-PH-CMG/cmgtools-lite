@@ -158,7 +158,7 @@ class BDT_EventReco_EventP4Cache {
 
 class BDT_EventReco {
  public: 
-  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
+  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
   ~BDT_EventReco(){
     clear();
   };
@@ -297,6 +297,7 @@ class BDT_EventReco {
   float csv_loose_working_point = -1;
   float csv_medium_working_point = -1;
   bool hj2017training = false;
+  bool hjLegacyTraining = false;
 };
 
 BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
