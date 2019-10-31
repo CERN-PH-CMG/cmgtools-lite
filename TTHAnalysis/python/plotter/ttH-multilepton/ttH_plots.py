@@ -26,6 +26,7 @@ if 'fanae' in os.environ['HOSTNAME']:
     nCores = 22
     submit = 'sbatch -c %d  --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/userstorage/sscruz/NanoAOD/"
+
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     P0 = "/nfs/user/pvischia/tth/v5pre/"
 
@@ -143,9 +144,6 @@ if __name__ == '__main__':
         if '_mll200' in torun:
             x = add(x,"-E ^mll200 ")
 
-        if '_synch' in torun:
-            x = x.replace('ttH-multilepton/2lss_3l_plots.txt','ttH-multilepton/synchTuple.txt')
-            x = x.replace('ttH-multilepton/mca-2lss-mc-sigextr.txt','ttH-multilepton/mca-synch.txt')
         if '_splitfakes' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-flavsplit.txt')
             
@@ -216,9 +214,6 @@ if __name__ == '__main__':
     if '3l_' in torun and not('cr') in torun:
         x = base('3l')
         if '_appl' in torun: x = add(x,'-I ^TTT ')
-        if '_synch' in torun: 
-            x = x.replace('ttH-multilepton/2lss_3l_plots.txt','ttH-multilepton/synchTuple.txt')
-            x = x.replace('ttH-multilepton/mca-3l-mc-{year}.txt'.format(year=year),'ttH-multilepton/mca-synch-3l.txt' )
         if '_1fo' in torun:
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2'")
             x = x.replace("--xP 'nT_.*'","")
@@ -293,9 +288,6 @@ if __name__ == '__main__':
         if '_appl' in torun: x = add(x,'-I ^TTTT ')
         if '_relax' in torun: x = add(x,'-X ^TTTT ')
         if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
-        if '_synch' in torun: 
-            x = x.replace('ttH-multilepton/2lss_3l_plots.txt','ttH-multilepton/synchTuple.txt')
-            x = add(x, ' --Fs {P}/8_synch')
         if '_frdata' in torun:
             x = promptsub(x)
             raise RuntimeError, 'Fakes estimation not implemented for 4l'

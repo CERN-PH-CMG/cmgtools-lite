@@ -1,1 +1,0 @@
-ttH    : TTHnobb_synch : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge
