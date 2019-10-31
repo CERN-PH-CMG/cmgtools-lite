@@ -13,7 +13,6 @@ metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || MET_pt*0.6 + mh
 Z_veto: abs(mZ1-91.2)>10
 eleID: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
 muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepGood2_pdgId)!=13 || LepGood2_tightCharge>=1)
-
 4j: nJet25>=4
 2b1B: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
 tauveto: nTauTight==0

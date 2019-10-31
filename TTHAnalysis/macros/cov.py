@@ -5,12 +5,33 @@ from root_numpy import root2array, tree2array
 
 ## open the files and get the tree. Make sure of the path!
 ## ------------------------------------------------------
+
+
+f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_no_cuts/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+
+
+
+
+
+
+
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing/2lss_NoTop-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_17/2lss_Top-tagged_17/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_17/2lss_NoTop-tagged_17/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_18/2lss_Top-tagged_18/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_18/2lss_NoTop-tagged_18/TTHnobb_pow_Friend.root")
+
+
+
+
+
+
 #f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2016/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
 #f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2016/2lss_Top-tagged/TTHnobb_pow_Friend.root")
 #f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2017/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
 #f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2017/2lss_Top-tagged/TTHnobb_pow_Friend.root")
 #f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2018/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
-f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2018/2lss_Top-tagged/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2018/2lss_Top-tagged/TTHnobb_pow_Friend.root")
 t = f.Get("Friends")
 
 ## select branches and apply selection: only events of which visible pT is constructed

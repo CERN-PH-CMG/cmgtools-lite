@@ -1,4 +1,5 @@
-ttH+    : TTHnobb_fxfx : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
+ttH+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
+#ttH+    : TTHnobb_fxfx : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
 
 tHq	: THQ_LHE : 123798.0/25.69875024*0.07096 : LHEweight_wgt[893]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kRed 
 tHW	: THW_LHE : 49936.0/3.21369648*0.01561 : LHEweight_wgt[1091]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kBlue 

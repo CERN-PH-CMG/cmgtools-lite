@@ -14,6 +14,25 @@
 //cout << eff;
 
 
+
+void drawscore(){
+
+TCanvas *c = new TCanvas;
+TFile *f  = new TFile("./TTHnobb_pow_Friend.root");
+TTree *tr = (TTree*)f->Get("Friends");
+TH1F *score = new TH1F("score","score", 11, 0, 1);
+tr->Draw("Hreco_BDThttTT_eventReco_mvaValue>>score","Hreco_BDThttTT_eventReco_mvaValue>=0");
+score->Draw();
+TImage *img0 = TImage::Create();
+//img1->FromPad(c,10,10,300,200);
+img0->FromPad(c);
+img0->WriteImage("all_score.png");
+delete score;
+delete c;
+delete img0;
+}
+
+
 void drawnum(){
 
 TCanvas *c = new TCanvas;
@@ -50,6 +69,7 @@ delete img2;
 }
 
 void draw(){
-drawnum();
-drawden();
+//drawnum();
+//drawden();
+drawscore();
 }
