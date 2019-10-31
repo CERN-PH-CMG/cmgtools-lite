@@ -7,23 +7,24 @@ from root_numpy import root2array, tree2array
 ## ------------------------------------------------------
 
 
-f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_no_cuts/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
-
-
-
-
-
-
-
-#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing/2lss_NoTop-tagged_16/TTHnobb_pow_Friend.root")
-#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_17/2lss_Top-tagged_17/TTHnobb_pow_Friend.root")
-#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_17/2lss_NoTop-tagged_17/TTHnobb_pow_Friend.root")
-#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_18/2lss_Top-tagged_18/TTHnobb_pow_Friend.root")
-#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_18/2lss_NoTop-tagged_18/TTHnobb_pow_Friend.root")
-
-
-
-
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_no_cuts/2lss_NoTop-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_1/2lss_NoTop-tagged_16/TTHnobb_pow_Friend.root")
+f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_2/2lss_NoTop-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_3/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_4/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_5/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_6/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_7/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_8/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_9/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_10/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_11/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_12/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_13/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_14/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_15/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_16/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
+#f = ROOT.TFile.Open("/home/ucl/cp3/elfaham/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/python/plotter/testing_17/2lss_Top-tagged_16/TTHnobb_pow_Friend.root")
 
 
 #f = ROOT.TFile.Open("/nfs/user/elfaham/104X/2016/2lss_NoTop-tagged/TTHnobb_pow_Friend.root")
