@@ -67,7 +67,7 @@ if __name__ == "__main__":
             friends = ""
             if len(options.friendTrees + options.friendTreesMC + options.friendTreesData) > 0:
                 raise RuntimeError("Sorry, only friends specified with --Fs, --FMCs, --FDs are supported")
-            for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
+            for D in options.friendTreesSimple + ( options.friendTreesMCSimple if not tty._isdata else []) + ( options.friendTreesDataSimple if tty._isdata else[]):
                 friends += ",%s/%s_Friend.root" % (D.replace('{P}',tty.basepath()), tty.cname())
             if mysource in fname2friends:
                 if friends != fname2friends[mysource]:
