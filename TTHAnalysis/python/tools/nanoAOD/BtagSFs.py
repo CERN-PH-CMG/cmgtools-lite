@@ -30,16 +30,16 @@ class BtagSFs( Module ):
         for corr in self.corrs:
             resCorrUp     = (resCorrUp**2   + self.corrs[corr]    *(ret['btagSF_shape_up_jes%s'  %corr]-ret['btagSF_shape'])**2)**0.5
             resCorrDown   = (resCorrDown**2 + self.corrs[corr]    *(ret['btagSF_shape_down_jes%s'%corr]-ret['btagSF_shape'])**2)**0.5
-            resUnCorrUp   = (resCorrUp**2   + (1-self.corrs[corr])*(ret['btagSF_shape_up_jes%s'  %corr]-ret['btagSF_shape'])**2)**0.5
-            resUnCorrDown = (resCorrDown**2 + (1-self.corrs[corr])*(ret['btagSF_shape_down_jes%s'%corr]-ret['btagSF_shape'])**2)**0.5
+            resUnCorrUp   = (resUnCorrUp**2   + (1-self.corrs[corr])*(ret['btagSF_shape_up_jes%s'  %corr]-ret['btagSF_shape'])**2)**0.5
+            resUnCorrDown = (resUnCorrDown**2 + (1-self.corrs[corr])*(ret['btagSF_shape_down_jes%s'%corr]-ret['btagSF_shape'])**2)**0.5
         if self.corrs:
             for corr in self.corrs: 
                 ret.pop( 'btagSF_shape_up_jes%s'%corr)
                 ret.pop( 'btagSF_shape_down_jes%s'%corr)
             ret['btagSF_shape_up_jesCorr']     = resCorrUp     + ret['btagSF_shape'] 
-            ret['btagSF_shape_down_jesCorr']   = resCorrDown   + ret['btagSF_shape']
+            ret['btagSF_shape_down_jesCorr']   = resCorrDown   - ret['btagSF_shape']
             ret['btagSF_shape_up_jesUnCorr']   = resUnCorrUp   + ret['btagSF_shape']
-            ret['btagSF_shape_down_jesUnCorr'] = resUnCorrDown + ret['btagSF_shape']
+            ret['btagSF_shape_down_jesUnCorr'] = resUnCorrDown - ret['btagSF_shape']
         
         writeOutput(self, ret)
         return True
