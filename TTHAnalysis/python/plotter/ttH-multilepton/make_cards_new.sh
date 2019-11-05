@@ -6,8 +6,8 @@ case $HOSTNAME in
     cmsco01.cern.ch) ORIGIN=/data/peruzzi; J=8 ;;
     cmsphys10) ORIGIN=/data1/g/gpetrucc; J=8 ;;
     gpetrucc-vm2.cern.ch) ORIGIN=/data/gpetrucc; J=4 ;;
-    fanae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=6;;
-    gae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=6;;
+    fanae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=32;;
+    gae*) ORIGIN=/pool/cienciasrw/userstorage/sscruz/NanoAOD/; J=32;;
     *)
         ORIGIN=/afs/cern.ch/work/p/peruzzi; J=1
         test -d /tmp/$USER/TREES_TTH_190418_Fall17_skim2lss3l && ORIGIN=/tmp/$USER;;
@@ -31,7 +31,7 @@ OPTIONS=" --tree NanoAOD --s2v -j $J -l ${LUMI} -f --WA prescaleFromSkim"
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
-T2L="-P $ORIGIN/NanoTrees_TTH_300519_v5pre_skim2LSS/${YEAR} --xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH -F Friends {P}/3_recleaner_v2/{cname}_Friend.root -F Friends {P}/2_triggerSequence_v2/{cname}_Friend.root --FMCs {P}/4_btag_v2 -F Friends {P}/1_lepJetBTagDeepFlav_v1/{cname}_Friend.root --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0 --FMCs {P}/0_jmeUnc_v1 "
+T2L="-P $ORIGIN/NanoTrees_TTH_091019_v6pre_skim2lss/${YEAR} --xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1  --Fs  {P}/1_recl/ --FMCs {P}/2_scalefactors --Fs {P}/3_tauCount "
 T3L=${T2L}
 T4L=${T2L}
 
@@ -50,7 +50,7 @@ SPLITDECAYS=""
 
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
 echo "We are using the asimov dataset"
-OPTIONS="${OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt ${PROMPTSUB} --neg --asimov signal" # neg necessary for subsequent rebin
+OPTIONS="${OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt ${PROMPTSUB} --neg --asimov signal" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
 FUNCTION_2L="OurBin2l(kinMVA_2lss_ttbar_withBDTrTT,kinMVA_2lss_ttV_withHj_rTT) [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]"
