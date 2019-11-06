@@ -18,7 +18,7 @@ class SimpleCorrection:
         self.year = year
     def __call__(self,expr,process,component,iscut,isdata, year):
         if isdata and not self.alsoData: return expr
-        if self.year and self.year != year: return expr
+        if self.year and self.year != int(year): return expr
         if self._procMatch and not re.match(self._procMatch, process): return expr
         if self._componentMatch and not re.match(self._componentMatch, component   ): return expr
         if self._onlyForCuts and not iscut: return expr

@@ -9,7 +9,7 @@ def _runIt(args):
         (mysource,myoutpath,mycut,options) = args
         pp = PostProcessor(myoutpath,[mysource], postfix='',
                 cut = mycut, 
-                saveSelectionElist = 'skimTrees_elist',
+                saveSelectionElist = options.elist,
                 outputbranchsel = options.branchsel_out, 
                 compression = options.compression,
                 justcount = options.justcount,
@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_option("--justcount",  dest="justcount", default=False, action="store_true",  help="Pretend to skim, up to the point of counting passing events") 
     parser.add_option("--skim-friends",  dest="skimFriends", default=False, action="store_true",  help="Also run skimFTrees") 
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("ZLIB:3"), help="Compression: none, or (algo):(level) ")
+    parser.add_option("--elist", dest="elist", type="string", default="skimTrees_elist", help="Name of the skim elist (default: skimTrees_elist)")
     parser.add_option("--bo", "--branch-selection-output",  dest="branchsel_out", type="string", default=None, help="Branch selection output")
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
@@ -66,7 +67,7 @@ if __name__ == "__main__":
             friends = ""
             if len(options.friendTrees + options.friendTreesMC + options.friendTreesData) > 0:
                 raise RuntimeError("Sorry, only friends specified with --Fs, --FMCs, --FDs are supported")
-            for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
+            for D in options.friendTreesSimple + ( options.friendTreesMCSimple if not tty._isdata else []) + ( options.friendTreesDataSimple if tty._isdata else[]):
                 friends += ",%s/%s_Friend.root" % (D.replace('{P}',tty.basepath()), tty.cname())
             if mysource in fname2friends:
                 if friends != fname2friends[mysource]:
@@ -90,6 +91,6 @@ if __name__ == "__main__":
             for P in options.path:
                 d = D.replace("{P}",P)
                 if not os.path.exists(d): continue
-                os.system("python %s %s %s  > /dev/null" % (skimFTrees, outdir, d))
+                os.system("python %s --elist %s %s %s  > /dev/null" % (skimFTrees, options.elist, outdir, d))
             print "Skimmed %s" % os.path.basename(D)
 
