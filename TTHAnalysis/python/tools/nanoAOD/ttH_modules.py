@@ -292,3 +292,5 @@ higgsDecay = lambda : higgsDecayFinder()
 # scaleFactorSequence_2018
 
 # 5_evtVars_v0
+from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import HiggsRegressionTTH
+higgsRegressionTTH = lambda : HiggsRegressionTTH(label='_Recl' )
