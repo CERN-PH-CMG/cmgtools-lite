@@ -14,15 +14,17 @@ class HiggsRegressionTTH(Module):
         self.branches = []
         self.systsJEC = {0:"", 1:"_jesTotalUp", -1:"_jesTotalDown"} if doSystJEC else {0:""}
         thevars = [
-            'Lep0_pt', 'Lep0_eta', 'Lep0_phi','Lep1_pt', 'Lep1_eta', 'Lep1_phi','Lep2_pt', 'Lep2_eta', 'Lep2_phi',
-            'Jet0_pt','Jet0_eta','Jet0_phi','Jet0_btagdiscr',#'Jet1_mass',
-            'Jet1_pt','Jet1_eta','Jet1_phi','Jet1_btagdiscr',#'Jet1_mass',
-            'Jet2_pt','Jet2_eta','Jet2_phi','Jet2_btagdiscr',#'Jet2_mass',
-            'Jet3_pt','Jet3_eta','Jet3_phi','Jet3_btagdiscr',#'Jet2_mass',
-            'Jet4_pt','Jet4_eta','Jet4_phi','Jet4_btagdiscr',#'Jet2_mass',
-            'Jet5_pt','Jet5_eta','Jet5_phi','Jet5_btagdiscr',#'Jet2_mass',
-            'Jet6_pt','Jet6_eta','Jet6_phi','Jet6_btagdiscr',#'Jet2_mass',
-            'HadTop_pt','HadTop_eta','HadTop_phi',
+            'Lep0_pt', 'Lep0_eta', 'Lep0_phi', 'Lep0_m',
+            'Lep1_pt', 'Lep1_eta', 'Lep1_phi', 'Lep1_m',
+            'Lep2_pt', 'Lep2_eta', 'Lep2_phi', 'Lep2_m',
+            'Jet0_pt','Jet0_eta','Jet0_phi','Jet0_m','Jet0_btagdiscr',#'Jet1_mass',
+            'Jet1_pt','Jet1_eta','Jet1_phi','Jet1_m','Jet1_btagdiscr',#'Jet1_mass',
+            'Jet2_pt','Jet2_eta','Jet2_phi','Jet2_m','Jet2_btagdiscr',#'Jet2_mass',
+            'Jet3_pt','Jet3_eta','Jet3_phi','Jet3_m','Jet3_btagdiscr',#'Jet2_mass',
+            'Jet4_pt','Jet4_eta','Jet4_phi','Jet4_m','Jet4_btagdiscr',#'Jet2_mass',
+            'Jet5_pt','Jet5_eta','Jet5_phi','Jet5_m','Jet5_btagdiscr',#'Jet2_mass',
+            'Jet6_pt','Jet6_eta','Jet6_phi','Jet6_m','Jet6_btagdiscr',#'Jet2_mass',
+            'HadTop_pt','HadTop_eta','HadTop_phi','HadTop_m',
             'TopScore',
             'met','met_phi',
             'HTXS_Higgs_pt','HTXS_Higgs_y',
@@ -100,9 +102,10 @@ class HiggsRegressionTTH(Module):
                 #        mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
                 #        candidates.append((mindR,mHvisconstr,mW,_lep,_j1,_j2))
                         
-            ret["HadTop_pt%s" %self.systsJEC[var]]  = HadTop.Pt()  if HadTop else -99
+            ret["HadTop_pt%s"  %self.systsJEC[var]] = HadTop.Pt()  if HadTop else -99
             ret["HadTop_eta%s" %self.systsJEC[var]] = HadTop.Eta() if HadTop else -99
             ret["HadTop_phi%s" %self.systsJEC[var]] = HadTop.Phi() if HadTop else -99
+            ret['HadTop_m%s'   %self.systsJEC[var]] = HadTop.M()   if HadTop else -99
             ret["TopScore%s" %self.systsJEC[var]]   = score # else -99? Or not?
 
             
@@ -112,6 +115,7 @@ class HiggsRegressionTTH(Module):
                     ret['Lep%s_pt%s'  %(l, self.systsJEC[var])] = lp4.Pt()
                     ret['Lep%s_eta%s' %(l, self.systsJEC[var])] = lp4.Eta()
                     ret['Lep%s_phi%s' %(l, self.systsJEC[var])] = lp4.Phi()
+                    ret['Lep%s_m%s'   %(l, self.systsJEC[var])] = lp4.M()
                     evt_tag *= lepsFO[l].pdgId
                 
             
@@ -124,6 +128,7 @@ class HiggsRegressionTTH(Module):
                     ret['Jet%s_pt%s'  %(j, self.systsJEC[var])] = jp4.Pt()
                     ret['Jet%s_eta%s' %(j, self.systsJEC[var])] = jp4.Eta()
                     ret['Jet%s_phi%s' %(j, self.systsJEC[var])] = jp4.Phi()
+                    ret['Jet%s_m%s'   %(j, self.systsJEC[var])] = jp4.M()
                     ret['Jet%s_btagdiscr%s' %(j, self.systsJEC[var])] = jets[j].btagDeepB
 
 
