@@ -1,28 +1,17 @@
 # vim: syntax=sh
-
 2lep_2DpT_2bins: Hreco_pTHvis\:Hreco_pTHgen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
-#2lep_pTHvis_2bins                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350];     XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
-#2lep_pTHvis_2bins_log                       :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350];     XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
+2lep_pTHvis_2bins                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350];     XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHvis_2bins_log                       :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350];     XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
 
 2lep_2DpT_3bins: Hreco_pTHvis\:Hreco_pTHgen :  [0,120,200,350]*[0,120,200,350] ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
-#2lep_pTHvis_3bins                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
-#2lep_pTHvis_3bins_log                       :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
+2lep_pTHvis_3bins                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHvis_3bins_log                       :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
 
 2lep_2DpT: Hreco_pTHvis\:Hreco_pTHgen            :  [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
-#2lep_pTHvis                                 :  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350;        XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
-#2lep_pTHvis_log                             :  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350;        XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
-
+2lep_pTHvis                                 :  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350;        XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHvis_log                             :  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350;        XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
 
 2lep_pTHgen_2bins    :  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,350]    ; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHgen_3bins    :  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,200,350]; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHgen          :  if3(nLepFO>1, Hreco_pTHgen,-99) : 50,0,350       ; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_2DpT_STXS_GEN: HTXS_Higgs_pt\:Hreco_pTHgen : [0,120,350]*[0,120,350] ; XTitle="pTH_STXS (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
-
-
-
-
-
-#TODO for this you need to find the command in the mcPlots.py that disables the reweighting 
-#2lep_matchedpartons          : if3(nLepFO>1, Hreco_matchedpartons,     -99)     : 4,-0.5,3.5; XTitle="number of genpar match with j1/j2        " , Legend= 'TL', MoreY=1.4, IncludeOverflows=False
-#2lep_bothmatchedpartons      : if3(nLepFO>1, Hreco_bothmatchedpartons, -99)     : 4,-0.5,3.5; XTitle="number of genpartons match with j1 and j2" , Legend= 'TL', MoreY=1.4, IncludeOverflows=False
-#2lep_mismatchedtoptaggedjets : if3(nLepFO>1, Hreco_mismatchedtoptaggedjets,-99) : 4,-0.5,3.5; XTitle="number of mismatched top tagged jets     " , Legend= 'TL', MoreY=1.4, IncludeOverflows=False
