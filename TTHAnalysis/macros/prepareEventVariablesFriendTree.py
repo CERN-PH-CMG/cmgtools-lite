@@ -398,8 +398,6 @@ if options.queue:
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
     elif options.env == "oviedo":
-        if options.queue != "":
-            options.queue = "batch" 
         super  = "qsub -q {queue} -N {name}".format(queue = options.queue, name=options.name)
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
