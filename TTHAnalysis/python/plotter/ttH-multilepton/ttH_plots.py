@@ -30,7 +30,7 @@ if 'fanae' in os.environ['HOSTNAME']:
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     P0 = "/nfs/user/pvischia/tth/v5pre/"
 
-TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors --Fs {P}/3_tauCount0" 
+TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors --Fs {P}/3_tauCount" 
 YEARDIR=YEAR if YEAR != 'all' else ''
 TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_091019_v6pre%s "%(YEARDIR,)
 TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)
@@ -121,6 +121,7 @@ if __name__ == '__main__':
     if '2lss_' in torun:
         x = base('2lss')
         if '_appl' in torun: x = add(x,'-I ^TT ')
+        if '_legacy' in torun: x = x.replace('ttH-multilepton/2lss_tight.txt',"ttH-multilepton/2lss_tight_legacy.txt")
         if '_1fo' in torun:
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight==1'")
             x = x.replace("--xP 'nT_.*'","")
@@ -214,6 +215,7 @@ if __name__ == '__main__':
     if '3l_' in torun and not('cr') in torun:
         x = base('3l')
         if '_appl' in torun: x = add(x,'-I ^TTT ')
+        if '_legacy' in torun: x = x.replace('ttH-multilepton/3l_tight.txt',"ttH-multilepton/3l_tight_legacy.txt")
         if '_1fo' in torun:
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2'")
             x = x.replace("--xP 'nT_.*'","")
