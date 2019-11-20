@@ -21,6 +21,14 @@ class HiggsRecoTTH(Module):
                                                                                                       "pTHgen","delR_H_partons","delR_H_j1j2","BDThttTT_eventReco_mvaValue",
                                                                                                       "delR_H_q1l", "delR_H_q2l", "delR_H_j1l", "delR_H_j2l",
                                                                                                       "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT"]]) # added new branches here
+
+        for mylep in [0, 1]:
+            for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["l%s_fj_deltaR"%mylep, "l%s_fj_lepIsFromH"%mylep,"l%s_fj_pt"%mylep,"l%s_fj_eta"%mylep,
+                                                                                                          "l%s_fj_phi"%mylep,"l%s_fj_mass"%mylep,"l%s_fj_msoftdrop"%mylep,"l%s_fj_tau1"%mylep,
+                                                                                                          "l%s_fj_tau2"%mylep,"l%s_fj_tau3"%mylep,"l%s_fj_tau4"%mylep]])
+
+
+
         self.cut_BDT_rTT_score = cut_BDT_rTT_score
         self.cuts_mW_had = cuts_mW_had
         self.cuts_mH_vis = cuts_mH_vis
@@ -69,6 +77,7 @@ class HiggsRecoTTH(Module):
         delR_H_q2l     = 0
         delR_H_j1l     = 0
         delR_H_j2l     = 0
+        closestFatJetToLeptonVars = []
         # loop over gen particles #TODO you can simplify the loop a bit but later, keep it explicit for now
         # -----------------------
         for part in genpar:
@@ -112,7 +121,8 @@ class HiggsRecoTTH(Module):
         leps     = Collection(event,"LepGood","nLepGood")
         lepsFO   = [leps[ileps[i]] for i in xrange(nFO)]
         jets     = [x for x in Collection(event,"JetSel"+self.label,"nJetSel"+self.label)]
-
+        fatjets  = [x for x in Collection(event,"FatJet","nFatJet")]
+       
         for var in self.systsJEC:
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
             candidates=[]
@@ -122,12 +132,29 @@ class HiggsRecoTTH(Module):
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
                 jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
+                fatjetsNoB   = [b for a,b in enumerate(fatjets) if b.btagDeepB<self.bgatDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
                 for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
+                    iClosestFatJetToLep = -99
+                    minDeltaRfatJetLep = 1000.
+                    for _j, j in [(ix,x.p4()) for ix,x in enumerate(fatjetsNoB)]: # Find the fat jet closest to the lepton
+                        if j.DeltaR(lep) < minDeltaRfatJetLep:
+                            iClosestFatJetToLep=_j
+                            minDeltaRfatJetLep = j.DeltaR(lep)
+                    if iClosestFatJetToLep >-1: # Otherwise there are no fat jets
+                        fj = fatjetsNoB[iClosestFatJetToLep]
+                        closestFat_deltaR = fj.p4().DeltaR(lep)
+                        closestFat_lepIsFromH = -99 # -99 if no lepton from H; 0 if this reco lepton is not the correct lepton; 1 if this reco lepton is the correct lepton
+                        if len(LFromWFromH) == 1:
+                            closestFat_lepIsFromH = 1 if (lep.DeltaR(LFromWFromH[0].p4()) < 0.1) else 0
+                        # Must probably add some ID (FatJet_jetId)
+                        closestFatJetToLeptonVars.append([closestFat_deltaR, closestFat_lepIsFromH, fj.pt, fj.eta, fj.phi, fj.mass, fj.msoftdrop, fj.tau1, fj.tau2, fj.tau3, fj.tau4])
+        
                     for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
                         j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
                         j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
 			W = j1+j2
 			mW = W.M()
+                        
 			if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
 			Wconstr = ROOT.TLorentzVector()
 			Wconstr.SetPtEtaPhiM(W.Pt(),W.Eta(),W.Phi(),80.4)
@@ -190,5 +217,17 @@ class HiggsRecoTTH(Module):
             ret['Hreco_nLFromWFromH%s'                      %self.systsJEC[var]] = len(LFromWFromH)
             ret['Hreco_nQFromWFromT%s'                      %self.systsJEC[var]] = len(QFromWFromT)
             ret['Hreco_nLFromWFromT%s'                      %self.systsJEC[var]] = len(LFromWFromT)
-
+            for mylep in [0, 1]:
+                ret["Hreco_l%s_fj_deltaR%s"      %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][0] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_lepIsFromH%s"  %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][1] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_pt%s"          %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][2] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_eta%s"         %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][3] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_phi%s"         %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][4] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_mass%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][5] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_msoftdrop%s"   %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][6] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_tau1%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][7] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_tau2%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][8] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_tau3%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][9] if len(closestFatJetToLeptonVars) == 2 else -99
+                ret["Hreco_l%s_fj_tau4%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][10] if len(closestFatJetToLeptonVars) == 2 else -99
+            
         return ret
