@@ -154,7 +154,6 @@ class HiggsRecoTTH(Module):
                         j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
 			W = j1+j2
 			mW = W.M()
-                        
 			if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
 			Wconstr = ROOT.TLorentzVector()
 			Wconstr.SetPtEtaPhiM(W.Pt(),W.Eta(),W.Phi(),80.4)
@@ -229,5 +228,4 @@ class HiggsRecoTTH(Module):
                 ret["Hreco_l%s_fj_tau2%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][8] if len(closestFatJetToLeptonVars) == 2 else -99
                 ret["Hreco_l%s_fj_tau3%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][9] if len(closestFatJetToLeptonVars) == 2 else -99
                 ret["Hreco_l%s_fj_tau4%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][10] if len(closestFatJetToLeptonVars) == 2 else -99
-            
         return ret
