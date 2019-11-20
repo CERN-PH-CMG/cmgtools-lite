@@ -18,6 +18,8 @@ class HiggsRegressionTTH(Module):
             'Lep1_pt', 'Lep1_eta', 'Lep1_phi', 'Lep1_m',
             'Lep2_pt', 'Lep2_eta', 'Lep2_phi', 'Lep2_m',
 
+            'DeltaRl0l1',
+
             'DeltaRl0j0', 'DeltaRl0j1', 'DeltaRl0j2', 'DeltaRl0j3', 'DeltaRl0j4', 'DeltaRl0j5', 
             'DeltaRl1j0', 'DeltaRl1j1', 'DeltaRl1j2', 'DeltaRl1j3', 'DeltaRl1j4', 'DeltaRl1j5', 
 
@@ -121,6 +123,8 @@ class HiggsRegressionTTH(Module):
 
             
             evt_tag = 1
+            ret['DeltaRl0l1'] = lepsFO[0].p4().DeltaR(lepsFO[1].p4()) if len(lepsFO)>=2 else -99
+
             for l,lp4 in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                 if len(lepsFO)<3:
                     ret['Lep%s_pt%s'  %(l, self.systsJEC[var])] = lp4.Pt()
@@ -130,8 +134,8 @@ class HiggsRegressionTTH(Module):
                     evt_tag *= lepsFO[l].pdgId
                 
                     for j, jp4 in [(ix,x.p4()) for ix,x in enumerate(jets)]:
-                        if len(jets) <6: # fix this
-                          ret['DeltaRl%sj%s]' %(l,j)] = lp4.DeltaR(jp4)
+                        if len(jets) <7: # fix this
+                          ret['DeltaRl%sj%s' %(l,j)] = lp4.DeltaR(jp4)
             
             ret["evt_tag%s"     %self.systsJEC[var]] = evt_tag
 
@@ -146,8 +150,8 @@ class HiggsRegressionTTH(Module):
                     ret['Jet%s_btagdiscr%s' %(j, self.systsJEC[var])] = jets[j].btagDeepB
 
                     for jo, jpo4 in [(ixo,xo.p4()) for ixo,xo in enumerate(jets)]:
-                        if len(jets) <6: # fix this
-                          ret['DeltaRj%sj%s]' %(j,jo)] = jp4.DeltaR(jpo4)
+                        if len(jets) <7: # fix this
+                          ret['DeltaRj%sj%s' %(j,jo)] = jp4.DeltaR(jpo4)
   
             ret["met%s"     %self.systsJEC[var]] = met
             ret["met_phi%s" %self.systsJEC[var]] = met_phi
