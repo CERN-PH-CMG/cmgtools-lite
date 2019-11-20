@@ -106,9 +106,7 @@ class HiggsRecoTTH(Module):
         ret      = {} 
 
         for var in self.systsJEC:
-            score = 1 
             candidates=[]
-            ### if score>self.cut_BDT_rTT_score: this "if" needs to go, otherwise you are keeping cutting on the top tagger
                 #j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%self.systsJEC[var])
                 #j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 #j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
