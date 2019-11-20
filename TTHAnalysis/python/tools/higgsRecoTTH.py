@@ -103,6 +103,9 @@ class HiggsRecoTTH(Module):
                         if self.debug: print "the mother of this W is a Top"
                         LFromWFromT.append(part)
 
+        print "number of quarks            =" + str(len(QFromWFromH))
+        print "------------------------------------------------------"
+        print "number of gen-level leptons =" + str(len(LFromWFromH))
 
         # loop over gen jets 
         # ------------------ 
@@ -183,9 +186,10 @@ class HiggsRecoTTH(Module):
                delR_H_j1l = leps[best[4]].p4().DeltaR(jetmat1.p4())
                delR_H_j2l = leps[best[4]].p4().DeltaR(jetmat2.p4())
                for q1,q2 in itertools.combinations(QFromWFromH,2):
-                    delR_H_partons = q1.p4().DeltaR(q2.p4())
-	            delR_H_q1l = q1.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH 
-                    delR_H_q2l = q2.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH
+                   delR_H_partons = q1.p4().DeltaR(q2.p4())
+                   for lepton in LFromWFromH:
+	               delR_H_q1l = q1.p4().DeltaR(lepton.p4()) # this will need to be from LFromWFromH 
+                       delR_H_q2l = q2.p4().DeltaR(lepton.p4()) # this will need to be from LFromWFromH
 	       for quark in QFromWFromH: 
 	           if quark.p4().DeltaR(jetmat1.p4()) < 0.3 or quark.p4().DeltaR(jetmat2.p4()) < 0.3:
 	              matchedpartons +=1
