@@ -69,12 +69,12 @@ class HiggsRecoTTH(Module):
         bothmatchedpartons      = 0 
         mismatchedtoptaggedjets = 0
         pTHgen = 0
-        delR_H_partons = 0
-        delR_H_j1j2    = 0
-        delR_H_q1l     = 0
-        delR_H_q2l     = 0
-        delR_H_j1l     = 0
-        delR_H_j2l     = 0
+        delR_H_partons = -99
+        delR_H_j1j2    = -99
+        delR_H_q1l     = -99
+        delR_H_q2l     = -99
+        delR_H_j1l     = -99
+        delR_H_j2l     = -99
         closestFatJetToLeptonVars = []
         # loop over gen particles #TODO you can simplify the loop a bit but later, keep it explicit for now
         # -----------------------
@@ -133,7 +133,7 @@ class HiggsRecoTTH(Module):
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
                 jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
-                fatjetsNoB   = [b for a,b in enumerate(fatjets) if b.btagDeepB<self.bgatDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
+                fatjetsNoB   = [b for a,b in enumerate(fatjets) if b.btagDeepB<self.btagDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
                 for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                     iClosestFatJetToLep = -99
                     minDeltaRfatJetLep = 1000.
