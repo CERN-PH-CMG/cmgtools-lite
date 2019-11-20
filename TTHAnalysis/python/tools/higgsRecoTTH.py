@@ -4,14 +4,15 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 from CMGTools.TTHAnalysis.treeReAnalyzer import * 
-from CMGTools.TTHAnalysis.tools.genParticleProducer import *
+#from CMGTools.TTHAnalysis.tools.genParticleProducer import *
 import ROOT, itertools
 from math import *
 
 #bTagCut = 0.3093 if year==2016 else 0.3033 if year==2017 else 0.2770
 class HiggsRecoTTH(Module):
     #def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.4941, doSystJEC=True): #TODO update the values here
-    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.2770, doSystJEC=True):
+    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.2770, doSystJEC=True, debug=False):
+        self.debug = debug
         self.label = label
         self.branches = []
         self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown"} if doSystJEC else {0:""}
@@ -35,15 +36,15 @@ class HiggsRecoTTH(Module):
         return True
     # code
     def run(self,event,Collection):
-## TODO ##        
-    # status flag for gen particles
-    # ----------------------------- 
+        ## TODO ##        
+        # status flag for gen particles
+        # ----------------------------- 
         statusFlagsMap={
         'isHardProcess' : 7,
         'isPrompt'      : 0
         }
-    # define variables and gen collections
-    # ------------------------------------   
+        # define variables and gen collections
+        # ------------------------------------   
         #HiggsDaughters = genHiggsDaughtersSelection(genpar) # that is how you define a collection from genproducer, i.e. apply the selection on your collection and it return a filtered collection
         genjet = Collection(event,"GenJet","nGenJet")
         genpar = Collection(event,"GenPart","nGenPart")
@@ -62,42 +63,42 @@ class HiggsRecoTTH(Module):
         delR_H_q2l     = 0
         delR_H_j1l     = 0
         delR_H_j2l     = 0
-    # loop over gen particles #TODO you can simplify the loop a bit but later, keep it explicit for now
-    # -----------------------
+        # loop over gen particles #TODO you can simplify the loop a bit but later, keep it explicit for now
+        # -----------------------
         for part in genpar:
             if part.pdgId == 25:
-               if part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
-                  pTHgen = part.p4().Pt()
+                if part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
+                    pTHgen = part.p4().Pt()
             if abs(part.pdgId) in range (1,8):
-               #print "it is a quark"
-               if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
-                  #print "the mother of this quark is W+ or W-"
-                  if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
-                     #print "the mother of this W is a Higgs"
-                     QFromWFromH.append(part)
+                if self.debug: print "it is a quark"
+                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
+                    if self.debug: print "the mother of this quark is W+ or W-"
+                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
+                        if self.debug: print "the mother of this W is a Higgs"
+                        QFromWFromH.append(part)
             if abs(part.pdgId) in range (11,18) and part.status == 1:
-               #print "it is a lepton"
-               if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
-                  #print "the mother of this lepton is W+ or W-"
-                  if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
-                     #print "the mother of this W is a Higgs"
-                     LFromWFromH.append(part)
+                if self.debug: print "it is a lepton"
+                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
+                    if self.debug: print "the mother of this lepton is W+ or W-"
+                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
+                        if self.debug: print "the mother of this W is a Higgs"
+                        LFromWFromH.append(part)
             if abs(part.pdgId) in range (1,8):
-               #print "it is a quark"
-               if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
-                  #print "the mother of this quark is W+ or W-"
-                  if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
-                     #print "the mother of this W is a Top"
-                     QFromWFromT.append(part)
+                if self.debug: print "it is a quark"
+                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
+                    if self.debug: print "the mother of this quark is W+ or W-"
+                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
+                        if self.debug: print "the mother of this W is a Top"
+                        QFromWFromT.append(part)
             if abs(part.pdgId) in range (11,18) and part.status == 1:
-               #print "it is a lepton"
-               if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
-                  #print "the mother of this lepton is W+ or W-"
-                  if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
-                     #print "the mother of this W is a Top"
-                     LFromWFromT.append(part)
-    # loop over gen jets 
-    # ------------------ 
+                if self.debug: print "it is a lepton"
+                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
+                    if self.debug: print "the mother of this lepton is W+ or W-"
+                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
+                        if self.debug: print "the mother of this W is a Top"
+                        LFromWFromT.append(part)
+        # loop over gen jets 
+        # ------------------ 
         #for jet in genjet:
             #if not jet.partonFlavour == 5 and not jet.partonFlavour == -5: #TODO that excludes b-jets but it is not necessary
             #if jet.p4().Pt() > 30 and abs(jet.p4().Eta()) < 2.5:  # bit extreme cuts, I think supposed to be 24 and 2.4
@@ -152,10 +153,7 @@ class HiggsRecoTTH(Module):
                         if deltaR(topjet.p4().Eta(),topjet.p4().Phi(), gentopquark.p4().Eta(),gentopquark.p4().Phi()) > 0.5:
                            #jets tagged as coming from top didn't match with true partons coming from top"
                            mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
-            #print candidates
             best = min(candidates) if len(candidates) else None
-            #print best
-            #print "--------------------------------"
             if best:
                jetmat1 = jets[best[5]] 
                jetmat2 = jets[best[6]]
