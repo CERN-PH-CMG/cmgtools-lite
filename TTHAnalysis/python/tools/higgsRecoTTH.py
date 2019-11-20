@@ -43,7 +43,6 @@ class HiggsRecoTTH(Module):
         'isHardProcess' : 7,
         'isPrompt'      : 0
         }
-        
         # Return dictionary
         ret      = {} 
 
@@ -82,7 +81,7 @@ class HiggsRecoTTH(Module):
                     elif abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
                         if self.debug: print "the mother of this W is a Top"
                         QFromWFromT.append(part)
-            elif abs(part.pdgId) in [11, 13, 15] and part.status == 1:
+            elif abs(part.pdgId) in [11, 13, 15] and part.statusFlags &(1 << statusFlagsMap['isPrompt']):
                 if self.debug: print "it is a lepton"
                 if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
                     if self.debug: print "the mother of this lepton is W+ or W-"
@@ -92,6 +91,8 @@ class HiggsRecoTTH(Module):
                     elif abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
                         if self.debug: print "the mother of this W is a Top"
                         LFromWFromT.append(part)
+
+        print '--------------------------------'
         # loop over gen jets 
         # ------------------ 
         #for jet in genjet:
