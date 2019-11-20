@@ -20,7 +20,7 @@ class HiggsRecoTTH(Module):
                                                                                                       "matchedpartons","bothmatchedpartons","mismatchedtoptaggedjets",
                                                                                                       "pTHgen","delR_H_partons","delR_H_j1j2","BDThttTT_eventReco_mvaValue",
                                                                                                       "delR_H_q1l", "delR_H_q2l", "delR_H_j1l", "delR_H_j2l",
-                                                                                                      "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT",]]) # added new branches here
+                                                                                                      "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT"]]) # added new branches here
         self.cut_BDT_rTT_score = cut_BDT_rTT_score
         self.cuts_mW_had = cuts_mW_had
         self.cuts_mH_vis = cuts_mH_vis
@@ -186,9 +186,9 @@ class HiggsRecoTTH(Module):
             ret["Hreco_delR_H_q2l%s"                  %self.systsJEC[var]] = delR_H_q2l if best else -99
             ret["Hreco_delR_H_j1l%s"                  %self.systsJEC[var]] = delR_H_j1l if best else -99 
             ret["Hreco_delR_H_j2l%s"                  %self.systsJEC[var]] = delR_H_j2l if best else -99 
-            ret['nQFromWFromH%s'                      %self.systsJEC[var]] = len(QFromWFromH)
-            ret['nLFromWFromH%s'                      %self.systsJEC[var]] = len(LFromWFromH)
-            ret['nQFromWFromT%s'                      %self.systsJEC[var]] = len(QFromWFromT)
-            ret['nLFromWFromT%s'                      %self.systsJEC[var]] = len(LFromWFromT)
+            ret['Hreco_nQFromWFromH%s'                      %self.systsJEC[var]] = len(QFromWFromH)
+            ret['Hreco_nLFromWFromH%s'                      %self.systsJEC[var]] = len(LFromWFromH)
+            ret['Hreco_nQFromWFromT%s'                      %self.systsJEC[var]] = len(QFromWFromT)
+            ret['Hreco_nLFromWFromT%s'                      %self.systsJEC[var]] = len(LFromWFromT)
 
         return ret
