@@ -9,8 +9,9 @@ from math import *
 #bTagCut = 0.3093 if year==2016 else 0.3033 if year==2017 else 0.2770
 class HiggsRecoTTH(Module):
     #def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.4941, doSystJEC=True): #TODO update the values here
-    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.2770, doSystJEC=True, debug=False):
+    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.2770, doSystJEC=True, useTopTagger=True, debug=False):
         self.debug = debug
+        self.useTopTagger = useTopTagger
         self.label = label
         self.branches = []
         self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown"} if doSystJEC else {0:""}
@@ -124,58 +125,68 @@ class HiggsRecoTTH(Module):
         for var in self.systsJEC:
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
             candidates=[]
-            if score>self.cut_BDT_rTT_score:
+            fatjetsNoB   = [b for b in fatjets if b.btagDeepB<self.btagDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
+            jetsTopNoB=None
+            jetsNoTopNoB=None
+
+
+            # Delicate: here the logic is built such that if one does not use the top tagger then 
+            # some variables are left empty to suppress code into "if variable:" blocks
+            if self.useTopTagger and score>self.cut_BDT_rTT_score:
                 j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%self.systsJEC[var])
                 j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
                 jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
-                fatjetsNoB   = [b for a,b in enumerate(fatjets) if b.btagDeepB<self.btagDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
-                for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
-                    iClosestFatJetToLep = -99
-                    minDeltaRfatJetLep = 1000.
-                    for _j, j in [(ix,x.p4()) for ix,x in enumerate(fatjetsNoB)]: # Find the fat jet closest to the lepton
-                        if j.DeltaR(lep) < minDeltaRfatJetLep:
-                            iClosestFatJetToLep=_j
-                            minDeltaRfatJetLep = j.DeltaR(lep)
-                    if iClosestFatJetToLep >-1: # Otherwise there are no fat jets
-                        fj = fatjetsNoB[iClosestFatJetToLep]
-                        closestFat_deltaR = fj.p4().DeltaR(lep)
-                        closestFat_lepIsFromH = -99 # -99 if no lepton from H; 0 if this reco lepton is not the correct lepton; 1 if this reco lepton is the correct lepton
-                        if len(LFromWFromH) == 1:
-                            closestFat_lepIsFromH = 1 if (lep.DeltaR(LFromWFromH[0].p4()) < 0.1) else 0
-                        # Must probably add some ID (FatJet_jetId)
-                        closestFatJetToLeptonVars.append([closestFat_deltaR, closestFat_lepIsFromH, fj.pt, fj.eta, fj.phi, fj.mass, fj.msoftdrop, fj.tau1, fj.tau2, fj.tau3, fj.tau4])
-        
-                    for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
-                        j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
-                        j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
-			W = j1+j2
-			mW = W.M()
-			if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
-			Wconstr = ROOT.TLorentzVector()
-			Wconstr.SetPtEtaPhiM(W.Pt(),W.Eta(),W.Phi(),80.4)
-			Hvisconstr = lep+Wconstr
-			mHvisconstr = Hvisconstr.M()
-			pTHvisconstr = Hvisconstr.Pt()
-			if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
-			mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
-                        delR_H_j1j2 = j1.DeltaR(j2)
-		        candidates.append((mindR,delR_H_j1j2,mHvisconstr,mW,_lep,_j1,_j2,pTHvisconstr))
-                        # need to remove #TODO
-                        # --------------
-                        #for jet in gengoodJets:
-                            #if deltaR(jet.p4().Eta(),jet.p4().Phi(), j1.Eta(),j1.Phi()) < 0.3 or deltaR(jet.p4().Eta(),jet.p4().Phi(), j2.Eta(),j2.Phi()) < 0.3:
-                               #print "at least one the detector-level jets matched with a true one --> counting it"
-                               #matchedjets +=1
-                            #elif deltaR(jet.p4().Eta(),jet.p4().Phi(), j1.Eta(),j1.Phi()) < 0.3 and deltaR(jet.p4().Eta(),jet.p4().Phi(), j2.Eta(),j2.Phi()) < 0.3:
-                                 #print "both detector level jets match with both true ones --> counting it"
-                                 #bothmatchedjets +=1
+            else:
+                jetsNoTopNoB = [j for j in jets if j.btagDeepB<self.btagDeepCSVveto]
+                
+            for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
+                iClosestFatJetToLep = -99
+                minDeltaRfatJetLep = 1000.
+                for _j, j in [(ix,x.p4()) for ix,x in enumerate(fatjetsNoB)]: # Find the fat jet closest to the lepton
+                    if j.DeltaR(lep) < minDeltaRfatJetLep:
+                        iClosestFatJetToLep=_j
+                        minDeltaRfatJetLep = j.DeltaR(lep)
+                if iClosestFatJetToLep >-1: # Otherwise there are no fat jets
+                    fj = fatjetsNoB[iClosestFatJetToLep]
+                    closestFat_deltaR = fj.p4().DeltaR(lep)
+                    closestFat_lepIsFromH = -99 # -99 if no lepton from H; 0 if this reco lepton is not the correct lepton; 1 if this reco lepton is the correct lepton
+                    if len(LFromWFromH) == 1:
+                        closestFat_lepIsFromH = 1 if (lep.DeltaR(LFromWFromH[0].p4()) < 0.1) else 0
+                    # Must probably add some ID (FatJet_jetId)
+                    closestFatJetToLeptonVars.append([closestFat_deltaR, closestFat_lepIsFromH, fj.pt, fj.eta, fj.phi, fj.mass, fj.msoftdrop, fj.tau1, fj.tau2, fj.tau3, fj.tau4])
+    
+                for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
+                    j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
+                    j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
+                    W = j1+j2
+                    mW = W.M()
+                    if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
+                    Wconstr = ROOT.TLorentzVector()
+                    Wconstr.SetPtEtaPhiM(W.Pt(),W.Eta(),W.Phi(),80.4)
+                    Hvisconstr = lep+Wconstr
+                    mHvisconstr = Hvisconstr.M()
+                    pTHvisconstr = Hvisconstr.Pt()
+                    if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
+                    mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
+                    delR_H_j1j2 = j1.DeltaR(j2)
+                    candidates.append((mindR,delR_H_j1j2,mHvisconstr,mW,_lep,_j1,_j2,pTHvisconstr))
+                    # need to remove #TODO
+                    # --------------
+                    #for jet in gengoodJets:
+                        #if deltaR(jet.p4().Eta(),jet.p4().Phi(), j1.Eta(),j1.Phi()) < 0.3 or deltaR(jet.p4().Eta(),jet.p4().Phi(), j2.Eta(),j2.Phi()) < 0.3:
+                           #print "at least one the detector-level jets matched with a true one --> counting it"
+                           #matchedjets +=1
+                        #elif deltaR(jet.p4().Eta(),jet.p4().Phi(), j1.Eta(),j1.Phi()) < 0.3 and deltaR(jet.p4().Eta(),jet.p4().Phi(), j2.Eta(),j2.Phi()) < 0.3:
+                             #print "both detector level jets match with both true ones --> counting it"
+                             #bothmatchedjets +=1
+            if self.useTopTagger:
                 for topjet in jetsTopNoB:
                     for gentopquark in QFromWFromT:
                         if topjet.p4().DeltaR(gentopquark.p4()) > 0.5:
-                           #jets tagged as coming from top didn't match with true partons coming from top"
-                           mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
+                            #jets tagged as coming from top didn't match with true partons coming from top"
+                            mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
             best = min(candidates) if len(candidates) else None
             for q1,q2 in itertools.combinations(QFromWFromH,2):
                 delR_H_partons = q1.p4().DeltaR(q2.p4())
