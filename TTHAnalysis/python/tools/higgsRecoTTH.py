@@ -43,6 +43,10 @@ class HiggsRecoTTH(Module):
         'isHardProcess' : 7,
         'isPrompt'      : 0
         }
+        
+        # Return dictionary
+        ret      = {} 
+
         # define variables and gen collections
         # ------------------------------------   
         #HiggsDaughters = genHiggsDaughtersSelection(genpar) # that is how you define a collection from genproducer, i.e. apply the selection on your collection and it return a filtered collection
@@ -103,7 +107,6 @@ class HiggsRecoTTH(Module):
         leps     = Collection(event,"LepGood","nLepGood")
         lepsFO   = [leps[ileps[i]] for i in xrange(nFO)]
         jets     = [x for x in Collection(event,"JetSel"+self.label,"nJetSel"+self.label)]
-        ret      = {} 
 
         for var in self.systsJEC:
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
@@ -128,7 +131,7 @@ class HiggsRecoTTH(Module):
 			pTHvisconstr = Hvisconstr.Pt()
 			if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
 			mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
-                        delR_H_j1j2 = deltaR(j1.Eta(),j1.Phi(), j2.Eta(),j2.Phi())
+                        delR_H_j1j2 = j1.DeltaR(j2)
 		        candidates.append((mindR,delR_H_j1j2,mHvisconstr,mW,_lep,_j1,_j2,pTHvisconstr))
                         # need to remove #TODO
                         # --------------
@@ -141,23 +144,23 @@ class HiggsRecoTTH(Module):
                                  #bothmatchedjets +=1
                 for topjet in jetsTopNoB:
                     for gentopquark in QFromWFromT:
-                        if deltaR(topjet.p4().Eta(),topjet.p4().Phi(), gentopquark.p4().Eta(),gentopquark.p4().Phi()) > 0.5:
+                        if topjet.p4().DeltaR(gentopquark.p4()) > 0.5:
                            #jets tagged as coming from top didn't match with true partons coming from top"
                            mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
             best = min(candidates) if len(candidates) else None
             if best:
                jetmat1 = jets[best[5]] 
                jetmat2 = jets[best[6]]
-               delR_H_j1l = deltaR(leps[best[4]].p4().Eta(),leps[best[4]].p4().Phi(), jetmat1.p4().Eta(),jetmat1.p4().Phi())
-               delR_H_j2l = deltaR(leps[best[4]].p4().Eta(),leps[best[4]].p4().Phi(), jetmat2.p4().Eta(),jetmat2.p4().Phi())
+               delR_H_j1l = leps[best[4]].p4().DeltaR(jetmat1.p4())
+               delR_H_j2l = leps[best[4]].p4().DeltaR(jetmat2.p4())
                for q1,q2 in itertools.combinations(QFromWFromH,2):
-                    delR_H_partons = deltaR(q1.p4().Eta(),q1.p4().Phi(), q2.p4().Eta(),q2.p4().Phi())
-	            delR_H_q1l = deltaR(q1.p4().Eta(),q1.p4().Phi(), leps[best[4]].p4().Eta(),leps[best[4]].p4().Phi()) 
-                    delR_H_q2l = deltaR(q2.p4().Eta(),q2.p4().Phi(), leps[best[4]].p4().Eta(),leps[best[4]].p4().Phi()) 
+                    delR_H_partons = q1.p4().DeltaR(q2.p4())
+	            delR_H_q1l = q1.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH 
+                    delR_H_q2l = q2.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH
 	       for quark in QFromWFromH: 
-	           if deltaR(quark.p4().Eta(),quark.p4().Phi(), jetmat1.p4().Eta(),jetmat1.p4().Phi()) < 0.3 or deltaR(quark.p4().Eta(),quark.p4().Phi(), jetmat2.p4().Eta(),jetmat2.p4().Phi()) < 0.3:
+	           if quark.p4().DeltaR(jetmat1.p4()) < 0.3 or quark.p4().DeltaR(jetmat2.p4()) < 0.3:
 	              matchedpartons +=1
-	           elif deltaR(quark.p4().Eta(),quark.p4().Phi(), jetmat1.p4().Eta(),jetmat1.p4().Phi()) < 0.3 and deltaR(quark.p4().Eta(),quark.p4().Phi(), jetmat2.p4().Eta(),jetmat2.p4().Phi()) < 0.3:
+                   if quark.p4().DeltaR(jetmat1.p4()) < 0.3 and quark.p4().DeltaR(jetmat2.p4()) < 0.3:
 		        bothmatchedpartons +=1
             else: pass   
             ret["Hreco_minDRlj%s"                     %self.systsJEC[var]] = best[0 ] if best else -99
