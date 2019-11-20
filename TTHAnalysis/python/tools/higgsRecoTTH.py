@@ -52,7 +52,6 @@ class HiggsRecoTTH(Module):
         LFromWFromH = []
         QFromWFromT = []
         LFromWFromT = []
-        #gengoodJets = []
         matchedpartons          = 0
         bothmatchedpartons      = 0 
         mismatchedtoptaggedjets = 0
@@ -69,32 +68,24 @@ class HiggsRecoTTH(Module):
             if part.pdgId == 25:
                 if part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
                     pTHgen = part.p4().Pt()
-            if abs(part.pdgId) in range (1,8):
+            elif abs(part.pdgId) in range (1,7): # from 1 to 6
                 if self.debug: print "it is a quark"
                 if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
                     if self.debug: print "the mother of this quark is W+ or W-"
                     if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
                         if self.debug: print "the mother of this W is a Higgs"
                         QFromWFromH.append(part)
-            if abs(part.pdgId) in range (11,18) and part.status == 1:
+                    elif abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
+                        if self.debug: print "the mother of this W is a Top"
+                        QFromWFromT.append(part)
+            elif abs(part.pdgId) in [11, 13, 15] and part.status == 1:
                 if self.debug: print "it is a lepton"
                 if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
                     if self.debug: print "the mother of this lepton is W+ or W-"
                     if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
                         if self.debug: print "the mother of this W is a Higgs"
                         LFromWFromH.append(part)
-            if abs(part.pdgId) in range (1,8):
-                if self.debug: print "it is a quark"
-                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
-                    if self.debug: print "the mother of this quark is W+ or W-"
-                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
-                        if self.debug: print "the mother of this W is a Top"
-                        QFromWFromT.append(part)
-            if abs(part.pdgId) in range (11,18) and part.status == 1:
-                if self.debug: print "it is a lepton"
-                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
-                    if self.debug: print "the mother of this lepton is W+ or W-"
-                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
+                    elif abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
                         if self.debug: print "the mother of this W is a Top"
                         LFromWFromT.append(part)
         # loop over gen jets 
