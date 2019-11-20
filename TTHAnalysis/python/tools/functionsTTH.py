@@ -457,9 +457,9 @@ MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.en
 from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
 MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
                                                        cut_BDT_rTT_score = 0.0,
-                                                       cuts_mW_had = (60.,100.),
-                                                       cuts_mH_vis = (80.,140.),
-                                                       btagDeepCSVveto = 0.1522) ))
+#                                                       cuts_mW_had = (60.,100.),
+#                                                       cuts_mH_vis = (80.,140.),
+#                                                       btagDeepCSVveto = 0.1522) ))
 
 from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
 MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
