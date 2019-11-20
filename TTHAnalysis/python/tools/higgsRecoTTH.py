@@ -3,8 +3,6 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as NanoAODCollection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
-from CMGTools.TTHAnalysis.treeReAnalyzer import * 
-#from CMGTools.TTHAnalysis.tools.genParticleProducer import *
 import ROOT, itertools
 from math import *
 
