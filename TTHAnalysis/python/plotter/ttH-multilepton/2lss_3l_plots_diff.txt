@@ -15,3 +15,6 @@
 2lep_pTHgen_3bins    :  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,200,350]; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHgen          :  if3(nLepFO>1, Hreco_pTHgen,-99) : 50,0,350       ; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_2DpT_STXS_GEN: HTXS_Higgs_pt\:Hreco_pTHgen : [0,120,350]*[0,120,350] ; XTitle="pTH_STXS (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
+#test_plot
+lep1_pt:         LepGood1_pt                                     : 40,0,200; XTitle="Leading lepton p_{T} (GeV)"

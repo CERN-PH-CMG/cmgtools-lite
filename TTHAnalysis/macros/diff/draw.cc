@@ -7,7 +7,7 @@
 
 void delR_q1_l(){
 TCanvas *c = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *delR_q1_l = new TH1F("delR_q1_l","delR_q1_l", 11, 0, 10);
@@ -23,7 +23,7 @@ delete img0;
 
 void delR_q2_l(){
 TCanvas *c1 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *delR_q2_l = new TH1F("delR_q2_l","delR_q2_l", 11, 0, 10);
@@ -39,7 +39,7 @@ delete img1;
 
 void delR_partons(){
 TCanvas *c2 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *delR_partons = new TH1F("delR_partons","delR_partons", 11, 0, 10);
@@ -55,7 +55,7 @@ delete img2;
 
 void delR_j1j2(){
 TCanvas *c3 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *delR_j1j2 = new TH1F("delR_j1j2","delR_j1j2", 11, 0, 10);
@@ -77,7 +77,7 @@ delete img3;
 
 void delR_j1l(){
 TCanvas *c4 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *delR_j1l = new TH1F("delR_j1l","delR_j1l", 11, 0, 10);
@@ -93,7 +93,7 @@ delete img4;
 
 void delR_j2l(){
 TCanvas *c5 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *delR_j2l = new TH1F("delR_j2l","delR_j2l", 11, 0, 10);
@@ -109,7 +109,7 @@ delete img5;
 
 void drawscore(){
 TCanvas *c6 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *score = new TH1F("score","score", 11, 0, 1);
@@ -125,7 +125,7 @@ delete img5;
 
 void drawnum_1(){
 TCanvas *c7 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *hnum = new TH1F("hnum","hnum", 21, 0, 20);
@@ -141,7 +141,7 @@ delete img6;
 
 void drawnum_2(){
 TCanvas *c8 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *hnum = new TH1F("hnum","hnum", 21, 0, 20);
@@ -157,7 +157,7 @@ delete img7;
 
 void drawden(){
 TCanvas *c9 = new TCanvas;
-TFile *f  = new TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
+TFile *f  = new TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root");
 //TFile *f  = new TFile("./TTHnobb_fxfx_Friend.root");
 TTree *tr = (TTree*)f->Get("Friends");
 TH1F *hden = new TH1F("hden","hden", 21, 0, 20);
@@ -174,7 +174,6 @@ delete img8;
 void draw(){
 drawnum_1();
 drawnum_2();
-drawnum();
 drawden();
 drawscore();
 delR_q1_l();
