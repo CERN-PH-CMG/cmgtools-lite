@@ -122,6 +122,7 @@ class HiggsRecoTTH(Module):
         fatjets  = [x for x in Collection(event,"FatJet","nFatJet")]
        
         for var in self.systsJEC:
+<<<<<<< HEAD
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
             candidates=[]
             if score>self.cut_BDT_rTT_score:
@@ -176,6 +177,45 @@ class HiggsRecoTTH(Module):
                         if topjet.p4().DeltaR(gentopquark.p4()) > 0.5:
                            #jets tagged as coming from top didn't match with true partons coming from top"
                            mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
+=======
+            candidates=[]
+                #j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%self.systsJEC[var])
+                #j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
+                #j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
+                #jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
+            ### How can this work if j1top, j2top, and j3top are not defined? What's the bool returned by "if i not in [j1top,j2top,j3top]..."?
+            jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
+            for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
+                for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
+                    j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
+                    j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
+                    W = j1+j2
+                    mW = W.M()
+                    if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
+                    Wconstr = ROOT.TLorentzVector()
+                    Wconstr.SetPtEtaPhiM(W.Pt(),W.Eta(),W.Phi(),80.4)
+                    Hvisconstr = lep+Wconstr
+                    mHvisconstr = Hvisconstr.M()
+                    pTHvisconstr = Hvisconstr.Pt()
+                    if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
+                    mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
+                    delR_H_j1j2 = deltaR(j1.Eta(),j1.Phi(), j2.Eta(),j2.Phi())
+                    candidates.append((mindR,delR_H_j1j2,mHvisconstr,mW,_lep,_j1,_j2,pTHvisconstr))
+                    # need to remove #TODO
+                    # --------------
+                    #for jet in gengoodJets:
+                    #if deltaR(jet.p4().Eta(),jet.p4().Phi(), j1.Eta(),j1.Phi()) < 0.3 or deltaR(jet.p4().Eta(),jet.p4().Phi(), j2.Eta(),j2.Phi()) < 0.3:
+                    #print "at least one the detector-level jets matched with a true one --> counting it"
+                    #matchedjets +=1
+                    #elif deltaR(jet.p4().Eta(),jet.p4().Phi(), j1.Eta(),j1.Phi()) < 0.3 and deltaR(jet.p4().Eta(),jet.p4().Phi(), j2.Eta(),j2.Phi()) < 0.3:
+                    #print "both detector level jets match with both true ones --> counting it"
+                    #bothmatchedjets +=1
+                    #for topjet in jetsTopNoB:
+                    #for gentopquark in QFromWFromT:
+                    #if deltaR(topjet.p4().Eta(),topjet.p4().Phi(), gentopquark.p4().Eta(),gentopquark.p4().Phi()) > 0.5:
+                    #jets tagged as coming from top didn't match with true partons coming from top"
+                    #mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
+>>>>>>> fd1adda64bb0145905a1d5c387e29e1ec7ac5cd7
             best = min(candidates) if len(candidates) else None
             if best:
                jetmat1 = jets[best[5]] 

@@ -18,14 +18,14 @@ fi
 if [ "$1" == "sig_16_TopTagged" ]; then
 for i in TTHnobb_fxfx TTH_ctcvcp
 do
-python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3  
+python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3   
 done
 fi
 #####################################
 if [ "$1" == "sig_16_NoTopTagged" ]; then
 for i in TTHnobb_fxfx TTH_ctcvcp
 do
-python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH_NoTopTag HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3   
+python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH_NoTopTag HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root    
 done
 fi
 ## that is for taking the files from 3_recleaner_v2 and creating FTs with BDThtt (it was used with v5) ##
