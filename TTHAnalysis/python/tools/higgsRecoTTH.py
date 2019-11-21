@@ -135,12 +135,13 @@ class HiggsRecoTTH(Module):
 
             # Delicate: here the logic is built such that if one does not use the top tagger then 
             # some variables are left empty to suppress code into "if variable:" blocks
-            if self.useTopTagger and score>self.cut_BDT_rTT_score:
+            if self.useTopTagger:
                 j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%self.systsJEC[var])
                 j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
                 jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
-                jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
+                if score>self.cut_BDT_rTT_score:
+                    jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
             else:
                 jetsNoTopNoB = [j for j in jets if j.btagDeepB<self.btagDeepCSVveto]
                 
