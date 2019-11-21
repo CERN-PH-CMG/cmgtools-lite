@@ -103,9 +103,9 @@ class HiggsRecoTTH(Module):
                         if self.debug: print "the mother of this W is a Top"
                         LFromWFromT.append(part)
 
-        print "number of quarks            =" + str(len(QFromWFromH))
-        print "------------------------------------------------------"
-        print "number of gen-level leptons =" + str(len(LFromWFromH))
+        #print "number of quarks            =" + str(len(QFromWFromH))
+        #print "------------------------------------------------------"
+        #print "number of gen-level leptons =" + str(len(LFromWFromH))
 
         # loop over gen jets 
         # ------------------ 
@@ -180,6 +180,8 @@ class HiggsRecoTTH(Module):
                            #jets tagged as coming from top didn't match with true partons coming from top"
                            mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
             best = min(candidates) if len(candidates) else None
+            for q1,q2 in itertools.combinations(QFromWFromH,2):
+                delR_H_partons = q1.p4().DeltaR(q2.p4())
             if best:
                jetmat1 = jets[best[5]] 
                jetmat2 = jets[best[6]]
@@ -194,7 +196,7 @@ class HiggsRecoTTH(Module):
 	           if quark.p4().DeltaR(jetmat1.p4()) < 0.3 or quark.p4().DeltaR(jetmat2.p4()) < 0.3:
 	              matchedpartons +=1
                    if quark.p4().DeltaR(jetmat1.p4()) < 0.3 and quark.p4().DeltaR(jetmat2.p4()) < 0.3:
-		        bothmatchedpartons +=1
+		      bothmatchedpartons +=1
             else: pass   
             ret["Hreco_minDRlj%s"                     %self.systsJEC[var]] = best[0 ] if best else -99
             ret["Hreco_visHmass%s"                    %self.systsJEC[var]] = best[2 ] if best else -99
