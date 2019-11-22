@@ -113,6 +113,7 @@ if __name__ == '__main__':
         if 'diff' in torun:
             x = x.replace('2lss_3l_plots.txt', '2lss_3l_plots_diff.txt').replace('--showMCError', '-X --showMCError')
         if '_appl' in torun: x = add(x,'-I ^TT ')
+        if '_legacy' in torun: x = x.replace('ttH-multilepton/2lss_tight.txt',"ttH-multilepton/2lss_tight_legacy.txt")
         if '_1fo' in torun:
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight==1'")
             x = x.replace("--xP 'nT_.*'","")
@@ -206,6 +207,7 @@ if __name__ == '__main__':
     if '3l_' in torun and not('cr') in torun:
         x = base('3l')
         if '_appl' in torun: x = add(x,'-I ^TTT ')
+        if '_legacy' in torun: x = x.replace('ttH-multilepton/3l_tight.txt',"ttH-multilepton/3l_tight_legacy.txt")
         if '_1fo' in torun:
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2'")
             x = x.replace("--xP 'nT_.*'","")
