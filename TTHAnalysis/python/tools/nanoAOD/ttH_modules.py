@@ -293,5 +293,18 @@ higgsDecay = lambda : higgsDecayFinder()
 # scaleFactorSequence_2018
 
 # 5_evtVars_v0
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+higgsRecoTTH = lambda : HiggsRecoTTH(label="_Recl",
+                                     cut_BDT_rTT_score = 0.0,
+                                     cuts_mW_had = (60.,100.),
+                                     cuts_mH_vis = (80.,140.),
+                                     btagDeepCSVveto = 0.1522)
+higgsRecoTTHNoTopTagger = lambda : HiggsRecoTTH(label="_Recl",
+                                                cut_BDT_rTT_score = 0.0,
+                                                cuts_mW_had = (60.,100.),
+                                                cuts_mH_vis = (80.,140.),
+                                                btagDeepCSVveto = 0.1522,
+                                                useTopTagger=False)
+
 from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import HiggsRegressionTTH
 higgsRegressionTTH = lambda : HiggsRegressionTTH(label='_Recl' )
