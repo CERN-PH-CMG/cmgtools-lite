@@ -86,7 +86,7 @@ def clean_and_FO_selection_TTH(lep,year):
 
 tightLeptonSel = lambda lep,year : clean_and_FO_selection_TTH(lep,year) and (abs(lep.pdgId)!=13 or lep.mediumId>0) and lep.mvaTTH > (0.85 if abs(lep.pdgId)==13 else 0.80)
 
-foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayMode and (int(tau.idDeepTau2017v2p1VSjet)>>1 & 1) # VVLoose WP
+foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayModeNewDMs and (int(tau.idDeepTau2017v2p1VSjet)>>1 & 1) # VVLoose WP
 tightTauSel = lambda tau: (int(tau.idDeepTau2017v2p1VSjet)>>2 & 1) # VLoose WP
 
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import CombinedObjectTaggerForCleaning
@@ -134,6 +134,7 @@ mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016All,jetmetUncertainties2017All,jetmetUncertainties2018All
+from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016AllStore,jetmetUncertainties2017AllStore,jetmetUncertainties2018AllStore
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetCorrelator import jetMetCorrelations2016,jetMetCorrelations2017,jetMetCorrelations2018
 
 jme2016 = [jetmetUncertainties2016All,jetMetCorrelations2016]
@@ -247,6 +248,14 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
 finalMVA = lambda : finalMVA_DNN()
 
+from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
+finalMVA3L = lambda : finalMVA_DNN_3l()
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.finalMVA_4l import FinalMVA_4L
+finalMVA_4l = lambda : FinalMVA_4L()
+
+
+
 from PhysicsTools.NanoAODTools.postprocessing.modules.btv.btagSFProducer import btagSFProducer
 
 
@@ -293,5 +302,20 @@ higgsDecay = lambda : higgsDecayFinder()
 # scaleFactorSequence_2018
 
 # 5_evtVars_v0
+from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco
+
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+higgsRecoTTH = lambda : HiggsRecoTTH(label="_Recl",
+                                     cut_BDT_rTT_score = 0.0,
+                                     cuts_mW_had = (60.,100.),
+                                     cuts_mH_vis = (80.,140.),
+                                     btagDeepCSVveto = 0.1522)
+higgsRecoTTHNoTopTagger = lambda : HiggsRecoTTH(label="_Recl",
+                                                cut_BDT_rTT_score = 0.0,
+                                                cuts_mW_had = (60.,100.),
+                                                cuts_mH_vis = (80.,140.),
+                                                btagDeepCSVveto = 0.1522,
+                                                useTopTagger=False)
+
 from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import HiggsRegressionTTH
 higgsRegressionTTH = lambda : HiggsRegressionTTH(label='_Recl' )

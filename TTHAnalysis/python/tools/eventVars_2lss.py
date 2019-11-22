@@ -12,10 +12,13 @@ class EventVars2LSS(Module):
     def __init__(self, label="", recllabel='Recl', doSystJEC=True):
         self.namebranches = [ "mindr_lep1_jet",
                               "mindr_lep2_jet",
+                              "mindr_lep3_jet",
                               "avg_dr_jet",
                               "MT_met_lep1",
                               "MT_met_lep2",
-                              'mbb',
+                              'mbb_loose',
+                              'mbb_medium',
+                              'min_Deta_leadfwdJet_jet',
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.systsJEC = {0:"",\
@@ -30,6 +33,7 @@ class EventVars2LSS(Module):
         if len(self.systsJEC) > 1: 
             self.branches.extend([br+self.label+'_unclustEnUp' for br in self.namebranches if 'met' in br])
             self.branches.extend([br+self.label+'_unclustEnDown' for br in self.namebranches if 'met' in br])
+        self.branches.extend( ['drlep12','drlep13','drlep23', 'hasOSSF4l','hasOSSF3l','m4l'])
 
     # old interface (CMG)
     def listBranches(self):
@@ -52,12 +56,45 @@ class EventVars2LSS(Module):
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iLepFO"+self.inputlabel)
         leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        if nFO >= 2: 
+            allret['drlep12'] = deltaR(leps[0],leps[1])
+        else: 
+            allret['drlep12'] = 0 
+        if nFO >= 3: 
+            allret['drlep13'] = deltaR(leps[0],leps[2])
+            allret['drlep23'] = deltaR(leps[1],leps[2])
+        else:
+            allret['drlep13'] = 0 
+            allret['drlep23'] = 0 
+        
+        allret['hasOSSF3l'] = False
+        allret['hasOSSF4l'] = False
+        allret['m4l']       = -99
+        if nFO >= 3:
+            leps3 = [leps[0], leps[1], leps[2]]
+            for l1 in leps3:
+                for l2 in leps3: 
+                    if l1 == l2: continue
+                    if l1.pdgId * l2.pdgId > 0: continue
+                    if abs(l1.pdgId) != abs(l2.pdgId): continue
+                    allret['hasOSSF3l'] = True
+
+        if nFO >= 4:
+            allret['m4l'] = (leps[0].p4()+leps[1].p4()+leps[2].p4()+leps[3].p4()).M()
+            leps4 = [leps[0], leps[1], leps[2], leps[3]]
+            for l1 in leps4:
+                for l2 in leps4: 
+                    if l1 == l2: continue
+                    if l1.pdgId * l2.pdgId > 0: continue
+                    if abs(l1.pdgId) != abs(l2.pdgId): continue
+                    allret['hasOSSF4l'] = True
 
         for var in self.systsJEC:
             # prepare output
             ret = dict([(name,0.0) for name in self.namebranches])
             _var = var
-            if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
+            if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): 
+                _var = 0; 
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
@@ -68,14 +105,32 @@ class EventVars2LSS(Module):
             elif (_var==3): jets = filter(lambda x : x.pt_jerUp>jetptcut, jets)
             elif (_var==-3): jets = filter(lambda x : x.pt_jerDown>jetptcut, jets)
             else: raise RuntimeError("Wrong variation %d"%d)
+            
+            if not hasattr(event, 'FwdJet1_eta%s_Recl'%self.systsJEC[var]) or len(jets) == 0: 
+                ret['min_Deta_leadfwdJet_jet'] = 0
+            else: 
+                if getattr(event, 'nFwdJet%s_Recl'%self.systsJEC[var]) > 0:
+                    ret['min_Deta_leadfwdJet_jet'] = min( [ abs( getattr(event, 'FwdJet1_eta%s_Recl'%self.systsJEC[var]) - j.eta) for j in jets])
+                else: 
+                    ret['min_Deta_leadfwdJet_jet'] = 0
+
+
             bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
+            bloose  = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
             if len(bmedium) >1: 
                 bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)
                 b1 = bmedium[0].p4()
                 b2 = bmedium[1].p4()
                 b1.SetPtEtaPhiM(getattr(bmedium[0],'pt%s'%self.systsJEC[_var]),bmedium[0].eta,bmedium[0].phi,bmedium[0].mass)
                 b2.SetPtEtaPhiM(getattr(bmedium[1],'pt%s'%self.systsJEC[_var]),bmedium[1].eta,bmedium[1].phi,bmedium[1].mass)
-                ret['mbb'] = (b1+b2).M()
+                ret['mbb_medium'] = (b1+b2).M()
+            if len(bloose) >1: 
+                bloose.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)
+                b1 = bloose[0].p4()
+                b2 = bloose[1].p4()
+                b1.SetPtEtaPhiM(getattr(bloose[0],'pt%s'%self.systsJEC[_var]),bloose[0].eta,bloose[0].phi,bloose[0].mass)
+                b2.SetPtEtaPhiM(getattr(bloose[1],'pt%s'%self.systsJEC[_var]),bloose[1].eta,bloose[1].phi,bloose[1].mass)
+                ret['mbb_loose'] = (b1+b2).M()
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
@@ -84,6 +139,7 @@ class EventVars2LSS(Module):
             if njet >= 1:
                 ret["mindr_lep1_jet"] = min([deltaR(j,leps[0]) for j in jets]) if nlep >= 1 else 0;
                 ret["mindr_lep2_jet"] = min([deltaR(j,leps[1]) for j in jets]) if nlep >= 2 else 0;
+                ret["mindr_lep2_jet"] = min([deltaR(j,leps[2]) for j in jets]) if nlep >= 3 else 0;
             if njet >= 2:
                 sumdr, ndr = 0, 0
                 for i,j in enumerate(jets):
