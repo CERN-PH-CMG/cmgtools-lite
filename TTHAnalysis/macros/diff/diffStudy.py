@@ -21,35 +21,35 @@ if not tr:
     raise ValueError('Tree not loaded')
 
 plotlist = [
-    ["Hreco_delR_H_q1l"                         ,"Hreco_delR_H_q1l>=0"                  ,"delR_q1l"      ],
-    ["Hreco_delR_H_q2l"                         ,"Hreco_delR_H_q2l>=0"                  ,"delR_q2l"      ],
-    ["Hreco_delR_H_partons"                     ,"Hreco_delR_H_partons>=0"              ,"delR_partons"  ],
-    ["Hreco_delR_H_j1l"                         ,"Hreco_delR_H_j1l>=0"                  ,"delR_j1l"      ],
-    ["Hreco_delR_H_j2l"                         ,"Hreco_delR_H_j2l>=0"                  ,"delR_j2l"      ],
-    ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0" ,"all_score_test"],
-    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons==1"              ,"hnum_top_1"    ],
-    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons==2"              ,"hnum_top_2"    ],
-    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons>=0"              ,"hden_no_top"   ],
+    ["Hreco_delR_H_q1l"                         ,"Hreco_delR_H_q1l>=0"                  ,"delR_q1l"      , 100, 0., 10.],
+    ["Hreco_delR_H_q2l"                         ,"Hreco_delR_H_q2l>=0"                  ,"delR_q2l"      , 100, 0., 10.],
+    ["Hreco_delR_H_partons"                     ,"Hreco_delR_H_partons>=0"              ,"delR_partons"  , 100, 0., 10.],
+    ["Hreco_delR_H_j1l"                         ,"Hreco_delR_H_j1l>=0"                  ,"delR_j1l"      , 100, 0., 10.],
+    ["Hreco_delR_H_j2l"                         ,"Hreco_delR_H_j2l>=0"                  ,"delR_j2l"      , 100, 0., 10.],
+    ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0" ,"all_score_test", 100, 0., 10.],
+    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10.],
+    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10.],
+    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10.],
  ]
 
 comparisonplotlist = [
-    ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_matchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_matchedpartons ==2","delR_j1j2"],
+    ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_matchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_matchedpartons ==2","delR_j1j2", 100, 0., 10.],
 ]
 
-def draw_plot(var,cut,fname):
+def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     c = TCanvas()
     c.cd()
-    theplot = TH1F(var,var, 11, 0, 10)
+    theplot = TH1F(var,var, nbins, lowbin, highbin)
     tr.Draw("%s>>%s"%(var,var),cut)
     theplot.Draw()
     c.Print("%s/%s.png"%(options.outputDir,fname))
 
-def draw_comparison(var1, cut1, var2, cut2, fname):
+def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     c = TCanvas()
     c.cd()
-    theplot_1 = TH1F(var1,var1, 11, 0, 10)
+    theplot_1 = TH1F(var1,var1, nbins, lowbin, highbin)
     tr.Draw("%s>>%s"%(var1,var1),cut1)
-    theplot_2 = TH1F("%s_2"%var2,var2, 11, 0, 10) # Avoid issues with same names
+    theplot_2 = TH1F("%s_2"%var2,var2, nbins, lowbin, highbin) # Avoid issues with same names
     tr.Draw("%s>>%s_2"%(var2,var2),cut2)
     theplot_1.Scale(1/theplot_1.Integral())
     theplot_2.Scale(1/theplot_2.Integral())
@@ -59,8 +59,8 @@ def draw_comparison(var1, cut1, var2, cut2, fname):
     c.Print("%s/%s.png"%(options.outputDir,fname))
 
 
-for var, cut, fname in plotlist:
-    draw_plot(var, cut, fname)
+for var, cut, fname, nbins, lowbin, highbin in plotlist:
+    draw_plot(var, cut, fname, nbins, lowbin, highbin )
 
-    for var1, cut1, var2, cut2, fname in comparisonplotlist:
-        draw_comparison(var1, cut1, var2, cut2, fname)
+    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist:
+        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
