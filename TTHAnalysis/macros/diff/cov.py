@@ -3,9 +3,15 @@ import ROOT
 import numpy as np
 from root_numpy import root2array, tree2array
 
+from optparse import OptionParser
+parser = OptionParser(usage="%prog [options]")
+# common options, independent of the flavour chosen
+parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/2lss_diff_NoTop-tagged/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
+(options, args) = parser.parse_args()
+
 ## open the files and get the tree. Make sure of the path!
 ## ------------------------------------------------------
-f = ROOT.TFile.Open("./skimmedTrees_16/2lss_diff_NoTop-tagged/TTHnobb_fxfx_Friend.root")
+f = ROOT.TFile.Open(options.inputFile)
 if not f:
     raise ValueError('File not opened')
 t = f.Get("Friends")
