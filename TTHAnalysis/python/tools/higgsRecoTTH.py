@@ -139,6 +139,8 @@ class HiggsRecoTTH(Module):
                 jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
                 if score>self.cut_BDT_rTT_score:
                     jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
+                else:
+                    jetsNoTopNoB = []
             else:
                 jetsNoTopNoB = [j for j in jets if j.btagDeepB<self.btagDeepCSVveto]
                 
