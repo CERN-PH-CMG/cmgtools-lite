@@ -22,9 +22,9 @@ if not t:
 hreco_pthvis = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis >= 0 ')
 hreco_pthgen = tree2array(t, branches=['Hreco_pTHgen'], selection ='Hreco_pTHvis >= 0 ')
 hreco_pthvis_recoFail = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis < 0  ')
-hreco_onematchedparton = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons == 1 ')
-hreco_twomatchedpartons = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons == 2 ')
-hreco_nmatchedpartonsall = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons >= 0 ')
+hreco_onematchedparton = tree2array(t, branches=['Hreco_nmatchedpartons'], selection ='Hreco_nmatchedpartons == 1 ')
+hreco_twomatchedpartons = tree2array(t, branches=['Hreco_nmatchedpartons'], selection ='Hreco_nmatchedpartons == 2 ')
+hreco_nmatchedpartonsall = tree2array(t, branches=['Hreco_nmatchedpartons'], selection ='Hreco_nmatchedpartons >= 0 ')
 
 hreco_onelfromwfromh = tree2array(t, branches=['Hreco_nLFromWFromH'], selection ='Hreco_nLFromWFromH == 1 ')
 hreco_twoqfromwfromh = tree2array(t, branches=['Hreco_nQFromWFromH'], selection ='Hreco_nQFromWFromH == 2 ')
