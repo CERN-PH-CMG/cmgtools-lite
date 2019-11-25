@@ -3,14 +3,14 @@
 if [ "$1" == "bkg_16_TopTagged" ]; then
 for i in TBar_tWch_noFullyHad TBar_tch TBar_tch_PS TGJets_lep THQ_ctcvcp THW_ctcvcp TTGJets TTJets_DiLepton TTJets_SingleLeptonFromT TTJets_SingleLeptonFromTbar TTTT TTWToLNu_fxfx TTWW TTZH TTZToLLNuNu_amc TTZToLLNuNu_m1to10 TZQToLL TZQToLL_PS T_sch_lep T_sch_lep_PS T_tWch_noFullyHad T_tch VHToNonbb WGToLNuG WJetsToLNu_LO WWTo2L2Nu WWTo2L2Nu_DPS WWW WWW_ll WWZ WZG WZTo3LNu_fxfx WZTo3LNu_pow WZZ WpWpJJ GGHZZ4L DYJetsToLL_M10to50_LO DYJetsToLL_M50 ZGTo2LG ZGTo2LG ZHTobb_ll ZZTo4L ZZZ tWll
 do
-python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3   
+python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3   
 done
 fi
 ######################################
 if [ "$1" == "bkg_16_NoTopTagged" ]; then
 for i in TBar_tWch_noFullyHad TBar_tch TBar_tch_PS TGJets_lep THQ_ctcvcp THW_ctcvcp TTGJets TTJets_DiLepton TTJets_SingleLeptonFromT TTJets_SingleLeptonFromTbar TTTT TTWToLNu_fxfx TTWW TTZH TTZToLLNuNu_amc TTZToLLNuNu_m1to10 TZQToLL TZQToLL_PS T_sch_lep T_sch_lep_PS T_tWch_noFullyHad T_tch VHToNonbb WGToLNuG WJetsToLNu_LO WWTo2L2Nu WWTo2L2Nu_DPS WWW WWW_ll WWZ WZG WZTo3LNu_fxfx WZTo3LNu_pow WZZ WpWpJJ GGHZZ4L DYJetsToLL_M10to50_LO DYJetsToLL_M50 ZGTo2LG ZGTo2LG ZHTobb_ll ZZTo4L ZZZ tWll
 do
-python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH_NoTopTag HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3    
+python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsRecoTTHNoTopTagger -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3    
 done
 fi
 ######################################
@@ -18,14 +18,14 @@ fi
 if [ "$1" == "sig_16_TopTagged" ]; then
 for i in TTHnobb_fxfx TTH_ctcvcp
 do
-python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root    
+python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3    
 done
 fi
 #####################################
 if [ "$1" == "sig_16_NoTopTagged" ]; then
 for i in TTHnobb_fxfx TTH_ctcvcp
 do
-python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.higgsRecoTTH_NoTopTag HiggsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root    
+python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsRecoTTHNoTopTagger -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3    
 done
 fi
 ## that is for taking the files from 3_recleaner_v2 and creating FTs with BDThtt (it was used with v5) ##
