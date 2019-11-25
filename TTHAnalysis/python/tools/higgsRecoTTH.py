@@ -16,7 +16,7 @@ class HiggsRecoTTH(Module):
         self.branches = []
         self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown"} if doSystJEC else {0:""}
         for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["minDRlj","visHmass","Wmass","lepIdx","j1Idx","j2Idx","pTHvis",
-                                                                                                      "matchedpartons","bothmatchedpartons","mismatchedtoptaggedjets",
+                                                                                                      "nmatchedpartons","nbothmatchedpartons","nmismatchedtoptaggedjets",
                                                                                                       "pTHgen","delR_H_partons","delR_H_j1j2","BDThttTT_eventReco_mvaValue",
                                                                                                       "delR_H_q1l", "delR_H_q2l", "delR_H_j1l", "delR_H_j2l",
                                                                                                       "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT"]]) # added new branches here
@@ -60,15 +60,15 @@ class HiggsRecoTTH(Module):
         # define variables and gen collections
         # ------------------------------------   
         #HiggsDaughters = genHiggsDaughtersSelection(genpar) # that is how you define a collection from genproducer, i.e. apply the selection on your collection and it return a filtered collection
-        genjet = Collection(event,"GenJet","nGenJet")
+        #genjet = Collection(event,"GenJet","nGenJet") # avoid loading unused collection
         genpar = Collection(event,"GenPart","nGenPart")
         QFromWFromH = []
         LFromWFromH = []
         QFromWFromT = []
         LFromWFromT = []
-        matchedpartons          = 0
-        bothmatchedpartons      = 0 
-        mismatchedtoptaggedjets = 0
+        nmatchedpartons          = 0
+        nbothmatchedpartons      = 0 
+        nmismatchedtoptaggedjets = 0
         pTHgen = 0
         delR_H_partons = -99
         delR_H_j1j2    = -99
@@ -189,7 +189,7 @@ class HiggsRecoTTH(Module):
                     for gentopquark in QFromWFromT:
                         if topjet.p4().DeltaR(gentopquark.p4()) > 0.5:
                             #jets tagged as coming from top didn't match with true partons coming from top"
-                            mismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
+                            nmismatchedtoptaggedjets +=1 #only with respect to the hadronic top where the W is going to qq and this is what I am matching here
             best = min(candidates) if len(candidates) else None
             for q1,q2 in itertools.combinations(QFromWFromH,2):
                 delR_H_partons = q1.p4().DeltaR(q2.p4())
@@ -203,9 +203,9 @@ class HiggsRecoTTH(Module):
                     delR_H_q2l = q2.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH
                 for quark in QFromWFromH: 
                     if quark.p4().DeltaR(jetmat1.p4()) < 0.3 or quark.p4().DeltaR(jetmat2.p4()) < 0.3:
-                        matchedpartons +=1
+                        nmatchedpartons +=1
                     if quark.p4().DeltaR(jetmat1.p4()) < 0.3 and quark.p4().DeltaR(jetmat2.p4()) < 0.3:
-		        bothmatchedpartons +=1
+		        nbothmatchedpartons +=1
             else: pass   
             ret["Hreco_minDRlj%s"                     %self.systsJEC[var]] = best[0 ] if best else -99
             ret["Hreco_visHmass%s"                    %self.systsJEC[var]] = best[2 ] if best else -99
@@ -216,10 +216,10 @@ class HiggsRecoTTH(Module):
             ret["Hreco_pTHvis%s"                      %self.systsJEC[var]] = best[7 ] if best else -99
             ret["Hreco_delR_H_partons%s"              %self.systsJEC[var]] = delR_H_partons if best else -99 
             ret["Hreco_delR_H_j1j2%s"                 %self.systsJEC[var]] = best[1 ] if best else -99
-            ret["Hreco_matchedpartons%s"              %self.systsJEC[var]] = matchedpartons if best else -99 
-            ret["Hreco_bothmatchedpartons%s"          %self.systsJEC[var]] = bothmatchedpartons if best else -99
+            ret["Hreco_nmatchedpartons%s"              %self.systsJEC[var]] = nmatchedpartons if best else -99 
+            ret["Hreco_nbothmatchedpartons%s"          %self.systsJEC[var]] = nbothmatchedpartons if best else -99
             ret["Hreco_pTHgen%s"                      %self.systsJEC[var]] = pTHgen 
-            ret["Hreco_mismatchedtoptaggedjets%s"     %self.systsJEC[var]] = mismatchedtoptaggedjets
+            ret["Hreco_nmismatchedtoptaggedjets%s"     %self.systsJEC[var]] = nmismatchedtoptaggedjets
             ret["Hreco_BDThttTT_eventReco_mvaValue%s" %self.systsJEC[var]] = score
             ret["Hreco_delR_H_q1l%s"                  %self.systsJEC[var]] = delR_H_q1l if best else -99 
             ret["Hreco_delR_H_q2l%s"                  %self.systsJEC[var]] = delR_H_q2l if best else -99
