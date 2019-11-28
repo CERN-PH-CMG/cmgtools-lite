@@ -114,9 +114,9 @@ class EventVars2LSS(Module):
                 else: 
                     ret['min_Deta_leadfwdJet_jet'] = 0
 
-
-            bmedium = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
-            bloose  = filter(lambda x : x.btagDeepB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
+                
+            bmedium = filter(lambda x : x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
+            bloose  = filter(lambda x : x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
             if len(bmedium) >1: 
                 bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)
                 b1 = bmedium[0].p4()
@@ -139,7 +139,7 @@ class EventVars2LSS(Module):
             if njet >= 1:
                 ret["mindr_lep1_jet"] = min([deltaR(j,leps[0]) for j in jets]) if nlep >= 1 else 0;
                 ret["mindr_lep2_jet"] = min([deltaR(j,leps[1]) for j in jets]) if nlep >= 2 else 0;
-                ret["mindr_lep2_jet"] = min([deltaR(j,leps[2]) for j in jets]) if nlep >= 3 else 0;
+                ret["mindr_lep3_jet"] = min([deltaR(j,leps[2]) for j in jets]) if nlep >= 3 else 0;
             if njet >= 2:
                 sumdr, ndr = 0, 0
                 for i,j in enumerate(jets):
