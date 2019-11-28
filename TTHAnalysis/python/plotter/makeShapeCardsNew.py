@@ -151,9 +151,9 @@ for binname, report in allreports.iteritems():
   # make a new list with only the ones that have an effect
   nuisances = sorted(systs.keys())
 
-  datacard = open(outdir+binname+".card.txt", "w"); 
+  datacard = open(outdir+binname+".txt", "w"); 
   datacard.write("## Datacard for cut file %s\n"%args[1])
-  datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+  datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
   datacard.write('##----------------------------------\n')
   datacard.write('bin         %s\n' % binname)
   datacard.write('observation %s\n' % allyields['data_obs'])
@@ -178,10 +178,10 @@ for binname, report in allreports.iteritems():
   if options.autoMCStats: 
     datacard.write('* autoMCStats %d\n' % options.autoMCStatsValue)
 
-  workspace = ROOT.TFile.Open(outdir+binname+".input.root", "RECREATE")
+  workspace = ROOT.TFile.Open(outdir+binname+".root", "RECREATE")
   for h in towrite:
       workspace.WriteTObject(h,h.GetName())
   workspace.Close()
 
-  print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname)
+  print "Wrote to {0}.txt and {0}.root ".format(outdir+binname)
 
