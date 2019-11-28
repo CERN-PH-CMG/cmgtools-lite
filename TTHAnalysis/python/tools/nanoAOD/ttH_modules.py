@@ -89,6 +89,7 @@ tightLeptonSel = lambda lep,year : clean_and_FO_selection_TTH(lep,year) and (abs
 foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idDecayModeNewDMs and (int(tau.idDeepTau2017v2p1VSjet)>>1 & 1) # VVLoose WP
 tightTauSel = lambda tau: (int(tau.idDeepTau2017v2p1VSjet)>>2 & 1) # VLoose WP
 
+from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import groups as jecGroups
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import CombinedObjectTaggerForCleaning
 from CMGTools.TTHAnalysis.tools.nanoAOD.fastCombinedObjectRecleaner import fastCombinedObjectRecleaner
 recleaner_step1 = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
@@ -108,7 +109,10 @@ recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel=
                                        jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
                                        btagL_thr=99, # they are set at runtime 
                                        btagM_thr=99,
-                                       isMC = True)
+                                       isMC = True,
+                                       variations=[ 'jes%s'%v for v in jecGroups] + ['jer'] 
+                                                
+)
 recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                          cleanTausWithLooseLeptons=True,
                                          cleanJetsWithFOTaus=True,
@@ -134,12 +138,12 @@ mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016All,jetmetUncertainties2017All,jetmetUncertainties2018All
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016AllStore,jetmetUncertainties2017AllStore,jetmetUncertainties2018AllStore
-from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetCorrelator import jetMetCorrelations2016,jetMetCorrelations2017,jetMetCorrelations2018
+from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import jetMetCorrelate2016, jetMetCorrelate2017, jetMetCorrelate2018
+from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetCorrelator import jetMetCorrelations2016, jetMetCorrelations2017, jetMetCorrelations2018
 
-jme2016 = [jetmetUncertainties2016All,jetMetCorrelations2016]
-jme2017 = [jetmetUncertainties2017All,jetMetCorrelations2017]
-jme2018 = [jetmetUncertainties2018All,jetMetCorrelations2018]
+jme2016 = [jetmetUncertainties2016All,jetMetCorrelate2016] 
+jme2017 = [jetmetUncertainties2017All,jetMetCorrelate2017]
+jme2018 = [jetmetUncertainties2018All,jetMetCorrelate2018]
 
 def _fires(ev, path):
     return getattr(ev,path) if hasattr(ev,path) else False
