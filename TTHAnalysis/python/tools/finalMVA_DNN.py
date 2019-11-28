@@ -209,9 +209,7 @@ class finalMVA_DNN(Module):
         ret = []
         for worker in self._MVAs:
             name = worker.name
-            worker.debug = True
             if not hasattr(event,"nJet25_jesTotalCorrDown_Recl") and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue
             ret.extend( [(x,y) for x,y in worker(event).iteritems()])
-            print kk
         writeOutput(self, dict(ret))
         return True
