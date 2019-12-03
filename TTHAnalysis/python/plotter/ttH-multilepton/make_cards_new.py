@@ -111,37 +111,37 @@ if REGION == "3l":
     for CATNAME in "ttH_bl,ttH_bt,tH_bl,tH_bt,rest_eee,rest_eem_bl,rest_eem_bt,rest_emm_bl,rest_emm_bt,rest_mmm_bl,rest_mmm_bt".split(','):
 	if  CATNAME == "ttH_bl" :
 	    CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5]"
-	    CUT="{FUNCTION_3L} > 0 && {FUNCTION_3L} < 6"
+	    CUT="{FUNCTION_3L} > 0 && {FUNCTION_3L} < 6".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "ttH_bt" :
 	    CATBINS="[5.5,6.5,7.5,8.5,9.5]"
-	    CUT="{FUNCTION_3L} > 5 && {FUNCTION_3L} < 10"
+	    CUT="{FUNCTION_3L} > 5 && {FUNCTION_3L} < 10".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "tH_bl" :
 	    CATBINS="[9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5]"
-	    CUT="{FUNCTION_3L} > 9 && {FUNCTION_3L} < 17"
+	    CUT="{FUNCTION_3L} > 9 && {FUNCTION_3L} < 17".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "tH_bt" :
 	    CATBINS="[16.5,17.5,18.5,19.5]"
-	    CUT="{FUNCTION_3L} > 16 && {FUNCTION_3L} < 20"
+	    CUT="{FUNCTION_3L} > 16 && {FUNCTION_3L} < 20".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_eee" :
 	    CATBINS="[19.5,20.5]"
-	    CUT="{FUNCTION_3L} > 19 && {FUNCTION_3L} < 21"
+	    CUT="{FUNCTION_3L} > 19 && {FUNCTION_3L} < 21".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_eem_bl" :
 	    CATBINS="[20.5,21.5,22.5,23.5,24.5]"
-	    CUT="{FUNCTION_3L} > 20 && {FUNCTION_3L} < 25"
+	    CUT="{FUNCTION_3L} > 20 && {FUNCTION_3L} < 25".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_eem_bt" :
 	    CATBINS="[24.5,25.5]"
-	    CUT="{FUNCTION_3L} > 24 && {FUNCTION_3L} < 26"
+	    CUT="{FUNCTION_3L} > 24 && {FUNCTION_3L} < 26".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_emm_bl" :
 	    CATBINS="[25.5,26.5,27.5,28.5,29.5]"
-	    CUT="{FUNCTION_3L} > 25 && {FUNCTION_3L} < 30"
+	    CUT="{FUNCTION_3L} > 25 && {FUNCTION_3L} < 30".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_emm_bt" :
 	    CATBINS="[29.5,30.5]"
-	    CUT="{FUNCTION_3L} > 29 && {FUNCTION_3L} < 31"
+	    CUT="{FUNCTION_3L} > 29 && {FUNCTION_3L} < 31".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_mmm_bl" :
 	    CATBINS="[30.5,31.5,32.5,33.5]"
-	    CUT="{FUNCTION_3L} > 30 && {FUNCTION_3L} < 34"
+	    CUT="{FUNCTION_3L} > 30 && {FUNCTION_3L} < 34".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_mmm_bt" :
 	    CATBINS="[30.5,34.5]"
-	    CUT="{FUNCTION_3L} > 33 && {FUNCTION_3L} < 35"
+	    CUT="{FUNCTION_3L} > 33 && {FUNCTION_3L} < 35".format(FUNCTION_3L=FUNCTION_3L)
 	else:
             print "Unkown sr", CATNAME
 
