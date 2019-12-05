@@ -1,6 +1,6 @@
 ttH+    : TTHnobb_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
                                                                                                                                                       
-tHq	: THQ_ctcvcp : xsec*LHEReweightingWeight[11]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed 
+tHq	: THQ_ctcvcp : xsec*LHEReweightingWeight[11]*3  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0); FillColor=ROOT.kRed 
 tHW	: THW_ctcvcp : xsec*LHEReweightingWeight[11]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kBlue
 TTWW	: TTWW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen
 
