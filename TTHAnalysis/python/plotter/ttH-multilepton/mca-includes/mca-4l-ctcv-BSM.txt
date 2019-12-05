@@ -9,7 +9,6 @@ ttH_ct_0p0_cv_1p0+   : TTH_ctcvcp  : 0.0*0.0*xsec                   : LepGood1_m
 ttH_ct_0p25_cv_1p0+  : TTH_ctcvcp  : 0.25*0.25*xsec                 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
 ttH_ct_0p5_cv_1p0+   : TTH_ctcvcp  : 0.5*0.5*xsec                   : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
 ttH_ct_0p75_cv_1p0+  : TTH_ctcvcp  : 0.75*0.75*xsec                 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
-ttH_ct_1p0_cv_1p0+   : TTH_ctcvcp  : 1.0*1.0*xsec                   : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
 ttH_ct_1p25_cv_1p0+  : TTH_ctcvcp  : 1.25*1.25*xsec                 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
 ttH_ct_1p5_cv_1p0+   : TTH_ctcvcp  : 1.5*1.5*xsec                   : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
 ttH_ct_2p0_cv_1p0+   : TTH_ctcvcp  : 2.0*2.0*xsec                   : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0;  FillColor=ROOT.kOrange+10
