@@ -1,4 +1,4 @@
-ttH_ct_1p0_cv_1p0+   : TTH_ctcvcp    : 1.0*1.0*xsec                   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge;  FillColor=ROOT.kOrange+10
+ttH_ct_1p0_cv_1p0+   : TTH_ctcvcp    : 1.0*1.0*xsec                : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge;  FillColor=ROOT.kOrange+10
 tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp  : xsec*LHEReweightingWeight[11] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
 tHW_ct_1p0_cv_1p0+   : THW_ctcvcp  : xsec*LHEReweightingWeight[11] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kBlue
 TTWW	: TTWW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen
@@ -41,3 +41,8 @@ Rares: WWZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;
 Rares: WZG : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: WZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: ZZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares : T_sch_lep+T_sch_lep_PS : xsec :   LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2016\,2017"
+Rares : T_sch_lep              : xsec :   LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2018"
+Rares : T_tch                  : 136.02+80.95 :   LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2016\,2018"
+Rares : T_tch+T_tch_PS         : 136.02+80.95 :   LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2017"
+Rares : T_tWch_noFullyHad      : 2*xsec :   LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge       ; FillColor=ROOT.kAzure-9 
