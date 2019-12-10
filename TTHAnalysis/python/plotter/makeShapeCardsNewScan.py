@@ -16,8 +16,8 @@ parser.add_option("--infile", dest="infile", action="store_true", default=False,
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
-parser.add_option("--scanregex", dest="scanregex", type="string", default="ct_(?P<p1>.*)_cv_(?P<p2>.*)", help="Regex expression to parse parameters of the scan")
-parser.add_option("--params", dest="params", type="string", default="p1,p2", help="List of parameters in the regex, separated by commas")
+parser.add_option("--scanregex", dest="scanregex", type="string", default="ct_(?P<kt>.*)_cv_(?P<kv>.*)", help="Regex expression to parse parameters of the scan")
+parser.add_option("--params", dest="params", type="string", default="kt,kv", help="List of parameters in the regex, separated by commas")
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
@@ -98,8 +98,6 @@ else:
 for scanpoint in scanpoints: 
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
-    pointname = pointname.replace('p1','kt')
-    pointname = pointname.replace('p2','kv')
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
         if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
