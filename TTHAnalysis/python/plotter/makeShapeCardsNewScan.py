@@ -40,9 +40,8 @@ for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
-    point = [ match.group( p ) for p in options.params.split(',') ]
-    if point not in scanpoints: scanpoints.append(  point ) 
-
+    point = [ match.group( p ) for p in options.params.split(',') ] 
+    if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
 
 report={}
 if options.infile:
@@ -68,7 +67,7 @@ if options.savefile:
 if options.asimov:
     match = pattern.search( options.asimov ) 
     if match: 
-        asimovprocesses = [x for x in mca.listSignals() if options.asimov in x] + mca.listBackgrounds()
+        asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
     elif options.asimov in ("b","bkg","background", "b-only"):
@@ -179,7 +178,7 @@ for scanpoint in scanpoints:
         nuisances = sorted(systs.keys())
         datacard = open(outdir+pointname+binname+".card.txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
-        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % pointname + binname)
+        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (pointname + binname))
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation %s\n' % allyields['data_obs'])
