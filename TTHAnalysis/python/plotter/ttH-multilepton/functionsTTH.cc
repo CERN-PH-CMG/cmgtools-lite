@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <map>
 
 float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
 
@@ -68,31 +69,107 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 
 float returnInputX(float x, float y) {return x;}
 
-int ttH_catIndex_2lss(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nBJetMedium25){
+float mvaCat(float ttH, float rest, float ttW, float thq){
+  float ret = 0; 
+  if (ttH > rest && ttH > ttW && ttH > thq){
+    ret =  ttH;
+  }
+  if (ttW > ttH && ttW > rest && ttW > thq){
+    ret= ttW+1;
+  }
+  if (thq > ttH && thq > ttW && thq > rest){
+    ret= thq+2;
+  }
+  if (rest > ttH && rest > thq && rest > ttW){
+    ret= rest+3;
+  }
+  return ret;
 
-//2lss_ee_neg
-//2lss_ee_pos
-//2lss_em_bl_neg
-//2lss_em_bl_pos
-//2lss_em_bt_neg
-//2lss_em_bt_pos
-//2lss_mm_bl_neg
-//2lss_mm_bl_pos
-//2lss_mm_bt_neg
-//2lss_mm_bt_pos
-   
-  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0) return 2-1;
-  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0) return 3-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2) return 4-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2) return 5-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2) return 6-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2) return 7-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2) return 8-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2) return 9-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2) return 10-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2) return 11-1;
+}
 
- return -1;
+int ttH_catIndex_2lss(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
+{
+
+//2lss_ee_ttH
+//2lss_ee_rest
+//2lss_ee_ttw
+//2lss_ee_thq
+//2lss_em_ttH
+//2lss_em_rest
+//2lss_em_ttw
+//2lss_em_thq
+//2lss_mm_ttH
+//2lss_mm_rest
+//2lss_mm_ttw
+//2lss_mm_thq  
+  int flch = 0;
+  int procch = 0;
+
+  if (abs(LepGood1_pdgId)+abs(LepGood2_pdgId) == 22)
+    flch = 0;
+  else if (abs(LepGood1_pdgId)+abs(LepGood2_pdgId) == 24)
+    flch = 1;
+  else if (abs(LepGood1_pdgId)+abs(LepGood2_pdgId) == 26)
+    flch = 2;
+  else
+    cout << "[2lss]: It shouldnt be here. pdgids are " << abs(LepGood1_pdgId) << " " << abs(LepGood2_pdgId)  << endl;
+
+  if (tth >= ttw && tth >= thq && tth >= rest)
+    procch = 0;
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    procch = 1;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    procch = 2;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    procch = 3;
+  else 
+    cout << "[2lss]: It shouldnt be here. DNN scores are " << tth << " " << rest << " " << ttw << " " << thq << endl;
+      
+  return flch*4+procch+1;
+
+}
+
+std::map<TString,int> bins2lss = {{"ee_ttHnode",8},{"ee_Restnode",13},{"ee_ttWnode",11},{"ee_tHQnode",8},
+				      {"em_ttHnode",5},{"em_Restnode",11},{"em_ttWnode",11},{"em_tHQnode",7},
+				      {"mm_ttHnode",10},{"mm_Restnode",10},{"mm_ttWnode",13},{"mm_tHQnode",4}};
+std::vector<TString> bin2lsslabels = {
+  "ee_ttHnode","ee_Restnode","ee_ttWnode","ee_tHQnode",
+  "em_ttHnode","em_Restnode","em_ttWnode","em_tHQnode",
+  "mm_ttHnode","mm_Restnode","mm_ttWnode","mm_tHQnode"
+};
+
+std::map<TString, TH1F*> binHistos2lss;
+std::map<TString, int> bins2lsscumul;
+TFile* f2lssBins;
+
+
+int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
+{
+  if (!f2lssBins){
+    int offset = 0;
+    f2lssBins = TFile::Open("../../data/kinMVA/DNNSubCat2_BIN.root");
+    for (auto & la : bin2lsslabels){
+      int bins = bins2lss[la];
+      binHistos2lss[la] = (TH1F*) f2lssBins->Get(Form("%s_2018_Map_nBin%d", la.Data(), bins));
+      bins2lsscumul[la] = offset;
+      offset += bins;
+    }
+  }
+  
+  int idx = ttH_catIndex_2lss(LepGood1_pdgId, LepGood2_pdgId, tth,ttw, thq,rest); 
+  TString binLabel = bin2lsslabels[idx-1];
+  float mvavar = 0;
+  if (tth >= ttw && tth >= thq && tth >= rest)
+    mvavar = tth;
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    mvavar =rest;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    mvavar = ttw;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    mvavar = thq;
+  else 
+    cout << "It shouldnt be here" << endl;
+  return binHistos2lss[binLabel]->FindBin( mvavar ) + bins2lsscumul[binLabel];
 
 }
 
@@ -122,20 +199,147 @@ int ttH_catIndex_2lss_SVA(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_c
   return res; // 1-10
 }
 
-int ttH_catIndex_3l(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nBJetMedium25){
 
-//3l_bl_neg
-//3l_bl_pos
-//3l_bt_neg
-//3l_bt_pos
+int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
+{
 
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2) return 11;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2) return 12;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2) return 13;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2) return 14;
+  int sumpdgId = abs(lep1_pdgId)+abs(lep2_pdgId)+abs(lep3_pdgId);
+  
+  if (ttH > rest && ttH > tH){
+    if (nBMedium < 2)
+      return 1;
+    else
+      return 2;
+  }
+  else if (tH > ttH && tH > rest){
+    if (nBMedium < 2){
+      return 3;
+    }
+    else{
+      return 4;
+    }
+  }
+  else if (rest > ttH && rest > tH){
+    if ( sumpdgId == 33){ // eee
+      return 5;
+    }
+    else if (sumpdgId == 35){ // eem
+      if (nBMedium < 2){
+	return 6;
+      }
+      else{
+	return 7;
+      }
+    }
+    else if (sumpdgId == 37){ // emm
+      if (nBMedium < 2){
+	return 8;
+      }
+      else{
+	return 9;
+      }
+    }
+    else if (sumpdgId == 39){ // mmm
+      if (nBMedium < 2){
+	return 10;
+      }
+      else{
+	return 11;
+      }
+    }
+  }
 
- return -1;
+  
+  cout << "[E]: It should not be here" << endl;
+  return -1;
 
+}
+
+
+int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
+{
+
+  int sumpdgId = abs(lep1_pdgId)+abs(lep2_pdgId)+abs(lep3_pdgId);
+  
+  if (ttH > rest && ttH > tH){
+    if (nBMedium < 2){
+      if      (ttH < 0.45) return 1;
+      else if (ttH < 0.51) return 2;
+      else if (ttH < 0.57) return 3;
+      else if (ttH < 0.66) return 4;
+      else return 5;
+    }
+    else{
+      if      (ttH < 0.51) return 6;
+      else if (ttH < 0.60) return 7;
+      else if (ttH < 0.70) return 8;
+      else return 9;
+    }
+  }
+  else if (tH > ttH && tH > rest){
+    if (nBMedium < 2){
+      if      (tH < 0.43) return 10;
+      else if (tH < 0.47) return 11;
+      else if (tH < 0.50) return 12;
+      else if (tH < 0.55) return 13;
+      else if (tH < 0.61) return 14;
+      else if (tH < 0.71) return 15;
+      else return 16;
+    }
+    else{
+      if      (tH < 0.46) return 17;
+      else if (tH < 0.58) return 18;
+      else return 19;
+    }
+  }
+  else if (rest > ttH && rest > tH){
+    if ( sumpdgId == 33){ // eee
+      return 20;
+    }
+    else if (sumpdgId == 35){ // eem
+      if (nBMedium < 2){
+	if (rest < 0.48)      return 21;
+	else if (rest < 0.52) return 22;
+	else if (rest < 0.59) return 23;
+	else                  return 24;
+      }
+      else{
+	return 25;
+      }
+    }
+    else if (sumpdgId == 37){ // emm
+      if (nBMedium < 2){
+	if (rest < 0.47)      return 26;
+	else if (rest < 0.53) return 27;
+	else if (rest < 0.58) return 28;
+	else                  return 29;
+      }
+      else{
+	return 30;
+      }
+    }
+    else if (sumpdgId == 39){ // mmm
+      if (nBMedium < 2){
+	if (rest < 0.5)       return 31;
+	else if (rest < 0.58) return 32;
+	else                  return 33;
+      }
+      else{
+	return 34;
+      }
+    }
+  }
+
+  
+  cout << "[E]: It should not be here" << endl;
+  return -1;
+
+}
+
+int ttH_catIndex_4l(float bdt)
+{
+  if (bdt < 0.31) return 1;
+  else return 2;
 }
 
 int ttH_catIndex_3l_SVA(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nJet25){
