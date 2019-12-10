@@ -98,6 +98,8 @@ else:
 for scanpoint in scanpoints: 
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
+    pointname = pointname.replace('p1','kt')
+    pointname = pointname.replace('p2','kv')
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
         if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
@@ -176,9 +178,9 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        datacard = open(outdir+pointname+binname+".card.txt", "w"); 
+        datacard = open(outdir+binname+'_'+pointname+".card.txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
-        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (pointname + binname))
+        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname + pointname))
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation %s\n' % allyields['data_obs'])
@@ -203,10 +205,10 @@ for scanpoint in scanpoints:
         if options.autoMCStats: 
             datacard.write('* autoMCStats %d\n' % options.autoMCStatsValue)
     
-        workspace = ROOT.TFile.Open(outdir+pointname+binname+".input.root", "RECREATE")
+        workspace = ROOT.TFile.Open(outdir+binname+'_'+pointname+".input.root", "RECREATE")
         for h in towrite:
             workspace.WriteTObject(h,h.GetName())
         workspace.Close()
     
-        print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+pointname+binname)
+        print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname+'_'+pointname)
     
