@@ -16,6 +16,7 @@ class EventVars2LSS(Module):
                               "avg_dr_jet",
                               "MT_met_lep1",
                               "MT_met_lep2",
+                              "MT_met_lep3",
                               'mbb_loose',
                               'mbb_medium',
                               'min_Deta_leadfwdJet_jet',
@@ -105,15 +106,11 @@ class EventVars2LSS(Module):
             elif (_var==3): jets = filter(lambda x : x.pt_jerUp>jetptcut, jets)
             elif (_var==-3): jets = filter(lambda x : x.pt_jerDown>jetptcut, jets)
             else: raise RuntimeError("Wrong variation %d"%d)
-            
-            if not hasattr(event, 'FwdJet1_eta%s_Recl'%self.systsJEC[var]) or len(jets) == 0: 
-                ret['min_Deta_leadfwdJet_jet'] = 0
-            else: 
-                if getattr(event, 'nFwdJet%s_Recl'%self.systsJEC[var]) > 0:
-                    ret['min_Deta_leadfwdJet_jet'] = min( [ abs( getattr(event, 'FwdJet1_eta%s_Recl'%self.systsJEC[var]) - j.eta) for j in jets])
-                else: 
-                    ret['min_Deta_leadfwdJet_jet'] = 0
 
+            if getattr(event, 'nFwdJet%s_Recl'%self.systsJEC[_var]) > 0 and len(jets):
+                ret['min_Deta_leadfwdJet_jet'] = min( [ abs( getattr(event, 'FwdJet1_eta%s_Recl'%self.systsJEC[_var]) - j.eta) for j in jets])
+            else: 
+                ret['min_Deta_leadfwdJet_jet'] = 0
                 
             bmedium = filter(lambda x : x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
             bloose  = filter(lambda x : x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
@@ -157,6 +154,8 @@ class EventVars2LSS(Module):
                 ret["MT_met_lep1"] = sqrt( 2*leps[0].conePt*met*(1-cos(leps[0].phi-metphi)) )
             if nlep > 1:
                 ret["MT_met_lep2"] = sqrt( 2*leps[1].conePt*met*(1-cos(leps[1].phi-metphi)) )
+            if nlep > 2:
+                ret["MT_met_lep3"] = sqrt( 2*leps[2].conePt*met*(1-cos(leps[2].phi-metphi)) )
 
             if not _var and hasattr(event, '%s_pt_unclustEnUp'%metName):
                 met_up = getattr(event,metName+"_pt_unclustEnUp")
