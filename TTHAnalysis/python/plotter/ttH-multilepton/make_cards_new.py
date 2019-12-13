@@ -58,7 +58,7 @@ MCASUFFIX="mcdata-frdata"
 DOFILE = ""
 
 if REGION == "2lss":
-    OPT_2L="{T2L} {OPTIONS} -W puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss".format(T2L=T2L, OPTIONS=OPTIONS)
+    OPT_2L="{T2L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss".format(T2L=T2L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
     for ch in ['ee', 'em', 'mm']:
         for node in ['Rest', 'tHQ', 'ttH', 'ttW']:
@@ -110,7 +110,7 @@ if REGION == "2lss_SVA":
     CATFUNC='''"ttH_catIndex_2lss_SVA(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nJet25)"'''
     CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"
     CATNAMES="ee_lj,ee_hj,em_neg_lj,em_neg_hj,em_pos_lj,em_pos_hj,mm_neg_lj,mm_neg_hj,mm_pos_lj,mm_pos_hj"
-    OPT_2L="{T2L} {OPTIONS} -W puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss".format(T2L=T2L, OPTIONS=OPTIONS)
+    OPT_2L="{T2L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss".format(T2L=T2L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
     TORUN='''python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt {FUNCTION_SVA_2L} {SYSTS} {OPT_2L} --binname ttH_2lss_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR};'''.format( DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, SPLITDECAYS=SPLITDECAYS, FUNCTION_SVA_2L=FUNCTION_SVA_2L, SYSTS=SYSTS, OPT_2L=OPT_2L, CATFUNC=CATFUNC,CATNAMES=CATNAMES, CATBINS=CATBINS,YEAR=YEAR)
     print submit.format(command=TORUN)
@@ -119,14 +119,14 @@ if REGION == "2lss_3j_SVA":
     CATFUNC='''"ttH_catIndex_2lss_SVA(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nJet25)"'''
     CATBINS="[0.5,2.5,4.5,6.5,8.5,10.5]"
     CATNAMES="ee,em_neg,em_pos,mm_neg,mm_pos"
-    OPT_2L="{T2L} {OPTIONS} -W puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss -X ^4j -E ^x3j ".format(T2L=T2L, OPTIONS=OPTIONS)
+    OPT_2L="{T2L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss -X ^4j -E ^x3j ".format(T2L=T2L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
     TORUN='''python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt {FUNCTION_SVA_2L} {SYSTS} {OPT_2L} --binname ttH_2lss_3j_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR};'''.format( DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, SPLITDECAYS=SPLITDECAYS, FUNCTION_SVA_2L=FUNCTION_SVA_2L, SYSTS=SYSTS, OPT_2L=OPT_2L, CATFUNC=CATFUNC,CATNAMES=CATNAMES, CATBINS=CATBINS,YEAR=YEAR)
     print submit.format(command=TORUN)
     
 
 if REGION == "3l":
-    OPT_3L="{T3L} {OPTIONS} -W puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
+    OPT_3L="{T3L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
     for CATNAME in "ttH_bl,ttH_bt,tH_bl,tH_bt,rest_eee,rest_eem_bl,rest_eem_bt,rest_emm_bl,rest_emm_bt,rest_mmm_bl,rest_mmm_bt".split(','):
 	if  CATNAME == "ttH_bl" :
@@ -172,13 +172,13 @@ if REGION == "3l_SVA":
     CATFUNC='''"ttH_catIndex_3l_SVA(LepGood1_charge,LepGood2_charge,LepGood3_charge,nJet25)"'''
     CATBINS="[10.5,11.5,12.5,13.5,14.5]"
     CATNAMES="lj_neg,lj_pos,hj_neg,hj_pos"
-    OPT_3L="{T3L} {OPTIONS} -W puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
+    OPT_3L="{T3L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
     TORUN="python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt {FUNCTION_SVA_3L} {SYSTS} {OPT_3L} --binname ttH_3l_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR} ;".format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_SVA_3L=FUNCTION_SVA_3L,SYSTS=SYSTS,OPT_3L=OPT_3L,CATFUNC=CATFUNC,CATBINS=CATBINS,CATNAMES=CATNAMES,YEAR=YEAR)
     print submit.format(command=TORUN)
 
 
 if  REGION == "cr_3l":
-    OPT_3L="{T3L} {OPTIONS} -W puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L,OPTIONS=OPTIONS)
+    OPT_3L="{T3L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L,OPTIONS=OPTIONS)
     CATPOSTFIX="_cr"
     OPT_3L="{OPT_3L} -I ^Zveto -X ^2j -X ^2b1B -E ^underflowVeto3l".format(OPT_3L=OPT_3L)
     CATFUNC="ttH_3l_ifflav(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)"
@@ -188,21 +188,21 @@ if  REGION == "cr_3l":
     print submit.format(command=TORUN)
 
 if REGION == "cr_4l":
-    OPT_4L="{T4L} {OPTIONS} -W puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
+    OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     OPT_4L="{OPT_4L} -I ^Zveto -X ^2j -X ^2b1B -E ^underflowVeto4l".format(OPT_4L=OPT_4L)
     CATPOSTFIX="_cr_4l";
     TORUN = 'python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt {FUNCTION_CR_4L} {SYSTS} {OPT_4L} --binname ttH{CATPOSTFIX}_{YEAR} --year {YEAR}'.format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS, FUNCTION_CR_4L=FUNCTION_CR_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     print submit.format(command=TORUN)
         
 if REGION=="4l": 
-    OPT_4L="{T4L} {OPTIONS} -W puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
+    OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     CATPOSTFIX=""
     TORUN="python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt {FUNCTION_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_4L=FUNCTION_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     
     print submit.format(command=TORUN)
 
 if REGION=="4l_SVA": 
-    OPT_4L="{T4L} {OPTIONS} -W puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
+    OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     CATPOSTFIX=""
     TORUN="python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt {FUNCTION_SVA_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_SVA_4L=FUNCTION_SVA_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     print submit.format(command=TORUN)
