@@ -3,13 +3,22 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import writeOutput
 from CMGTools.TTHAnalysis.tools.mvaTool import *
 
-def m4l(ev):
+def mL4(ev): 
     all_leps = [l for l in Collection(ev,"LepGood")]
     nFO = getattr(ev,"nLepFO_Recl")
     chosen = getattr(ev,"iLepFO_Recl")
     leps = [all_leps[chosen[i]] for i in xrange(nFO)]
     if len(leps) < 4: return 0
-    return (leps[0].p4()+leps[1].p4()+leps[2].p4()+leps[3].p4()).M()
+    leps = leps[:4]
+    min_mass = 999999
+    for i1,l1 in enumerate(leps): 
+        for i2,l2 in enumerate(leps): 
+            if i1<=i2: continue
+            mass = (l1.p4()+l2.p4()).M()
+            if mass < min_mass: 
+                min_mass = mass
+    return min_mass
+            
     
 
 class FinalMVA_4L(Module):
@@ -20,7 +29,7 @@ class FinalMVA_4L(Module):
             MVAVar("lep2_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[1])]) if ev.nLepFO_Recl >= 2 else 0),
             MVAVar("lep3_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[2])]) if ev.nLepFO_Recl >= 3 else 0),
             MVAVar("lep4_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[3])]) if ev.nLepFO_Recl >= 4 else 0),
-            MVAVar("massL4"     , func = lambda ev : m4l(ev)),
+            MVAVar("massL4"     , func = lambda ev : mL4(ev)),
             MVAVar("met_LD"     , func = lambda ev : (ev.MET_pt if ev.year != 2017 else ev.METFixEE2017_pt) *0.6 + ev.mhtJet25_Recl*0.4),
             MVAVar("has_SFOS"   , func = lambda ev : ev.hasOSSF4l),
             
