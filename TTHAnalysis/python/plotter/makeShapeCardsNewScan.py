@@ -178,14 +178,14 @@ for scanpoint in scanpoints:
         nuisances = sorted(systs.keys())
         datacard = open(outdir+binname+'_'+pointname+".card.txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
-        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname + pointname))
+        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation %s\n' % allyields['data_obs'])
         datacard.write('##----------------------------------\n')
         klen = max([7, len(binname)]+[len(p) for p in procs])
         kpatt = " %%%ds "  % klen
-        fpatt = " %%%d.%df " % (klen,3)
+        fpatt = " %%%d.%df " % (klen,10)
         npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
         datacard.write('##----------------------------------\n')
         datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
