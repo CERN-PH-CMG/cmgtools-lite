@@ -6,6 +6,7 @@ change: mhtJet25_Recl\b: mhtJet25_jesTotalUnCorrDown_Recl
 change: nJet40_Recl\b: nJet40_jesTotalUnCorrDown_Recl
 change: htJet40j_Recl\b: htJet40j_jesTotalUnCorrDown_Recl
 change: mhtJet40_Recl\b: mhtJet40_jesTotalUnCorrDown_Recl
+change: nFwdJet_Recl\b: nFwdJet_jesTotalUnCorrDown_Recl
 change: nBJetLoose25_Recl\b: nBJetLoose25_jesTotalUnCorrDown_Recl
 change: nBJetMedium25_Recl\b: nBJetMedium25_jesTotalUnCorrDown_Recl
 change: nBJetTight25_Recl\b: nBJetTight25_jesTotalUnCorrDown_Recl

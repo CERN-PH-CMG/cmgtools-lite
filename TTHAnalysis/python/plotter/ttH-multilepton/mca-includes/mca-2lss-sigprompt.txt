@@ -1,7 +1,7 @@
 ttH+    : TTHnobb_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
                                                                                                                                                       
-tHq	: THQ_ctcvcp : xsec*LHEReweightingWeight[11]*3  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0); FillColor=ROOT.kRed 
-tHW	: THW_ctcvcp : xsec*LHEReweightingWeight[11]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kBlue
+tHq	: THQ_ctcvcp : xsec*LHEReweightingWeight[11]*3  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0); FillColor=ROOT.kBlue
+tHW	: THW_ctcvcp : xsec*LHEReweightingWeight[11]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+8
 TTWW	: TTWW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen
 
 TTW     : TTWToLNu_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"

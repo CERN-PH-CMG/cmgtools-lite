@@ -42,6 +42,9 @@ CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss_mm.* : none
 CMS_ttHl_lepEff_eltight : $PromptFromMC : .*3l.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)+(abs(LepGood3_pdgId)==11)*if3(LepGood3_pt<25\,0.05\,0.03)'
 CMS_ttHl_lepEff_eltight : $PromptFromMC : .*4l.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)+(abs(LepGood3_pdgId)==11)*if3(LepGood3_pt<25\,0.05\,0.03)+(abs(LepGood4_pdgId)==11)*if3(LepGood4_pt<25\,0.05\,0.03)'
 
+## L1 ECAL prefiring
+CMS_ttHl16_L1PreFiring : $PromptFromMC : .*2016.* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom']
+
 ### todo: replace with tau veto efficiency
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
@@ -69,11 +72,11 @@ CMS_scale_j_corr	: $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jecCorrUp.txt'\,'ttH-multilepton/fr-jecCorrDn.txt'], \
 	AddWeights=['btagSF_shape_up_jesCorr/btagSF_shape'\,'btagSF_shape_down_jesCorr/btagSF_shape']
 
-#CMS_ttHl_JER	: $PromptFromMC : .* : templateAsymm; \
-#        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
+CMS_ttHl_JER	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
 
-#CMS_ttHl_UnclusteredEn : $PromptFromMC : .* : templateAsymm; \
-#        FakeRates=['ttH-multilepton/fr-unclUp.txt'\,'ttH-multilepton/fr-unclDn.txt']
+CMS_ttHl_UnclusteredEn : $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-unclUp.txt'\,'ttH-multilepton/fr-unclDn.txt']
 
 CMS_ttHl16_btag_LF    : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_lf/btagSF_shape'\,'btagSF_shape_down_lf/btagSF_shape']
 CMS_ttHl16_btag_HF    : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_hf/btagSF_shape'\,'btagSF_shape_down_hf/btagSF_shape']
