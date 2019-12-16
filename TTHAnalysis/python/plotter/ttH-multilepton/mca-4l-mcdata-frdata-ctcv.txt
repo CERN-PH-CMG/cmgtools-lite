@@ -1,4 +1,4 @@
-incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcvcp.txt"
+incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv.txt"
 incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM.txt"
 incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt"
 incl_mcfakes   : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-mcfakes.txt"
