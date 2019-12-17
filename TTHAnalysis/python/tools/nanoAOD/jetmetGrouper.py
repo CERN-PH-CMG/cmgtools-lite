@@ -47,14 +47,14 @@ class jetmetGrouper(Module):
         for group in self.groups:
             for sign in ['Up','Down']:
                 jetVar    = []
-                metPxVar  = 0
-                metPyVar  = 0
+                metPxVar  = metPx
+                metPyVar  = metPy
                 for j in jets: 
                     thePt  = getattr(j, "pt_nom", "pt")
                     thePhi = getattr(j, "phi") 
                     jetVar.append(0)
                     for comp in self.groups[group]:
-                        jetVar[-1] = (jetVar[-1]**2 + getattr(j,"pt_jes"+ comp + sign)**2)**0.5
+                        jetVar[-1] = (jetVar[-1]**2 + (getattr(j,"pt_jes"+ comp + sign)-thePt)**2)**0.5
                     
                     metPxVar    = metPxVar - (1 if sign == 'Up' else -1) * jetVar[-1] * math.cos(thePhi)
                     metPyVar    = metPyVar - (1 if sign == 'Up' else -1) * jetVar[-1] * math.sin(thePhi)

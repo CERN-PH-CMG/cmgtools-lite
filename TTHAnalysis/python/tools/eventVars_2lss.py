@@ -9,7 +9,7 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class EventVars2LSS(Module):
-    def __init__(self, label="", recllabel='Recl', doSystJEC=True):
+    def __init__(self, label="", recllabel='Recl', doSystJEC=True, variations=[]):
         self.namebranches = [ "mindr_lep1_jet",
                               "mindr_lep2_jet",
                               "mindr_lep3_jet",
@@ -27,6 +27,12 @@ class EventVars2LSS(Module):
                          2:"_jesTotalUnCorrUp", -2: "_jesTotalUnCorrDown",\
                          3:"_jerUp", -3: "_jerDown",\
                      } if doSystJEC else {0:""}
+        if len(variations): 
+            self.systsJEC = {0:""}
+            for i,var in enumerate(variations):
+                self.systsJEC[i+1]   ="_%sUp"%var
+                self.systsJEC[-(i+1)]="_%sDown"%var
+
 
         self.inputlabel = '_'+recllabel
         self.branches = []
@@ -98,14 +104,8 @@ class EventVars2LSS(Module):
                 _var = 0; 
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
-            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalCorrUp>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalCorrDown>jetptcut, jets)
-            elif (_var==2): jets = filter(lambda x : x.pt_jesTotalUnCorrUp>jetptcut, jets)
-            elif (_var==-2): jets = filter(lambda x : x.pt_jesTotalUnCorrDown>jetptcut, jets)
-            elif (_var==3): jets = filter(lambda x : x.pt_jerUp>jetptcut, jets)
-            elif (_var==-3): jets = filter(lambda x : x.pt_jerDown>jetptcut, jets)
-            else: raise RuntimeError("Wrong variation %d"%d)
+            jets = filter(lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), jets)
+
 
             if getattr(event, 'nFwdJet%s_Recl'%self.systsJEC[_var]) > 0 and len(jets):
                 ret['min_Deta_leadfwdJet_jet'] = min( [ abs( getattr(event, 'FwdJet1_eta%s_Recl'%self.systsJEC[_var]) - j.eta) for j in jets])
@@ -168,6 +168,9 @@ class EventVars2LSS(Module):
                 if nlep > 1:
                     allret["MT_met_lep2" + self.label + '_unclustEnUp'] = sqrt( 2*leps[1].conePt*met_up*(1-cos(leps[1].phi-metphi_up)) )
                     allret["MT_met_lep2" + self.label + '_unclustEnDown'] = sqrt( 2*leps[1].conePt*met_down*(1-cos(leps[1].phi-metphi_down)) )
+                if nlep > 2:
+                    allret["MT_met_lep3" + self.label + '_unclustEnUp'] = sqrt( 2*leps[2].conePt*met_up*(1-cos(leps[2].phi-metphi_up)) )
+                    allret["MT_met_lep3" + self.label + '_unclustEnDown'] = sqrt( 2*leps[2].conePt*met_down*(1-cos(leps[2].phi-metphi_down)) )
 
             for br in self.namebranches:
                 allret[br+self.label+self.systsJEC[_var]] = ret[br]
