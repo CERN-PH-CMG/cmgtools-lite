@@ -218,7 +218,7 @@ class MCAnalysis:
             variations={}
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
-                    if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
+                    if var.procmatch().match(pname) and var.binmatch().match(options.binname) and ( var.year() == None or options.year == var.year()) : 
                         #if var.name in variations:
                         #    print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
                         #            var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())

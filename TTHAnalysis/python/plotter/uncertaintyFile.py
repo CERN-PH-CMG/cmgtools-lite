@@ -26,6 +26,7 @@ class Uncertainty:
         self.normUnc=[None,None]
         self._postProcess = None
         self._nontrivialSelectionChange = False
+        self._year = None
         lnU_byname = name.endswith("_lnU")
         lnU_byextra = extra != None and ('lnU' in extra) and bool(extra['lnU'])
         if lnU_byname != lnU_byextra: raise RuntimeError("Inconsistent declaration of %s: is it a lnU or not? by name %r, by options %r" % (name,lnU_byname,lnU_byextra))
@@ -77,6 +78,8 @@ class Uncertainty:
                 self._postProcess = "Normalize"
         if 'DoesNotChangeEventSelection' in self.extra and self.extra['DoesNotChangeEventSelection']:
             self._nontrivialSelectionChange = False
+        if 'year' in self.extra: 
+            self._year = self.extra['year']
     def isDummy(self):
         return  self.unc_type == 'none'
     def isTrivial(self,sign):
@@ -133,6 +136,8 @@ class Uncertainty:
         return self._binmatch
     def unc_type(self):
         return self.unc_type
+    def year(self):
+        return self._year
     def getFR(self,sign):
         FR = self.fakerate[0 if sign=='up' else 1]
         if FR: FR.loadFiles()
@@ -211,3 +216,4 @@ class UncertaintyFile:
     def add(self,uncertainty):
         if uncertainty.name in [u.name for u in self._uncertainty]: raise RuntimeError, 'Uncertainty with name %s is already present' % uncertainty.name
         self._uncertainty.append(uncertainty)
+ 
