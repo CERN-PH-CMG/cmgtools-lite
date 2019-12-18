@@ -102,17 +102,27 @@ recleaner_step1 = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                                            selectJet = lambda jet: jet.jetId > 0, # pt and eta cuts are (hard)coded in the step2 
                                                            coneptdef = lambda lep: conept_TTH(lep),
 )
+recleaner_step2_mc_allvariations = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
+                                                                        cleanTausWithLooseLeptons=True,
+                                                                        cleanJetsWithFOTaus=True,
+                                                                        doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
+                                                                        jetPts=[25,40],
+                                                                        jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
+                                                                        btagL_thr=99, # they are set at runtime 
+                                                                        btagM_thr=99,
+                                                                        isMC = True,
+                                                                        variations= [ 'jes%s'%v for v in jecGroups] + ['jer'] 
+)
 recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
-                                       cleanTausWithLooseLeptons=True,
-                                       cleanJetsWithFOTaus=True,
-                                       doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
-                                       jetPts=[25,40],
-                                       jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
-                                       btagL_thr=99, # they are set at runtime 
-                                       btagM_thr=99,
-                                       isMC = True,
-                                                          #variations=[ 'jes%s'%v for v in jecGroups] + ['jer'] 
-                                                
+                                                          cleanTausWithLooseLeptons=True,
+                                                          cleanJetsWithFOTaus=True,
+                                                          doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
+                                                          jetPts=[25,40],
+                                                          jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
+                                                          btagL_thr=99, # they are set at runtime 
+                                                          btagM_thr=99,
+                                                          isMC = True,
+                                                          
 )
 recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                          cleanTausWithLooseLeptons=True,
@@ -131,6 +141,7 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars = lambda : EventVars2LSS('','Recl')
+eventVars_allvariations = lambda : EventVars2LSS('','Recl',variations = [ 'jes%s'%v for v in jecGroups] + ['jer'])
 
 
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
@@ -144,6 +155,10 @@ countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau201
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016All,jetmetUncertainties2017All,jetmetUncertainties2018All
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import jetMetCorrelate2016, jetMetCorrelate2017, jetMetCorrelate2018
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetCorrelator import jetMetCorrelations2016, jetMetCorrelations2017, jetMetCorrelations2018
+
+jme2016_allvariations = [jetmetUncertainties2016All,jetMetCorrelate2016] 
+jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
+jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
 
 jme2016 = [jetmetUncertainties2016All,jetMetCorrelations2016] 
 jme2017 = [jetmetUncertainties2017All,jetMetCorrelations2017]
@@ -214,6 +229,11 @@ triggerGroups=dict(
         2017 : lambda ev : ev.Trigger_2lss or ev.Trigger_3e or ev.Trigger_3m or ev.Trigger_mee or ev.Trigger_mme,
         2018 : lambda ev : ev.Trigger_2lss or ev.Trigger_3e or ev.Trigger_3m or ev.Trigger_mee or ev.Trigger_mme,
     },
+    Trigger_MET={
+        2016 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight'), # _fires(ev,'HLT_PFMET120_PFMHT90_IDTight') and _fires(ev,'HLT_PFMET120_PFMHT100_IDTight')  and _fires(ev,'HLT_PFMET120_PFMHT110_IDTight') and
+        2017 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight') and _fires(ev,'HLT_PFMET120_PFMHT120_IDTight_PFHT60'), 
+        2018 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight') and _fires(ev,'HLT_PFMET120_PFMHT120_IDTight_PFHT60'),
+    }
 )
 
 
@@ -230,8 +250,9 @@ Trigger_mee  = lambda : EvtTagger('Trigger_mee',[ lambda ev : triggerGroups['Tri
 Trigger_mme  = lambda : EvtTagger('Trigger_mme',[ lambda ev : triggerGroups['Trigger_mme'][ev.year](ev) ])
 Trigger_2lss = lambda : EvtTagger('Trigger_2lss',[ lambda ev : triggerGroups['Trigger_2lss'][ev.year](ev) ])
 Trigger_3l   = lambda : EvtTagger('Trigger_3l',[ lambda ev : triggerGroups['Trigger_3l'][ev.year](ev) ])
+Trigger_MET  = lambda : EvtTagger('Trigger_MET',[ lambda ev : triggerGroups['Trigger_MET'][ev.year](ev) ])
 
-triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss,Trigger_3l]
+triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss,Trigger_3l,Trigger_MET]
 
 
 from CMGTools.TTHAnalysis.tools.BDT_eventReco_cpp import BDT_eventReco
@@ -249,11 +270,31 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
                                      selection = [
                                          lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
                                          lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-                ]
+                                     ]
 )
+
+BDThttTT_allvariations = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjtagger_legacy_xgboost_v1.weights.xml',
+                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
+                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HTT_HadTopTagger_2017_nomasscut_nvar17_resolved.xml',
+                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
+                                                algostring = 'k_httTT_Hj',
+                                                csv_looseWP = 0.5426, 
+                                                csv_mediumWP = 0.8484,
+                                                selection = [
+                                                    lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                                                    lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
+                                                ],
+                                                variations = [ 'jes%s'%v for v in jecGroups] + ['jer'] ,
+)
+
+
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
 finalMVA = lambda : finalMVA_DNN()
+finalMVA_allVars = lambda : finalMVA_DNN( variations = [ 'jes%s'%v for v in jecGroups] + ['jer'])
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
 finalMVA3L = lambda : finalMVA_DNN_3l()
@@ -273,6 +314,10 @@ btagSF2018_dj = lambda : btagSFProducer("2018",'deepjet',collName="JetSel_Recl",
 from CMGTools.TTHAnalysis.tools.nanoAOD.BtagSFs import BtagSFs
 bTagSFs = lambda : BtagSFs("JetSel_Recl",
                            corrs={  "AbsoluteScale": 1., "AbsoluteStat":0., "FlavorQCD":1.,"Fragmentation":1.,"PileUpDataMC":0.5,"PileUpPtBB":0.5,"PileUpPtEC1":0.5,"PileUpPtEC2":0.5,"PileUpPtHF":0.5,"PileUpPtRef":0.5,"RelativeFSR":0.5,"RelativeJEREC1":0., "RelativeJEREC2":0., "RelativeJERHF":0.5,"RelativePtBB":0.5,"RelativePtEC1":0.,"RelativePtEC2":0.,"RelativePtHF":0.5, "RelativeBal":0.5, "RelativeStatEC":0., "RelativeStatFSR":0., "RelativeStatHF":0.,"SinglePionECAL":1., "SinglePionHCAL": 1., "TimePtEta":0., "AbsoluteMPFBias": 1.} # relative sample not there 
+                       )
+
+bTagSFs_allvars = lambda : BtagSFs("JetSel_Recl",
+                                   corrs=jecGroups,
                        )
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors import lepScaleFactors

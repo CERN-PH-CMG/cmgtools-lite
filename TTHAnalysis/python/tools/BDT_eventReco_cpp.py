@@ -10,10 +10,15 @@ import math
 import os
 
 class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = []):
+    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = [], variations=[]):
 
         self.inputlabel = '_'+recllabel
         self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown", 2:"_jesTotalUnCorrUp", -2:"_jesTotalUnCorrDown", 3 : 'jerUp', -3:'jerDown'}
+        if len(variations):
+            self.systsJEC = {0:""}
+            for i,var in enumerate(variations):
+                self.systsJEC[i+1]   ="_%sUp"%var
+                self.systsJEC[-(i+1)]="_%sDown"%var
         self.selection = selection
 
         if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries():
