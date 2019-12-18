@@ -16,7 +16,7 @@ parser.add_option("--infile", dest="infile", action="store_true", default=False,
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
-parser.add_option("--scanregex", dest="scanregex", type="string", default="ct_(?P<kt>.*)_cv_(?P<kv>.*)", help="Regex expression to parse parameters of the scan")
+parser.add_option("--scanregex", dest="scanregex", type="string", default="ct_(?P<kt>.*)_cv_(?P<kv>.*)_", help="Regex expression to parse parameters of the scan")
 parser.add_option("--params", dest="params", type="string", default="kt,kv", help="List of parameters in the regex, separated by commas")
 (options, args) = parser.parse_args()
 options.weight = True
@@ -35,14 +35,13 @@ if not os.path.exists(outdir): os.mkdir(outdir)
 
 scanpoints = []
 pattern = re.compile( options.scanregex ) 
-
 for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ] 
+    
     if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
-
 report={}
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
@@ -96,6 +95,7 @@ else:
     allreports = {binname:report}
 
 for scanpoint in scanpoints: 
+    
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 

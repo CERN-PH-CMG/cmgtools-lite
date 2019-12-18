@@ -36,12 +36,18 @@ T3L=T2L
 T4L=T2L
 
 SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
-SPLITDECAYS=""
-SPLITDECAYS="-splitdecays"
-
+MCAOPTION=""
+MCAOPTION="-splitdecays"
+ASIMOV="signal"
+SCRIPT= "makeShapeCardsNew.py"
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
+if "scan" in OTHER: 
+    ASIMOV="tHq_ct_1p0_cv_1p0,ttH_ct_1p0_cv_1p0,tHW_ct_1p0_cv_1p0"
+    SCRIPT = "makeShapeCardsNewScan.py"
+    MCAOPTION="-ctcv"
+
 print "We are using the asimov dataset"
-OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg ".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB) # neg necessary for subsequent rebin # --asimov signal
+OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg --asimov {ASIMOV}".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
 FUNCTION_2L="ttH_catIndex_2lss_MVA(LepGood1_pdgId,LepGood2_pdgId,DNN_2lss_predictions_ttH,DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ,DNN_2lss_predictions_Rest)"
@@ -102,7 +108,7 @@ if REGION == "2lss":
 else:
 		print "Unknown category {CATNAME}".format(CATNAME=CATNAME)
             
-            TORUN='''python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/2lss_tight_legacy.txt "{FUNCTION_2L}" "{CATBINS}" {SYSTS} {OPT_2L} --binname ttH_2lss_0tau_{ch}_{node}node_{YEAR} --year {YEAR} -A ^alwaystrue regcut "{CUT}"'''.format(DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, SPLITDECAYS=SPLITDECAYS, FUNCTION_2L=FUNCTION_2L, CATBINS=CATBINS, SYSTS=SYSTS, OPT_2L=OPT_2L,ch=ch,node=node,YEAR=YEAR,CUT=CUT)
+            TORUN='''python {SCRIPT} {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/2lss_tight_legacy.txt "{FUNCTION_2L}" "{CATBINS}" {SYSTS} {OPT_2L} --binname ttH_2lss_0tau_{ch}_{node}node_{YEAR} --year {YEAR} -A ^alwaystrue regcut "{CUT}"'''.format(SCRIPT=SCRIPT, DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, MCAOPTION=MCAOPTION, FUNCTION_2L=FUNCTION_2L, CATBINS=CATBINS, SYSTS=SYSTS, OPT_2L=OPT_2L,ch=ch,node=node,YEAR=YEAR,CUT=CUT)
             print submit.format(command=TORUN)
 
 
@@ -112,7 +118,7 @@ if REGION == "2lss_SVA":
     CATNAMES="ee_lj,ee_hj,em_neg_lj,em_neg_hj,em_pos_lj,em_pos_hj,mm_neg_lj,mm_neg_hj,mm_pos_lj,mm_pos_hj"
     OPT_2L="{T2L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss".format(T2L=T2L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    TORUN='''python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt {FUNCTION_SVA_2L} {SYSTS} {OPT_2L} --binname ttH_2lss_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR};'''.format( DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, SPLITDECAYS=SPLITDECAYS, FUNCTION_SVA_2L=FUNCTION_SVA_2L, SYSTS=SYSTS, OPT_2L=OPT_2L, CATFUNC=CATFUNC,CATNAMES=CATNAMES, CATBINS=CATBINS,YEAR=YEAR)
+    TORUN='''python {SCRIPT} {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/2lss_tight.txt {FUNCTION_SVA_2L} {SYSTS} {OPT_2L} --binname ttH_2lss_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR};'''.format(SCRIPT=SCRIPT, DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, MCAOPTION=MCAOPTION, FUNCTION_SVA_2L=FUNCTION_SVA_2L, SYSTS=SYSTS, OPT_2L=OPT_2L, CATFUNC=CATFUNC,CATNAMES=CATNAMES, CATBINS=CATBINS,YEAR=YEAR)
     print submit.format(command=TORUN)
 
 if REGION == "2lss_3j_SVA":
@@ -121,7 +127,7 @@ if REGION == "2lss_3j_SVA":
     CATNAMES="ee,em_neg,em_pos,mm_neg,mm_pos"
     OPT_2L="{T2L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss -X ^4j -E ^x3j ".format(T2L=T2L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    TORUN='''python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt {FUNCTION_SVA_2L} {SYSTS} {OPT_2L} --binname ttH_2lss_3j_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR};'''.format( DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, SPLITDECAYS=SPLITDECAYS, FUNCTION_SVA_2L=FUNCTION_SVA_2L, SYSTS=SYSTS, OPT_2L=OPT_2L, CATFUNC=CATFUNC,CATNAMES=CATNAMES, CATBINS=CATBINS,YEAR=YEAR)
+    TORUN='''python {SCRIPT} {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/2lss_tight.txt {FUNCTION_SVA_2L} {SYSTS} {OPT_2L} --binname ttH_2lss_3j_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR};'''.format(SCRIPT=SCRIPT, DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, MCAOPTION=MCAOPTION, FUNCTION_SVA_2L=FUNCTION_SVA_2L, SYSTS=SYSTS, OPT_2L=OPT_2L, CATFUNC=CATFUNC,CATNAMES=CATNAMES, CATBINS=CATBINS,YEAR=YEAR)
     print submit.format(command=TORUN)
     
 
@@ -165,7 +171,7 @@ if REGION == "3l":
 	else:
             print "Unkown sr", CATNAME
 
-        TORUN = 'python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/3l_tight_legacy.txt "{FUNCTION_3L}" "{CATBINS}" {SYSTS} {OPT_3L} --binname ttH_3l_0tau_{CATNAME}_{YEAR} --year {YEAR}  -A ^alwaystrue regcut "{CUT}"'.format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_3L=FUNCTION_3L,CATBINS=CATBINS,CATNAME=CATNAME,YEAR=YEAR,CUT=CUT, SYSTS=SYSTS, OPT_3L=OPT_3L)
+        TORUN = 'python {SCRIPT} {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/3l_tight_legacy.txt "{FUNCTION_3L}" "{CATBINS}" {SYSTS} {OPT_3L} --binname ttH_3l_0tau_{CATNAME}_{YEAR} --year {YEAR}  -A ^alwaystrue regcut "{CUT}"'.format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_3L=FUNCTION_3L,CATBINS=CATBINS,CATNAME=CATNAME,YEAR=YEAR,CUT=CUT, SYSTS=SYSTS, OPT_3L=OPT_3L)
         print submit.format(command=TORUN)
 
 if REGION == "3l_SVA":
@@ -173,7 +179,7 @@ if REGION == "3l_SVA":
     CATBINS="[10.5,11.5,12.5,13.5,14.5]"
     CATNAMES="lj_neg,lj_pos,hj_neg,hj_pos"
     OPT_3L="{T3L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
-    TORUN="python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt {FUNCTION_SVA_3L} {SYSTS} {OPT_3L} --binname ttH_3l_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR} ;".format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_SVA_3L=FUNCTION_SVA_3L,SYSTS=SYSTS,OPT_3L=OPT_3L,CATFUNC=CATFUNC,CATBINS=CATBINS,CATNAMES=CATNAMES,YEAR=YEAR)
+    TORUN="python {SCRIPT} {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/3l_tight.txt {FUNCTION_SVA_3L} {SYSTS} {OPT_3L} --binname ttH_3l_{YEAR} --categorize {CATFUNC} {CATBINS} {CATNAMES}  --year {YEAR} ;".format(SCRIPT=SCRIPT,DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_SVA_3L=FUNCTION_SVA_3L,SYSTS=SYSTS,OPT_3L=OPT_3L,CATFUNC=CATFUNC,CATBINS=CATBINS,CATNAMES=CATNAMES,YEAR=YEAR)
     print submit.format(command=TORUN)
 
 
@@ -184,25 +190,25 @@ if  REGION == "cr_3l":
     CATFUNC="ttH_3l_ifflav(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)"
     CATBINS="[0.5,1.5,2.5,3.5,4.5]"
     CATNAMES=",".join( map( lambda x : x+CATPOSTFIX, 'eee,eem,emm,mmm'.split(',')))
-    TORUN = '''python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt {FUNCTION_CR_3L} {SYSTS} {OPT_3L} --binname ttH_cr_3l_{YEAR} --categorize "{CATFUNC}" {CATBINS} {CATNAMES} --year {YEAR}'''.format(DOFILE=DOFILE, MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_CR_3L=FUNCTION_CR_3L,SYSTS=SYSTS,OPT_3L=OPT_3L,YEAR=YEAR,CATFUNC=CATFUNC,CATBINS=CATBINS,CATNAMES=CATNAMES)
+    TORUN = '''python {SCRIPT} {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/3l_tight.txt {FUNCTION_CR_3L} {SYSTS} {OPT_3L} --binname ttH_cr_3l_{YEAR} --categorize "{CATFUNC}" {CATBINS} {CATNAMES} --year {YEAR}'''.format( SCRIPT=SCRIPT, DOFILE=DOFILE, MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_CR_3L=FUNCTION_CR_3L,SYSTS=SYSTS,OPT_3L=OPT_3L,YEAR=YEAR,CATFUNC=CATFUNC,CATBINS=CATBINS,CATNAMES=CATNAMES)
     print submit.format(command=TORUN)
 
 if REGION == "cr_4l":
     OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     OPT_4L="{OPT_4L} -I ^Zveto -X ^2j -X ^2b1B -E ^underflowVeto4l".format(OPT_4L=OPT_4L)
     CATPOSTFIX="_cr_4l";
-    TORUN = 'python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt {FUNCTION_CR_4L} {SYSTS} {OPT_4L} --binname ttH{CATPOSTFIX}_{YEAR} --year {YEAR}'.format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS, FUNCTION_CR_4L=FUNCTION_CR_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
+    TORUN = 'python {SCRIPT} {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/4l_tight.txt {FUNCTION_CR_4L} {SYSTS} {OPT_4L} --binname ttH{CATPOSTFIX}_{YEAR} --year {YEAR}'.format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION, FUNCTION_CR_4L=FUNCTION_CR_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     print submit.format(command=TORUN)
         
 if REGION=="4l": 
     OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    TORUN="python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt {FUNCTION_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_4L=FUNCTION_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
+    TORUN="python {SCRIPT} {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/4l_tight.txt {FUNCTION_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_4L=FUNCTION_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     
     print submit.format(command=TORUN)
 
 if REGION=="4l_SVA": 
     OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    TORUN="python makeShapeCardsNew.py {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt {FUNCTION_SVA_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,SPLITDECAYS=SPLITDECAYS,FUNCTION_SVA_4L=FUNCTION_SVA_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
+    TORUN="python {SCRIPT} {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/4l_tight.txt {FUNCTION_SVA_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_SVA_4L=FUNCTION_SVA_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     print submit.format(command=TORUN)
