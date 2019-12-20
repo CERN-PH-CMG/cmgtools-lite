@@ -27,7 +27,7 @@ class finalMVA_DNN(Module):
 
 
         for var in self.systsJEC: 
-            self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/NN_2lss_0tau_2017.pb',
+            self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
                                self.getVarsForVariation(self.systsJEC[var]), cats_2lss, varorder))
 
             self.outVars.extend( ['DNN_2lss%s_'%self.systsJEC[var] + x for x in cats_2lss])
@@ -45,9 +45,9 @@ class finalMVA_DNN(Module):
         vars_2lss_unclDown["mT_lep2"          ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
         self.outVars.extend( ['DNN_2lss_unclDown_' + x for x in cats_2lss])
 
-        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/NN_2lss_0tau_2017.pb',
+        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
                                            vars_2lss_unclUp, cats_2lss, varorder)
-        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/NN_2lss_0tau_2017.pb',
+        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
                                            vars_2lss_unclDown, cats_2lss, varorder)
         
         self._MVAs.extend( [worker_2lss_unclUp, worker_2lss_unclDown])
@@ -65,7 +65,7 @@ class finalMVA_DNN(Module):
                  "mT_lep2"          : lambda ev : getattr(ev,'MT_met_lep2%s'%var),
                  "jet4_phi"         : lambda ev : ev.JetSel_Recl_phi[3] if getattr(ev,'nJet25%s_Recl'%var) > 3 else -9,
                  "lep2_conePt"      : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[1])],
-                 "hadTop_BDT"       : lambda ev : getattr(ev,'BDThttTT_eventReco_mvaValue%s'%var) if getattr(ev,'BDThttTT_eventReco_mvaValue%s'%var) > 0 else -9,
+                 "hadTop_BDT"       : lambda ev : getattr(ev,'BDThttTT_eventReco_mvaValue%s'%(var)) if getattr(ev,'BDThttTT_eventReco_mvaValue%s'%(var)) > 0 else -9,
                  "jet1_phi"         : lambda ev : ev.JetSel_Recl_phi[0] if getattr(ev,'nJet25%s_Recl'%var) > 0 else -9,
                  "jet2_eta"         : lambda ev : abs(ev.JetSel_Recl_eta[1]) if getattr(ev,'nJet25%s_Recl'%var) > 1 else 9,
                  "n_presel_jetFwd"  : lambda ev : getattr(ev,'nFwdJet%s_Recl'%var), 
@@ -73,7 +73,7 @@ class finalMVA_DNN(Module):
                  "lep1_charge"      : lambda ev : ev.LepGood_charge[int(ev.iLepFO_Recl[0])],
                  "avg_dr_jet"       : lambda ev : getattr(ev,'avg_dr_jet%s'%var),
                  "lep1_phi"         : lambda ev : (ev.LepGood_phi[int(ev.iLepFO_Recl[0])]) if ev.nLepFO_Recl >= 1 else -9,
-                 "Hj_tagger_hadTop" : lambda ev : getattr(ev,'BDThttTT_eventReco_Hj_score%s'%var) if getattr(ev,'BDThttTT_eventReco_Hj_score%s'%var) > 0 else -9 ,
+                 "Hj_tagger_hadTop" : lambda ev : getattr(ev,'BDThttTT_eventReco_Hj_score%s'%(var)) if getattr(ev,'BDThttTT_eventReco_Hj_score%s'%(var)) > 0 else -9 ,
                  "nBJetLoose"       : lambda ev : getattr(ev,'nBJetLoose25%s_Recl'%var),
                  "jet4_pt"          : lambda ev : getattr(ev,'JetSel_Recl_pt%s'%var)[3] if getattr(ev,'nJet25%s_Recl'%var) > 3 else -9,
                  "mindr_lep1_jet"   : lambda ev : getattr(ev,'mindr_lep1_jet%s'%var),
