@@ -324,7 +324,7 @@ class TreeToYield:
         if 'Friends' in self._settings: friendOpts += self._settings['Friends']
         friendSimpleOpts = self._options.friendTreesSimple[:]
         friendSimpleOpts += (self._options.friendTreesDataSimple if self._isdata else self._options.friendTreesMCSimple)
-        if 'FriendsSimple' in self._settings: friendSimpleOpts += self._settings['FriendsSimple']
+        if 'FriendsSimple' in self._settings: friendSimpleOpts += [self._settings['FriendsSimple']]
         if self._isNano:
             friendOpts += [ ('Friends', d+"/{cname}_Friend.root") for d in friendSimpleOpts]
         else:
