@@ -298,6 +298,7 @@ finalMVA_allVars = lambda : finalMVA_DNN( variations = [ 'jes%s'%v for v in jecG
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
 finalMVA3L = lambda : finalMVA_DNN_3l()
+finalMVA3L_allVars = lambda : finalMVA_DNN_3l(variations = [ 'jes%s'%v for v in jecGroups] + ['jer'])
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.finalMVA_4l import FinalMVA_4L
 finalMVA_4l = lambda : FinalMVA_4L()
@@ -330,6 +331,9 @@ scaleFactorSequence_2018 = [leptonSFs,btagSF2018_dj,bTagSFs]
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
 higgsDecay = lambda : higgsDecayFinder()
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.VHsplitter import VHsplitter
+vhsplitter = lambda : VHsplitter()
 
 # from CMGTools.TTHAnalysis.tools.synchTools import SynchTuples
 # synchTuples = lambda : SynchTuples()
