@@ -12,12 +12,19 @@ tHW_hww+ : THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 &
 tHW_hzz+ : THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue, sumgenweightname = "LHEReweightingSumw_[11]"
 tHW_htt+ : THW_ctcvcp : xsec*LHEReweightingWeight[11] : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue, sumgenweightname = "LHEReweightingSumw_[11]"
 
-VH_hww : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)  ; FillColor=ROOT.kAzure-9, years="2017\,2018"
-VH_hzz : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)  ; FillColor=ROOT.kAzure-9, years="2017\,2018"
-VH_htt : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)  ; FillColor=ROOT.kAzure-9, years="2017\,2018"
-VH_hww : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)  ; FillColor=ROOT.kAzure-9, years="2016"
-VH_hzz : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)  ; FillColor=ROOT.kAzure-9, years="2016"
-VH_htt : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)  ; FillColor=ROOT.kAzure-9, years="2016"
+ZH_hww+ : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)*(VHisZH==1)  ; FillColor=ROOT.kAzure-9, years="2017\,2018", FriendsSimple="{P}/0_VHsplitter/"
+ZH_hzz+ : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)*(VHisZH==1)  ; FillColor=ROOT.kAzure-9, years="2017\,2018", FriendsSimple="{P}/0_VHsplitter/"
+ZH_htt+ : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)*(VHisZH==1)  ; FillColor=ROOT.kAzure-9, years="2017\,2018", FriendsSimple="{P}/0_VHsplitter/"
+ZH_hww+ : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)   *(VHisZH==1)  ; FillColor=ROOT.kAzure-9, years="2016"      , FriendsSimple="{P}/0_VHsplitter/"
+ZH_hzz+ : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)   *(VHisZH==1)  ; FillColor=ROOT.kAzure-9, years="2016"      , FriendsSimple="{P}/0_VHsplitter/"
+ZH_htt+ : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)   *(VHisZH==1)  ; FillColor=ROOT.kAzure-9, years="2016"      , FriendsSimple="{P}/0_VHsplitter/"
+																										                                                      
+WH_hww+ : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)*(VHisZH!=1)  ; FillColor=ROOT.kAzure-9, years="2017\,2018", FriendsSimple="{P}/0_VHsplitter/"
+WH_hzz+ : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)*(VHisZH!=1)  ; FillColor=ROOT.kAzure-9, years="2017\,2018", FriendsSimple="{P}/0_VHsplitter/"
+WH_htt+ : VHToNonbb_ll : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)*(VHisZH!=1)  ; FillColor=ROOT.kAzure-9, years="2017\,2018", FriendsSimple="{P}/0_VHsplitter/"
+WH_hww+ : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==24)   *(VHisZH!=1)  ; FillColor=ROOT.kAzure-9, years="2016"      , FriendsSimple="{P}/0_VHsplitter/"
+WH_hzz+ : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==23)   *(VHisZH!=1)  ; FillColor=ROOT.kAzure-9, years="2016"      , FriendsSimple="{P}/0_VHsplitter/"
+WH_htt+ : VHToNonbb : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0) * (GenHiggsDecayMode==15)   *(VHisZH!=1)  ; FillColor=ROOT.kAzure-9, years="2016"      , FriendsSimple="{P}/0_VHsplitter/"
 
 
 
