@@ -1,0 +1,34 @@
+ttH_ct_0p75_cv_1p0+    : TTH_ctcvcp : 0.5071*0.418*LHEReweightingWeight[10] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
+ttH_ct_1p25_cv_1p0+    : TTH_ctcvcp : 0.5071*0.418*LHEReweightingWeight[12] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
+ttH_ct_3p0_cv_1p0+     : TTH_ctcvcp : 0.5071*0.418*LHEReweightingWeight[15] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
+ttH_ct_1p0_cv_1p5+     : TTH_ctcvcp : 0.5071*0.418*LHEReweightingWeight[28] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
+ttH_ct_0p25_cv_1p5+    : TTH_ctcvcp : 0.5071*0.418*LHEReweightingWeight[25] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
+
+tHq_ct_0p75_cv_1p0+ : THQ_ctcvcp : xsec*LHEReweightingWeight[10] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
+tHq_ct_1p25_cv_1p0+: THQ_ctcvcp : xsec*LHEReweightingWeight[12] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
+tHq_ct_3p0_cv_1p0+ : THQ_ctcvcp : xsec*LHEReweightingWeight[15] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
+tHq_ct_1p0_cv_1p5+ : THQ_ctcvcp : xsec*LHEReweightingWeight[28] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
+tHq_ct_0p25_cv_1p5+ : THQ_ctcvcp : xsec*LHEReweightingWeight[25] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
+
+tHW_ct_0p75_cv_1p0+	: THW_ctcvcp : xsec*LHEReweightingWeight[10] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue
+tHW_ct_1p25_cv_1p0+	: THW_ctcvcp : xsec*LHEReweightingWeight[12] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue
+tHW_ct_3p0_cv_1p0+	: THW_ctcvcp : xsec*LHEReweightingWeight[15] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue
+tHW_ct_1p0_cv_1p5+	: THW_ctcvcp : xsec*LHEReweightingWeight[28] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue
+tHWS_ct_0p25_cv_1p+	: THW_ctcvcp : xsec*LHEReweightingWeight[25] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue
+
+TTWW	: TTWW : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kGreen
+
+TTW     : TTWToLNu_fxfx : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, Label="ttW   "
+TTZ     : TTZToLLNuNu_amc : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2, Label="ttZ   "
+TTZ     : TTZToLLNuNu_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
+TTZ	: TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+TTZ   	: TTJets_SingleLeptonFromT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+TTZ   	: TTJets_SingleLeptonFromTbar : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+
+WZ	: WZTo3LNu_fxfx : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
+WZ	: WJetsToLNu_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
+ZZ      : ZZTo4L : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kViolet-3
+ZZ      : DYJetsToLL_M10to50_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kViolet-3
+ZZ      : DYJetsToLL_M50 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kViolet-3
+
+Rares: GGHZZ4L : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
