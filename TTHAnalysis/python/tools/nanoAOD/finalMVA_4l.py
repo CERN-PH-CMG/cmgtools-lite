@@ -25,10 +25,10 @@ class FinalMVA_4L(Module):
     def __init__(self):
         self._MVAs = {}
         self._vars = [
-            MVAVar("lep1_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[0])]) if ev.nLepFO_Recl >= 1 else 0),
-            MVAVar("lep2_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[1])]) if ev.nLepFO_Recl >= 2 else 0),
-            MVAVar("lep3_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[2])]) if ev.nLepFO_Recl >= 3 else 0),
-            MVAVar("lep4_conePt", func = lambda ev : (ev.LepGood_eta[int(ev.iLepFO_Recl[3])]) if ev.nLepFO_Recl >= 4 else 0),
+            MVAVar("lep1_conePt", func = lambda ev : (ev.LepGood_conePt[int(ev.iLepFO_Recl[0])]) if ev.nLepFO_Recl >= 1 else 0),
+            MVAVar("lep2_conePt", func = lambda ev : (ev.LepGood_conePt[int(ev.iLepFO_Recl[1])]) if ev.nLepFO_Recl >= 2 else 0),
+            MVAVar("lep3_conePt", func = lambda ev : (ev.LepGood_conePt[int(ev.iLepFO_Recl[2])]) if ev.nLepFO_Recl >= 3 else 0),
+            MVAVar("lep4_conePt", func = lambda ev : (ev.LepGood_conePt[int(ev.iLepFO_Recl[3])]) if ev.nLepFO_Recl >= 4 else 0),
             MVAVar("massL4"     , func = lambda ev : mL4(ev)),
             MVAVar("met_LD"     , func = lambda ev : (ev.MET_pt if ev.year != 2017 else ev.METFixEE2017_pt) *0.6 + ev.mhtJet25_Recl*0.4),
             MVAVar("has_SFOS"   , func = lambda ev : ev.hasOSSF4l),
