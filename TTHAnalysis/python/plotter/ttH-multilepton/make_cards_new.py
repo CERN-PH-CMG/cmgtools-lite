@@ -7,8 +7,8 @@ submit = '''sbatch -c %d -p short  --wrap '{command}' '''%nCores
 if   'cmsco01.cern.ch' in os.environ['HOSTNAME']: ORIGIN="/data/peruzzi";
 elif 'cmsphys10' in os.environ['HOSTNAME']:       ORIGIN="/data1/g/gpetrucc"; 
 elif 'gpetrucc-vm2.cern.ch' in os.environ['HOSTNAME']:       ORIGIN="/data/gpetrucc"; 
-elif 'fanae' in os.environ['HOSTNAME']:       ORIGIN="/pool/ciencias/HeppyTrees/EdgeZ/TTH/"; 
-elif 'gae' in os.environ['HOSTNAME']:       ORIGIN="/pool/ciencias/HeppyTrees/EdgeZ/TTH/"; 
+elif 'fanae' in os.environ['HOSTNAME']:       ORIGIN="/pool/cienciasrw/HeppyTrees/EdgeZ/TTH/"; 
+elif 'gae' in os.environ['HOSTNAME']:       ORIGIN="/pool/cienciasrw/HeppyTrees/EdgeZ/TTH/"; 
 else: ORIGIN="/afs/cern.ch/work/p/peruzzi"; 
 
 if len(sys.argv) < 4: 
@@ -31,11 +31,12 @@ OPTIONS=" --tree NanoAOD --s2v -j {J} -l {LUMI} -f --WA prescaleFromSkim --split
 os.system("test -d cards/{OUTNAME} || mkdir -p cards/{OUTNAME}".format(OUTNAME=OUTNAME))
 OPTIONS="{OPTIONS} --od cards/{OUTNAME} ".format(OPTIONS=OPTIONS, OUTNAME=OUTNAME)
 
-T2L="-P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1  --Fs  {{P}}/1_recl/ --FMCs {{P}}/2_scalefactors --Fs {{P}}/3_tauCount --Fs {{P}}/6_mva3l --Fs {{P}}/6_mva2lss_new/  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
+#T2L="-P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1  --Fs  {{P}}/1_recl/ --FMCs {{P}}/2_scalefactors --Fs {{P}}/3_tauCount --Fs {{P}}/6_mva3l --Fs {{P}}/6_mva2lss_new/  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
+T2L="-P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1_sources  --FMCs {{P}}/1_recl_sources --FDs {{P}}/1_recl --FMCs {{P}}/2_scalefactors_allvars --FMCs {{P}}/2_scalefactors_lep --Fs {{P}}/3_tauCount --FMCs {{P}}/6_mva3l_allVars --FDs {{P}}/6_mva3l --FMCs {{P}}/6_mva2lss_allVars/ --FDs {{P}}/6_mva2lss  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
 T3L=T2L
 T4L=T2L
 
-SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
+SYSTS="--unc ttH-multilepton/systsUnc_all.txt --amc"
 MCAOPTION=""
 MCAOPTION="-splitdecays"
 ASIMOV="signal"
@@ -105,7 +106,7 @@ if REGION == "2lss":
             elif CATNAME == "mm_tHQnode":
                 CATBINS="[113.5,114.5,115.5,116.5,117.5,118.5,119.5,120.5]"
                 CUT="{FUNCTION_2L} > 113 && {FUNCTION_2L} < 121".format(FUNCTION_2L=FUNCTION_2L)
-else:
+            else:
 		print "Unknown category {CATNAME}".format(CATNAME=CATNAME)
             
             TORUN='''python {SCRIPT} {DOFILE} ttH-multilepton/mca-2lss-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/2lss_tight_legacy.txt "{FUNCTION_2L}" "{CATBINS}" {SYSTS} {OPT_2L} --binname ttH_2lss_0tau_{ch}_{node}node_{YEAR} --year {YEAR} -A ^alwaystrue regcut "{CUT}"'''.format(SCRIPT=SCRIPT, DOFILE=DOFILE, MCASUFFIX=MCASUFFIX, MCAOPTION=MCAOPTION, FUNCTION_2L=FUNCTION_2L, CATBINS=CATBINS, SYSTS=SYSTS, OPT_2L=OPT_2L,ch=ch,node=node,YEAR=YEAR,CUT=CUT)
