@@ -36,7 +36,6 @@ if not os.path.exists(outdir): os.mkdir(outdir)
 scanpoints = []
 pattern = re.compile( options.scanregex ) 
 for psig in mca.listSignals(True):
-    print(psig)
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
@@ -94,7 +93,6 @@ if options.categ:
         allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
 else:
     allreports = {binname:report}
-print(scanpoints)
 for scanpoint in scanpoints: 
     
     listSignals = [] 
