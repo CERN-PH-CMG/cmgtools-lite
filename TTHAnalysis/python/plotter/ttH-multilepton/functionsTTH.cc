@@ -129,9 +129,9 @@ int ttH_catIndex_2lss(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float t
 
 }
 
-std::map<TString,int> bins2lss = {{"ee_ttHnode",8},{"ee_Restnode",13},{"ee_ttWnode",11},{"ee_tHQnode",8},
-				      {"em_ttHnode",5},{"em_Restnode",11},{"em_ttWnode",11},{"em_tHQnode",7},
-				      {"mm_ttHnode",10},{"mm_Restnode",10},{"mm_ttWnode",13},{"mm_tHQnode",4}};
+std::map<TString,int> bins2lss = {{"ee_ttHnode",5},{"ee_Restnode",8},{"ee_ttWnode",6},{"ee_tHQnode",4},
+				  {"em_ttHnode",13},{"em_Restnode",8},{"em_ttWnode",19},{"em_tHQnode",11},
+				  {"mm_ttHnode",13},{"mm_Restnode",11},{"mm_ttWnode",15},{"mm_tHQnode",7}};
 std::vector<TString> bin2lsslabels = {
   "ee_ttHnode","ee_Restnode","ee_ttWnode","ee_tHQnode",
   "em_ttHnode","em_Restnode","em_ttWnode","em_tHQnode",
@@ -147,7 +147,7 @@ int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, flo
 {
   if (!f2lssBins){
     int offset = 0;
-    f2lssBins = TFile::Open("../../data/kinMVA/DNNSubCat2_BIN.root");
+    f2lssBins = TFile::Open("../../data/kinMVA/DNN_BIN_v2.root ");
     for (auto & la : bin2lsslabels){
       int bins = bins2lss[la];
       binHistos2lss[la] = (TH1F*) f2lssBins->Get(Form("%s_2018_Map_nBin%d", la.Data(), bins));
