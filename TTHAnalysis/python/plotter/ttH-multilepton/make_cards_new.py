@@ -1,14 +1,14 @@
 import os, sys
 nCores=8
 submit = '{command}' 
-submit = '''sbatch -c %d -p short  --wrap '{command}' '''%nCores
+submit = '''sbatch -c %d -p batch  --wrap '{command}' '''%nCores
 
 
 if   'cmsco01.cern.ch' in os.environ['HOSTNAME']: ORIGIN="/data/peruzzi";
 elif 'cmsphys10' in os.environ['HOSTNAME']:       ORIGIN="/data1/g/gpetrucc"; 
 elif 'gpetrucc-vm2.cern.ch' in os.environ['HOSTNAME']:       ORIGIN="/data/gpetrucc"; 
-elif 'fanae' in os.environ['HOSTNAME']:       ORIGIN="/pool/cienciasrw/HeppyTrees/EdgeZ/TTH/"; 
-elif 'gae' in os.environ['HOSTNAME']:       ORIGIN="/pool/cienciasrw/HeppyTrees/EdgeZ/TTH/"; 
+elif 'fanae' in os.environ['HOSTNAME']:       ORIGIN="/pool/ciencias/HeppyTrees/EdgeZ/TTH/"; 
+elif 'gae' in os.environ['HOSTNAME']:       ORIGIN="/pool/ciencias/HeppyTrees/EdgeZ/TTH/"; 
 else: ORIGIN="/afs/cern.ch/work/p/peruzzi"; 
 
 if len(sys.argv) < 4: 
@@ -53,7 +53,7 @@ CATPOSTFIX=""
 
 FUNCTION_2L="ttH_catIndex_2lss_MVA(LepGood1_pdgId,LepGood2_pdgId,DNN_2lss_predictions_ttH,DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ,DNN_2lss_predictions_Rest)"
 FUNCTION_3L="ttH_catIndex_3l_MVA(DNN_3l_predictions_ttH,DNN_3l_predictions_tH,DNN_3l_predictions_rest,LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId,nBJetMedium25)"
-FUNCTION_4L="FinalMVA_4L_BDTG [0.0,0.31,1.0]"
+FUNCTION_4L=''' "ttH_catIndex_4l(FinalMVA_4L_BDTG)" [0.5,1.5,2.5] '''
 FUNCTION_CR_3L='''"ttH_3l_clasifier(nJet25,nBJetMedium25)" [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5] '''
 FUNCTION_CR_4L='''"ttH_4l_clasifier(nJet25,nBJetMedium25,mZ2)" [0.5,1.5,2.5,3.5,4.5] '''
 FUNCTION_SVA_2L='''"mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass)" [10.,40.0,55.0,70.0,80.0,95.0,110.0,140.0,180.,800.0]'''
@@ -135,40 +135,31 @@ if REGION == "2lss_3j_SVA":
 if REGION == "3l":
     OPT_3L="{T3L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    for CATNAME in "ttH_bl,ttH_bt,tH_bl,tH_bt,rest_eee,rest_eem_bl,rest_eem_bt,rest_emm_bl,rest_emm_bt,rest_mmm_bl,rest_mmm_bt".split(','):
+    for CATNAME in "ttH_bl,ttH_bt,tH_bl,tH_bt,rest_eee,rest_eem,rest_emm,rest_mmm".split(','):
 	if  CATNAME == "ttH_bl" :
-	    CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5]"
-	    CUT="{FUNCTION_3L} > 0 && {FUNCTION_3L} < 6".format(FUNCTION_3L=FUNCTION_3L)
+	    CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5,6.5]"
+	    CUT="{FUNCTION_3L} > 0 && {FUNCTION_3L} < 7".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "ttH_bt" :
-	    CATBINS="[5.5,6.5,7.5,8.5,9.5]"
-	    CUT="{FUNCTION_3L} > 5 && {FUNCTION_3L} < 10".format(FUNCTION_3L=FUNCTION_3L)
+	    CATBINS="[6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5]"
+	    CUT="{FUNCTION_3L} > 6 && {FUNCTION_3L} < 14".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "tH_bl" :
-	    CATBINS="[9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5]"
-	    CUT="{FUNCTION_3L} > 9 && {FUNCTION_3L} < 17".format(FUNCTION_3L=FUNCTION_3L)
+	    CATBINS="[13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5]"
+	    CUT="{FUNCTION_3L} > 13 && {FUNCTION_3L} < 21".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "tH_bt" :
-	    CATBINS="[16.5,17.5,18.5,19.5]"
-	    CUT="{FUNCTION_3L} > 16 && {FUNCTION_3L} < 20".format(FUNCTION_3L=FUNCTION_3L)
+	    CATBINS="[20.5,21.5,22.5,23.5,24.5,25.5]"
+	    CUT="{FUNCTION_3L} > 20 && {FUNCTION_3L} < 23".format(FUNCTION_3L=FUNCTION_3L)
 	elif  CATNAME == "rest_eee" :
-	    CATBINS="[19.5,20.5]"
-	    CUT="{FUNCTION_3L} > 19 && {FUNCTION_3L} < 21".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_eem_bl" :
-	    CATBINS="[20.5,21.5,22.5,23.5,24.5]"
-	    CUT="{FUNCTION_3L} > 20 && {FUNCTION_3L} < 25".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_eem_bt" :
-	    CATBINS="[24.5,25.5]"
-	    CUT="{FUNCTION_3L} > 24 && {FUNCTION_3L} < 26".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_emm_bl" :
-	    CATBINS="[25.5,26.5,27.5,28.5,29.5]"
-	    CUT="{FUNCTION_3L} > 25 && {FUNCTION_3L} < 30".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_emm_bt" :
-	    CATBINS="[29.5,30.5]"
-	    CUT="{FUNCTION_3L} > 29 && {FUNCTION_3L} < 31".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_mmm_bl" :
-	    CATBINS="[30.5,31.5,32.5,33.5]"
-	    CUT="{FUNCTION_3L} > 30 && {FUNCTION_3L} < 34".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_mmm_bt" :
-	    CATBINS="[30.5,34.5]"
-	    CUT="{FUNCTION_3L} > 33 && {FUNCTION_3L} < 35".format(FUNCTION_3L=FUNCTION_3L)
+	    CATBINS="[25.5,26.5]"
+	    CUT="{FUNCTION_3L} > 25 && {FUNCTION_3L} < 27".format(FUNCTION_3L=FUNCTION_3L)
+	elif  CATNAME == "rest_eem" :
+	    CATBINS="[26.5,27.5,28.5,29.5,30.5]"
+	    CUT="{FUNCTION_3L} > 26 && {FUNCTION_3L} < 31".format(FUNCTION_3L=FUNCTION_3L)
+	elif  CATNAME == "rest_emm" :
+	    CATBINS="[30.5,31.5,32.5,33.5,34.5]"
+	    CUT="{FUNCTION_3L} > 30 && {FUNCTION_3L} < 35".format(FUNCTION_3L=FUNCTION_3L)
+	elif  CATNAME == "rest_mmm" :
+	    CATBINS="[34.5,35.5,36.5,37.5,38.5]"
+	    CUT="{FUNCTION_3L} > 34 && {FUNCTION_3L} < 39".format(FUNCTION_3L=FUNCTION_3L)
 	else:
             print "Unkown sr", CATNAME
 
@@ -204,7 +195,7 @@ if REGION == "cr_4l":
 if REGION=="4l": 
     OPT_4L="{T4L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l".format(T4L=T4L,OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    TORUN="python {SCRIPT} {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/4l_tight.txt {FUNCTION_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR}".format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_4L=FUNCTION_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
+    TORUN="python {SCRIPT} {DOFILE} ttH-multilepton/mca-4l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/4l_tight.txt {FUNCTION_4L} {SYSTS} {OPT_4L} --binname ttH_4l{CATPOSTFIX}_{YEAR} --year {YEAR} ".format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_4L=FUNCTION_4L,SYSTS=SYSTS,OPT_4L=OPT_4L,CATPOSTFIX=CATPOSTFIX,YEAR=YEAR)
     
     print submit.format(command=TORUN)
 

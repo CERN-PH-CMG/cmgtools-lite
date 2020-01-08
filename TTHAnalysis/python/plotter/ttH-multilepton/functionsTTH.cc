@@ -205,13 +205,13 @@ int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pd
 
   int sumpdgId = abs(lep1_pdgId)+abs(lep2_pdgId)+abs(lep3_pdgId);
   
-  if (ttH > rest && ttH > tH){
+  if (ttH >= rest && ttH >= tH){
     if (nBMedium < 2)
       return 1;
     else
       return 2;
   }
-  else if (tH > ttH && tH > rest){
+  else if (tH >= ttH && tH >= rest){
     if (nBMedium < 2){
       return 3;
     }
@@ -219,38 +219,23 @@ int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pd
       return 4;
     }
   }
-  else if (rest > ttH && rest > tH){
+  else if (rest >= ttH && rest >= tH){
     if ( sumpdgId == 33){ // eee
       return 5;
     }
     else if (sumpdgId == 35){ // eem
-      if (nBMedium < 2){
-	return 6;
-      }
-      else{
-	return 7;
-      }
+      return 6;
     }
     else if (sumpdgId == 37){ // emm
-      if (nBMedium < 2){
-	return 8;
-      }
-      else{
-	return 9;
-      }
+      return 7;
     }
     else if (sumpdgId == 39){ // mmm
-      if (nBMedium < 2){
-	return 10;
-      }
-      else{
-	return 11;
-      }
+      return 8;
     }
   }
 
   
-  cout << "[E]: It should not be here" << endl;
+  cout << "[ttH_catIndex_3l]: It should not be here" << endl;
   return -1;
 
 }
@@ -258,87 +243,82 @@ int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pd
 
 int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
 {
-
-  int sumpdgId = abs(lep1_pdgId)+abs(lep2_pdgId)+abs(lep3_pdgId);
   
-  if (ttH > rest && ttH > tH){
-    if (nBMedium < 2){
-      if      (ttH < 0.45) return 1;
-      else if (ttH < 0.51) return 2;
-      else if (ttH < 0.57) return 3;
-      else if (ttH < 0.66) return 4;
-      else return 5;
-    }
-    else{
-      if      (ttH < 0.51) return 6;
-      else if (ttH < 0.60) return 7;
-      else if (ttH < 0.70) return 8;
-      else return 9;
-    }
+  int binIdx = ttH_catIndex_3l(ttH,tH,rest,lep1_pdgId,lep2_pdgId,lep3_pdgId,nBMedium );
+  if (binIdx == 1){ // "output_NN_ttH_bl"
+    if ( ttH <= 0.47 && ttH >= 0.00) return 1;
+    else if ( ttH <= 0.54 && ttH >= 0.47) return 2;
+    else if ( ttH <= 0.60 && ttH >= 0.54) return 3;
+    else if ( ttH <= 0.70 && ttH >= 0.60) return 4;
+    else if ( ttH <= 0.80 && ttH >= 0.70) return 5;
+    else if ( ttH <= 1.00 && ttH >= 0.80) return 6;
   }
-  else if (tH > ttH && tH > rest){
-    if (nBMedium < 2){
-      if      (tH < 0.43) return 10;
-      else if (tH < 0.47) return 11;
-      else if (tH < 0.50) return 12;
-      else if (tH < 0.55) return 13;
-      else if (tH < 0.61) return 14;
-      else if (tH < 0.71) return 15;
-      else return 16;
-    }
-    else{
-      if      (tH < 0.46) return 17;
-      else if (tH < 0.58) return 18;
-      else return 19;
-    }
+  else if (binIdx == 2){ // "output_NN_ttH_bt"
+    if      ( ttH >= 0.00 && ttH <=  0.54) return 7;
+    else if ( ttH >= 0.54 && ttH <=  0.62) return 8;
+    else if ( ttH >= 0.62 && ttH <=  0.71) return 9;
+    else if ( ttH >= 0.71 && ttH <=  0.79) return 10;
+    else if ( ttH >= 0.79 && ttH <=  0.85) return 11;
+    else if ( ttH >= 0.85 && ttH <=  0.91) return 12;
+    else if ( ttH >= 0.91 && ttH <=  1.00) return 13;
   }
-  else if (rest > ttH && rest > tH){
-    if ( sumpdgId == 33){ // eee
-      return 20;
-    }
-    else if (sumpdgId == 35){ // eem
-      if (nBMedium < 2){
-	if (rest < 0.48)      return 21;
-	else if (rest < 0.52) return 22;
-	else if (rest < 0.59) return 23;
-	else                  return 24;
-      }
-      else{
-	return 25;
-      }
-    }
-    else if (sumpdgId == 37){ // emm
-      if (nBMedium < 2){
-	if (rest < 0.47)      return 26;
-	else if (rest < 0.53) return 27;
-	else if (rest < 0.58) return 28;
-	else                  return 29;
-      }
-      else{
-	return 30;
-      }
-    }
-    else if (sumpdgId == 39){ // mmm
-      if (nBMedium < 2){
-	if (rest < 0.5)       return 31;
-	else if (rest < 0.58) return 32;
-	else                  return 33;
-      }
-      else{
-	return 34;
-      }
-    }
+  else if (binIdx == 3){ // "output_NN_tH_bl"
+    if ( tH >= 0.00 && tH <= 0.46) return 14;
+    else if ( tH >= 0.46 && tH <= 0.50) return 15;
+    else if ( tH >= 0.50 && tH <= 0.54) return 16;
+    else if ( tH >= 0.54 && tH <= 0.60) return 17;
+    else if ( tH >= 0.60 && tH <= 0.68) return 18;
+    else if ( tH >= 0.68 && tH <= 0.79) return 19;
+    else if ( tH >= 0.79 && tH <= 1.00) return 20;
   }
 
+  else if (binIdx == 4){ // "output_NN_tH_bt"
+    
+    if ( tH >= 0.00 && tH <=  0.47) return 21; 
+    else if ( tH >= 0.47 && tH <=  0.52) return 22; 
+    else if ( tH >= 0.52 && tH <=  0.58) return 23; 
+    else if ( tH >= 0.58 && tH <=  0.66) return 24; 
+    else if ( tH >= 0.66 && tH <=  1.00) return 25; 
+  }
   
-  cout << "[E]: It should not be here" << endl;
+  else if (binIdx == 5){ // "output_NN_rest_eee"
+    return 26;
+  }
+
+  else if (binIdx == 6){ // "output_NN_rest_eem"
+    if (rest >= 0.0  && rest <=   0.49) return 27;
+    else if (rest >= 0.49 && rest <=   0.57) return 28;
+    else if (rest >= 0.57 && rest <=   0.66) return 29;
+    else if (rest >= 0.66 && rest <=   1.0 ) return 30;
+  }
+
+  else if (binIdx == 7){ // "output_NN_rest_emm"
+    if (rest >= 0.0  && rest <=  0.51) return 31;
+    else if (rest >= 0.51 && rest <=  0.6) return 32;
+    else if (rest >= 0.60 && rest <=  0.69) return 33;
+    else if (rest >= 0.69 && rest <=  1.0) return 34;
+  }
+  else if (binIdx == 8){ // "output_NN_rest_mmm"
+    if ( rest >= 0.0 && rest <= 0.52) return 35;
+    else if ( rest >= 0.52&& rest <= 0.59) return 36;
+    else if ( rest >= 0.59&& rest <= 0.70) return 37;
+    else if ( rest >= 0.70&& rest <= 1.0 ) return 38;
+  }
+  
+  cout << "[ttH_catIndex_3l_MVA]: It should not be here "<< ttH << " " << tH << " " << rest << " " << binIdx << endl;
   return -1;
+
+}
+
+float ttH_mva_4l(float score)
+{
+  return 1. / (1. + std::sqrt((1. - score) / (1. + score)));
 
 }
 
 int ttH_catIndex_4l(float bdt)
 {
-  if (bdt < 0.31) return 1;
+  if (ttH_mva_4l(bdt) < 0.31) return 1;
   else return 2;
 }
 
