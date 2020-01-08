@@ -237,6 +237,55 @@ triggerGroups=dict(
 )
 
 
+triggerGroups_dict=dict(
+    Trigger_1e={
+        2016 :  ['HLT_Ele27_WPTight_Gsf' , 'HLT_Ele25_eta2p1_WPTight_Gsf' , 'HLT_Ele27_eta2p1_WPLoose_Gsf'],
+        2017 :  ['HLT_Ele32_WPTight_Gsf' , 'HLT_Ele35_WPTight_Gsf'],
+        2018 :  ['HLT_Ele32_WPTight_Gsf'],
+    },
+    Trigger_1m={
+        2016 :  ['HLT_IsoMu24' , 'HLT_IsoTkMu24' , 'HLT_IsoMu22_eta2p1' , 'HLT_IsoTkMu22_eta2p1' , 'HLT_IsoMu22' , 'HLT_IsoTkMu22'],
+        2017 :  ['HLT_IsoMu24' , 'HLT_IsoMu27'],
+        2018 :  ['HLT_IsoMu24'],
+    },
+    Trigger_2e={
+        2016 :  ['HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ'],
+        2017 :  ['HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'],
+        2018 :  ['HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'],
+    },
+    Trigger_2m={
+        2016 :  ['HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL' , 'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL' ,  'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ' , 'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ'],
+        2017 :  ['HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8' , 'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8'],
+        2018 :  ['HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8'],
+    },
+    Trigger_em={
+        2016 :   ['HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL' , 'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ', 'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL' , 'HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ'],
+        2017 :   ['HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL', 'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ'        , 'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ'        , 'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ'],
+        2018 :   ['HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL', 'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ'        , 'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ'],
+    },
+    Trigger_3e={
+        2016 :  ['HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL'],
+        2017 :  ['HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL'],
+        2018 :  ['HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL'], # prescaled in the two years according to https://twiki.cern.ch/twiki/bin/view/CMS/EgHLTRunIISummary#2018
+    },
+    Trigger_3m={
+        2016 :  ['HLT_TripleMu_12_10_5'],
+        2017 :  ['HLT_TripleMu_12_10_5'],
+        2018 :  ['HLT_TripleMu_12_10_5'],
+    },
+    Trigger_mee={
+        2016 :  ['HLT_Mu8_DiEle12_CaloIdL_TrackIdL'],
+        2017 :  ['HLT_Mu8_DiEle12_CaloIdL_TrackIdL'],
+        2018 :  ['HLT_Mu8_DiEle12_CaloIdL_TrackIdL'],
+    },
+    Trigger_mme={
+        2016 :  ['HLT_DiMu9_Ele9_CaloIdL_TrackIdL'   ],
+        2017 :  ['HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ'],
+        2018 :  ['HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ'],
+    },
+)
+
+
 from CMGTools.TTHAnalysis.tools.evtTagger import EvtTagger
 
 Trigger_1e   = lambda : EvtTagger('Trigger_1e',[ lambda ev : triggerGroups['Trigger_1e'][ev.year](ev) ])
