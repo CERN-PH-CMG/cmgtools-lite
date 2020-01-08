@@ -701,7 +701,7 @@ float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, float scale_l
 
 float ttH_4l_clasifier(float nJet25,float nBJetMedium25,float mZ2){
  
-  if ( abs(mZ2-91.2) < 10 && abs(mZ2 -91.2)<10) return 1;
+  if ( abs(mZ2 -91.2)<10) return 1;
   if ((abs(mZ2-91.2) > 10) && nJet25==0) return 2;
   if ( (abs(mZ2-91.2) > 10) && nJet25>=0 && nBJetMedium25==1) return 3;
   if ( (abs(mZ2-91.2) > 10) && nJet25>=1 && nBJetMedium25>1) return 4;
