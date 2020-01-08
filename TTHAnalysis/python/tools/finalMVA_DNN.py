@@ -8,11 +8,17 @@ import os
 from copy import deepcopy
 
 class finalMVA_DNN(Module):
-    def __init__(self, variations=[], doSystJEC=True):
+    def __init__(self, variations=[], doSystJEC=True, fillInputs=False):
         self.outVars = []
         self._MVAs   = [] 
+        fillInputs = True
         varorder = ["jet3_pt","jet3_eta","lep1_eta","jet2_pt","jet1_pt","jetFwd1_eta","mT_lep1","mT_lep2","jet4_phi","lep2_conePt","hadTop_BDT","jet1_phi","jet2_eta","n_presel_jetFwd","n_presel_jet","lep1_charge","avg_dr_jet","lep1_phi","Hj_tagger_hadTop","nBJetLoose","jet4_pt","mindr_lep1_jet","lep1_conePt","jetFwd1_pt","lep2_phi","jet2_phi","lep2_eta","mbb","mindr_lep2_jet","jet4_eta","nBJetMedium","Dilep_pdgId","metLD","jet3_phi","maxeta","jet1_eta"]
         cats_2lss = ['predictions_ttH','predictions_Rest','predictions_ttW','predictions_tHQ']
+
+        if fillInputs:
+            self.outVars.extend(varorder+['nEvent'])
+            self.inputHelper = self.getVarsForVariation('')
+            self.inputHelper['nEvent'] = lambda ev : ev.event
 
         self.systsJEC = {0:"",\
                          1:"_jesTotalCorrUp"  , -1:"_jesTotalCorrDown",\
@@ -71,7 +77,7 @@ class finalMVA_DNN(Module):
                  "n_presel_jetFwd"  : lambda ev : getattr(ev,'nFwdJet%s_Recl'%var), 
                  "n_presel_jet"     : lambda ev : getattr(ev,'nJet25%s_Recl'%var),
                  "lep1_charge"      : lambda ev : ev.LepGood_charge[int(ev.iLepFO_Recl[0])],
-                 "avg_dr_jet"       : lambda ev : getattr(ev,'avg_dr_jet%s'%var),
+                 "avg_dr_jet"       : lambda ev : getattr(ev,'avg_dr_jet%s'%var) if  getattr(ev,'avg_dr_jet%s'%var) > 0 else -9,
                  "lep1_phi"         : lambda ev : (ev.LepGood_phi[int(ev.iLepFO_Recl[0])]) if ev.nLepFO_Recl >= 1 else -9,
                  "Hj_tagger_hadTop" : lambda ev : getattr(ev,'BDThttTT_eventReco_Hj_score%s'%(var)) if getattr(ev,'BDThttTT_eventReco_Hj_score%s'%(var)) > 0 else -9 ,
                  "nBJetLoose"       : lambda ev : getattr(ev,'nBJetLoose25%s_Recl'%var),
@@ -101,6 +107,9 @@ class finalMVA_DNN(Module):
     def analyze(self,event):
         myvars = [event.iLepFO_Recl[0],event.iLepFO_Recl[1],event.iLepFO_Recl[2]]
         ret = []
+        if self.inputHelper:
+            for var in self.inputHelper:
+                ret.append( (var, self.inputHelper[var](event)))
         for worker in self._MVAs:
             name = worker.name
             if ( not hasattr(event,"nJet25_jerUp_Recl") and not hasattr(event, "nJet25_jesBBEC1_yearDown_Recl")) and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue # using jer bc components wont change
