@@ -3,6 +3,7 @@ from __future__ import print_function
 import os, sys, imp, pickle, multiprocessing, types, json
 from copy import copy
 from math import ceil
+import ROOT
 
 def _loadHeppyGlobalOptions(options):
     from PhysicsTools.HeppyCore.framework.heppy_loop import _heppyGlobalOptions
@@ -41,7 +42,6 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
         fineSplitIndex, fineSplitFactor = fineSplit
         if fineSplitFactor <= 1:
             raise RuntimeError("FineSplitting not supported for component %s with %r fineSplitFactor" % (comp.name, fineSplitFactor))
-        import ROOT
         ROOT.PyConfig.IgnoreCommandLineOptions = True
         tfile = ROOT.TFile.Open(comp.files[0])
         totEvents = min(tfile.Get("Events").GetEntries(), pp.maxEntries)
@@ -66,8 +66,20 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     trigSel = getattr(comp, 'triggers', [])
     trigVeto = getattr(comp, 'vetoTriggers', [])
     if trigSel:
-        cut = "(%s) && (%s)" % (cut if cut else 1, " || ".join("AltBranch$(%s,0)" % t.rstrip("_v*") for t in trigSel))
-        if trigVeto: cut += " && !(%s)" % (" || ".join("AltBranch$(%s,0)" % t.rstrip("_v*") for t in trigVeto))
+        if hasattr(comp, 'year'):
+            year = comp.year
+        elif ("Autumn18" in comp.dataset) or ("Run2018" in comp.dataset):
+            year = 2018
+        elif ("Fall17" in comp.dataset) or ("Run2017" in comp.dataset):
+            year = 2017
+        elif ("Summer16" in comp.dataset) or ("Run2016" in comp.dataset):
+            year = 2016
+        else:
+            raise RuntimeError("Can't detect year scenario for %s, %s" % (comp.name, comp.dataset))
+
+        cut = "(%s) && (%s)" % (cut if cut else 1, " || ".join("fires_{trigger}_{year}(run,AltBranch$({trigger},0))".format(year=year, trigger=t.rstrip("_v*")) for t in trigSel))
+        if trigVeto:
+            cut += " && !(%s)" % (" || ".join("fires_{trigger}_{year}(run,AltBranch$({trigger},0))".format(year=year, trigger=t.rstrip("_v*")) for t in trigVeto))
     elif trigVeto: raise RuntimeError("vetoTriggers specified without triggers for component %s" % comp.name)
     pp.cut = cut
     # input
@@ -127,6 +139,7 @@ if __name__ == "__main__":
 
     # this must be done before calling the source
     _loadHeppyGlobalOptions(options)
+    ROOT.gROOT.LoadMacro(os.environ['CMSSW_BASE'] + '/src/CMGTools/Production/src/hasfiredtriggers.cc+')
 
     cfg = args[1]
     cfo = imp.load_source(os.path.basename(cfg).rstrip('.py'), cfg, open(cfg,'r'))
