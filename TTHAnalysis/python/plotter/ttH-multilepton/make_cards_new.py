@@ -41,8 +41,8 @@ MCAOPTION="-splitdecays"
 ASIMOV="signal"
 SCRIPT= "makeShapeCardsNew.py"
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
-if "scan" in OTHER: 
-    ASIMOV="tHq_ct_1p0_cv_1p0,ttH_ct_1p0_cv_1p0,tHW_ct_1p0_cv_1p0"
+if "scan" in OTHER:         
+    ASIMOV="tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt" 
     SCRIPT = "makeShapeCardsNewScan.py"
     MCAOPTION="-ctcv"
 

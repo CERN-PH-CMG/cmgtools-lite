@@ -34,16 +34,19 @@ outdir  = options.outdir+"/" if options.outdir else ""
 if not os.path.exists(outdir): os.mkdir(outdir)
 
 scanpoints = []
+scanpointnames = []
 pattern = re.compile( options.scanregex ) 
 for psig in mca.listSignals(True):
-    print(psig)
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
-    point = [ match.group( p ) for p in options.params.split(',') ] 
+    point = [ match.group(p) for p in options.params.split(',') ] 
+
+    #if point not in scanpointnames and 'promptsub' not in point[1]: scanpointnames.append(  point ) 
     point[1] = re.sub("_h[a-z]+", '',point[1])
     if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
 report={}
+
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
     for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
@@ -94,14 +97,18 @@ if options.categ:
         allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
 else:
     allreports = {binname:report}
-print(scanpoints)
-for scanpoint in scanpoints: 
+
+for i,scanpoint in enumerate(scanpoints): 
     
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
-        if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
+        matchpoint = [match.group(p) for p in options.params.split(',')]
+        matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
+        
+        #if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
+        if scanpoint != matchpoint: continue
         listSignals.append(psig)
     
     
@@ -126,8 +133,7 @@ for scanpoint in scanpoints:
             if b not in allyields: continue
             if allyields[b] == 0: continue
             procs.append(b); iproc[b] = i+1
-            #for p in procs: print "%-10s %10.4f" % (p, allyields[p])
-            
+            #for p in procs: print "%-10s %10.4f" % (p, allyields[p]) 
         systs = {}
         for name in nuisances:
             effshape = {}
