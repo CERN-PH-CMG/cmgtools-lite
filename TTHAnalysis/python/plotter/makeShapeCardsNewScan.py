@@ -94,12 +94,15 @@ if options.categ:
 else:
     allreports = {binname:report}
 for scanpoint in scanpoints: 
-    
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
-        if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
+        matchpoint = [match.group(p) for p in options.params.split(',')]
+        matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
+        
+        #if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
+        if scanpoint != matchpoint: continue
         listSignals.append(psig)
     
     
@@ -124,8 +127,7 @@ for scanpoint in scanpoints:
             if b not in allyields: continue
             if allyields[b] == 0: continue
             procs.append(b); iproc[b] = i+1
-            #for p in procs: print "%-10s %10.4f" % (p, allyields[p])
-            
+            #for p in procs: print "%-10s %10.4f" % (p, allyields[p]) 
         systs = {}
         for name in nuisances:
             effshape = {}
