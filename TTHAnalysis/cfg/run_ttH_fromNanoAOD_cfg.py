@@ -26,26 +26,28 @@ if preprocessor:
 else:
     if year == 2018:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import dataSamples_1June2019 as allData
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import dataSamples_25Oct2019 as allData
     elif year == 2017:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import dataSamples_1June2019 as allData
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import dataSamples_25Oct2019 as allData
     elif year == 2016:
         from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import dataSamples_1June2019 as allData
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import dataSamples_25Oct2019 as allData
+mcSamples_=[]
 autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
 mcSamples_, _ = mergeExtensions(mcSamples_)
 
 # Triggers
-if year == 2018:
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
-elif year == 2017:
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
-    triggers["FR_1mu_iso"] = [] # they probably existed but we didn't use them in 2017
-elif year == 2016:
-    from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
-    triggers["FR_1mu_noiso_smpd"] = [] 
+# if year == 2018:
+#     from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
+# elif year == 2017:
+#     from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
+#     triggers["FR_1mu_iso"] = [] # they probably existed but we didn't use them in 2017
+# elif year == 2016:
+#     from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
+#     triggers["FR_1mu_noiso_smpd"] = [] 
 
+from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules import triggerGroups_dict
 
 DatasetsAndTriggers = []
 if analysis == "main":
@@ -70,12 +72,12 @@ if analysis == "main":
         # other Higgs processes
         "GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
     ]])
-    DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
-    DatasetsAndTriggers.append( ("EGamma",     triggers["ee"] + triggers["3e"] + triggers["1e_iso"]) if year == 2018 else
-                                ("DoubleEG",   triggers["ee"] + triggers["3e"]) )
-    DatasetsAndTriggers.append( ("MuonEG",     triggers["mue"] + triggers["2mu1e"] + triggers["2e1mu"]) )
-    DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) )
-    DatasetsAndTriggers.append( ("SingleElectron", triggers["1e_iso"]) if year != 2018 else (None,None) )
+    DatasetsAndTriggers.append( ("DoubleMuon", triggerGroups_dict["Trigger_2m"][year] + triggerGroups_dict["Trigger_3m"][year]) )
+    DatasetsAndTriggers.append( ("EGamma",     triggerGroups_dict["Trigger_2e"][year] + triggerGroups_dict["Trigger_3e"][year] + triggerGroups_dict["Trigger_1e"][year]) if year == 2018 else
+                                ("DoubleEG",   triggerGroups_dict["Trigger_2e"][year] + triggerGroups_dict["Trigger_3e"][year]) )
+    DatasetsAndTriggers.append( ("MuonEG",     triggerGroups_dict["Trigger_em"][year] + triggerGroups_dict["Trigger_mee"][year] + triggerGroups_dict["Trigger_mme"][year]) )
+    DatasetsAndTriggers.append( ("SingleMuon", triggerGroups_dict["Trigger_1m"][year]) )
+    DatasetsAndTriggers.append( ("SingleElectron", triggerGroups_dict["Trigger_1e"][year]) if year != 2018 else (None,None) )
 elif analysis == "frqcd":
     mcSamples = byCompName(mcSamples_, [
         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
@@ -258,5 +260,15 @@ elif test == "102X-MC":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/NANOAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2), useAAA=True )
     TTLep_pow.files = TTLep_pow.files[:1]
     selectedComponents = [TTLep_pow]
+
+elif test == "94X-data":
+    json = 'Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt'
+    SingleElectron_Run2017C_14Dec2018 = kreator.makeDataComponent("SingleElectron_Run2017C_14Dec2018", "/SingleElectron/Run2017C-Nano14Dec2018-v1/NANOAOD", "CMS", ".*root", json)
+    SingleElectron_Run2017C_14Dec2018.files = ["0450ACEF-E1E5-1345-8660-28CF5ABE26BE.root"]
+    SingleElectron_Run2017C_14Dec2018.triggers = triggerGroups_dict["Trigger_1e"][year]
+    SingleElectron_Run2017C_14Dec2018.vetoTriggers = triggerGroups_dict["Trigger_2m"][year] + triggerGroups_dict["Trigger_3m"][year]+triggerGroups_dict["Trigger_2e"][year] + triggerGroups_dict["Trigger_3e"][year]+triggerGroups_dict["Trigger_em"][year] + triggerGroups_dict["Trigger_mee"][year] + triggerGroups_dict["Trigger_mme"][year]+triggerGroups_dict["Trigger_1m"][year]
+    
+    selectedComponents = [SingleElectron_Run2017C_14Dec2018]
 elif test in ('2','3','3s'):
     doTestN(test, selectedComponents)
+
