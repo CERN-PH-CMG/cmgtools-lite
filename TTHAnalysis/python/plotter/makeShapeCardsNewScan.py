@@ -34,19 +34,15 @@ outdir  = options.outdir+"/" if options.outdir else ""
 if not os.path.exists(outdir): os.mkdir(outdir)
 
 scanpoints = []
-scanpointnames = []
 pattern = re.compile( options.scanregex ) 
 for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ] 
-
-    #if point not in scanpointnames and 'promptsub' not in point[1]: scanpointnames.append(  point ) 
     point[1] = re.sub("_h[a-z]+", '',point[1])
     if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
 report={}
-
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
     for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
@@ -98,7 +94,6 @@ if options.categ:
 else:
     allreports = {binname:report}
 for scanpoint in scanpoints: 
-
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
