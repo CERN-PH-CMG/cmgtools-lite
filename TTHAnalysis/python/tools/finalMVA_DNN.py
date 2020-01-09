@@ -8,11 +8,17 @@ import os
 from copy import deepcopy
 
 class finalMVA_DNN(Module):
-    def __init__(self, variations=[], doSystJEC=True):
+    def __init__(self, variations=[], doSystJEC=True, fillInputs=False):
         self.outVars = []
         self._MVAs   = [] 
+        fillInputs = True
         varorder = ["jet3_pt","jet3_eta","lep1_eta","jet2_pt","jet1_pt","jetFwd1_eta","mT_lep1","mT_lep2","jet4_phi","lep2_conePt","hadTop_BDT","jet1_phi","jet2_eta","n_presel_jetFwd","n_presel_jet","lep1_charge","avg_dr_jet","lep1_phi","Hj_tagger_hadTop","nBJetLoose","jet4_pt","mindr_lep1_jet","lep1_conePt","jetFwd1_pt","lep2_phi","jet2_phi","lep2_eta","mbb","mindr_lep2_jet","jet4_eta","nBJetMedium","Dilep_pdgId","metLD","jet3_phi","maxeta","jet1_eta"]
         cats_2lss = ['predictions_ttH','predictions_Rest','predictions_ttW','predictions_tHQ']
+
+        if fillInputs:
+            self.outVars.extend(varorder+['nEvent'])
+            self.inputHelper = self.getVarsForVariation('')
+            self.inputHelper['nEvent'] = lambda ev : ev.event
 
         self.systsJEC = {0:"",\
                          1:"_jesTotalCorrUp"  , -1:"_jesTotalCorrDown",\
@@ -27,7 +33,7 @@ class finalMVA_DNN(Module):
 
 
         for var in self.systsJEC: 
-            self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/NN_2lss_0tau_2017.pb',
+            self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
                                self.getVarsForVariation(self.systsJEC[var]), cats_2lss, varorder))
 
             self.outVars.extend( ['DNN_2lss%s_'%self.systsJEC[var] + x for x in cats_2lss])
@@ -45,9 +51,9 @@ class finalMVA_DNN(Module):
         vars_2lss_unclDown["mT_lep2"          ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
         self.outVars.extend( ['DNN_2lss_unclDown_' + x for x in cats_2lss])
 
-        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/NN_2lss_0tau_2017.pb',
+        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
                                            vars_2lss_unclUp, cats_2lss, varorder)
-        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/NN_2lss_0tau_2017.pb',
+        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
                                            vars_2lss_unclDown, cats_2lss, varorder)
         
         self._MVAs.extend( [worker_2lss_unclUp, worker_2lss_unclDown])
@@ -65,15 +71,15 @@ class finalMVA_DNN(Module):
                  "mT_lep2"          : lambda ev : getattr(ev,'MT_met_lep2%s'%var),
                  "jet4_phi"         : lambda ev : ev.JetSel_Recl_phi[3] if getattr(ev,'nJet25%s_Recl'%var) > 3 else -9,
                  "lep2_conePt"      : lambda ev : ev.LepGood_conePt[int(ev.iLepFO_Recl[1])],
-                 "hadTop_BDT"       : lambda ev : getattr(ev,'BDThttTT_eventReco_mvaValue%s'%var) if getattr(ev,'BDThttTT_eventReco_mvaValue%s'%var) > 0 else -9,
+                 "hadTop_BDT"       : lambda ev : getattr(ev,'BDThttTT_eventReco_mvaValue%s'%(var)) if getattr(ev,'BDThttTT_eventReco_mvaValue%s'%(var)) > 0 else -9,
                  "jet1_phi"         : lambda ev : ev.JetSel_Recl_phi[0] if getattr(ev,'nJet25%s_Recl'%var) > 0 else -9,
                  "jet2_eta"         : lambda ev : abs(ev.JetSel_Recl_eta[1]) if getattr(ev,'nJet25%s_Recl'%var) > 1 else 9,
                  "n_presel_jetFwd"  : lambda ev : getattr(ev,'nFwdJet%s_Recl'%var), 
                  "n_presel_jet"     : lambda ev : getattr(ev,'nJet25%s_Recl'%var),
                  "lep1_charge"      : lambda ev : ev.LepGood_charge[int(ev.iLepFO_Recl[0])],
-                 "avg_dr_jet"       : lambda ev : getattr(ev,'avg_dr_jet%s'%var),
+                 "avg_dr_jet"       : lambda ev : getattr(ev,'avg_dr_jet%s'%var) if  getattr(ev,'avg_dr_jet%s'%var) > 0 else -9,
                  "lep1_phi"         : lambda ev : (ev.LepGood_phi[int(ev.iLepFO_Recl[0])]) if ev.nLepFO_Recl >= 1 else -9,
-                 "Hj_tagger_hadTop" : lambda ev : getattr(ev,'BDThttTT_eventReco_Hj_score%s'%var) if getattr(ev,'BDThttTT_eventReco_Hj_score%s'%var) > 0 else -9 ,
+                 "Hj_tagger_hadTop" : lambda ev : getattr(ev,'BDThttTT_eventReco_Hj_score%s'%(var)) if getattr(ev,'BDThttTT_eventReco_Hj_score%s'%(var)) > 0 else -9 ,
                  "nBJetLoose"       : lambda ev : getattr(ev,'nBJetLoose25%s_Recl'%var),
                  "jet4_pt"          : lambda ev : getattr(ev,'JetSel_Recl_pt%s'%var)[3] if getattr(ev,'nJet25%s_Recl'%var) > 3 else -9,
                  "mindr_lep1_jet"   : lambda ev : getattr(ev,'mindr_lep1_jet%s'%var),
@@ -101,6 +107,9 @@ class finalMVA_DNN(Module):
     def analyze(self,event):
         myvars = [event.iLepFO_Recl[0],event.iLepFO_Recl[1],event.iLepFO_Recl[2]]
         ret = []
+        if self.inputHelper:
+            for var in self.inputHelper:
+                ret.append( (var, self.inputHelper[var](event)))
         for worker in self._MVAs:
             name = worker.name
             if ( not hasattr(event,"nJet25_jerUp_Recl") and not hasattr(event, "nJet25_jesBBEC1_yearDown_Recl")) and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue # using jer bc components wont change

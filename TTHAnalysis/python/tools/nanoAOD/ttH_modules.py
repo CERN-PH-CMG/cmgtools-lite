@@ -268,7 +268,7 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
                                      csv_looseWP = 0.5426, 
                                      csv_mediumWP = 0.8484,
                                      selection = [
-                                         lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                                         lambda leps,jets,event : len(leps)>=2,
                                          lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
                                      ]
 )
@@ -284,7 +284,7 @@ BDThttTT_allvariations = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/C
                                                 csv_looseWP = 0.5426, 
                                                 csv_mediumWP = 0.8484,
                                                 selection = [
-                                                    lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
+                                                    lambda leps,jets,event : len(leps)>=2,
                                                     lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
                                                 ],
                                                 variations = [ 'jes%s'%v for v in jecGroups] + ['jer'] ,
@@ -298,10 +298,10 @@ finalMVA_allVars = lambda : finalMVA_DNN( variations = [ 'jes%s'%v for v in jecG
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
 finalMVA3L = lambda : finalMVA_DNN_3l()
+finalMVA3L_allVars = lambda : finalMVA_DNN_3l(variations = [ 'jes%s'%v for v in jecGroups] + ['jer'])
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.finalMVA_4l import FinalMVA_4L
 finalMVA_4l = lambda : FinalMVA_4L()
-
 
 
 from PhysicsTools.NanoAODTools.postprocessing.modules.btv.btagSFProducer import btagSFProducer
@@ -330,6 +330,9 @@ scaleFactorSequence_2018 = [leptonSFs,btagSF2018_dj,bTagSFs]
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
 higgsDecay = lambda : higgsDecayFinder()
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.VHsplitter import VHsplitter
+vhsplitter = lambda : VHsplitter()
 
 # from CMGTools.TTHAnalysis.tools.synchTools import SynchTuples
 # synchTuples = lambda : SynchTuples()

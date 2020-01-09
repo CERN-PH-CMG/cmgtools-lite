@@ -40,7 +40,7 @@ for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
         raise RuntimeError("Signal %s does not match the regexp"%psig)
-    point = [ match.group(p) for p in options.params.split(',') ] 
+    point = [ match.group( p ) for p in options.params.split(',') ] 
 
     #if point not in scanpointnames and 'promptsub' not in point[1]: scanpointnames.append(  point ) 
     point[1] = re.sub("_h[a-z]+", '',point[1])
@@ -97,9 +97,8 @@ if options.categ:
         allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
 else:
     allreports = {binname:report}
+for scanpoint in scanpoints: 
 
-for i,scanpoint in enumerate(scanpoints): 
-    
     listSignals = [] 
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 

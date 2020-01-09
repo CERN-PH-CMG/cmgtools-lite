@@ -104,7 +104,7 @@ class EventVars2LSS(Module):
                 _var = 0; 
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
-            jets = filter(lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), jets)
+            jets = filter(lambda x : getattr(x,'pt%s'%self.systsJEC[_var]) > jetptcut, jets)
 
 
             if getattr(event, 'nFwdJet%s_Recl'%self.systsJEC[_var]) > 0 and len(jets):
