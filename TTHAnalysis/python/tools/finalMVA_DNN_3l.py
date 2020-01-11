@@ -8,6 +8,7 @@ from CMGTools.TTHAnalysis.tools.tfTool import TFTool
 import os 
 from math import sqrt, cos, sin
 from copy import deepcopy
+import ROOT as r 
 
 def mL3(ev): 
     # transverse mass of the three lepton system and met...
@@ -17,12 +18,13 @@ def mL3(ev):
     leps = [all_leps[chosen[i]] for i in xrange(nFO)]
     
     if len(leps) < 3: return 0
-    v = leps[0].p4()+leps[1].p4()+leps[2].p4()
+    v1 = r.TLorentzVector(); v2 = r.TLorentzVector(); v3 = r.TLorentzVector()
+    v1.SetPtEtaPhiM( leps[0].conePt, leps[0].eta, leps[0].phi, 0)
+    v2.SetPtEtaPhiM( leps[1].conePt, leps[1].eta, leps[1].phi, 0)
+    v3.SetPtEtaPhiM( leps[2].conePt, leps[2].eta, leps[2].phi, 0)
+    v = v1+v2+v3
     met = ev.MET_pt if ev.year != 2017 else ev.METFixEE2017_pt
     met_phi = ev.MET_phi if ev.year != 2017 else ev.METFixEE2017_phi
-    met_px = met*cos(met_phi)
-    met_py = met*sin(met_phi)
-    #return sqrt( 2*v.Pt()*met*(1-cos(v.Phi()-met_phi)))
     return sqrt( (v.Et() + met)**2 - (v.Px()+met_px)**2 - (v.Py()+met_py)**2 )
 
 
