@@ -16,7 +16,7 @@ lumis = {
 submit = '{command}' 
 dowhat = "plots" 
 #dowhat = "dumps" 
-dowhat = "yields" 
+#dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 dojeccomps=True
 P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
@@ -32,15 +32,15 @@ if 'gae' in os.environ['HOSTNAME']:
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     P0 = "/nfs/user/pvischia/tth/v5pre/"
 
-TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l --Fs {P}/4_evtVars --Fs {P}/5_BDThtt_reco "  #_new
+TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors_jecSum --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l --Fs {P}/4_evtVars --Fs {P}/5_BDThtt_reco "  #_new
 YEARDIR=YEAR if YEAR != 'all' else ''
-TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_091019_v6pre%s "%(YEARDIR,)
-TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)
-TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
-TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
+TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix%s "%(YEARDIR,)            + "-P "+P0+"/NanoTrees_TTH_091019_v6pre%s "%(YEARDIR,)
+TREESONLYSKIM     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/%s "%(YEARDIR,)  + "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)
+TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)           + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
+TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)           + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)            
 
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
-    TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" 
+    TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" 
     TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
     TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre_skim2LSS/%s "%(YEAR,)
     TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
@@ -51,7 +51,7 @@ def base(selection):
     if dojeccomps:
         THETREES = THETREES.replace("--FMCs {P}/0_jmeUnc_v1", "--FMCs {P}/0_jmeUnc_v1_sources" )
         THETREES = THETREES.replace("--Fs {P}/1_recl","--FMCs {P}/1_recl_sources --FDs {P}/1_recl" )
-        THETREES = THETREES.replace("--FMCs {P}/2_scalefactors","--FMCs {P}/2_scalefactors_allvars --FMCs {P}/2_scalefactors_lep" )
+        THETREES = THETREES.replace("--FMCs {P}/2_scalefactors_jecSum","--FMCs {P}/2_scalefactors_jecAllVars" )
         THETREES = THETREES.replace("--Fs {P}/4_evtVars", "--FMCs {P}/4_evtVars_allVars --FDs {P}/4_evtVars")
         THETREES = THETREES.replace("--Fs {P}/5_BDThtt_reco", "--FDs {P}/5_BDThtt_reco --FMCs {P}/5_BDThtt_reco_allVars")
 
@@ -456,7 +456,7 @@ if __name__ == '__main__':
 
     if 'cr_3l' in torun:
         x = base('3l')
-        x = add(x,"-I 'Zveto' -X ^2j -X ^2b1B -E ^underflowVeto3l")
+        x = add(x,"-I 'Zveto' -X ^2j -X ^2b1B -E ^underflowVeto3l ")
         if '_data' in torun: 
             x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
