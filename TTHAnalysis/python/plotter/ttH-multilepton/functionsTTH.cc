@@ -147,7 +147,7 @@ int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, flo
 {
   if (!f2lssBins){
     int offset = 0;
-    f2lssBins = TFile::Open("../../data/kinMVA/DNN_BIN_v2.root ");
+    f2lssBins = TFile::Open("../../data/kinMVA/DNNBin_v3_xmas.root");
     for (auto & la : bin2lsslabels){
       int bins = bins2lss[la];
       binHistos2lss[la] = (TH1F*) f2lssBins->Get(Form("%s_2018_Map_nBin%d", la.Data(), bins));
