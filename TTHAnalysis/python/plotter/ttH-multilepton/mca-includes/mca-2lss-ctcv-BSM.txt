@@ -47,7 +47,7 @@ ttH_ct_1p25_cv_0p5+  : TTH_ctcvcp  : xsec*LHEReweightingWeight[46]  : LepGood1_i
 ttH_ct_1p5_cv_0p5+   : TTH_ctcvcp  : xsec*LHEReweightingWeight[47]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[47]*genEventSumw_"
 ttH_ct_2p0_cv_0p5+   : TTH_ctcvcp  : xsec*LHEReweightingWeight[48]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[48]*genEventSumw_"
 ttH_ct_3p0_cv_0p5+   : TTH_ctcvcp  : xsec*LHEReweightingWeight[49]  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[49]*genEventSumw_"
-ttH_ct_-1p0_cv_1p0+  : TTH_ctcvcp  : sxsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
+ttH_ct_-1p0_cv_1p0+  : TTH_ctcvcp  : xsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
 
 tHq_ct_-1p0_cv_1p0+  : THQ_ctcvcp  : 0.07096 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed
 tHq_ct_-3p0_cv_1p0+  : THQ_ctcvcp  : 0.07096*LHEReweightingWeight[0]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[0]*genEventSumw_"
