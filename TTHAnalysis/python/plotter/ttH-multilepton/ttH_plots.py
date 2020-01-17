@@ -15,7 +15,7 @@ lumis = {
 
 submit = '{command}' 
 dowhat = "plots" 
-#dowhat = "dumps" 
+dowhat = "dumps" 
 #dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 dojeccomps=True
@@ -23,7 +23,7 @@ P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
 #if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data1/peruzzi"
 nCores = 8
 if 'fanae' in os.environ['HOSTNAME']:
-    nCores = 8
+    nCores = 32
     submit = 'sbatch -c %d -p short  --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/HeppyTrees/EdgeZ/TTH/"
 if 'gae' in os.environ['HOSTNAME']: 
@@ -34,7 +34,7 @@ if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
 
 TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors_jecSum --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l --Fs {P}/4_evtVars --Fs {P}/5_BDThtt_reco "  #_new
 YEARDIR=YEAR if YEAR != 'all' else ''
-TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix%s "%(YEARDIR,)            + "-P "+P0+"/NanoTrees_TTH_091019_v6pre%s "%(YEARDIR,)
+TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)            + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
 TREESONLYSKIM     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/%s "%(YEARDIR,)  + "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)
 TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)           + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
 TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)           + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)            
@@ -66,20 +66,20 @@ def base(selection):
 
     if selection=='2lss':
         GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
-        GO="%s -W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss'"%GO
+        GO="%s -W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.52 ")
         if dowhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 ")
         GO += " --binname 2lss "
     elif selection=='3l':
         GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
-        GO="%s -W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_3l*triggerSF_3l'"%GO
+        GO="%s -W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_3l*triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 3, year)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.42 ")
         GO += " --binname 3l "
     elif selection=='4l':
         GO="%s ttH-multilepton/mca-4l-mc.txt ttH-multilepton/4l_tight.txt "%CORE
-        GO="%s -W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_3l'"%GO
+        GO="%s -W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_4l*triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 3, year)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|3)lep_.*' --xP '^lep(1|2|3|4)_.*' --xP 'kinMVA_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 2 --legendWidth 0.3 ")
         if dowhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.0  2.99 --ratioYNDiv 505 ")
@@ -355,6 +355,19 @@ if __name__ == '__main__':
             x = add(x,"--unc ttH-multilepton/systsUnc%s.txt"%("_all" if dojeccomps else ""))
         plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40','era']
         runIt(x,'%s'%torun)#,plots)
+
+    if 'cr_trigger_eff' in torun:
+        x = base('2lss')
+        x = fulltrees(x) # for mc same-sign
+        x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
+        x = x.replace('2lss_tight.txt', 'trigger-eff/cuts_trigger_eff.txt')
+        x = x.replace("-W 'L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'", '')
+        x = x.replace("--FMCs {P}/2_scalefactors_jecAllVars --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l --FMCs {P}/4_evtVars_allVars --FDs {P}/4_evtVars --FDs {P}/5_BDThtt_reco --FMCs {P}/5_BDThtt_reco_allVars", "")
+        x = x.replace("--FMCs {P}/0_jmeUnc_v1_sources --FMCs {P}/1_recl_sources --FDs {P}/1_recl","")
+        x = add(x,"-I same-sign -X ^4j -X ^2b1B ")
+        x = add(x," --Fs {P}/1_extraTriggersMET ")
+        plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40','era']
+        runIt(x,'%s'%torun,plots)
 
     if 'cr_zjets' in torun:
         x = base('2lss')
