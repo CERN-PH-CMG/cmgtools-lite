@@ -707,51 +707,53 @@ float ttH_3l_clasifier(float nJet25,float nBJetMedium25){
 }
 
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, int year){
-
-  if (abs(pdgid1*pdgid2) == 121){
-    if (year == 2016){
-      if (pt2 < 25){
-	return 0.98;
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, int year, int var=0){
+  if (nlep == 2){
+    if (abs(pdgid1*pdgid2) == 121){
+      if (year == 2016){
+	if (pt2 < 25){
+	  return 0.98*(1 + var*0.02);
+	}
+      else return 1.*(1 + var*0.02);
       }
-      else return 1.;
-    }
-    if (year == 2017){
-      if (pt2<40) return 0.98;
-      else return 1;
-    }
-    if (year == 2018){
-      if (pt2<25){
-	return 0.98;
+      if (year == 2017){
+	if (pt2<40) return 0.98*(1 + var*0.01);
+	else return 1*(1 + var*0.01);
       }
-      else return 1.;
+      if (year == 2018){
+	if (pt2<25){
+	return 0.98*(1 + var*0.01);
+	}
+	else return 1.*(1 + var*0.01);
+      }
     }
+    
+    else if ( abs(pdgid1*pdgid2) == 143){
+      if (year == 2016) return 1.*(1 + var*0.01);
+      if (year == 2017){
+	if (pt2<40) return 0.98*(1 + var*0.01);
+	else return 0.99*(1 + var*0.01);
+      }
+      if (year == 2018){
+	if (pt2<25) return 0.98*(1 + var*0.01);
+	else        return 1*(1 + var*0.01);
+      }
+    }
+    else{
+      if (year == 2016) return 0.99*(1 + var*0.01);
+      if (year == 2017){
+	if (pt2 < 40) return 0.97*(1 + var*0.02);
+	else if (pt2 < 55 && pt2>40) return 0.995*(1 + var*0.02);
+	else if (pt2 < 70 && pt2>55) return 0.96*(1 + var*0.02);
+	else                         return 0.94*(1 + var*0.02);
+      }
+      if (year == 2018){
+	if (pt1 < 40) return 1.01*(1 + var*0.01);
+	if (pt1 < 70) return 0.995*(1 + var*0.01);
+	else return 0.98*(1 + var*0.01);
+      }
+    }
+    
   }
-
-  else if ( abs(pdgid1*pdgid2) == 143){
-    if (year == 2016) return 1.;
-    if (year == 2017){
-      if (pt2<40) return 0.98;
-      else return 0.99;
-    }
-    if (year == 2018){
-      if (pt2<30) return 0.98;
-      else        return 1;
-    }
-  }
-  else{
-    if (year == 2016) return 0.99;
-    if (year == 2017){
-      if (pt2 < 40) return 0.97;
-      else if (pt2 < 55 && pt2>40) return 0.995;
-      else if (pt2 < 70 && pt2>55) return 0.96;
-      else                         return 0.94;
-    }
-    if (year == 2018){
-      if (pt1 < 40) return 1.01;
-      if (pt1 < 70) return 0.995;
-      else return 0.98;
-    }
-  }
-
+  else return 1.;
 }
