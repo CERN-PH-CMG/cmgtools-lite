@@ -32,11 +32,12 @@ def scalarToVector(x):
     return x
 
 class PlotSpec:
-    def __init__(self,name,expr,bins,opts):
+    def __init__(self,name,expr,bins,opts,extracut=None):
         self.name = name
         self.expr = expr
         self.bins = bins
         self.opts = opts
+        self.extracut = extracut
         self.logs = {}
     def hasOption(self,name):
         return (name in self.opts)
@@ -309,7 +310,7 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         for tf_tree, tf_filename in self._listFriendTrees():
-            tf = self._tree.AddFriend(tf_tree, tf_filename),
+            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')),
             self._friends.append(tf)
         self._isInit = True
     def _close(self):
@@ -578,6 +579,8 @@ class TreeToYield:
             graph = ROOT.gROOT.FindObject("Graph").Clone(name) #ROOT.gPad.GetPrimitive("Graph").Clone(name)
             return graph
         drawOpt = "goff"
+        if plotspec.extracut : 
+            cut = '(%s)*(%s)'%(cut, self.adaptExpr(plotspec.extracut ))
         if "TProfile" in histo.ClassName(): drawOpt += " PROF";
         self._tree.Draw("%s>>%s" % (expr,"dummy"), cut, drawOpt, maxEntries, firstEntry)
         if canKeys and histo.GetEntries() > 0 and histo.GetEntries() < self.getOption('KeysPdfMinN',2000) and not self._isdata and self.getOption("KeysPdf",False):
