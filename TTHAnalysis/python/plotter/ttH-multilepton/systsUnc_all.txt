@@ -32,13 +32,13 @@ CMS_ttHl_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=
 CMS_ttHl_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['leptonSF_3l_el_up/leptonSF_3l'\,'leptonSF_3l_el_dn/leptonSF_3l']	     
 CMS_ttHl_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['leptonSF_4l_el_up/leptonSF_4l'\,'leptonSF_4l_el_dn/leptonSF_4l']            
 
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeights=['leptonSF_2lss_mu_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_mu_loosetotight_dn/leptonSF_2lss']
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*3l.* : templateSymm ; AddWeights=['leptonSF_3l_mu_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_mu_loosetotight_dn/leptonSF_3l']
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*4l.* : templateSymm ; AddWeights=['leptonSF_4l_mu_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_mu_loosetotight_dn/leptonSF_4l']
+CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_mu_loosetotight_dn/leptonSF_2lss']
+CMS_ttHl_lepEff_mutight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_mu_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_mu_loosetotight_dn/leptonSF_3l']
+CMS_ttHl_lepEff_mutight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_mu_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_mu_loosetotight_dn/leptonSF_4l']
 
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeights=['leptonSF_2lss_el_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_el_loosetotight_dn/leptonSF_2lss']
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*3l.* : templateSymm ; AddWeights=['leptonSF_3l_el_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_el_loosetotight_dn/leptonSF_3l']
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*4l.* : templateSymm ; AddWeights=['leptonSF_4l_el_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_el_loosetotight_dn/leptonSF_4l']
+CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_el_loosetotight_dn/leptonSF_2lss']
+CMS_ttHl_lepEff_eltight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_el_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_el_loosetotight_dn/leptonSF_3l']
+CMS_ttHl_lepEff_eltight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_el_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_el_loosetotight_dn/leptonSF_4l']
 
 
 ## L1 ECAL prefiring
@@ -49,9 +49,9 @@ CMS_ttHl17_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreF
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_2lss      : $PromptFromMC : .*2lss.*_2016 : templateAsymm; AddWeights=['triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year,+1)/triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'\,'triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year,-1)/triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'], year="2016"
-CMS_ttHl17_trigger_2lss      : $PromptFromMC : .*2lss.*_2017 : templateAsymm; AddWeights=['triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year,+1)/triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'\,'triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year,-1)/triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'], year="2017"
-CMS_ttHl18_trigger_2lss      : $PromptFromMC : .*2lss.*_2018 : templateAsymm; AddWeights=['triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year,+1)/triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'\,'triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year,-1)/triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year)'], year="2018"
+CMS_ttHl16_trigger_2lss      : $PromptFromMC : .*2lss.*_2016 : templateAsymm; AddWeights=['triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year\,+1)/triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year)'\,'triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year\,-1)/triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year)'], year="2016"
+CMS_ttHl17_trigger_2lss      : $PromptFromMC : .*2lss.*_2017 : templateAsymm; AddWeights=['triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year\,+1)/triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year)'\,'triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year\,-1)/triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year)'], year="2017"
+CMS_ttHl18_trigger_2lss      : $PromptFromMC : .*2lss.*_2018 : templateAsymm; AddWeights=['triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year\,+1)/triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year)'\,'triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year\,-1)/triggerSF_ttH(LepGood1_pdgId\, LepGood1_conePt\, LepGood2_pdgId\, LepGood2_conePt\, 2\, year)'], year="2018"
 
 CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.*_2016 : normSymm : 1.01
 CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.*_2017 : normSymm : 1.01
