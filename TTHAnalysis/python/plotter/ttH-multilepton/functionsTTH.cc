@@ -527,24 +527,24 @@ float leptonSF_ttH_var(int pdgid, float pt, float eta, int nlep, float var_e, fl
 //TH2Poly* t2poly_triggerSF_ttH_em = NULL;
 //TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float shift = 0){
+// float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float shift = 0){
 
-  if (nlep>=3) return 1.0+shift*0.05;
+//   if (nlep>=3) return 1.0+shift*0.05;
 
-  int comb = abs(pdgid1)+abs(pdgid2);
+//   int comb = abs(pdgid1)+abs(pdgid2);
 
-  if (comb==22) return (pt1<30) ? (0.937+shift*0.027) : (0.991+shift*0.002); // ee
-  else if (comb==24) { // em
-    if (pt1<35) return 0.952+shift*0.008;
-    else if (pt1<50) return 0.983+shift*0.003;
-    else return 1.0+shift*0.001;
-  }
-  else if (comb==26) return (pt1<35) ? (0.972+shift*0.006) : (0.994+shift*0.001); // mm
+//   if (comb==22) return (pt1<30) ? (0.937+shift*0.027) : (0.991+shift*0.002); // ee
+//   else if (comb==24) { // em
+//     if (pt1<35) return 0.952+shift*0.008;
+//     else if (pt1<50) return 0.983+shift*0.003;
+//     else return 1.0+shift*0.001;
+//   }
+//   else if (comb==26) return (pt1<35) ? (0.972+shift*0.006) : (0.994+shift*0.001); // mm
 
-  std::cout << "ERROR: triggerSF_ttH called with wrong input, returning 1" << std::endl;
-  return 1;
+//   std::cout << "ERROR: triggerSF_ttH called with wrong input, returning 1" << std::endl;
+//   return 1;
 
-}
+// }
 
 //float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
 //
@@ -704,4 +704,56 @@ float ttH_3l_clasifier(float nJet25,float nBJetMedium25){
   if ((nJet25 == 4)*(nBJetMedium25>1))    return 11;
   if ((nJet25>4)*(nBJetMedium25>1))       return 12;
   else return -1;
+}
+
+
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, int year, int var=0){
+  if (nlep == 2){
+    if (abs(pdgid1*pdgid2) == 121){
+      if (year == 2016){
+	if (pt2 < 25){
+	  return 0.98*(1 + var*0.02);
+	}
+      else return 1.*(1 + var*0.02);
+      }
+      if (year == 2017){
+	if (pt2<40) return 0.98*(1 + var*0.01);
+	else return 1*(1 + var*0.01);
+      }
+      if (year == 2018){
+	if (pt2<25){
+	return 0.98*(1 + var*0.01);
+	}
+	else return 1.*(1 + var*0.01);
+      }
+    }
+    
+    else if ( abs(pdgid1*pdgid2) == 143){
+      if (year == 2016) return 1.*(1 + var*0.01);
+      if (year == 2017){
+	if (pt2<40) return 0.98*(1 + var*0.01);
+	else return 0.99*(1 + var*0.01);
+      }
+      if (year == 2018){
+	if (pt2<25) return 0.98*(1 + var*0.01);
+	else        return 1*(1 + var*0.01);
+      }
+    }
+    else{
+      if (year == 2016) return 0.99*(1 + var*0.01);
+      if (year == 2017){
+	if (pt2 < 40) return 0.97*(1 + var*0.02);
+	else if (pt2 < 55 && pt2>40) return 0.995*(1 + var*0.02);
+	else if (pt2 < 70 && pt2>55) return 0.96*(1 + var*0.02);
+	else                         return 0.94*(1 + var*0.02);
+      }
+      if (year == 2018){
+	if (pt1 < 40) return 1.01*(1 + var*0.01);
+	if (pt1 < 70) return 0.995*(1 + var*0.01);
+	else return 0.98*(1 + var*0.01);
+      }
+    }
+    
+  }
+  else return 1.;
 }
