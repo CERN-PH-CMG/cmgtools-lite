@@ -1,7 +1,7 @@
 ttH+    : TTHnobb_fxfx : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
 
-tHq	: THQ_ctcvcp: 0.07096*LHEReweightingWeight[11] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue,genSumWeightName="LHEReweightingSumw_[11]*genEventSumw_"
-tHW	: THW_ctcvcp :0.01561*LHEReweightingWeight[11] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+8,genSumWeightName="LHEReweightingSumw_[11]*genEventSumw_"
+tHq	: THQ_ctcvcp: 0.07096*LHEReweightingWeight[11] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kBlue,genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
+tHW	: THW_ctcvcp :0.01561*LHEReweightingWeight[11] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+8,genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
 TTWW	: TTWW : 0.006981 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kGreen
 
 TTW     : TTWToLNu_fxfx : 0.1960 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"
