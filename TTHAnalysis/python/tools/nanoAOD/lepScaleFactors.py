@@ -92,13 +92,15 @@ class lepScaleFactors(Module):
                 recohist = reco
             else: 
                 recohist = reco[0] if lep.pt > 20 else reco[1]
-            histList.append(recohist)
+            histList.append([recohist]) # recohist is a list so we can distinguish it afterwards :)
 
         if abs(lep.pdgId) == 13: 
             histList.append( self.recoToLoose['%d,m'%year] ) 
         out = 1
         for hist in histList:
-            etabin = max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(abs(lep.eta))));
+            eta = (lep.eta+lep.deltaEtaSC) if type(hist) == list else abs(lep.eta)
+            hist = hist[0]
+            etabin = max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(eta)));
             ptbin  = max(1, min(hist.GetNbinsY(), hist.GetYaxis().FindBin(lep.pt)));
             sf = hist.GetBinContent(etabin,ptbin)
             if '_mu_up' == var_str and abs(lep.pdgId) == 13: 
@@ -115,7 +117,6 @@ class lepScaleFactors(Module):
 
     def analyze(self, event):
         year = event.year
-        
         # leptons
         all_leps = [l for l in Collection(event,"LepGood")]
         nFO = getattr(event,"nLepFO_Recl")
