@@ -316,9 +316,9 @@ float ttH_mva_4l(float score)
 
 }
 
-int ttH_catIndex_4l(float bdt)
+int ttH_catIndex_4l(float bdt, float cut=0.55)
 {
-  if (ttH_mva_4l(bdt) < 0.31) return 1;
+  if (ttH_mva_4l(bdt) < cut) return 1;
   else return 2;
 }
 
