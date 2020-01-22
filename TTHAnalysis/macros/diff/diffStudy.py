@@ -27,14 +27,14 @@ plotlist = [
     ["Hreco_delR_H_j1l"                         ,"Hreco_delR_H_j1l>=0"                  ,"delR_j1l"      , 100, 0., 10. ],
     ["Hreco_delR_H_j2l"                         ,"Hreco_delR_H_j2l>=0"                  ,"delR_j2l"      , 100, 0., 10. ],
     ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0" ,"all_score_test", 100, 0., 10. ],
-    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10. ],
-    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10. ],
-    ["Hreco_matchedpartons"                     ,"Hreco_matchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10. ],
     ["HTXS_Higgs_pt"                            ,"HTXS_Higgs_pt>=0"                     ,"gen_STXS_pTH"  , 100, 0., 400.],
+    ["Hreco_nmatchedpartons"                     ,"Hreco_nmatchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10.],
+    ["Hreco_nmatchedpartons"                     ,"Hreco_nmatchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10.],
+    ["Hreco_nmatchedpartons"                     ,"Hreco_nmatchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10.],
  ]
 
 comparisonplotlist = [
-    ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_matchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_matchedpartons ==2","delR_j1j2", 100, 0., 10.],
+    ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2", 100, 0., 10.],
 ]
 
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):
