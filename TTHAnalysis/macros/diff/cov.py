@@ -19,6 +19,7 @@ if not t:
     raise ValueError('Tree not loaded')
 ## select branches and apply selection: only events of which visible pT is constructed
 ## -----------------------------------------------------------------------------------
+hreco_pthvis_withnu = tree2array(t, branches=['Hreco_pTVisPlusNu'], selection ='Hreco_pTVisPlusNu >= 0 ')
 hreco_pthvis = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis >= 0 ')
 hreco_pthgen = tree2array(t, branches=['Hreco_pTHgen'], selection ='Hreco_pTHvis >= 0 ')
 hreco_pthvis_recoFail = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis < 0  ')
@@ -51,8 +52,9 @@ print ("fraction of reconstructed events in which two partons are matched to two
 ## ----------------------------
 X = np.asarray(hreco_pthvis ,float)
 Y = np.asarray(hreco_pthgen ,float)
-
+Z = np.asarray(hreco_pthvis_withnu ,float)
 print ("corr of vis with gen = "   + str(np.corrcoef(X,Y)[0,1]))
+print ("corr of vis_withnu with gen = "   + str(np.corrcoef(Z,Y)[0,1]))
 #print ("corr of vis with itself    = "+ str(np.corrcoef(X)))
 #print ("corr of gen with itself    = "+ str(np.corrcoef(Y)))
 

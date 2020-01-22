@@ -134,7 +134,7 @@ mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016All,jetmetUncertainties2017All,jetmetUncertainties2018All
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016AllStore,jetmetUncertainties2017AllStore,jetmetUncertainties2018AllStore
+#from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertainties2016AllStore,jetmetUncertainties2017AllStore,jetmetUncertainties2018AllStore #H commented this
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetMetCorrelator import jetMetCorrelations2016,jetMetCorrelations2017,jetMetCorrelations2018
 
 jme2016 = [jetmetUncertainties2016All,jetMetCorrelations2016]
@@ -248,10 +248,10 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
 finalMVA = lambda : finalMVA_DNN()
 
-from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
+#from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l #H commented this
 finalMVA3L = lambda : finalMVA_DNN_3l()
 
-from CMGTools.TTHAnalysis.tools.nanoAOD.finalMVA_4l import FinalMVA_4L
+#from CMGTools.TTHAnalysis.tools.nanoAOD.finalMVA_4l import FinalMVA_4L #H commented this
 finalMVA_4l = lambda : FinalMVA_4L()
 
 
@@ -302,14 +302,26 @@ higgsDecay = lambda : higgsDecayFinder()
 # scaleFactorSequence_2018
 
 # 5_evtVars_v0
-from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco
+#from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco #not sure whether H commented this
 
 from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+#from CMGTools.TTHAnalysis.tools.higgsRecoTTH_94X import HiggsRecoTTH_94X
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH_v5 import HiggsRecoTTH_v5
 higgsRecoTTH = lambda : HiggsRecoTTH(label="_Recl",
                                      cut_BDT_rTT_score = 0.0,
                                      cuts_mW_had = (60.,100.),
                                      cuts_mH_vis = (80.,140.),
                                      btagDeepCSVveto = 0.1522)
+higgsRecoTTH_v5 = lambda : HiggsRecoTTH_v5(label="_Recl",
+                                     cut_BDT_rTT_score = 0.0,
+                                     cuts_mW_had = (60.,100.),
+                                     cuts_mH_vis = (80.,140.),
+                                     btagDeepCSVveto = 0.1522)
+#higgsRecoTTH_94X = lambda : HiggsRecoTTH_94X(label="_Recl",
+                                     #cut_BDT_rTT_score = 0.0,
+                                     #cuts_mW_had = (60.,100.),
+                                     #cuts_mH_vis = (80.,140.),
+                                     #btagDeepCSVveto = 0.1522)
 higgsRecoTTHNoTopTagger = lambda : HiggsRecoTTH(label="_Recl",
                                                 cut_BDT_rTT_score = 0.0,
                                                 cuts_mW_had = (60.,100.),
