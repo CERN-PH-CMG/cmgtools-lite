@@ -23,9 +23,19 @@ hreco_pthvis_withnu = tree2array(t, branches=['Hreco_pTVisPlusNu'], selection ='
 hreco_pthvis = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis >= 0 ')
 hreco_pthgen = tree2array(t, branches=['Hreco_pTHgen'], selection ='Hreco_pTHvis >= 0 ')
 hreco_pthvis_recoFail = tree2array(t, branches=['Hreco_pTHvis'], selection ='Hreco_pTHvis < 0  ')
-hreco_onematchedparton = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons == 1 ')
-hreco_twomatchedpartons = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons == 2 ')
-hreco_nmatchedpartonsall = tree2array(t, branches=['Hreco_matchedpartons'], selection ='Hreco_matchedpartons >= 0 ')
+hreco_onematchedparton = tree2array(t, branches=['Hreco_nmatchedpartons'], selection ='Hreco_nmatchedpartons == 1 ')
+hreco_twomatchedpartons = tree2array(t, branches=['Hreco_nmatchedpartons'], selection ='Hreco_nmatchedpartons == 2 ')
+hreco_nmatchedpartonsall = tree2array(t, branches=['Hreco_nmatchedpartons'], selection ='Hreco_nmatchedpartons >= 0 ')
+
+hreco_onelfromwfromh = tree2array(t, branches=['Hreco_nLFromWFromH'], selection ='Hreco_nLFromWFromH == 1 ')
+hreco_twoqfromwfromh = tree2array(t, branches=['Hreco_nQFromWFromH'], selection ='Hreco_nQFromWFromH == 2 ')
+hreco_onelandtwoqfromwfromh = tree2array(t, branches=['Hreco_nLFromWFromH'], selection ='Hreco_nLFromWFromH == 1 && Hreco_nQFromWFromH == 2 ')
+hreco_nlfromwfromh = tree2array(t, branches=['Hreco_nLFromWFromH'], selection ='')
+hreco_nqfromwfromh = tree2array(t, branches=['Hreco_nQFromWFromH'], selection ='')
+
+print("Fraction of events with one lepton from W from H:", float(len(hreco_onelfromwfromh)/len(hreco_nlfromwfromh)))
+print("Fraction of events with two quarks from W from H:", float(len(hreco_twoqfromwfromh)/len(hreco_nqfromwfromh)))
+print("Fraction of events with one lepton from W from H AND two quarks from W from H:", float(len(hreco_onelandtwoqfromwfromh)/len(hreco_nlfromwfromh)))
 
 print ("length of vis array              = " + str(len(hreco_pthvis))) 
 #print ("length of gen array              = " + str(len(hreco_pthgen))) 
