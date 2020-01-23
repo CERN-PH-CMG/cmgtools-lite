@@ -702,3 +702,4 @@ tHW_ct_3p0_cv_0p5_htt+ : THW_ctcvcp  : 0.01561*LHEReweightingWeight[49] : (LepGo
 tHW_ct_-1p0_cv_1p0_hww+ : THW_ctcvcp  : 0.01561  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kBlue
 tHW_ct_-1p0_cv_1p0_hzz+ : THW_ctcvcp  : 0.01561  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue
 tHW_ct_-1p0_cv_1p0_htt+ : THW_ctcvcp  : 0.01561  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue
+
