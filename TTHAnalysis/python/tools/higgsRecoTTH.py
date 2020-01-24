@@ -64,7 +64,6 @@ class HiggsRecoTTH(Module):
         #HiggsDaughters = genHiggsDaughtersSelection(genpar) # that is how you define a collection from genproducer, i.e. apply the selection on your collection and it return a filtered collection
         #genjet = Collection(event,"GenJet","nGenJet") # avoid loading unused collection
         genpar = Collection(event,"GenPart","nGenPart")
-        
         QFromWFromH = []
         LFromWFromH = []
         QFromWFromT = []
@@ -125,12 +124,6 @@ class HiggsRecoTTH(Module):
                     if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
                         if self.debug: print "the mother of this W is a Higgs"
                         NuFromWFromH.append(part)
-                       
-
-        #print "number of quarks            =" + str(len(QFromWFromH))
-        #print "------------------------------------------------------"
-        #print "number of gen-level leptons =" + str(len(LFromWFromH))
-
         # loop over gen jets 
         # ------------------ 
         #for jet in genjet:
