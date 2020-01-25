@@ -15,8 +15,8 @@ lumis = {
 
 submit = '{command}' 
 dowhat = "plots" 
-dowhat = "dumps" 
-#dowhat = "yields" 
+#dowhat = "dumps" 
+dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 dojeccomps=True
 P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
@@ -32,7 +32,7 @@ if 'gae' in os.environ['HOSTNAME']:
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     P0 = "/nfs/user/pvischia/tth/v5pre/"
 
-TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors_jecSum --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l --Fs {P}/4_evtVars --Fs {P}/5_BDThtt_reco "  #_new
+TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors_jecSum --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l_updated/ --Fs {P}/6_mva4l --Fs {P}/4_evtVars --Fs {P}/5_BDThtt_reco "  #_new
 YEARDIR=YEAR if YEAR != 'all' else ''
 TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)            + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
 TREESONLYSKIM     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/%s "%(YEARDIR,)  + "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)

@@ -1,7 +1,7 @@
 import os, sys
-nCores=8
+nCores=32
 submit = '{command}' 
-submit = '''sbatch -c %d -p batch  --wrap '{command}' '''%nCores
+submit = '''sbatch -c %d -p short  --wrap '{command}' '''%nCores
 
 
 if   'cmsco01.cern.ch' in os.environ['HOSTNAME']: ORIGIN="/data/peruzzi";
@@ -32,7 +32,7 @@ os.system("test -d cards/{OUTNAME} || mkdir -p cards/{OUTNAME}".format(OUTNAME=O
 OPTIONS="{OPTIONS} --od cards/{OUTNAME} ".format(OPTIONS=OPTIONS, OUTNAME=OUTNAME)
 
 #T2L="-P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1  --Fs  {{P}}/1_recl/ --FMCs {{P}}/2_scalefactors --Fs {{P}}/3_tauCount --Fs {{P}}/6_mva3l --Fs {{P}}/6_mva2lss_new/  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
-T2L="-P {ORIGIN}/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/{YEAR} -P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1_sources  --FMCs {{P}}/1_recl_sources --FDs {{P}}/1_recl --FMCs {{P}}/2_scalefactors_jecAllVars --FMCs {{P}}/2_scalefactors_lep --Fs {{P}}/3_tauCount --FMCs {{P}}/6_mva3l_allVars --FDs {{P}}/6_mva3l --FMCs {{P}}/6_mva2lss_allVars/ --FDs {{P}}/6_mva2lss  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
+T2L="-P {ORIGIN}/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/{YEAR} -P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1_sources  --FMCs {{P}}/1_recl_sources --FDs {{P}}/1_recl --FMCs {{P}}/2_scalefactors_jecAllVars --FMCs {{P}}/2_scalefactors_lep --Fs {{P}}/3_tauCount --Fs {{P}}/6_mva3l_updated/ --FMCs {{P}}/6_mva2lss_allVars/ --FDs {{P}}/6_mva2lss  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
 T3L=T2L
 T4L=T2L
 
@@ -147,33 +147,44 @@ if REGION == "2lss_3j_SVA":
 if REGION == "3l":
     OPT_3L='{T3L} {OPTIONS} -W "L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 3, year)*leptonSF_3l"'.format(T3L=T3L, OPTIONS=OPTIONS)
     CATPOSTFIX=""
-    for CATNAME in "ttH_bl,ttH_bt,tH_bl,tH_bt,rest_eee,rest_eem,rest_emm,rest_mmm".split(','):
-	if  CATNAME == "ttH_bl" :
-	    CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5,6.5]"
-	    CUT="{FUNCTION_3L} > 0 && {FUNCTION_3L} < 7".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "ttH_bt" :
-	    CATBINS="[6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5]"
-	    CUT="{FUNCTION_3L} > 6 && {FUNCTION_3L} < 14".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "tH_bl" :
-	    CATBINS="[13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5]"
-	    CUT="{FUNCTION_3L} > 13 && {FUNCTION_3L} < 21".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "tH_bt" :
-	    CATBINS="[20.5,21.5,22.5,23.5,24.5,25.5]"
-	    CUT="{FUNCTION_3L} > 20 && {FUNCTION_3L} < 26".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_eee" :
-	    CATBINS="[25.5,26.5]"
-	    CUT="{FUNCTION_3L} > 25 && {FUNCTION_3L} < 27".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_eem" :
-	    CATBINS="[26.5,27.5,28.5,29.5,30.5]"
-	    CUT="{FUNCTION_3L} > 26 && {FUNCTION_3L} < 31".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_emm" :
-	    CATBINS="[30.5,31.5,32.5,33.5,34.5]"
-	    CUT="{FUNCTION_3L} > 30 && {FUNCTION_3L} < 35".format(FUNCTION_3L=FUNCTION_3L)
-	elif  CATNAME == "rest_mmm" :
-	    CATBINS="[34.5,35.5,36.5,37.5,38.5]"
-	    CUT="{FUNCTION_3L} > 34 && {FUNCTION_3L} < 39".format(FUNCTION_3L=FUNCTION_3L)
+    for CATNAME in "ttH_bl,ttH_bt,tH_bl,tH_bt,rest_eee,rest_eem_bt,rest_emm_bt,rest_mmm_bt,rest_eem_bl,rest_emm_bl,rest_mmm_bl".split(','):
+        if  CATNAME == "ttH_bl" :
+            CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5]"
+            CUT="{FUNCTION_3L} > 0 && {FUNCTION_3L} <6".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "ttH_bt" :
+            CATBINS="[5.5,6.5,7.5,8.5,9.5]"
+            CUT="{FUNCTION_3L} > 5 && {FUNCTION_3L} <10".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "tH_bl" :
+            CATBINS="[9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5]"
+            CUT="{FUNCTION_3L} > 9 && {FUNCTION_3L} <17".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "tH_bt" :
+            CATBINS="[16.5,17.5,18.5,19.5]"
+            CUT="{FUNCTION_3L} > 16 && {FUNCTION_3L} <20".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_eee" :
+            CATBINS="[19.5,20.5]"
+            CUT="{FUNCTION_3L} > 19 && {FUNCTION_3L} <21".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_eem_bl" :
+            CATBINS="[20.5,21.5,22.5,23.5,24.5]"
+            CUT="{FUNCTION_3L} > 20 && {FUNCTION_3L} <25".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_eem_bt" :
+            CATBINS="[24.5,25.5]"
+            CUT="{FUNCTION_3L} > 24 && {FUNCTION_3L} <26".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_emm_bl" :
+            CATBINS="[25.5,26.5,27.5,28.5,29.5]"
+            CUT="{FUNCTION_3L} > 25 && {FUNCTION_3L} <30".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_emm_bt" :
+            CATBINS="[29.5,30.5]"
+            CUT="{FUNCTION_3L} > 29 && {FUNCTION_3L} <31".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_mmm_bl" :
+            CATBINS="[30.5,31.5,32.5,33.5]"
+            CUT="{FUNCTION_3L} > 30 && {FUNCTION_3L} <34".format(FUNCTION_3L=FUNCTION_3L)
+        elif  CATNAME == "rest_mmm_bt" :
+            CATBINS="[33.5,34.5]"
+            CUT="{FUNCTION_3L} > 33 && {FUNCTION_3L} <35".format(FUNCTION_3L=FUNCTION_3L)
+
 	else:
-            print "Unkown sr", CATNAME
+            print "Unknown sr", CATNAME
+            raise RuntimeError
 
         TORUN = 'python {SCRIPT} {DOFILE} ttH-multilepton/mca-3l-{MCASUFFIX}{MCAOPTION}.txt ttH-multilepton/3l_tight_legacy.txt "{FUNCTION_3L}" "{CATBINS}" {SYSTS} {OPT_3L} --binname ttH_3l_0tau_{CATNAME}_{YEAR} --year {YEAR}  -A ^alwaystrue regcut "{CUT}"'.format(SCRIPT=SCRIPT, DOFILE=DOFILE,MCASUFFIX=MCASUFFIX,MCAOPTION=MCAOPTION,FUNCTION_3L=FUNCTION_3L,CATBINS=CATBINS,CATNAME=CATNAME,YEAR=YEAR,CUT=CUT, SYSTS=SYSTS, OPT_3L=OPT_3L)
         print submit.format(command=TORUN)

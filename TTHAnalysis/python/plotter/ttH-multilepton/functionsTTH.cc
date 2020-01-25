@@ -200,6 +200,8 @@ int ttH_catIndex_2lss_SVA(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_c
 }
 
 
+
+
 int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
 {
 
@@ -207,30 +209,39 @@ int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pd
   
   if (ttH >= rest && ttH >= tH){
     if (nBMedium < 2)
-      return 1;
+      return 1; // ttH_bl
     else
-      return 2;
+      return 2; // ttH_bt
   }
   else if (tH >= ttH && tH >= rest){
     if (nBMedium < 2){
-      return 3;
+      return 3; // tH_bl
     }
     else{
-      return 4;
+      return 4; // tH_bt
     }
   }
   else if (rest >= ttH && rest >= tH){
-    if ( sumpdgId == 33){ // eee
+    if ( sumpdgId == 33){ // rest_eee
       return 5;
     }
-    else if (sumpdgId == 35){ // eem
-      return 6;
+    else if (sumpdgId == 35){ 
+      if (nBMedium < 2)
+	return 6; // rest_eem_bl
+      else
+	return 7; // rest_eem_bt
     }
     else if (sumpdgId == 37){ // emm
-      return 7;
+      if (nBMedium < 2)
+	return 8; // rest_emm_bl
+      else
+	return 9; // rest_emm_bt
     }
     else if (sumpdgId == 39){ // mmm
-      return 8;
+      if (nBMedium < 2)
+	return 10; // rest_mmm_bl
+      else
+	return 11; // rest_mmm_bt
     }
   }
 
@@ -241,71 +252,32 @@ int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pd
 }
 
 
+std::vector<TString> bin3llabels = {"ttH_bl",  "ttH_bt",  "tH_bl",  "tH_bt",  "rest_eee",  "rest_eem_bl",  "rest_eem_bt",  "rest_emm_bl",  "rest_emm_bt",  "rest_mmm_bl",  "rest_mmm_bt"};
+
+std::map<TString, TH1F*> binHistos3l;
+std::map<TString, int> bins3lcumul;
+TFile* f3lBins;
+
+
 int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
 {
-  
-  int binIdx = ttH_catIndex_3l(ttH,tH,rest,lep1_pdgId,lep2_pdgId,lep3_pdgId,nBMedium );
-  if (binIdx == 1){ // "output_NN_ttH_bl"
-    if ( ttH <= 0.47 && ttH >= 0.00) return 1;
-    else if ( ttH <= 0.54 && ttH >= 0.47) return 2;
-    else if ( ttH <= 0.60 && ttH >= 0.54) return 3;
-    else if ( ttH <= 0.70 && ttH >= 0.60) return 4;
-    else if ( ttH <= 0.80 && ttH >= 0.70) return 5;
-    else if ( ttH <= 1.00 && ttH >= 0.80) return 6;
-  }
-  else if (binIdx == 2){ // "output_NN_ttH_bt"
-    if      ( ttH >= 0.00 && ttH <=  0.54) return 7;
-    else if ( ttH >= 0.54 && ttH <=  0.62) return 8;
-    else if ( ttH >= 0.62 && ttH <=  0.71) return 9;
-    else if ( ttH >= 0.71 && ttH <=  0.79) return 10;
-    else if ( ttH >= 0.79 && ttH <=  0.85) return 11;
-    else if ( ttH >= 0.85 && ttH <=  0.91) return 12;
-    else if ( ttH >= 0.91 && ttH <=  1.00) return 13;
-  }
-  else if (binIdx == 3){ // "output_NN_tH_bl"
-    if ( tH >= 0.00 && tH <= 0.46) return 14;
-    else if ( tH >= 0.46 && tH <= 0.50) return 15;
-    else if ( tH >= 0.50 && tH <= 0.54) return 16;
-    else if ( tH >= 0.54 && tH <= 0.60) return 17;
-    else if ( tH >= 0.60 && tH <= 0.68) return 18;
-    else if ( tH >= 0.68 && tH <= 0.79) return 19;
-    else if ( tH >= 0.79 && tH <= 1.00) return 20;
-  }
 
-  else if (binIdx == 4){ // "output_NN_tH_bt"
-    
-    if ( tH >= 0.00 && tH <=  0.47) return 21; 
-    else if ( tH >= 0.47 && tH <=  0.52) return 22; 
-    else if ( tH >= 0.52 && tH <=  0.58) return 23; 
-    else if ( tH >= 0.58 && tH <=  0.66) return 24; 
-    else if ( tH >= 0.66 && tH <=  1.00) return 25; 
+  if (!f3lBins){
+    f3lBins=TFile::Open("../../data/kinMVA/binning_3l.root");
+    int count=0;
+    for (auto label : bin3llabels){
+      binHistos3l[label] = (TH1F*) f3lBins->Get(label);
+      bins3lcumul[label] = count;
+      count += binHistos3l[label]->GetNbinsX();
+    }
   }
-  
-  else if (binIdx == 5){ // "output_NN_rest_eee"
-    return 26;
-  }
+  TString binLabel = bin3llabels[ttH_catIndex_3l(ttH,tH,rest,lep1_pdgId,lep2_pdgId,lep3_pdgId,nBMedium)-1];
+  float mvas[] = { ttH, tH, rest };
+  float mvavar = *std::max_element( mvas, mvas+3 );
+  return binHistos3l[binLabel]->FindBin( mvavar ) + bins3lcumul[binLabel];
 
-  else if (binIdx == 6){ // "output_NN_rest_eem"
-    if (rest >= 0.0  && rest <=   0.49) return 27;
-    else if (rest >= 0.49 && rest <=   0.57) return 28;
-    else if (rest >= 0.57 && rest <=   0.66) return 29;
-    else if (rest >= 0.66 && rest <=   1.0 ) return 30;
-  }
-
-  else if (binIdx == 7){ // "output_NN_rest_emm"
-    if (rest >= 0.0  && rest <=  0.51) return 31;
-    else if (rest >= 0.51 && rest <=  0.6) return 32;
-    else if (rest >= 0.60 && rest <=  0.69) return 33;
-    else if (rest >= 0.69 && rest <=  1.0) return 34;
-  }
-  else if (binIdx == 8){ // "output_NN_rest_mmm"
-    if ( rest >= 0.0 && rest <= 0.52) return 35;
-    else if ( rest >= 0.52&& rest <= 0.59) return 36;
-    else if ( rest >= 0.59&& rest <= 0.70) return 37;
-    else if ( rest >= 0.70&& rest <= 1.0 ) return 38;
-  }
   
-  cout << "[ttH_catIndex_3l_MVA]: It should not be here "<< ttH << " " << tH << " " << rest << " " << binIdx << endl;
+  cout << "[ttH_catIndex_3l_MVA]: It should not be here "<< ttH << " " << tH << " " << rest << endl;
   return -1;
 
 }
