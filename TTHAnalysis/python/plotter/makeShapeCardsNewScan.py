@@ -38,7 +38,8 @@ pattern = re.compile( options.scanregex )
 for psig in mca.listSignals(True):
     match = pattern.search( psig ) 
     if not match: 
-        raise RuntimeError("Signal %s does not match the regexp"%psig)
+	continue
+        #raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ] 
     point[1] = re.sub("_h[a-z]+", '',point[1])
     if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
@@ -98,13 +99,14 @@ for scanpoint in scanpoints:
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
-        matchpoint = [match.group(p) for p in options.params.split(',')]
-        matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
+        if match: 
+        	matchpoint = [match.group(p) for p in options.params.split(',')]
+        	matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
         
-        #if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
-        if scanpoint != matchpoint: continue
-        listSignals.append(psig)
-    
+        	#if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
+        	if scanpoint != matchpoint: continue
+        if 'promptsub' not in psig: listSignals.append(psig)
+    #print(listSignals)
     
     for binname, report in allreports.iteritems():
         if options.bbb:
