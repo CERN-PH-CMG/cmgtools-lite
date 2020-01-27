@@ -7,8 +7,9 @@ $alias : tHq : tHq|tHq_h[a-z]+|tHq_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHq_ct_-[0-9]
 $alias : tHW : tHW|tHW_h[a-z]+|tHW_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHW_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHW_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+|tHW_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+
 $alias : ttHX : $ttH|$tHq|$tHW
 $alias : ttV  : TT[WZ]|TTWW
-$alias : VH   : VH|VH_h[a-z]+
-$alias : PromptFromMC : $ttHX|$ttV|$VH|Rares|Convs|WZ|ZZ|EWK  
+$alias : ZH   : ZH|ZH_h[a-z]+
+$alias : WH   : WH|WH_h[a-z]+
+$alias : PromptFromMC : $ttHX|$ttV|$ZH|$WH|Rares|Convs|WZ|ZZ|EWK  
 $alias : FRData : data_fakes|.*_promptsub
 $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 
@@ -23,25 +24,22 @@ lumi_corr		: $PromptFromMC : .* : normSymm : 1.021; year="2018"
 
 
 # lepton efficiencies
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['muLooseUnc_2lss_up'\,'muLooseUnc_2lss_dn']
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['muLooseUnc_3l_up'\,'muLooseUnc_3l_dn']
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['muLooseUnc_4l_up'\,'muLooseUnc_4l_dn']
+CMS_ttHl_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_up/leptonSF_2lss'\,'leptonSF_2lss_mu_dn/leptonSF_2lss']
+CMS_ttHl_lepEff_muloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['leptonSF_3l_mu_up/leptonSF_3l'\,'leptonSF_3l_mu_dn/leptonSF_3l']
+CMS_ttHl_lepEff_muloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['leptonSF_4l_mu_up/leptonSF_4l'\,'leptonSF_4l_mu_dn/leptonSF_4l']            
 
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
+CMS_ttHl_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_up/leptonSF_2lss'\,'leptonSF_2lss_el_dn/leptonSF_2lss']   
+CMS_ttHl_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['leptonSF_3l_el_up/leptonSF_3l'\,'leptonSF_3l_el_dn/leptonSF_3l']	     
+CMS_ttHl_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['leptonSF_4l_el_up/leptonSF_4l'\,'leptonSF_4l_el_dn/leptonSF_4l']            
 
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.02\, 1.04)'
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss_ee.* : none
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss_mm.* : normSymm : 1.04
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss_em.* : normSymm : 1.02
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*3l.* : normSymm : 1.03
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*4l.* : normSymm : 1.04
+CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_mu_loosetotight_dn/leptonSF_2lss']
+CMS_ttHl_lepEff_mutight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_mu_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_mu_loosetotight_dn/leptonSF_3l']
+CMS_ttHl_lepEff_mutight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_mu_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_mu_loosetotight_dn/leptonSF_4l']
 
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)'
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss_mm.* : none
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*3l.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)+(abs(LepGood3_pdgId)==11)*if3(LepGood3_pt<25\,0.05\,0.03)'
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*4l.* : templateSymm ; AddWeight='1+(abs(LepGood1_pdgId)==11)*if3(LepGood1_pt<25\,0.05\,0.03)+(abs(LepGood2_pdgId)==11)*if3(LepGood2_pt<25\,0.05\,0.03)+(abs(LepGood3_pdgId)==11)*if3(LepGood3_pt<25\,0.05\,0.03)+(abs(LepGood4_pdgId)==11)*if3(LepGood4_pt<25\,0.05\,0.03)'
+CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_el_loosetotight_dn/leptonSF_2lss']
+CMS_ttHl_lepEff_eltight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_el_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_el_loosetotight_dn/leptonSF_3l']
+CMS_ttHl_lepEff_eltight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_el_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_el_loosetotight_dn/leptonSF_4l']
+
 
 ## L1 ECAL prefiring
 CMS_ttHl16_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2016"
@@ -51,28 +49,90 @@ CMS_ttHl17_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreF
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger      : $PromptFromMC : .*2lss.*_2016 : templateAsymm; AddWeights=['triggerSF_2lss_up/triggerSF_2lss'\,'triggerSF_2lss_dn/triggerSF_2lss'], year="2016"
-CMS_ttHl16_trigger      : $PromptFromMC : .*3l.*_2016   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l'], year="2016"
-CMS_ttHl16_trigger      : $PromptFromMC : .*4l.*_2016   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l'], year="2016"
-CMS_ttHl17_trigger      : $PromptFromMC : .*2lss.*_2017 : templateAsymm; AddWeights=['triggerSF_2lss_up/triggerSF_2lss'\,'triggerSF_2lss_dn/triggerSF_2lss'], year="2017"
-CMS_ttHl17_trigger      : $PromptFromMC : .*3l.*_2017   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l'], year="2017"
-CMS_ttHl17_trigger      : $PromptFromMC : .*4l.*_2017   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l'], year="2017"
-CMS_ttHl18_trigger      : $PromptFromMC : .*2lss.*_2018 : templateAsymm; AddWeights=['triggerSF_2lss_up/triggerSF_2lss'\,'triggerSF_2lss_dn/triggerSF_2lss'], year="2018"
-CMS_ttHl18_trigger      : $PromptFromMC : .*3l.*_2018   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l'], year="2018"
-CMS_ttHl18_trigger      : $PromptFromMC : .*4l.*_2018   : templateAsymm; AddWeights=['triggerSF_3l_up/triggerSF_3l'\,'triggerSF_3l_dn/triggerSF_3l'], year="2018"
+CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)'], year="2016"
+CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)'], year="2016"
+CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)'], year="2016"
 
-CMS_scale_j_2016	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jecUnCorrUp.txt'\,'ttH-multilepton/fr-jecUnCorrDn.txt'], \
-	AddWeights=['btagSF_shape_up_jesUnCorr/btagSF_shape'\,'btagSF_shape_down_jesUnCorr/btagSF_shape'], year="2016"
-CMS_scale_j_2017	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jecUnCorrUp.txt'\,'ttH-multilepton/fr-jecUnCorrDn.txt'], \
-	AddWeights=['btagSF_shape_up_jesUnCorr/btagSF_shape'\,'btagSF_shape_down_jesUnCorr/btagSF_shape'], year="2017"
-CMS_scale_j_2018	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jecUnCorrUp.txt'\,'ttH-multilepton/fr-jecUnCorrDn.txt'], \
-	AddWeights=['btagSF_shape_up_jesUnCorr/btagSF_shape'\,'btagSF_shape_down_jesUnCorr/btagSF_shape'], year="2018"
-CMS_scale_j_corr	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jecCorrUp.txt'\,'ttH-multilepton/fr-jecCorrDn.txt'], \
-	AddWeights=['btagSF_shape_up_jesCorr/btagSF_shape'\,'btagSF_shape_down_jesCorr/btagSF_shape']
+CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)'], year="2017"
+CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)'], year="2017"
+CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)'], year="2017"
+	 
+CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)'], year="2018"
+CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)'], year="2018"
+CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)'], year="2018"
+
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.*_2016 : normSymm : 1.01
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.*_2017 : normSymm : 1.01
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.*_2018 : normSymm : 1.01
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.*_2016 : normSymm : 1.01
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.*_2017 : normSymm : 1.01
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.*_2018 : normSymm : 1.01
+
+
+CMS_ttHl_JESHF        : $PromptFromMC : .* : templateAsymm; \
+                         FakeRates=['ttH-multilepton/frs-jecs/fr-jesHFUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHFDown.txt'], \
+                         AddWeights=['btagSF_shape_up_jesHF/btagSF_shape'\,'btagSF_shape_down_jesHF/btagSF_shape']
+CMS_ttHl_JESBBEC1_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesBBEC1_year/btagSF_shape'\,'btagSF_shape_down_jesBBEC1_year/btagSF_shape'], year="2016"
+CMS_ttHl_JESBBEC1_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesBBEC1_year/btagSF_shape'\,'btagSF_shape_down_jesBBEC1_year/btagSF_shape'], year="2017"
+CMS_ttHl_JESBBEC1_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesBBEC1_year/btagSF_shape'\,'btagSF_shape_down_jesBBEC1_year/btagSF_shape'], year="2018"
+CMS_ttHl_JESFlavorQCD        : $PromptFromMC : .* : templateAsymm; \
+                         FakeRates=['ttH-multilepton/frs-jecs/fr-jesFlavorQCDUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesFlavorQCDDown.txt'], \
+                         AddWeights=['btagSF_shape_up_jesFlavorQCD/btagSF_shape'\,'btagSF_shape_down_jesFlavorQCD/btagSF_shape']
+CMS_ttHl_JESRelativeSample_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesRelativeSample_year/btagSF_shape'\,'btagSF_shape_down_jesRelativeSample_year/btagSF_shape'], year="2016"
+CMS_ttHl_JESRelativeSample_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesRelativeSample_year/btagSF_shape'\,'btagSF_shape_down_jesRelativeSample_year/btagSF_shape'], year="2017"
+CMS_ttHl_JESRelativeSample_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesRelativeSample_year/btagSF_shape'\,'btagSF_shape_down_jesRelativeSample_year/btagSF_shape'], year="2018"
+CMS_ttHl_JESEC2        : $PromptFromMC : .* : templateAsymm; \
+                         FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2Up.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2Down.txt'], \
+                         AddWeights=['btagSF_shape_up_jesEC2/btagSF_shape'\,'btagSF_shape_down_jesEC2/btagSF_shape']
+CMS_ttHl_JESHF_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesHF_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHF_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesHF_year/btagSF_shape'\,'btagSF_shape_down_jesHF_year/btagSF_shape'], year="2016"
+CMS_ttHl_JESHF_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesHF_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHF_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesHF_year/btagSF_shape'\,'btagSF_shape_down_jesHF_year/btagSF_shape'], year="2017"
+CMS_ttHl_JESHF_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesHF_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHF_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesHF_year/btagSF_shape'\,'btagSF_shape_down_jesHF_year/btagSF_shape'], year="2018"
+CMS_ttHl_JESRelativeBal        : $PromptFromMC : .* : templateAsymm; \
+                         FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeBalUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeBalDown.txt'], \
+                         AddWeights=['btagSF_shape_up_jesRelativeBal/btagSF_shape'\,'btagSF_shape_down_jesRelativeBal/btagSF_shape']
+CMS_ttHl_JESAbsolute_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsolute_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsolute_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesAbsolute_year/btagSF_shape'\,'btagSF_shape_down_jesAbsolute_year/btagSF_shape'], year="2016"
+CMS_ttHl_JESAbsolute_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsolute_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsolute_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesAbsolute_year/btagSF_shape'\,'btagSF_shape_down_jesAbsolute_year/btagSF_shape'], year="2017"
+CMS_ttHl_JESAbsolute_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsolute_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsolute_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesAbsolute_year/btagSF_shape'\,'btagSF_shape_down_jesAbsolute_year/btagSF_shape'], year="2018"
+CMS_ttHl_JESBBEC1        : $PromptFromMC : .* : templateAsymm; \
+                         FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1Up.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1Down.txt'], \
+                         AddWeights=['btagSF_shape_up_jesBBEC1/btagSF_shape'\,'btagSF_shape_down_jesBBEC1/btagSF_shape']
+CMS_ttHl_JESEC2_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesEC2_year/btagSF_shape'\,'btagSF_shape_down_jesEC2_year/btagSF_shape'], year="2016"
+CMS_ttHl_JESEC2_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesEC2_year/btagSF_shape'\,'btagSF_shape_down_jesEC2_year/btagSF_shape'], year="2017"
+CMS_ttHl_JESEC2_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2_yearDown.txt'], \
+                             AddWeights=['btagSF_shape_up_jesEC2_year/btagSF_shape'\,'btagSF_shape_down_jesEC2_year/btagSF_shape'], year="2018"
+CMS_ttHl_JESAbsolute        : $PromptFromMC : .* : templateAsymm; \
+                         FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsoluteUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsoluteDown.txt'], \
+                         AddWeights=['btagSF_shape_up_jesAbsolute/btagSF_shape'\,'btagSF_shape_down_jesAbsolute/btagSF_shape']
+
 
 CMS_ttHl_JER	: $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
@@ -102,23 +162,13 @@ CMS_ttHl18_btag_HFStats2   : $PromptFromMC : .* : templateAsymm; AddWeights=['bt
 
 # Diboson background
 # 2lss: 
-CMS_ttHl_EWK_4j : EWK$ : .*2lss.* : normSymm : 2.0 
 # these below for 3l final state are when not using the WZ and ZZ CR
-CMS_ttHl_EWK_stat : EWK : .*3l.* : normSymm : 1.1
-CMS_ttHl_EWK_bkgs : EWK : .*3l.* : normSymm : 1.2
-CMS_ttHl_EWK_btag : EWK : .*3l* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.1\, 1.4)'
-CMS_ttHl_EWK_btag : EWK : .*3l_bl.* : normSymm : 1.1
-CMS_ttHl_EWK_btag : EWK : .*3l_bt.* : normSymm : 1.4
-CMS_ttHl_EWK_theo : EWK : .*3l.* : normSymm : 1.07
+CMS_ttHl_EWK_btag : WZ|ZZ : .*3l* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.1\, 1.4)'
 # these are when using the CRs, and split WZ/ZZ
 CMS_ttHl_WZ_lnU  : WZ : .*          : normSymm : 1.3 ; lnU=True
 CMS_ttHl_WZ_theo : WZ : .*3l.*      : normSymm : 1.07
-CMS_ttHl_WZ_theo : WZ : .*3l_crwz.* : none
-CMS_ttHl_WZ_bkg  : .* : .*3l_crwz.* : normSymm : 2.0 
-CMS_ttHl_WZ_bkg  : WZ : .*3l_crwz.* : none
+CMS_ttHl_WZ_theo : WZ : .*cr_3l.* : none
 CMS_ttHl_ZZ_lnU  : ZZ : .*          : normSymm : 3.0 ; lnU=True
-CMS_ttHl_ZZ_bkg  : .* : .*4l_crzz.* : normSymm : 2.0 
-CMS_ttHl_ZZ_bkg  : ZZ : .*4l_crzz.* : none
 
 
 # Other normalizations
@@ -134,17 +184,23 @@ QCDscale_ttZ   : TTZ   : .* : normAsymm : 0.904 : 1.112
 QCDscale_tHq   : $tHq  : .* : normAsymm : 0.933 : 1.041
 QCDscale_tHW   : $tHW  : .* : normAsymm : 0.939 : 1.046
 QCDscale_ttWW  : TTWW  : .* : normAsymm : 0.891 : 1.081
+QCDscale_WH    : $WH   : .* : normAsymm : 0.950 : 1.070
+QCDscale_ZH    : $ZH   : .* : normAsymm : 0.962 : 1.031
 pdf_Higgs_ttH  : $ttH  : .* : normSymm : 1.036
 pdf_gg         : TTZ   : .* : normSymm : 0.966
 pdf_qg	       : $tHq  : .* : normSymm : 1.01
 pdf_qg	       : $tHW  : .* : normSymm : 1.027
 pdf_qqbar      : TTW   : .* : normSymm : 1.04
 pdf_TTWW       : TTWW  : .* : normSymm : 1.03
+pdf_WH	       : $WH   : .* : normSymm : 1.019
+pdf_ZH	       : $ZH   : .* : normSymm : 1.016
 
 BR_hbb         : ttH$  	       : .* : normSymm : 1.0126 # in this analysis un-splitted ttH sample is TTHnobb
-BR_hvv	       : ttH_hww       : .* : normSymm : 1.0154
-BR_hzz	       : ttH_hzz       : .* : normSymm : 1.0154
-BR_htt	       : ttH_htt       : .* : normSymm : 1.0165
+BR_hbb         : WH$  	       : .* : normSymm : 1.0126
+BR_hbb         : ZH$  	       : .* : normSymm : 1.0126
+BR_hww	       : .*_hww       : .* : normSymm : 1.0154
+BR_hzz	       : .*_hzz       : .* : normSymm : 1.0154
+BR_htt	       : .*_htt       : .* : normSymm : 1.0165
 
 # shape theoretical uncertainties (private to this channel)
 # FIXME CMS_ttHl_thu_shape_ttH  : $ttH  : .*2lss.* : templateSymm ; AddWeight='lnN1D_p1(1.05\,kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)*lnN1D_p1(1.02\,kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.04' #shapeOnly2D_1.05X_1.02Y
@@ -212,9 +268,9 @@ CMS_ttHl_FRm_pt : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilept
 CMS_ttHl_FRm_be : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be2.txt"], \
         RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt", DoesNotChangeEventSelection=True
 
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.30\, 1.15\, 1.0)'
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.30
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.15
+CMS_ttHl_Clos_e_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.40\, 1.2\, 1.0)'
+CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.40
+CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.20
 CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_mm.* : none
 CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
 CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.1\, 1.0\,1.0)'
@@ -250,20 +306,226 @@ CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.24' 
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.35' 
 
-# FIXME!!
-CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_ee.*    : templateSymm ; Normalize=False, AddWeight='1.3' , year="2016"
-CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss_mm.*    : templateSymm ; Normalize=False, AddWeight='1.3' , year="2016"
-CMS_ttHl16_Clos_e_shape : $FRAll  : .*2lss_em.*    : templateSymm ; Normalize=False, AddWeight='1.15', year="2016" 
-CMS_ttHl16_Clos_m_shape : $FRAll  : .*2lss_em.*    : templateSymm ; Normalize=False, AddWeight='1.15', year="2016" 
-CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_ee.*    : templateSymm ; Normalize=False, AddWeight='1.3' , year="2017"
-CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.*    : templateSymm ; Normalize=False, AddWeight='1.3' , year="2017"
-CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_em.*    : templateSymm ; Normalize=False, AddWeight='1.15', year="2017" 
-CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_em.*    : templateSymm ; Normalize=False, AddWeight='1.15', year="2017" 
-CMS_ttHl18_Clos_e_shape : $FRAll  : .*2lss_ee.*    : templateSymm ; Normalize=False, AddWeight='1.3' , year="2018"
-CMS_ttHl18_Clos_m_shape : $FRAll  : .*2lss_mm.*    : templateSymm ; Normalize=False, AddWeight='1.3' , year="2018"
-CMS_ttHl18_Clos_e_shape : $FRAll  : .*2lss_em.*    : templateSymm ; Normalize=False, AddWeight='1.15', year="2018" 
-CMS_ttHl18_Clos_m_shape : $FRAll  : .*2lss_em.*    : templateSymm ; Normalize=False, AddWeight='1.15', year="2018" 
 
 
 # Charge flip uncertainty
 CMS_ttHl_QF     : data_flips  : .* : normSymm : 1.3
+
+ 
+
+# xsec scan uncertainties
+pdf_tHW : tHW_ct_-3p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_-2p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_-1p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-1p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-0p75_cv_1p0_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_-0p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_-0p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_0p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_0p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_0p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.035                          
+pdf_tHW : tHW_ct_0p75_cv_1p0_h[a-z]+ : .* : normSymm : 1.029                          
+pdf_tHW :  tHW_ct_1p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.027                          
+pdf_tHW : tHW_ct_1p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.028                          
+pdf_tHW :  tHW_ct_1p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.03 : 0.961                   
+pdf_tHW : tHW_ct_2p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.032                          
+pdf_tHW : tHW_ct_3p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.034                          
+pdf_tHW : tHW_ct_-3p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_-2p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-1p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-1p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-1p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-0p75_cv_1p5_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_-0p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_-0p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_0p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_0p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_0p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_0p75_cv_1p5_h[a-z]+ : .* : normSymm : 1.035                          
+pdf_tHW : tHW_ct_1p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.031                          
+pdf_tHW : tHW_ct_1p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.028                          
+pdf_tHW : tHW_ct_1p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.027                          
+pdf_tHW : tHW_ct_2p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.028                          
+pdf_tHW : tHW_ct_3p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.032                          
+pdf_tHW : tHW_ct_-3p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.037                          
+pdf_tHW : tHW_ct_-2p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_-1p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_-1p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.038                          
+pdf_tHW : tHW_ct_-1p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-0p75_cv_0p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-0p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.039                          
+pdf_tHW : tHW_ct_-0p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_0p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.04                           
+pdf_tHW : tHW_ct_0p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.035                          
+pdf_tHW : tHW_ct_0p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.027                          
+pdf_tHW : tHW_ct_0p75_cv_0p5_h[a-z]+ : .* : normSymm : 1.03                           
+pdf_tHW : tHW_ct_1p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.032                          
+pdf_tHW : tHW_ct_1p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.033                          
+pdf_tHW : tHW_ct_1p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.034                          
+pdf_tHW : tHW_ct_2p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.035                          
+pdf_tHW : tHW_ct_3p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.035                          
+pdf_tHW : tHW_ct_-1p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.039                          
+
+pdf_tHq : tHq_ct_-3p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-2p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p75_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_0p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_0p75_cv_1p0_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_1p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_1p25_cv_1p0_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_1p5_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_2p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_3p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-3p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-2p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p75_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_0p75_cv_1p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_1p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_1p25_cv_1p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_1p5_cv_1p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_2p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_3p0_cv_1p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-3p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-2p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p75_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-0p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_0p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_0p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.01                           
+pdf_tHq : tHq_ct_0p75_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_1p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_1p25_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_1p5_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_2p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_3p0_cv_0p5_h[a-z]+ : .* : normSymm : 1.009                          
+pdf_tHq : tHq_ct_-1p0_cv_1p0_h[a-z]+ : .* : normSymm : 1.009                          
+
+
+
+# xsec scan uncertainties
+QCDscale_tHW : tHW_ct_-3p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.023 : 0.973                  
+QCDscale_tHW : tHW_ct_-2p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.022 : 0.975                  
+QCDscale_tHW : tHW_ct_-1p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.021 : 0.978                  
+QCDscale_tHW : tHW_ct_-1p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.02 : 0.98                    
+QCDscale_tHW : tHW_ct_-0p75_cv_1p0_h[a-z]+ : .* : normAsymm : 1.02 : 0.983                   
+QCDscale_tHW : tHW_ct_-0p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.017 : 0.986                  
+QCDscale_tHW : tHW_ct_-0p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.016 : 0.989                  
+QCDscale_tHW : tHW_ct_0p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.015 : 0.988                  
+QCDscale_tHW : tHW_ct_0p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.016 : 0.985                  
+QCDscale_tHW : tHW_ct_0p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.021 : 0.98                   
+QCDscale_tHW : tHW_ct_0p75_cv_1p0_h[a-z]+ : .* : normAsymm : 1.032 : 0.961                  
+QCDscale_tHW : tHW_ct_1p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.046 : 0.939                  
+QCDscale_tHW : tHW_ct_1p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.048 : 0.946                  
+QCDscale_tHW : tHW_ct_1p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.046 : 0.937                  
+QCDscale_tHW : tHW_ct_2p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.04 : 0.945                   
+QCDscale_tHW : tHW_ct_3p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.033 : 0.954                  
+QCDscale_tHW : tHW_ct_-3p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.977                  
+QCDscale_tHW : tHW_ct_-2p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.979                  
+QCDscale_tHW : tHW_ct_-1p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.019 : 0.982                  
+QCDscale_tHW : tHW_ct_-1p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.019 : 0.984                  
+QCDscale_tHW : tHW_ct_-1p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.019 : 0.985                  
+QCDscale_tHW : tHW_ct_-0p75_cv_1p5_h[a-z]+ : .* : normAsymm : 1.018 : 0.987                  
+QCDscale_tHW : tHW_ct_-0p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.016 : 0.988                  
+QCDscale_tHW : tHW_ct_-0p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.016 : 0.988                  
+QCDscale_tHW : tHW_ct_0p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.015 : 0.988                  
+QCDscale_tHW : tHW_ct_0p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.015 : 0.986                  
+QCDscale_tHW : tHW_ct_0p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.018 : 0.983                  
+QCDscale_tHW : tHW_ct_0p75_cv_1p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.98                   
+QCDscale_tHW : tHW_ct_1p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.028 : 0.97                   
+QCDscale_tHW : tHW_ct_1p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.036 : 0.953                  
+QCDscale_tHW : tHW_ct_1p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.046 : 0.94                   
+QCDscale_tHW : tHW_ct_2p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.048 : 0.935                  
+QCDscale_tHW : tHW_ct_3p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.04 : 0.944                   
+QCDscale_tHW : tHW_ct_-3p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.023 : 0.97                   
+QCDscale_tHW : tHW_ct_-2p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.023 : 0.972                  
+QCDscale_tHW : tHW_ct_-1p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.023 : 0.972                  
+QCDscale_tHW : tHW_ct_-1p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.022 : 0.975                  
+QCDscale_tHW : tHW_ct_-1p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.977                  
+QCDscale_tHW : tHW_ct_-0p75_cv_0p5_h[a-z]+ : .* : normAsymm : 1.02 : 0.979                   
+QCDscale_tHW : tHW_ct_-0p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.019 : 0.982                  
+QCDscale_tHW : tHW_ct_-0p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.018 : 0.987                  
+QCDscale_tHW : tHW_ct_0p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.016 : 0.987                  
+QCDscale_tHW : tHW_ct_0p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.98                   
+QCDscale_tHW : tHW_ct_0p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.046 : 0.939                  
+QCDscale_tHW : tHW_ct_0p75_cv_0p5_h[a-z]+ : .* : normAsymm : 1.047 : 0.937                  
+QCDscale_tHW : tHW_ct_1p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.04 : 0.945                   
+QCDscale_tHW : tHW_ct_1p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.037 : 0.948                  
+QCDscale_tHW : tHW_ct_1p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.035 : 0.951                  
+QCDscale_tHW : tHW_ct_2p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.03 : 0.957                   
+QCDscale_tHW : tHW_ct_3p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.028 : 0.96                   
+QCDscale_tHW : tHW_ct_-1p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.02 : 0.982 
+QCDscale_tHq : tHq_ct_-3p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.021 : 0.969                  
+QCDscale_tHq : tHq_ct_-2p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.026 : 0.968                  
+QCDscale_tHq : tHq_ct_-1p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.025 : 0.964                  
+QCDscale_tHq : tHq_ct_-1p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.026 : 0.966                  
+QCDscale_tHq : tHq_ct_-0p75_cv_1p0_h[a-z]+ : .* : normAsymm : 1.029 : 0.959                  
+QCDscale_tHq : tHq_ct_-0p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.032 : 0.956                  
+QCDscale_tHq : tHq_ct_-0p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.035 : 0.95                   
+QCDscale_tHq : tHq_ct_0p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.039 : 0.945                  
+QCDscale_tHq : tHq_ct_0p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.044 : 0.938                  
+QCDscale_tHq : tHq_ct_0p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.05 : 0.929                   
+QCDscale_tHq : tHq_ct_0p75_cv_1p0_h[a-z]+ : .* : normAsymm : 1.057 : 0.924                  
+QCDscale_tHq : tHq_ct_1p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.041 : 0.933                  
+QCDscale_tHq : tHq_ct_1p25_cv_1p0_h[a-z]+ : .* : normAsymm : 1.023 : 0.954                  
+QCDscale_tHq : tHq_ct_1p5_cv_1p0_h[a-z]+ : .* : normAsymm : 1.012 : 0.971                  
+QCDscale_tHq : tHq_ct_2p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.01 : 0.964                   
+QCDscale_tHq : tHq_ct_3p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.008 : 0.963                  
+QCDscale_tHq : tHq_ct_-3p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.026 : 0.968                  
+QCDscale_tHq : tHq_ct_-2p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.025 : 0.964                  
+QCDscale_tHq : tHq_ct_-1p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.027 : 0.961                  
+QCDscale_tHq : tHq_ct_-1p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.028 : 0.961                  
+QCDscale_tHq : tHq_ct_-1p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.03 : 0.957                   
+QCDscale_tHq : tHq_ct_-0p75_cv_1p5_h[a-z]+ : .* : normAsymm : 1.031 : 0.956                  
+QCDscale_tHq : tHq_ct_-0p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.034 : 0.953                  
+QCDscale_tHq : tHq_ct_-0p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.036 : 0.95                   
+QCDscale_tHq : tHq_ct_0p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.038 : 0.946                  
+QCDscale_tHq : tHq_ct_0p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.042 : 0.939                  
+QCDscale_tHq : tHq_ct_0p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.046 : 0.935                  
+QCDscale_tHq : tHq_ct_0p75_cv_1p5_h[a-z]+ : .* : normAsymm : 1.052 : 0.928                  
+QCDscale_tHq : tHq_ct_1p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.057 : 0.924                  
+QCDscale_tHq : tHq_ct_1p25_cv_1p5_h[a-z]+ : .* : normAsymm : 1.055 : 0.925                  
+QCDscale_tHq : tHq_ct_1p5_cv_1p5_h[a-z]+ : .* : normAsymm : 1.041 : 0.933                  
+QCDscale_tHq : tHq_ct_2p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.02 : 0.961                   
+QCDscale_tHq : tHq_ct_3p0_cv_1p5_h[a-z]+ : .* : normAsymm : 1.009 : 0.963                  
+QCDscale_tHq : tHq_ct_-3p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.019 : 0.973                  
+QCDscale_tHq : tHq_ct_-2p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.02 : 0.971                   
+QCDscale_tHq : tHq_ct_-1p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.969                  
+QCDscale_tHq : tHq_ct_-1p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.021 : 0.97                   
+QCDscale_tHq : tHq_ct_-1p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.023 : 0.967                  
+QCDscale_tHq : tHq_ct_-0p75_cv_0p5_h[a-z]+ : .* : normAsymm : 1.025 : 0.965                  
+QCDscale_tHq : tHq_ct_-0p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.028 : 0.961                  
+QCDscale_tHq : tHq_ct_-0p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.031 : 0.954                  
+QCDscale_tHq : tHq_ct_0p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.038 : 0.944                  
+QCDscale_tHq : tHq_ct_0p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.05 : 0.929                   
+QCDscale_tHq : tHq_ct_0p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.042 : 0.933                  
+QCDscale_tHq : tHq_ct_0p75_cv_0p5_h[a-z]+ : .* : normAsymm : 1.014 : 0.971                  
+QCDscale_tHq : tHq_ct_1p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.01 : 0.964                   
+QCDscale_tHq : tHq_ct_1p25_cv_0p5_h[a-z]+ : .* : normAsymm : 1.009 : 0.963                  
+QCDscale_tHq : tHq_ct_1p5_cv_0p5_h[a-z]+ : .* : normAsymm : 1.008 : 0.963                  
+QCDscale_tHq : tHq_ct_2p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.01 : 0.964                   
+QCDscale_tHq : tHq_ct_3p0_cv_0p5_h[a-z]+ : .* : normAsymm : 1.012 : 0.968                  
+QCDscale_tHq : tHq_ct_-1p0_cv_1p0_h[a-z]+ : .* : normAsymm : 1.027 : 0.961
+
+
+#floating ttZ and ttW, for scan only!!
+CMS_ttHl_TTZ_lnU  : TTZ   : .*     : normSymm : 3.0 ; lnU=True
+CMS_ttHl_TTW_lnU  : TTW   : .*     : normSymm : 3.0 ; lnU=True
+

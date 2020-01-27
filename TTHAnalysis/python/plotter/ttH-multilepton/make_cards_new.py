@@ -36,7 +36,7 @@ T2L="-P {ORIGIN}/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/{YEAR} -P {ORIGIN}/
 T3L=T2L
 T4L=T2L
 
-SYSTS="--unc ttH-multilepton/systsUnc_all.txt --amc"
+SYSTS="--unc ttH-multilepton/systsUnc.txt --amc --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU"
 MCAOPTION=""
 MCAOPTION="-splitdecays"
 ASIMOV="signal"
@@ -46,7 +46,7 @@ if "scan" in OTHER:
     ASIMOV="tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz" 
     SCRIPT = "makeShapeCardsNewScan.py"
     MCAOPTION="-ctcv"
-    SYSTS="--unc ttH-multilepton/systsUnc_scan.txt --amc"
+    SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
 
 print "We are using the asimov dataset"
 OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg --asimov {ASIMOV}".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin
