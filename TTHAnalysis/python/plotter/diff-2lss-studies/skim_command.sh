@@ -14,11 +14,3 @@ python skimTreesNew.py -P /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_s
 else
 echo "ERROR: enter a correct year; either 2016, 2017 or 2018"
 fi
-
-
-
-
-
-
-
-
