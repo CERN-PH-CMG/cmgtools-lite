@@ -54,3 +54,5 @@ elLooseUnc_4l_up\b : leptonSF_4l_el_up/leptonSF_4l
 elLooseUnc_4l_dn\b : leptonSF_4l_el_dn/leptonSF_4l
 muLooseUnc_4l_up\b : leptonSF_4l_mu_up/leptonSF_4l
 muLooseUnc_4l_dn\b : leptonSF_4l_mu_dn/leptonSF_4l
+DNN_2lss_predictions_max\b : max(max(DNN_2lss_predictions_ttH,DNN_2lss_predictions_Rest),max(DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ)); AlsoData
+DNN_3l_predictions_max\b : max(max(DNN_3l_predictions_ttH,DNN_3l_predictions_tH),DNN_3l_predictions_rest); AlsoData
