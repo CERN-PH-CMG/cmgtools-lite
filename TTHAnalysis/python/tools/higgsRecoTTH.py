@@ -9,7 +9,7 @@ from math import *
 #bTagCut = 0.3093 if year==2016 else 0.3033 if year==2017 else 0.2770
 class HiggsRecoTTH(Module):
     #def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.4941, doSystJEC=True): #TODO update the values here
-    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.2770, doSystJEC=True, useTopTagger=True, debug=False):
+    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.3093, doSystJEC=True, useTopTagger=True, debug=False):
         self.debug = debug
         self.useTopTagger = useTopTagger
         self.label = label
@@ -19,7 +19,9 @@ class HiggsRecoTTH(Module):
                                                                                                       "nmatchedpartons","nbothmatchedpartons","nmismatchedtoptaggedjets",
                                                                                                       "pTHgen","delR_H_partons","delR_H_j1j2","BDThttTT_eventReco_mvaValue",
                                                                                                       "delR_H_q1l", "delR_H_q2l", "delR_H_j1l", "delR_H_j2l",
-                                                                                                      "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT"]]) # added new branches here
+                                                                                                      "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT","pTVisPlusNu",
+                                                                                                      "matchedleptons","bothmatchedleptons","pTTrueGen", "pTTrueGenAll",
+                                                                                                      "deltaM_trueGen_H","pTtgen","pTTrueGenplusNu"]]) # added new branches here
 
         for mylep in [0, 1]:
             for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["l%s_fj_deltaR"%mylep, "l%s_fj_lepIsFromH"%mylep,"l%s_fj_pt"%mylep,"l%s_fj_eta"%mylep,
@@ -62,14 +64,24 @@ class HiggsRecoTTH(Module):
         #HiggsDaughters = genHiggsDaughtersSelection(genpar) # that is how you define a collection from genproducer, i.e. apply the selection on your collection and it return a filtered collection
         #genjet = Collection(event,"GenJet","nGenJet") # avoid loading unused collection
         genpar = Collection(event,"GenPart","nGenPart")
+        
         QFromWFromH = []
         LFromWFromH = []
         QFromWFromT = []
         LFromWFromT = []
+        NuFromWFromH = []
         nmatchedpartons          = 0
         nbothmatchedpartons      = 0 
         nmismatchedtoptaggedjets = 0
+        matchedleptons          = 0
+        bothmatchedleptons      = 0 
         pTHgen = 0
+        pTtgen = 0
+        pTVisPlusNu = 0
+        massHgen = 0
+        deltaM_trueGen_H = 0
+        pTTrueGen = 0
+        pTTrueGenplusNu = 0
         delR_H_partons = -99
         delR_H_j1j2    = -99
         delR_H_q1l     = -99
@@ -83,6 +95,9 @@ class HiggsRecoTTH(Module):
             if part.pdgId == 25:
                 if part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
                     pTHgen = part.p4().Pt()
+            elif part.pdgId == abs(6):
+                  if part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
+                      pTtgen = part.p4().Pt()
             elif abs(part.pdgId) in range (1,7): # from 1 to 6
                 if self.debug: print "it is a quark"
                 if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
@@ -103,8 +118,14 @@ class HiggsRecoTTH(Module):
                     elif abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6:
                         if self.debug: print "the mother of this W is a Top"
                         LFromWFromT.append(part)
-
-
+            elif abs(part.pdgId) in [12, 14, 16, 18] and part.statusFlags &(1 << statusFlagsMap['isPrompt']):
+                if self.debug: print "it is a neutrino"
+                if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
+                    if self.debug: print "the mother of this neutrino is W+ or W-"
+                    if abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 25:
+                        if self.debug: print "the mother of this W is a Higgs"
+                        NuFromWFromH.append(part)
+        
         # loop over gen jets 
         # ------------------ 
         #for jet in genjet:
@@ -194,18 +215,33 @@ class HiggsRecoTTH(Module):
             for q1,q2 in itertools.combinations(QFromWFromH,2):
                 delR_H_partons = q1.p4().DeltaR(q2.p4())
             if best:
-                jetmat1 = jets[best[5]] 
-                jetmat2 = jets[best[6]]
-                delR_H_j1l = leps[best[4]].p4().DeltaR(jetmat1.p4())
-                delR_H_j2l = leps[best[4]].p4().DeltaR(jetmat2.p4())
-                for q1,q2 in itertools.combinations(QFromWFromH,2):
-	            delR_H_q1l = q1.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH 
-                    delR_H_q2l = q2.p4().DeltaR(leps[best[4]].p4()) # this will need to be from LFromWFromH
-                for quark in QFromWFromH: 
-                    if quark.p4().DeltaR(jetmat1.p4()) < 0.3 or quark.p4().DeltaR(jetmat2.p4()) < 0.3:
-                        nmatchedpartons +=1
-                    if quark.p4().DeltaR(jetmat1.p4()) < 0.3 and quark.p4().DeltaR(jetmat2.p4()) < 0.3:
-		        nbothmatchedpartons +=1
+               jetmat1 = jets[best[5]] 
+               jetmat2 = jets[best[6]]
+               delR_H_j1l = leps[best[4]].p4().DeltaR(jetmat1.p4())
+               delR_H_j2l = leps[best[4]].p4().DeltaR(jetmat2.p4())
+               for q1,q2 in itertools.combinations(QFromWFromH,2):
+                   delR_H_partons = q1.p4().DeltaR(q2.p4())
+                   for lepton in LFromWFromH:
+	               delR_H_q1l = q1.p4().DeltaR(lepton.p4()) # this will need to be from LFromWFromH 
+                       delR_H_q2l = q2.p4().DeltaR(lepton.p4()) # this will need to be from LFromWFromH
+                       trueGenSum = lepton.p4()+q1.p4()+q2.p4()
+                       pTTrueGen  = trueGenSum.Pt()
+                       massTrueGen= trueGenSum.M()
+                       deltaM_trueGen_H = massTrueGen-massHgen
+                       for nu in NuFromWFromH:
+                           pTTrueGenplusNu = pTTrueGen+nu.p4().Pt()
+	       for quark in QFromWFromH: 
+	           if quark.p4().DeltaR(jetmat1.p4()) < 0.3 or quark.p4().DeltaR(jetmat2.p4()) < 0.3:
+	              nmatchedpartons +=1
+                   if quark.p4().DeltaR(jetmat1.p4()) < 0.3 and quark.p4().DeltaR(jetmat2.p4()) < 0.3:
+		      nbothmatchedpartons +=1
+               for l in LFromWFromH:
+	           if l.p4().DeltaR(leps[best[4]].p4()) < 0.3 or l.p4().DeltaR(leps[best[4]].p4()) < 0.3:
+	              matchedleptons +=1
+                   if l.p4().DeltaR(leps[best[4]].p4()) < 0.3 and l.p4().DeltaR(leps[best[4]].p4()) < 0.3:
+		      bothmatchedleptons +=1
+               for neutrino in NuFromWFromH:
+                   pTVisPlusNu = best[7]+neutrino.p4().Pt()
             else: pass   
             ret["Hreco_minDRlj%s"                     %self.systsJEC[var]] = best[0 ] if best else -99
             ret["Hreco_visHmass%s"                    %self.systsJEC[var]] = best[2 ] if best else -99
@@ -216,15 +252,23 @@ class HiggsRecoTTH(Module):
             ret["Hreco_pTHvis%s"                      %self.systsJEC[var]] = best[7 ] if best else -99
             ret["Hreco_delR_H_partons%s"              %self.systsJEC[var]] = delR_H_partons if best else -99 
             ret["Hreco_delR_H_j1j2%s"                 %self.systsJEC[var]] = best[1 ] if best else -99
+            ret["Hreco_matchedleptons%s"              %self.systsJEC[var]] = matchedleptons if best else -99 
+            ret["Hreco_bothmatchedleptons%s"          %self.systsJEC[var]] = bothmatchedleptons if best else -99
+            ret["Hreco_pTtgen%s"                      %self.systsJEC[var]] = pTtgen 
             ret["Hreco_nmatchedpartons%s"              %self.systsJEC[var]] = nmatchedpartons if best else -99 
             ret["Hreco_nbothmatchedpartons%s"          %self.systsJEC[var]] = nbothmatchedpartons if best else -99
             ret["Hreco_pTHgen%s"                      %self.systsJEC[var]] = pTHgen 
             ret["Hreco_nmismatchedtoptaggedjets%s"     %self.systsJEC[var]] = nmismatchedtoptaggedjets
             ret["Hreco_BDThttTT_eventReco_mvaValue%s" %self.systsJEC[var]] = score
-            ret["Hreco_delR_H_q1l%s"                  %self.systsJEC[var]] = delR_H_q1l if best else -99 
-            ret["Hreco_delR_H_q2l%s"                  %self.systsJEC[var]] = delR_H_q2l if best else -99
-            ret["Hreco_delR_H_j1l%s"                  %self.systsJEC[var]] = delR_H_j1l if best else -99 
-            ret["Hreco_delR_H_j2l%s"                  %self.systsJEC[var]] = delR_H_j2l if best else -99 
+            ret["Hreco_delR_H_q1l%s"                  %self.systsJEC[var]] = delR_H_q1l  if best else -99 
+            ret["Hreco_delR_H_q2l%s"                  %self.systsJEC[var]] = delR_H_q2l  if best else -99
+            ret["Hreco_delR_H_j1l%s"                  %self.systsJEC[var]] = delR_H_j1l  if best else -99 
+            ret["Hreco_delR_H_j2l%s"                  %self.systsJEC[var]] = delR_H_j2l  if best else -99
+            ret["Hreco_pTVisPlusNu%s"                 %self.systsJEC[var]] = pTVisPlusNu if best else -99 
+            ret["Hreco_pTTrueGen%s"                   %self.systsJEC[var]] = pTTrueGen   if best else -99
+            ret["Hreco_pTTrueGenplusNu%s"             %self.systsJEC[var]] = pTTrueGenplusNu 
+            ret["Hreco_pTTrueGenAll%s"                %self.systsJEC[var]] = pTTrueGen  
+            ret["Hreco_deltaM_trueGen_H%s"            %self.systsJEC[var]] = deltaM_trueGen_H 
             ret['Hreco_nQFromWFromH%s'                      %self.systsJEC[var]] = len(QFromWFromH)
             ret['Hreco_nLFromWFromH%s'                      %self.systsJEC[var]] = len(LFromWFromH)
             ret['Hreco_nQFromWFromT%s'                      %self.systsJEC[var]] = len(QFromWFromT)
