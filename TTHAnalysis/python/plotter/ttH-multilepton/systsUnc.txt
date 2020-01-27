@@ -49,17 +49,17 @@ CMS_ttHl17_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreF
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)'], year="2016"
-CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)'], year="2016"
-CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)'], year="2016"
+CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)', year="2016"
+CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2016"
+CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2016"
 
-CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)'], year="2017"
-CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)'], year="2017"
-CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)'], year="2017"
+CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2017"
+CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2017"
+CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)', year="2017"
 	 
-CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)'], year="2018"
-CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)'], year="2018"
-CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight=['ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)'], year="2018"
+CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2018"
+CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2018"
+CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2018"
 
 CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.*_2016 : normSymm : 1.01
 CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.*_2017 : normSymm : 1.01
@@ -203,12 +203,6 @@ BR_hzz	       : .*_hzz       : .* : normSymm : 1.0154
 BR_htt	       : .*_htt       : .* : normSymm : 1.0165
 
 # shape theoretical uncertainties (private to this channel)
-# FIXME CMS_ttHl_thu_shape_ttH  : $ttH  : .*2lss.* : templateSymm ; AddWeight='lnN1D_p1(1.05\,kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)*lnN1D_p1(1.02\,kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.04' #shapeOnly2D_1.05X_1.02Y
-# FIXME CMS_ttHl_thu_shape_ttW  : TTW 	: .*2lss.* : templateSymm ; AddWeight='lnN1D_p1(1.02\,kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)*lnN1D_p1(1.03\,kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.04' #shapeOnly2D_1.02X_1.03Y
-# FIXME CMS_ttHl_thu_shape_ttZ  : TTZ 	: .*2lss.* : templateSymm ; AddWeight='lnN1D_p1(1.06\,kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)*lnN1D_p1(1.06\,kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.04' #shapeOnly2D_1.06X_1.06Y
-# FIXME CMS_ttHl_thu_shape_ttH  : $ttH  : .*3l.*   : templateSymm ; AddWeight='lnN1D_p1(1.05\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.10\,kinMVA_3l_ttV\,-1\,1)/1.08' #shapeOnly2D_1.05X_1.10Y
-# FIXME CMS_ttHl_thu_shape_ttW  : TTW 	: .*3l.*   : templateSymm ; AddWeight='lnN1D_p1(1.04\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.10\,kinMVA_3l_ttV\,-1\,1)/1.08' #shapeOnly2D_1.04X_1.10Y
-# FIXME CMS_ttHl_thu_shape_ttZ  : TTZ 	: .*3l.*   : templateSymm ; AddWeight='lnN1D_p1(1.08\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.13\,kinMVA_3l_ttV\,-1\,1)/1.08' #shapeOnly2D_1.08X_1.13Y
 
 CMS_ttHl_FRe_norm : $FRData  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-down.txt"], \
         RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
@@ -307,9 +301,34 @@ CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.35' 
 
 
+CMS_ttHl_thu_shape_ttH_x2 : $ttH : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.937  +0.281*DNN_2lss_predictions_max  -0.276*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
+CMS_ttHl_thu_shape_ttH_x1 : $ttH : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.936  +0.246*DNN_2lss_predictions_max  -0.220*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
+CMS_ttHl_thu_shape_ttZ_x2 : TTZ  : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.972  +0.126*DNN_2lss_predictions_max  -0.128*DNN_2lss_predictions_max*DNN_2lss_predictions_max)' 
+CMS_ttHl_thu_shape_ttZ_x1 : TTZ  : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.952  +0.189*DNN_2lss_predictions_max  -0.179*DNN_2lss_predictions_max*DNN_2lss_predictions_max)' 
+CMS_ttHl_thu_shape_ttW_x2 : TTW  : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.984  +0.091*DNN_2lss_predictions_max  -0.108*DNN_2lss_predictions_max*DNN_2lss_predictions_max)' 
+CMS_ttHl_thu_shape_ttW_x1 : TTW  : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.988  +0.051*DNN_2lss_predictions_max  -0.043*DNN_2lss_predictions_max*DNN_2lss_predictions_max)' 
+CMS_ttHl_thu_shape_tHW_x2 : $tHW : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.932  +0.339*DNN_2lss_predictions_max  -0.386*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
+CMS_ttHl_thu_shape_tHW_x1 : $tHW : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(1.000  -0.000*DNN_2lss_predictions_max  +0.000*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
+CMS_ttHl_thu_shape_tHq_x2 : $tHq : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.922  +0.291*DNN_2lss_predictions_max  -0.259*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
+CMS_ttHl_thu_shape_tHq_x1 : $tHq : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(1.025  -0.080*DNN_2lss_predictions_max  +0.067*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
+
+CMS_ttHl_thu_shape_ttH_x2 : $ttH : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(1.023  -0.097*DNN_3l_predictions_max  +0.099*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_ttH_x1 : $ttH : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(1.015  -0.084*DNN_3l_predictions_max  +0.090*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_ttZ_x2 : TTZ : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(0.992  -0.008*DNN_3l_predictions_max  +0.032*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_ttZ_x1 : TTZ : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(1.005  -0.100*DNN_3l_predictions_max  +0.148*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_ttW_x2 : TTW : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(0.985  +0.061*DNN_3l_predictions_max  -0.056*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_ttW_x1 : TTW : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(0.997  -0.007*DNN_3l_predictions_max  +0.020*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_tHW_x2 : $tHW : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(1.045  -0.185*DNN_3l_predictions_max  +0.168*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_tHW_x1 : $tHW : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(1.000  +0.000*DNN_3l_predictions_max  -0.000*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_tHq_x2 : $tHq : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(0.974  +0.119*DNN_3l_predictions_max  -0.136*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+CMS_ttHl_thu_shape_tHq_x1 : $tHq : ttH_3l.* : templateSymm; Normalize=True, AddWeight='(1.017  -0.051*DNN_3l_predictions_max  +0.044*DNN_3l_predictions_max*DNN_3l_predictions_max)'
+
+
+
 
 # Charge flip uncertainty
 CMS_ttHl_QF     : data_flips  : .* : normSymm : 1.3
+
 
  
 
