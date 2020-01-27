@@ -317,6 +317,12 @@ higgsRecoTTH_v5 = lambda : HiggsRecoTTH_v5(label="_Recl",
                                      cuts_mW_had = (60.,100.),
                                      cuts_mH_vis = (80.,140.),
                                      btagDeepCSVveto = 0.1522)
+higgsRecoTTH_v5NoTopTagger = lambda : HiggsRecoTTH_v5(label="_Recl",
+                                     cut_BDT_rTT_score = 0.0,
+                                     cuts_mW_had = (60.,100.),
+                                     cuts_mH_vis = (80.,140.),
+                                     btagDeepCSVveto = 0.1522,
+                                     useTopTagger=False)
 #higgsRecoTTH_94X = lambda : HiggsRecoTTH_94X(label="_Recl",
                                      #cut_BDT_rTT_score = 0.0,
                                      #cuts_mW_had = (60.,100.),

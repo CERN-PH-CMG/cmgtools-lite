@@ -2,25 +2,32 @@
 2lep_2DpT_2bins: Hreco_pTHvis\:Hreco_pTHgen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 #2lep_2DpT_2bins_withNu: Hreco_pTVisPlusNu\:Hreco_pTHgen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvisplusNu (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 #2lep_2DpT_2bins_allgen: Hreco_pTHvis\:Hreco_pTTrueGenplusNu :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgenall (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
-2lep_2DpT_2bins_truegen: Hreco_pTHvis\:Hreco_pTTrueGen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTTrueGen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
+#2lep_2DpT_2bins_truegen: Hreco_pTHvis\:Hreco_pTTrueGen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTTrueGen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 2lep_pTHvis_2bins                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350];     XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHvis_2bins_log                       :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,350];     XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
+
 2lep_2DpT_3bins: Hreco_pTHvis\:Hreco_pTHgen :  [0,120,200,350]*[0,120,200,350] ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
-2lep_2DpT_3bins_truegen: Hreco_pTHvis\:Hreco_pTTrueGen :  [0,120,200,350]*[0,120,200,350] ;                  XTitle="pTHvis (GeV)",  YTitle="pTTrueGen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+#2lep_2DpT_3bins_truegen: Hreco_pTHvis\:Hreco_pTTrueGen :  [0,120,200,350]*[0,120,200,350] ;                  XTitle="pTHvis (GeV)",  YTitle="pTTrueGen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 #2lep_2DpT_3bins_allgen: Hreco_pTHvis\:Hreco_pTTrueGenplusNu :  [0,120,200,350]*[0,120,200,350] ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgenall (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 #2lep_2DpT_3bins_withNu: Hreco_pTVisPlusNu\:Hreco_pTHgen :  [0,120,200,350]*[0,120,200,350] ;                  XTitle="pTHvisplusNu (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
 2lep_pTHvis_3bins                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHvis_3bins_log                       :  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,120,200,350]; XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
+
 2lep_2DpT: Hreco_pTHvis\:Hreco_pTHgen            :  [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
-2lep_2DpT_truegen: Hreco_pTHvis\:Hreco_pTTrueGen            :  [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTTrueGen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+#2lep_2DpT_truegen: Hreco_pTHvis\:Hreco_pTTrueGen            :  [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTTrueGen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
 #2lep_2DpT_allgen: Hreco_pTHvis\:Hreco_pTTrueGenplusNu            :  [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvis (GeV)", YTitle="pTHgenall (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
 #2lep_2DpT_withNu: Hreco_pTVisPlusNu\:Hreco_pTHgen            :  [25,35,50,70,90,110,130,160,200,300]*[25,35,50,70,90,110,130,160,200,300] ; XTitle="pTHvisplusNu (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+
 2lep_pTHvis                                 :  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350;        XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHvis_log                             :  if3(nLepFO>1, Hreco_pTHvis,-99) : 50,0,350;        XTitle="pT of reconstructed Higgs (GeV)"      , Legend='TL', MoreY=20, IncludeOverflows=False, Logy
+
 2lep_pTHgen_2bins    :  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,350]    ; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHgen_3bins    :  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,120,200,350]; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_pTHgen          :  if3(nLepFO>1, Hreco_pTHgen,-99) : 50,0,350       ; XTitle="pT of generator Higgs (GeV)",  Legend='TL', MoreY=1.8, IncludeOverflows=False
 2lep_2DpT_STXS_GEN: HTXS_Higgs_pt\:Hreco_pTHgen : [0,120,350]*[0,120,350] ; XTitle="pTH_STXS (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
+
 #test_plots
 lep1_pt:         LepGood1_pt                                     : 40,0,200; XTitle="Leading lepton p_{T} (GeV)"
 lep1_conePt:     LepGood1_conePt                                 : 40,0,200; XTitle="Leading lepton cone p_{T} (GeV)"  
