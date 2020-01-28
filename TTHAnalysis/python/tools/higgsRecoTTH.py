@@ -222,8 +222,8 @@ class HiggsRecoTTH(Module):
                for q1,q2 in itertools.combinations(QFromWFromH,2):
                    delR_H_partons = q1.p4().DeltaR(q2.p4())
                    for lepton in LFromWFromH:
-	               delR_H_q1l = q1.p4().DeltaR(lepton.p4()) # this will need to be from LFromWFromH 
-                       delR_H_q2l = q2.p4().DeltaR(lepton.p4()) # this will need to be from LFromWFromH
+	                   delR_H_q1l = q1.p4().DeltaR(lepton.p4())  
+                       delR_H_q2l = q2.p4().DeltaR(lepton.p4()) 
                        trueGenSum = lepton.p4()+q1.p4()+q2.p4()
                        pTTrueGen  = trueGenSum.Pt()
                        massTrueGen= trueGenSum.M()

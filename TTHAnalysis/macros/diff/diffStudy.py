@@ -1,5 +1,5 @@
 import os
-from ROOT import TCanvas, TROOT, TH1F, TFile, TTree, gROOT, kRed
+from ROOT import TCanvas, TROOT, TH1F, TFile, TTree, gROOT, kRed, TLegend
 
 gROOT.SetBatch(True)
 
@@ -33,8 +33,14 @@ plotlist = [
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10. ],
  ]
 
-comparisonplotlist = [
+comparisonplotlist1 = [
     ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2", 100, 0., 10.],
+]
+comparisonplotlist2 = [
+    ["Hreco_delR_H_j1l" , "Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l" , 100, 0., 10.],
+]
+comparisonplotlist3 = [
+    ["Hreco_delR_H_j2l" , "Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l" , 100, 0., 10.],
 ]
 
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):
@@ -43,10 +49,11 @@ def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     theplot = TH1F(var,var, nbins, lowbin, highbin)
     tr.Draw("%s>>%s"%(var,var),cut)
     theplot.Draw()
-    c.Print("%s/%s.png"%(options.outputDir,fname))
+    c.Print("%s/%s_var.png"%(options.outputDir,fname)) # _var to not overwrite single var plots
 
 def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
-    c = TCanvas()
+    c   = TCanvas()
+    leg = TLegend(0.5,0.6,0.9,0.9)
     c.cd()
     theplot_1 = TH1F(var1,var1, nbins, lowbin, highbin)
     tr.Draw("%s>>%s"%(var1,var1),cut1)
@@ -57,11 +64,20 @@ def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     theplot_1.SetLineColor(kRed)
     theplot_1.Draw("HIST")
     theplot_2.Draw("HIST SAME")
+    leg.AddEntry(theplot_1,"%s"%(cut1))
+    leg.AddEntry(theplot_2,"%s"%(cut2))
+    leg.Draw()
     c.Print("%s/%s.png"%(options.outputDir,fname))
-
+    
 
 for var, cut, fname, nbins, lowbin, highbin in plotlist:
     draw_plot(var, cut, fname, nbins, lowbin, highbin )
 
-    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist:
+    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist1:
+        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+
+    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist2:
+        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+
+    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist3:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
