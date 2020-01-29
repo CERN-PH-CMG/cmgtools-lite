@@ -43,13 +43,21 @@ comparisonplotlist3 = [
     ["Hreco_delR_H_j2l" , "Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l" , 100, 0., 10.],
 ]
 
+comparisonplotlist4 = [
+    ["Hreco_delR_H_q1l" , "Hreco_delR_H_q1l>=0" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q1j1l" , 100, 0., 10.],
+]
+
+comparisonplotlist5 = [
+    ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
+]
+
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     c = TCanvas()
     c.cd()
     theplot = TH1F(var,var, nbins, lowbin, highbin)
     tr.Draw("%s>>%s"%(var,var),cut)
     theplot.Draw()
-    c.Print("%s/%s_var.png"%(options.outputDir,fname)) # _var to not overwrite single var plots
+    c.Print("%s/%s.png"%(options.outputDir,fname)) 
 
 def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     c   = TCanvas()
@@ -67,7 +75,7 @@ def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     leg.AddEntry(theplot_1,"%s"%(cut1))
     leg.AddEntry(theplot_2,"%s"%(cut2))
     leg.Draw()
-    c.Print("%s/%s.png"%(options.outputDir,fname))
+    c.Print("%s/%s_comp.png"%(options.outputDir,fname)) # Avoid overwriting single var plots
     
 
 for var, cut, fname, nbins, lowbin, highbin in plotlist:
@@ -80,4 +88,10 @@ for var, cut, fname, nbins, lowbin, highbin in plotlist:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
 
     for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist3:
+        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+
+    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist4:
+        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+
+    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist5:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
