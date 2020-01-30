@@ -3,13 +3,13 @@ from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, 
 
 gROOT.SetBatch(True)
     ## open files 
-f1  = TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")
+f1  = TFile("./skimmedTrees_16/2lss_diff_NoTop-tagged/TTHnobb_fxfx_Friend.root")
 if not f1:
     raise ValueError('File not opened')
 tr1 = f1.Get("Friends")
 if not tr1:
     raise ValueError('Tree not loaded')
-f2  = TFile("./skimmedTrees_v5_16/2lss_diff_Top-tagged/TTHnobb_pow_Friend.root")
+f2  = TFile("./skimmedTrees_v5_16/2lss_diff_NoTop-tagged/TTHnobb_pow_Friend.root")
 if not f2:
     raise ValueError('File not opened')
 tr2 = f2.Get("Friends")
@@ -70,10 +70,10 @@ def draw_comparison(var,cut, fname, nbins, lowbin, highbin):
     c.cd()
     theplot_1 = TH1F(var,var, nbins, lowbin, highbin)
     tr1.Draw("%s>>%s"%(var,var),cut)
-    theplot_2 = TH1F(var,var, nbins, lowbin, highbin) # Avoid issues with same names
-    tr2.Draw("%s>>%s"%(var,var),cut)
-    theplot_3 = TH1F(var,var, nbins, lowbin, highbin) # Avoid issues with same names
-    tr3.Draw("%s>>%s"%(var,var),cut)
+    theplot_2 = TH1F("%s_2"%var,var, nbins, lowbin, highbin) # Avoid issues with same names
+    tr2.Draw("%s>>%s_2"%(var,var),cut)
+    theplot_3 = TH1F("%s_3"%var,var, nbins, lowbin, highbin) # Avoid issues with same names
+    tr3.Draw("%s>>%s_3"%(var,var),cut)
     theplot_1.Scale(1/theplot_1.Integral())
     theplot_2.Scale(1/theplot_2.Integral())
     theplot_3.Scale(1/theplot_3.Integral())
@@ -82,9 +82,9 @@ def draw_comparison(var,cut, fname, nbins, lowbin, highbin):
     theplot_1.Draw("HIST")
     theplot_2.Draw("HIST SAME")
     theplot_3.Draw("HIST SAME")
-    leg.AddEntry(theplot_1,"%s"%(f1))
-    leg.AddEntry(theplot_2,"%s"%(f2))
-    leg.AddEntry(theplot_3,"%s"%(f3))
+    leg.AddEntry(theplot_1,"v6")
+    leg.AddEntry(theplot_2,"v5")
+    leg.AddEntry(theplot_3,"v4")
     leg.Draw()
     c.Print("%s/%s_comp.png"%("./test_compare/",fname)) # Avoid overwriting single var plots
 
