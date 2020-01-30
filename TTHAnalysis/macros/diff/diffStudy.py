@@ -27,7 +27,7 @@ plotlist = [
     ["Hreco_delR_H_j1l"                         ,"Hreco_delR_H_j1l>=0"                   ,"delR_j1l"      , 100, 0., 10. ],
     ["Hreco_delR_H_j2l"                         ,"Hreco_delR_H_j2l>=0"                   ,"delR_j2l"      , 100, 0., 10. ],
     ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0"  ,"all_score_test", 100, 0., 10. ],
-    ["HTXS_Higgs_pt"                            ,"HTXS_Higgs_pt>=0"                      ,"gen_STXS_pTH"  , 100, 0., 400.],
+    #["HTXS_Higgs_pt"                            ,"HTXS_Higgs_pt>=0"                      ,"gen_STXS_pTH"  , 100, 0., 400.],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10. ],
@@ -81,7 +81,7 @@ def draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     c   = TCanvas()
     leg = TLegend(0.5,0.6,0.9,0.9) 
     c.cd()
-    theplot_scat = TH2F(varr,varr, nbins, lowbin, highbin, nbins, lowbin, highbin)
+    theplot_scat = TH2F(var2,var2, nbins, lowbin, highbin, nbins, lowbin, highbin)
     tr.Draw("%s:%s>>%s"%(var1,var2,var2),cut1)
     theplot_scat.Draw()
     c.Print("%s/%s_scat.png"%(options.outputDir,fname))
@@ -92,7 +92,7 @@ for var, cut, fname, nbins, lowbin, highbin in plotlist:
 
     for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist1:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
-    draw_scatter(varr,var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
+    draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
 
     for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist2:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
