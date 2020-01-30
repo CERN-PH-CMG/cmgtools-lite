@@ -1,5 +1,5 @@
 import os
-from ROOT import TCanvas, TROOT, TH1F, TFile, TTree, gROOT, kRed, TLegend
+from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kRed, TLegend
 
 gROOT.SetBatch(True)
 
@@ -76,13 +76,23 @@ def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     leg.AddEntry(theplot_2,"%s"%(cut2))
     leg.Draw()
     c.Print("%s/%s_comp.png"%(options.outputDir,fname)) # Avoid overwriting single var plots
-    
+
+def draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
+    c   = TCanvas()
+    leg = TLegend(0.5,0.6,0.9,0.9) 
+    c.cd()
+    theplot_scat = TH2F(varr,varr, nbins, lowbin, highbin, nbins, lowbin, highbin)
+    tr.Draw("%s:%s>>%s"%(var1,var2,var2),cut1)
+    theplot_scat.Draw()
+    c.Print("%s/%s_scat.png"%(options.outputDir,fname))
+
 
 for var, cut, fname, nbins, lowbin, highbin in plotlist:
     draw_plot(var, cut, fname, nbins, lowbin, highbin )
 
     for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist1:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+    draw_scatter(varr,var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
 
     for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist2:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
