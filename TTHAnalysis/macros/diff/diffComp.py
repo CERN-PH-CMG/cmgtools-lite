@@ -3,19 +3,22 @@ from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, 
 
 gROOT.SetBatch(True)
     ## open files 
-f1  = TFile("./skimmedTrees_16/2lss_diff_NoTop-tagged/TTHnobb_fxfx_Friend.root")
+#f1  = TFile("./skimmedTrees_16/2lss_diff_NoTop-tagged/TTHnobb_fxfx_Friend.root")
+f1  = TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")    
 if not f1:
     raise ValueError('File not opened')
 tr1 = f1.Get("Friends")
 if not tr1:
     raise ValueError('Tree not loaded')
-f2  = TFile("./skimmedTrees_v5_16/2lss_diff_NoTop-tagged/TTHnobb_pow_Friend.root")
+#f2  = TFile("./skimmedTrees_v5_16/2lss_diff_NoTop-tagged/TTHnobb_pow_Friend.root")
+f2  = TFile("/nfs/user/elfaham/104X/2016/2lss_diff_Top-tagged/TTHnobb_pow_Friend.root")       
 if not f2:
     raise ValueError('File not opened')
 tr2 = f2.Get("Friends")
 if not tr2:
     raise ValueError('Tree not loaded')
-f3  = TFile("./skimmedTrees_v4_16/2016/evVarFriend_TTHnobb_2016.root")
+#f3  = TFile("./skimmedTrees_v4_16/2016/evVarFriend_TTHnobb_2016.root")
+f3  = TFile("~/CMSSW_9_4_4/src/CMGTools/TTHAnalysis/macros/2016/evVarFriend_TTHnobb_2016.root") #v4
 if not f3:
     raise ValueError('File not opened')
 tr3 = f3.Get("sf/t")
@@ -62,7 +65,7 @@ def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     theplot = TH1F(var,var, nbins, lowbin, highbin)
     tr1.Draw("%s>>%s"%(var,var),cut)
     theplot.Draw()
-    c.Print("%s/%s.png"%("./test_compare/",fname)) 
+    c.Print("%s/%s_loose_skim.png"%("./test_compare/",fname)) 
 
 def draw_comparison(var,cut, fname, nbins, lowbin, highbin):
     c   = TCanvas()
@@ -86,7 +89,7 @@ def draw_comparison(var,cut, fname, nbins, lowbin, highbin):
     leg.AddEntry(theplot_2,"v5")
     leg.AddEntry(theplot_3,"v4")
     leg.Draw()
-    c.Print("%s/%s_comp.png"%("./test_compare/",fname)) # Avoid overwriting single var plots
+    c.Print("%s/%s_comp_loose_skim.png"%("./test_compare/",fname)) # Avoid overwriting single var plots
 
 #for var, cut, fname, nbins, lowbin, highbin in plotlist:
     #draw_plot(var, cut, fname, nbins, lowbin, highbin )
