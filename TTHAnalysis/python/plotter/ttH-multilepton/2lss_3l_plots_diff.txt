@@ -1,4 +1,5 @@
 # vim: syntax=sh
+
 2lep_2DpT_2bins: Hreco_pTHvis\:Hreco_pTHgen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 #2lep_2DpT_2bins_withNu: Hreco_pTVisPlusNu\:Hreco_pTHgen :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvisplusNu (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
 #2lep_2DpT_2bins_allgen: Hreco_pTHvis\:Hreco_pTTrueGenplusNu :  [0,120,350]*[0,120,350]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgenall (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
@@ -34,3 +35,21 @@ lep1_conePt:     LepGood1_conePt                                 : 40,0,200; XTi
 diff_conePt_Pt_leading   :  (LepGood1_conePt-LepGood1_pt) / (LepGood1_pt)   : 20,-1,1; XTitle= "conePt-lepPt/lepPt (leading)"
 diff_conePt_Pt_subleading:  (LepGood2_conePt-LepGood2_pt) / (LepGood2_pt)   : 20,-1,1; XTitle= "conePt-lepPt/lepPt (sub_leading)"
 2lep_2DpT_diffconePtleading_vs_leppt: (LepGood1_conePt-LepGood1_pt) / (LepGood1_pt)\:LepGood1_pt     : [-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]*[25,35,50,70,90,110,130,160,200,250,300,350,400] ; XTitle="diff_conePt_Pt_leading", YTitle="lep1_pt (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+
+#STXS by bin
+2lep_pTHvis_STXS_bin1                          	:  if3(nLepFO>1, Hreco_pTHvis,-99) : [0  ,120[;     	XTitle="pT of reconstructed Higgs (GeV)"   , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHvis_STXS_bin2                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [120,200[;    	XTitle="pT of reconstructed Higgs (GeV)"   , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHvis_STXS_bin3                           :  if3(nLepFO>1, Hreco_pTHvis,-99) : [200,350[;     	XTitle="pT of reconstructed Higgs (GeV)"   , Legend='TL', MoreY=1.8, IncludeOverflows=False
+
+2lep_pTHgen_STXS_bin1                           :  if3(nLepFO>1, Hreco_pTHgen,-99) : [0  ,120[;     XTitle="pT of generator Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHgen_STXS_bin2                           :  if3(nLepFO>1, Hreco_pTHgen,-99) : [120,200[;     XTitle="pT of generator Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
+2lep_pTHgen_STXS_bin3                           :  if3(nLepFO>1, Hreco_pTHgen,-99) : [200,350[;     XTitle="pT of generator Higgs (GeV)"      , Legend='TL', MoreY=1.8, IncludeOverflows=False
+
+#TODO
+lep1_pt_STXS_bin1         :	0<=LepGood1_pt<120	: 40,0,200;     		XTitle="Leading lepton p_{T} (GeV)" , MoreY=2.0     
+###lep1_pt_STXS_bin2         :	120<=LepGood1_pt<200	: 1,120,200;     	XTitle="Leading lepton p_{T} (GeV)" , MoreY=2.0     
+###lep1_pt_STXS_bin3         :	200<=LepGood1_pt<350	: 1,200,350;     	XTitle="Leading lepton p_{T} (GeV)" , MoreY=2.0     
+
+###lep1_conePt_STXS_bin1         :	0<=LepGood1_conePt<120	: [0,120[;     			XTitle="Leading lepton cone p_{T} (GeV)" , MoreY=2.0     
+###lep1_conePt_STXS_bin2         :	120<=LepGood1_conePt<200	: [120,200[;     	XTitle="Leading lepton cone p_{T} (GeV)" , MoreY=2.0     
+###lep1_conePt_STXS_bin3         :	200<=LepGood1_conePt<350	: [200,350[;     	XTitle="Leading lepton cone p_{T} (GeV)" , MoreY=2.0     

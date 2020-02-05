@@ -6,8 +6,9 @@ gROOT.SetBatch(True)
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 # common options, independent of the flavour chosen
-parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
-parser.add_option("-o", "--outputDir", dest="outputDir",  type="string", default="./rootplots", help="Friend tree with the needed information");
+#parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
+parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_v5_16/2lss_diff_Top-tagged/TTHnobb_pow_Friend.root", help="Friend tree with the needed information");
+parser.add_option("-o", "--outputDir", dest="outputDir",  type="string", default="./rootplots_v5", help="Friend tree with the needed information");
 (options, args) = parser.parse_args()
 
 if not os.path.isdir(options.outputDir):
@@ -31,7 +32,7 @@ plotlist = [
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10. ],
- ]
+]
 
 comparisonplotlist1 = [
     ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2", 100, 0., 10.],
@@ -63,6 +64,12 @@ scatterplotlist4 = [
 ]
 scatterplotlist5 = [
     ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
+]
+scatterplotlist6 = [
+    ["Hreco_delR_H_j1l"     , "Hreco_delR_H_j1l>=0  && Hreco_nmatchedpartons==1"        , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1l_vs_j2l"     , 100, 0., 10.],
+]
+scatterplotlist7 = [
+    ["Hreco_delR_H_j1j2"    , "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons==2"        , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1j2_vs_j1l"    , 100, 0., 10.],
 ]
 
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):
@@ -134,4 +141,10 @@ for var, cut, fname, nbins, lowbin, highbin in plotlist:
             draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
         
         for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist5:
+            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
+
+        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist6:
+            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
+        
+        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist7:
             draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
