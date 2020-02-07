@@ -18,10 +18,13 @@ $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 lumi_2016		: $PromptFromMC : .* : normSymm : 1.022; year="2016"
 lumi_2017		: $PromptFromMC : .* : normSymm : 1.020; year="2017"
 lumi_2018		: $PromptFromMC : .* : normSymm : 1.015; year="2018"
-lumi_corr		: $PromptFromMC : .* : normSymm : 1.014; year="2016"
-lumi_corr		: $PromptFromMC : .* : normSymm : 1.013; year="2017"
-lumi_corr		: $PromptFromMC : .* : normSymm : 1.021; year="2018"
-
+lumi_2016_2017_2018     : $PromptFromMC : .* : normSymm : 1.009; year="2016"
+lumi_2016_2017_2018     : $PromptFromMC : .* : normSymm : 1.008; year="2017"
+lumi_2016_2017_2018     : $PromptFromMC : .* : normSymm : 1.020; year="2018"
+lumi_2017_2018     : $PromptFromMC : .* : normSymm : 1.004; year="2017"
+lumi_2017_2018     : $PromptFromMC : .* : normSymm : 1.003; year="2018"
+lumi_2016_2017     : $PromptFromMC : .* : normSymm : 1.008; year="2016"
+lumi_2016_2017     : $PromptFromMC : .* : normSymm : 1.006; year="2017"
 
 # lepton efficiencies
 CMS_ttHl_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_up/leptonSF_2lss'\,'leptonSF_2lss_mu_dn/leptonSF_2lss']
