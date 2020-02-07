@@ -179,11 +179,11 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        if '-' in pointname: 
-           pointname = pointname.replace('-','m')
+        
         pointname2 = pointname.replace('kt','ct')
         pointname2 = pointname2.replace('kv','cv')
-        
+        if '-' in pointname: 
+           pointname = pointname.replace('-','m')
         datacard = open(outdir+binname+'_'+pointname+".txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
         datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))
