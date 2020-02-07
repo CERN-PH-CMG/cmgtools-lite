@@ -1,5 +1,5 @@
 import os, sys
-nCores=32
+nCores=21
 submit = '{command}' 
 submit = '''sbatch -c %d -p short  --wrap '{command}' '''%nCores
 
@@ -49,7 +49,7 @@ if "scan" in OTHER:
     SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
 
 print "We are using the asimov dataset"
-OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg --asimov {ASIMOV}".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin
+OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg --asimov {ASIMOV} --threshold 0.01 ".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin #  
 CATPOSTFIX=""
 
 FUNCTION_2L="ttH_catIndex_2lss_MVA(LepGood1_pdgId,LepGood2_pdgId,DNN_2lss_predictions_ttH,DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ,DNN_2lss_predictions_Rest)"

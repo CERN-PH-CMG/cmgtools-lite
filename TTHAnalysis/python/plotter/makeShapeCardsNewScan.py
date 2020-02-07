@@ -16,6 +16,7 @@ parser.add_option("--infile", dest="infile", action="store_true", default=False,
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
+parser.add_option("--threshold", dest="threshold", type=float, default=0.0, help="Minimum event yield to consider processes")
 parser.add_option("--scanregex", dest="scanregex", type="string", default="ct_(?P<kt>.*)_cv_(?P<kv>.*)", help="Regex expression to parse parameters of the scan")
 parser.add_option("--params", dest="params", type="string", default="kt,kv", help="List of parameters in the regex, separated by commas")
 (options, args) = parser.parse_args()
@@ -123,11 +124,11 @@ for scanpoint in scanpoints:
         procs = []; iproc = {}
         for i,s in enumerate(listSignals):
             if s not in allyields: continue
-            if allyields[s] == 0: continue
+            if allyields[s] <= options.threshold: continue
             procs.append(s); iproc[s] = i-len(listSignals)+1
         for i,b in enumerate(mca.listBackgrounds()):
             if b not in allyields: continue
-            if allyields[b] == 0: continue
+            if allyields[s] <= options.threshold: continue
             procs.append(b); iproc[b] = i+1
             #for p in procs: print "%-10s %10.4f" % (p, allyields[p]) 
         systs = {}
