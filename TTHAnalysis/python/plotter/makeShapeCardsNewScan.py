@@ -180,9 +180,14 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        datacard = open(outdir+binname+'_'+pointname+".card.txt", "w"); 
+        if '-' in pointname: 
+           pointname = pointname.replace('-','m')
+        pointname2 = pointname.replace('kt','ct')
+        pointname2 = pointname2.replace('kv','cv')
+        
+        datacard = open(outdir+binname+'_'+pointname+".txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
-        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))
+        datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation %s\n' % allyields['data_obs'])
@@ -193,7 +198,7 @@ for scanpoint in scanpoints:
         npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
         datacard.write('##----------------------------------\n')
         datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
-        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p        for p in procs]))+"\n")
+        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','')        for p in procs]))+"\n")
         datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
         datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % allyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
@@ -207,9 +212,9 @@ for scanpoint in scanpoints:
         if options.autoMCStats: 
             datacard.write('* autoMCStats %d\n' % options.autoMCStatsValue)
     
-        workspace = ROOT.TFile.Open(outdir+binname+'_'+pointname+".input.root", "RECREATE")
+        workspace = ROOT.TFile.Open(outdir+binname+'_'+pointname+".root", "RECREATE")
         for h in towrite:
-            workspace.WriteTObject(h,h.GetName())
+            workspace.WriteTObject(h,h.GetName().replace(pointname2+'_',''))
         workspace.Close()
     
         print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname+'_'+pointname)
