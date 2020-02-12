@@ -1,6 +1,6 @@
 Convs  : TTGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange, Label="Conv. "
 Convs  : TGJets_lep : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange, Label="Conv. "
-#Convs  : WGToLNuG_amcatanlo_ext+WGToLNuG_amcatnlo_ext2_skimPromptGamma : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+Convs  : WGToLNuG_01J : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
 #Convs 	: ZGTo2LG_ext : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
 #Convs : W1JetsToLNu_LO_skimSameSign : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
 #Convs : W2JetsToLNu_LO_skimSameSign : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
