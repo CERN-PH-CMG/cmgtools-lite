@@ -1,0 +1,2 @@
+weight : LHEScaleWeight[5]
+alt-norm : LHEScaleSumw_[5]/LHEScaleSumw_[4]*genEventSumw_
