@@ -33,7 +33,7 @@ class finalMVA_DNN(Module):
 
 
         for var in self.systsJEC: 
-            self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
+            self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017samples_xmasupdates_tH_selection.pb',
                                self.getVarsForVariation(self.systsJEC[var]), cats_2lss, varorder))
 
             self.outVars.extend( ['DNN_2lss%s_'%self.systsJEC[var] + x for x in cats_2lss])
@@ -51,9 +51,9 @@ class finalMVA_DNN(Module):
         vars_2lss_unclDown["mT_lep2"          ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
         self.outVars.extend( ['DNN_2lss_unclDown_' + x for x in cats_2lss])
 
-        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
+        worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017samples_xmasupdates_tH_selection.pb',
                                            vars_2lss_unclUp, cats_2lss, varorder)
-        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017tautag2p1samples_xsecrwonly_oldvars_tH_selection.pb',
+        worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017samples_xmasupdates_tH_selection.pb',
                                            vars_2lss_unclDown, cats_2lss, varorder)
         
         self._MVAs.extend( [worker_2lss_unclUp, worker_2lss_unclDown])

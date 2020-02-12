@@ -98,8 +98,11 @@ class lepScaleFactors(Module):
             histList.append( self.recoToLoose['%d,m'%year] ) 
         out = 1
         for hist in histList:
-            eta = (lep.eta+lep.deltaEtaSC) if type(hist) == list else abs(lep.eta)
-            hist = hist[0]
+            if type(hist) == list:
+                eta = (lep.eta+lep.deltaEtaSC)
+                hist = hist[0]
+            else:
+                eta = abs(lep.eta)
             etabin = max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(eta)));
             ptbin  = max(1, min(hist.GetNbinsY(), hist.GetYaxis().FindBin(lep.pt)));
             sf = hist.GetBinContent(etabin,ptbin)
