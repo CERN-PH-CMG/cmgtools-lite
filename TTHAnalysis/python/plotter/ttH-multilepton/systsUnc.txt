@@ -28,12 +28,12 @@ lumi_2016_2017     : $PromptFromMC : .* : normSymm : 1.006; year="2017"
 
 # lepton efficiencies
 CMS_ttHl_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_up/leptonSF_2lss'\,'leptonSF_2lss_mu_dn/leptonSF_2lss']
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['leptonSF_3l_mu_up/leptonSF_3l'\,'leptonSF_3l_mu_dn/leptonSF_3l']
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['leptonSF_4l_mu_up/leptonSF_4l'\,'leptonSF_4l_mu_dn/leptonSF_4l']            
+CMS_ttHl_lepEff_muloose : $PromptFromMC : .*3l.*    : templateAsymm ; AddWeights=['leptonSF_3l_mu_up/leptonSF_3l'\,'leptonSF_3l_mu_dn/leptonSF_3l']
+CMS_ttHl_lepEff_muloose : $PromptFromMC : .*4l.*    : templateAsymm ; AddWeights=['leptonSF_4l_mu_up/leptonSF_4l'\,'leptonSF_4l_mu_dn/leptonSF_4l']            
 
 CMS_ttHl_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_up/leptonSF_2lss'\,'leptonSF_2lss_el_dn/leptonSF_2lss']   
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*3l*    : templateAsymm ; AddWeights=['leptonSF_3l_el_up/leptonSF_3l'\,'leptonSF_3l_el_dn/leptonSF_3l']	     
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*4l*    : templateAsymm ; AddWeights=['leptonSF_4l_el_up/leptonSF_4l'\,'leptonSF_4l_el_dn/leptonSF_4l']            
+CMS_ttHl_lepEff_elloose : $PromptFromMC : .*3l.*    : templateAsymm ; AddWeights=['leptonSF_3l_el_up/leptonSF_3l'\,'leptonSF_3l_el_dn/leptonSF_3l']	     
+CMS_ttHl_lepEff_elloose : $PromptFromMC : .*4l.*    : templateAsymm ; AddWeights=['leptonSF_4l_el_up/leptonSF_4l'\,'leptonSF_4l_el_dn/leptonSF_4l']            
 
 CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_mu_loosetotight_dn/leptonSF_2lss']
 CMS_ttHl_lepEff_mutight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_mu_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_mu_loosetotight_dn/leptonSF_3l']
@@ -303,6 +303,7 @@ CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.24' 
 # CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.35' 
 
+#CMS_ttHl_thu_shape_WZ : WZ : .* : envelope ; FakeRates=['fr-muR_2p0_muF_1p0.txt'\,'fr-muR_0p5_muF_1p0.txt'\,'fr-muR_1p0_muF_2p0.txt'\,'fr-muR_1p0_muF_0p5.txt'\,'fr-muR_2p0_muF_2p0.txt'\,'fr-muR_0p5_muF_0p5.txt']
 
 CMS_ttHl_thu_shape_ttH_x2 : $ttH : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.937  +0.281*DNN_2lss_predictions_max  -0.276*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'
 CMS_ttHl_thu_shape_ttH_x1 : $ttH : ttH_2lss.* : templateSymm; Normalize=True, AddWeight='(0.936  +0.246*DNN_2lss_predictions_max  -0.220*DNN_2lss_predictions_max*DNN_2lss_predictions_max)'

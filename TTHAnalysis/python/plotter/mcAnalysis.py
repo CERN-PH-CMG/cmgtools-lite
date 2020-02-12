@@ -879,11 +879,17 @@ class MCAnalysis:
             for tty in ttys: tasks.append( (igroup, tty, genWName) )
         retlist = self._processTasks(_runSumW, tasks, name="sumw")
         mergemap = defaultdict(float)
-        for (igroup,w) in retlist:
+        mergemap_vars = defaultdict( lambda : defaultdict(float) )
+        for (igroup,(w,var_w)) in retlist:
             mergemap[igroup] += w
+            for var in var_w: 
+                mergemap_vars[igroup][var] += var_w[var]
         for (igroup,total_w) in mergemap.iteritems():
             ttys, _, scale = self._groupsToNormalize[igroup]
-            for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+            for tty in ttys: 
+                tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                for var in mergemap_vars[igroup]:
+                    tty.setVarScaleFactor(var, "%s*%g" % (scale, 1000.0/mergemap_vars[igroup][var]))
         self._groupsToNormalize = []
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):

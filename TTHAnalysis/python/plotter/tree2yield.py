@@ -150,6 +150,8 @@ class TreeToYield:
         self._weightStringAll  = options.weightStringAll
         self._weightString0  = options.weightString if not self._isdata else "1"
         self._scaleFactor0  = scaleFactor
+        self._varScaleFactor = {} 
+        self._varScaleFactor0 = {}
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
@@ -212,11 +214,13 @@ class TreeToYield:
     def makeTTYVariations(self):
         ttyVariations = {}
         for var in self.getVariations():
-            for direction in ['up','dn']:
+            for direction in (['up','down'] if var.unc_type != "envelope" else ['var%d'%x for x in range(var.fakerate)]):
                 tty2 = copy.copy(self)
                 tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
+                if not tty2._isdata:
+                    tty2.setScaleFactor( self._varScaleFactor0[(var.name,direction)])
                 if var.getFRToRemove() != None:
                     #print "Passa di qui"
                     tty2._FRSourceList = []
@@ -257,6 +261,17 @@ class TreeToYield:
             self._scaleFactor  = self.adaptExpr(scaleFactor, cut=True)
         else:
             self._scaleFactor = scaleFactor
+        self._ttyVariations = None # invalidate ttys
+                        
+    def setVarScaleFactor(self,var,scaleFactor,mcCorrs=True):
+        if (not self._options.forceunweight) and scaleFactor != 1: 
+            self._weight = True
+        if mcCorrs and self._mcCorrs and scaleFactor and scaleFactor != 1.0:
+            # apply MC corrections to the scale factor
+            self._varScaleFactor0[var] = scaleFactor
+            self._varScaleFactor[var]  = self.adaptExpr(scaleFactor, cut=True)
+        else:
+            self._varScaleFactor[var] = scaleFactor
         self._ttyVariations = None # invalidate ttys
     def getScaleFactor(self):
         return self._scaleFactor
@@ -355,21 +370,36 @@ class TreeToYield:
             return t
     def getSumW(self,expr="genEventSumw",closeFileAfterwards=True):
         if self._maintty != None: print "WARNING: getSumW called on a non-main TTY"
-        if expr not in self._sumweights:
-            if self._isNano:
-                if closeFileAfterwards and (not self._isInit):
-                    if "root://" in self._fname: ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
-                    tfile = ROOT.TFile.Open(self._fname)
-                    if not tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
-                    t = tfile.Get("Runs")
-                    if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % ("LuminosityBlocks", self._fname)
-                    self._sumweights[expr] = _treeSum(t, expr)
-                    tfile.Close()
-                else:
-                    self._sumweights[expr] = _treeSum(self.getTree("Runs"), expr)
-            else:
-                raise RuntimeError, "getSumW implemented only for NanoAOD for now"
-        return self._sumweights[expr]
+        varNormList = []
+        for var in [None] + self.getVariations():
+            if var == None: 
+                exprs = [(expr,0)]
+            else: 
+                exprs = [(fr._altNorm if fr else expr, idx) for idx,fr in enumerate(var.fakerate) ]
+            for theExpr, idx in exprs:
+                if var: 
+                    if var.unc_type == 'envelope':
+                        sign = 'var%d'%(idx ) 
+                    else: 
+                        sign = 'up' if idx == 0 else 'down'
+                if theExpr == None: theExpr = expr
+                if theExpr not in self._sumweights:
+                    if self._isNano:
+                        if closeFileAfterwards and (not self._isInit):
+                            if "root://" in self._fname: ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
+                            tfile = ROOT.TFile.Open(self._fname)
+                            if not tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
+                            t = tfile.Get("Runs")
+                            if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % ("LuminosityBlocks", self._fname)
+                            self._sumweights[theExpr] = _treeSum(t, theExpr)
+                            tfile.Close()
+                        else:
+                            self._sumweights[theExpr] = _treeSum(self.getTree("Runs"), theExpr)
+                    else:
+                        raise RuntimeError, "getSumW implemented only for NanoAOD for now"
+                if var != None: 
+                    varNormList.append( ((var.name, sign), theExpr) )
+        return self._sumweights[expr], dict( (k,self._sumweights[v]) for (k,v) in varNormList )
     def getEntries(self,useEList=True,closeFileAfterwards=True):
         if useEList and self._elist: 
             return self._elist.GetN()
@@ -492,18 +522,18 @@ class TreeToYield:
             ret = HistoWithNuisances( nominal )
             variations = {}
             for var,sign,tty2 in self.getTTYVariations():
-                if var.name not in variations: variations[var.name] = [var,None,None]
-                isign = (1 if sign == "up" else 2)
+                if var.name not in variations: variations[var.name] = [var,{}]
                 if not var.isTrivial(sign):
                     tty2._isInit = True; tty2._tree = self.getTree()
-                    variations[var.name][isign] = tty2.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=False,noUncertainties=True)
+                    variations[var.name][1][sign] = tty2.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=False,noUncertainties=True)
                     tty2._isInit = False; tty2._tree = None
-            for (var,up,down) in variations.itervalues():
-                if up   == None: up   = var.getTrivial("up",  [nominal,None,None])
-                if down == None: down = var.getTrivial("down",[nominal,up,  None])
-                var.postProcess(nominal, up, down)
-                ret.addVariation(var.name, "up",   up)
-                ret.addVariation(var.name, "down", down)
+            for (var,variations) in variations.itervalues():
+                var.makeEnvelope( nominal, variations )
+                if 'up'   not in variations: variations['up']    = var.getTrivial("up",  [nominal,None,None])
+                if 'down' not in variations: variations['down']  = var.getTrivial("down",  [nominal,variations['up'],None])
+                var.postProcess(nominal, variations['up'], variations['down'])
+                ret.addVariation(var.name, "up",   variations['up'])
+                ret.addVariation(var.name, "down", variations['down'])
             if closeTreeAfter and _wasclosed: self._close()
             return ret
         ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec, fsplit=fsplit, closeTreeAfter=closeTreeAfter)
