@@ -1,4 +1,5 @@
 import os
+import ROOT 
 conf = dict(
         muPt = 5, 
         elePt = 7, 
@@ -165,7 +166,12 @@ jme2017 = [jetmetUncertainties2017All,jetMetCorrelations2017]
 jme2018 = [jetmetUncertainties2018All,jetMetCorrelations2018]
 
 def _fires(ev, path):
-    return getattr(ev,path) if hasattr(ev,path) else False
+    if "/hasfiredtriggers_cc.so" not in ROOT.gSystem.GetLibraries():
+        ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/Production/src/hasfiredtriggers.cc+O" % os.environ['CMSSW_BASE'])
+    if not hasattr(ev,path): return False 
+    if ev.run == 1:  # is MC
+        return getattr( ev,path ) 
+    return getattr(ROOT, 'fires_%s_%d'%(path,ev.year))( ev.run, getattr(ev,path))
 
 triggerGroups=dict(
     Trigger_1e={
@@ -180,7 +186,7 @@ triggerGroups=dict(
     },
     Trigger_2e={
         2016 : lambda ev : _fires(ev,'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ'),
-        2017 : lambda ev : _fires(ev,'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ') or _fires(ev,'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'),
+        2017 : lambda ev : _fires(ev,'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'),
         2018 : lambda ev : _fires(ev,'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'),
     },
     Trigger_2m={
@@ -230,9 +236,9 @@ triggerGroups=dict(
         2018 : lambda ev : ev.Trigger_2lss or ev.Trigger_3e or ev.Trigger_3m or ev.Trigger_mee or ev.Trigger_mme,
     },
     Trigger_MET={
-        2016 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight'), # _fires(ev,'HLT_PFMET120_PFMHT90_IDTight') and _fires(ev,'HLT_PFMET120_PFMHT100_IDTight')  and _fires(ev,'HLT_PFMET120_PFMHT110_IDTight') and
-        2017 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight') and _fires(ev,'HLT_PFMET120_PFMHT120_IDTight_PFHT60'), 
-        2018 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight') and _fires(ev,'HLT_PFMET120_PFMHT120_IDTight_PFHT60'),
+        2016 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight'),
+        2017 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight'),
+        2018 : lambda ev : _fires(ev,'HLT_PFMET120_PFMHT120_IDTight'),
     }
 )
 
@@ -301,7 +307,7 @@ Trigger_2lss = lambda : EvtTagger('Trigger_2lss',[ lambda ev : triggerGroups['Tr
 Trigger_3l   = lambda : EvtTagger('Trigger_3l',[ lambda ev : triggerGroups['Trigger_3l'][ev.year](ev) ])
 Trigger_MET  = lambda : EvtTagger('Trigger_MET',[ lambda ev : triggerGroups['Trigger_MET'][ev.year](ev) ])
 
-triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss,Trigger_3l,Trigger_MET]
+triggerSequence = [Trigger_1e,Trigger_1m,Trigger_2e,Trigger_2m,Trigger_em,Trigger_3e,Trigger_3m,Trigger_mee,Trigger_mme,Trigger_2lss,Trigger_3l ,Trigger_MET]
 
 
 from CMGTools.TTHAnalysis.tools.BDT_eventReco_cpp import BDT_eventReco
@@ -372,9 +378,13 @@ bTagSFs_allvars = lambda : BtagSFs("JetSel_Recl",
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepScaleFactors import lepScaleFactors
 leptonSFs = lambda : lepScaleFactors()
 
-scaleFactorSequence_2016 = [leptonSFs,btagSF2016_dj,bTagSFs] 
-scaleFactorSequence_2017 = [leptonSFs,btagSF2017_dj,bTagSFs] 
-scaleFactorSequence_2018 = [leptonSFs,btagSF2018_dj,bTagSFs]
+scaleFactorSequence_2016 = [btagSF2016_dj,bTagSFs] 
+scaleFactorSequence_2017 = [btagSF2017_dj,bTagSFs] 
+scaleFactorSequence_2018 = [btagSF2018_dj,bTagSFs]
+
+scaleFactorSequence_allVars_2016 = [btagSF2016_dj,bTagSFs_allvars] 
+scaleFactorSequence_allVars_2017 = [btagSF2017_dj,bTagSFs_allvars] 
+scaleFactorSequence_allVars_2018 = [btagSF2018_dj,bTagSFs_allvars]
 
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.higgsDecayFinder import higgsDecayFinder
