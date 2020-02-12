@@ -216,8 +216,8 @@ class HistoWithNuisances:
         if self.nominal != self.central:
             ret['nominal'] = self.nominal; 
         variations = []
-        for (x,(v1,v2)) in self.variations.iteritems():
-            variations.append((x,(v1,v2)))
+        for (x,y) in self.variations.iteritems():
+            variations.append((x,y))
         ret['variations'] = variations
         return ret
     def __setstate__(self,state):
@@ -225,10 +225,11 @@ class HistoWithNuisances:
         self.central = _cloneNoDir(state['central'], state['name'])
         self.nominal = _cloneNoDir(state['nominal'], state['name']+"_nominal") if (state['nominal'] != None) else self.central
         self.variations = dict()
-        for (x,(v1,v2)) in state['variations']:
-            v1c = _cloneNoDir(v1, "%s_%s_up"   % (self.central.GetName(),x))
-            v2c = _cloneNoDir(v2, "%s_%s_down" % (self.central.GetName(),x))
-            self.variations[x] = (v1c, v2c)
+        for (x,y) in state['variations']:
+            self.variations[x] = []
+            for i,h in enumerate(y): 
+                self.variations[x].append( _cloneNoDir(h, "%s_%s_%d"   % (self.central.GetName(),x,i)) )
+                
         self._rooFit  = None
         self._postFit = None
         self._usePostFit = True
@@ -421,9 +422,15 @@ class HistoWithNuisances:
     def getVariationList(self):
         return self.variations.keys()
     def addVariation(self,name,sign,histo_varied, clone=True):
-        idx = 0 if sign=='up' else 1
-        if name not in self.variations: self.variations[name] = [None,None]
-        self.variations[name][idx] = _cloneNoDir(histo_varied) if clone else histo_varied
+        if sign in ['up', 'down']:
+            if name not in self.variations: self.variations[name] = [None,None]
+            idx = 0 if sign=='up' else 1
+            self.variations[name][idx] = _cloneNoDir(histo_varied) if clone else histo_varied
+        else:  # is an envelope
+            if name not in self.variations: 
+                self.variations[name] = []
+            self.variations[name].append( _cloneNoDir(histo_varied) if clone else histo_varied ) 
+            setattr(self.variations[name][-1], 'isEnvelope', True) 
         # invalidate caches
         if self._rooFit or self._postFit:
             print "WARNING: adding a variantion on an object that already has roofit/postfit info"
@@ -618,6 +625,26 @@ class HistoWithNuisances:
         self._rooFit["nuisances"] = nuisances
         self._rooFit["templates"] = templates
         self._rooFit["scaleFactors"] = {}
+
+    def buildEnvelopes(self):
+        for var in self.getVariationList():
+            if len( self.getVariation(var) ) < 3: continue
+            up   = _cloneNoDir( self.central, self.central.GetName() + 'envUp' )
+            down = _cloneNoDir( self.central, self.central.GetName() + 'envDown' )
+            for x in range(1, self.central.GetNbinsX()+1):
+                maxUp = self.central.GetBinContent( x )
+                minDn = self.central.GetBinContent( x ) 
+                for hvar in self.getVariation(var):
+                    cont = hvar.GetBinContent(x)
+                    if cont-maxUp > 0: maxUp = cont
+                    if cont-minDn < 0: minDn = cont
+                up.SetBinContent( x, maxUp ) 
+                down.SetBinContent( x, minDn ) 
+            del self.variations[var]
+            self.addVariation( var, 'up', up)
+            self.addVariation( var, 'down', down)
+
+
     def _dropPdfAndNorm(self):
         if self._rooFit:
             for k in "norm", "pdf", "nuisances", "templates", "scaleFactors":
@@ -633,8 +660,8 @@ class HistoWithNuisances:
         vars2 = copy(x.variations)
         for var in set(vars1.keys()+vars2.keys()):
             if var not in vars1: 
-                vars1[var] = [_cloneNoDir(self.central),_cloneNoDir(self.central)]
-            if var not in vars2: vars2[var] = [x.central,x.central]
+                vars1[var] = [_cloneNoDir(self.central) for _ in vars2[var] ]
+            if var not in vars2: vars2[var] = [x.central for _ in vars1[var] ]
         def adder(v1,v2):
             if "TGraph" in v1.ClassName():
                 other = ROOT.TList()
@@ -649,7 +676,7 @@ class HistoWithNuisances:
             self.nominal = _cloneNoDir(self.central,self.central.GetName())
             adder(self.nominal,x.nominal)
         for var in set(vars1.keys()+vars2.keys()):
-            for idx in xrange(2): adder(vars1[var][idx],vars2[var][idx])
+            for idx in xrange(len(vars1[var])): adder(vars1[var][idx],vars2[var][idx])
         if self._rooFit and "pdf" in self._rooFit and x._rooFit:
             print "Would be good to be able to add roofit objects"
         self._dropPdfAndNorm()

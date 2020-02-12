@@ -115,24 +115,6 @@ class Uncertainty:
                     down.Reset(); down.Add(h0) 
             else:
                 up.Scale(0); down.Scale(0);
-    def makeEnvelope(self, nominal, variations ):
-        if self.unc_type != 'envelope':
-            return
-        if 'up' in variations or 'down' in variations: 
-            raise RuntimeError("Attempt to overwrite up and down uncertainties when making an envelope")
-        up   = _cloneNoDir( nominal, nominal.GetName() + 'envUp' )
-        down = _cloneNoDir( nominal, nominal.GetName() + 'envDown' )
-        for x in range(1, nominal.GetNbinsX()+1):
-            maxUp = nominal.GetBinContent( x )
-            minDn = nominal.GetBinContent( x ) 
-            for k, var in self.variations.iteritems():
-                cont = var.GetBinContent(x)
-                if cont-maxUp > 0: maxUp = cont
-                if cont-minDn < 0: minDn = cont
-            up.SetBinContent( maxUp ) 
-            dn.SetBinContent( minDn ) 
-        variations['up'] = up
-        variations['down'] = down
                 
 
     def isNorm(self):
@@ -168,7 +150,7 @@ class Uncertainty:
         return self._year
     def getFR(self,sign):
         if self.unc_type == 'envelope':
-            FR = self.fakerate['%d'%(sign.replace('var',''))]
+            FR = self.fakerate[int('%s'%(sign.replace('var','')))]
         else:
             FR = self.fakerate[0 if sign=='up' else 1]
         if FR: FR.loadFiles()
