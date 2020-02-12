@@ -63,7 +63,9 @@ class BtagSFs( Module ):
         ret = {} 
         for var in self.vars: 
             res = 1
-            for jet in jets: res *= getattr(jet,var)
+            for jet in jets: 
+                if jet.pt<25: continue
+                res *= getattr(jet,var)
             ret[var] = res
         if not self.isGroups: 
             resCorrUp  =0; resCorrDown=0;
@@ -85,11 +87,9 @@ class BtagSFs( Module ):
         else: 
             for corr in self.corrs:
                 ret['btagSF_shape_grouped_up_jes%s'%corr] =0; ret['btagSF_shape_grouped_down_jes%s'%corr] =0; 
-                print 'begin group', corr
                 for comp in self.corrs[corr]:
                     if comp == "RelativeSample": continue # not here
                     ret['btagSF_shape_grouped_up_jes%s'%corr] = ( ret['btagSF_shape_grouped_up_jes%s'%corr]**2 + (ret['btagSF_shape_up_jes%s'  %comp]-ret['btagSF_shape'])**2)**0.5
-                    if corr == "Absolute": print comp, ret['btagSF_shape_grouped_up_jes%s'%corr], ret['btagSF_shape_up_jes%s'  %comp]-ret['btagSF_shape']
 
                     ret['btagSF_shape_grouped_down_jes%s'%corr] = ( ret['btagSF_shape_grouped_down_jes%s'%corr]**2 + (ret['btagSF_shape_down_jes%s'  %comp]-ret['btagSF_shape'])**2)**0.5
                     ret.pop( 'btagSF_shape_up_jes%s'%comp)

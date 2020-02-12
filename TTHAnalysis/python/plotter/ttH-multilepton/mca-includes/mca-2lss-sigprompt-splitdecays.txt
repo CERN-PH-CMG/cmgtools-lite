@@ -14,6 +14,11 @@ tHW_hww+	: THW_ctcvcp : 0.01561*LHEReweightingWeight[11] : (LepGood1_isMatchRigh
 tHW_hzz+	: THW_ctcvcp : 0.01561*LHEReweightingWeight[11] : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue,genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
 tHW_htt+	: THW_ctcvcp : 0.01561*LHEReweightingWeight[11] : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue,genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
 
+HH+ : GluGluToHHTo4Tau   : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kAzure-9, years="2016\,2017"
+HH+ : GluGluToHHTo2V2Tau : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kAzure-9, years="2017\,2018"
+HH+ : GluGluToHHTo4V     : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kAzure-9, years="2017"
+
+
 ZH_hww+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==24)*(VHisZH==1) ; FillColor=ROOT.kAzure-9 	     , FriendsSimple="{P}/0_VHsplitter/"
 ZH_hzz+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==23)*(VHisZH==1) ; FillColor=ROOT.kAzure-9	     , FriendsSimple="{P}/0_VHsplitter/"
 ZH_htt+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==15)*(VHisZH==1) ; FillColor=ROOT.kAzure-9         , FriendsSimple="{P}/0_VHsplitter/"  
@@ -21,6 +26,8 @@ ZH_htt+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRigh
 WH_hww+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==24)*(VHisZH!=1) ; FillColor=ROOT.kAzure-9	     , FriendsSimple="{P}/0_VHsplitter/"
 WH_hzz+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==23)*(VHisZH!=1) ; FillColor=ROOT.kAzure-9	     , FriendsSimple="{P}/0_VHsplitter/"
 WH_htt+: VHToNonbb : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)* (GenHiggsDecayMode==15)*(VHisZH!=1) ; FillColor=ROOT.kAzure-9	     , FriendsSimple="{P}/0_VHsplitter/"
+
+qqH_hzz+ : qqHZZ4L : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) ; FillColor=ROOT.kAzure-9
 
 TTWW	: TTWW : 0.006981 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen
 
