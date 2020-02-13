@@ -1,7 +1,7 @@
 import os, sys
-nCores=21
+nCores=16
 submit = '{command}' 
-submit = '''sbatch -c %d -p short  --wrap '{command}' '''%nCores
+submit = '''sbatch -c %d -p batch  --wrap '{command}' '''%nCores
 
 
 if   'cmsco01.cern.ch' in os.environ['HOSTNAME']: ORIGIN="/data/peruzzi";
@@ -43,7 +43,7 @@ ASIMOV="signal"
 SCRIPT= "makeShapeCardsNew.py"
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
 if "scan" in OTHER:         
-    ASIMOV="tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz" 
+    ASIMOV="tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz,HH" 
     SCRIPT = "makeShapeCardsNewScan.py"
     MCAOPTION="-ctcv"
     SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
@@ -125,7 +125,7 @@ if REGION == "2lss_SVA":
     print submit.format(command=TORUN)
 
 if REGION == "2lss_SVA_scan":
-    CATFUNC='''"ttH_catIndex_2lss_SVA(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nJet25)"'''
+    CATFUNC='''"ttH_catIndex_2lss_SVA_soft(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nJet25)"'''
     CATBINS="[0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]"
     CATNAMES="ee_lj,ee_hj,em_neg_lj,em_neg_hj,em_pos_lj,em_pos_hj,mm_neg_lj,mm_neg_hj,mm_pos_lj,mm_pos_hj"
     OPT_2L="{T2L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss".format(T2L=T2L, OPTIONS=OPTIONS)
@@ -199,7 +199,7 @@ if REGION == "3l_SVA":
     print submit.format(command=TORUN)
 
 if REGION == "3l_SVA_scan":
-    CATFUNC='''"ttH_catIndex_3l_SVA(LepGood1_charge,LepGood2_charge,LepGood3_charge,nJet25)"'''
+    CATFUNC='''"ttH_catIndex_3l_SVA_soft(LepGood1_charge,LepGood2_charge,LepGood3_charge,nJet25)"'''
     CATBINS="[10.5,11.5,12.5,13.5,14.5]"
     CATNAMES="lj_neg,lj_pos,hj_neg,hj_pos"
     OPT_3L="{T3L} {OPTIONS} -W L1PreFiringWeight_Nom*puWeight*btagSF_shape*triggerSF_3l*leptonSF_3l".format(T3L=T3L, OPTIONS=OPTIONS)
