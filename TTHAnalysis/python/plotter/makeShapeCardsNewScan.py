@@ -128,7 +128,7 @@ for scanpoint in scanpoints:
             procs.append(s); iproc[s] = i-len(listSignals)+1
         for i,b in enumerate(mca.listBackgrounds()):
             if b not in allyields: continue
-            if allyields[s] <= options.threshold: continue
+            if allyields[b] <= options.threshold: continue
             procs.append(b); iproc[b] = i+1
             #for p in procs: print "%-10s %10.4f" % (p, allyields[p]) 
         systs = {}
@@ -180,11 +180,11 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        
         pointname2 = pointname.replace('kt','ct')
         pointname2 = pointname2.replace('kv','cv')
         if '-' in pointname: 
            pointname = pointname.replace('-','m')
+        pointname2=pointname2.replace('m','-') #for sanity
         datacard = open(outdir+binname+'_'+pointname+".txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
         datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))
@@ -217,5 +217,5 @@ for scanpoint in scanpoints:
             workspace.WriteTObject(h,h.GetName().replace(pointname2+'_',''))
         workspace.Close()
     
-        print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname+'_'+pointname)
+        print "Wrote to {0}.txt and {0}.root ".format(outdir+binname+'_'+pointname)
     
