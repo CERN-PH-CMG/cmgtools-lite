@@ -532,6 +532,10 @@ class MCAnalysis:
             if k not in mergemap: mergemap[k] = []
             mergemap[k].append(v)
         ret = dict([ (k,mergePlots(plotspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
+        
+        ## construct envelope variations if any
+        for p,h in ret.iteritems():
+            h.buildEnvelopes() 
 
         rescales = []
         self.compilePlotScaleMap(self._options.plotscalemap,rescales)
