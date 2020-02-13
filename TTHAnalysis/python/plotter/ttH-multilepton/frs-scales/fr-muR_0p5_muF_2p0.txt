@@ -1,2 +1,2 @@
-weight : LHEScaleWeight[2]
-alt-norm : LHEScaleSumw_[2]/LHEScaleSumw_[4]*genEventSumw_
+weight : Alt$(LHEScaleWeight[2],1)
+alt-norm : Alt$(LHEScaleSumw_[2]/LHEScaleSumw_[4]*genEventSumw_,genEventSumw_)
