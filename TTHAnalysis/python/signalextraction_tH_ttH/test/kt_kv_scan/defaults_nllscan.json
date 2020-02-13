@@ -1,0 +1,17 @@
+{
+    "smoothing": 0.0,
+    "ymax" : 100.0,
+    "xmax" : 2.0,
+    "y_major_ticks" : 5.0,
+    "y_minor_ticks" : 1.0,
+    "y_axis_label" : "$-2\\Delta\\mathrm{ln}(\\mathcal{L})$",
+    "x_axis_label" : "$\\kappa_\\mathrm{t}$",
+    "smoothing" : 0.0,
+    "text_bg_alpha" : 1.0,
+    "header_left" : "$\\mathbf{CMS}$ {\\huge{\\textit{Preliminary}}",
+    "header_right" : "35.9\\,$\\mathrm{fb}^{-1}$ (13\\,TeV)",
+    "tag1" : "$\\mathrm{pp}\\to\\mathrm{tH}+\\mathrm{t\\bar{t}H}$",
+    "tag2" : "$\\mathrm{H}\\to\\mathrm{W}\\mathrm{W}/\\mathrm{Z}\\mathrm{Z}/\\mathrm{\\tau}\\mathrm{\\tau}/\\mathrm{b}\\mathrm{\\overline{b}}/\\gamma\\gamma$",
+    "tag3" : "$\\kappa_{\\mathrm{V}}=1.0$, non-resolved"
+}
+
