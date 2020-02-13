@@ -220,7 +220,8 @@ class TreeToYield:
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
                 if not tty2._isdata:
-                    tty2.setScaleFactor( self._varScaleFactor0[(var.name,direction)])
+                    if (var.name,direction) in self._varScaleFactor0: 
+                        tty2.setScaleFactor( self._varScaleFactor0[(var.name,direction)])
                 if var.getFRToRemove() != None:
                     #print "Passa di qui"
                     tty2._FRSourceList = []
