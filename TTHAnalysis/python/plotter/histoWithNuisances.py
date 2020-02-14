@@ -632,14 +632,17 @@ class HistoWithNuisances:
             up   = _cloneNoDir( self.central, self.central.GetName() + 'envUp' )
             down = _cloneNoDir( self.central, self.central.GetName() + 'envDown' )
             for x in range(1, self.central.GetNbinsX()+1):
-                maxUp = self.central.GetBinContent( x )
-                minDn = self.central.GetBinContent( x ) 
-                for hvar in self.getVariation(var):
-                    cont = hvar.GetBinContent(x)
-                    if cont-maxUp > 0: maxUp = cont
-                    if cont-minDn < 0: minDn = cont
-                up.SetBinContent( x, maxUp ) 
-                down.SetBinContent( x, minDn ) 
+                for y in range(1,self.central.GetNbinsX()+1):
+                    ibin  = self.central.GetBin(x,y)
+                    maxUp = self.central.GetBinContent( ibin )
+                    minDn = self.central.GetBinContent( ibin ) 
+                    for hvar in self.getVariation(var):
+                        print hvar.Integral()
+                        cont = hvar.GetBinContent(ibin)
+                        if cont-maxUp > 0: maxUp = cont
+                        if cont-minDn < 0: minDn = cont
+                    up.SetBinContent( ibin, maxUp ) 
+                    down.SetBinContent( ibin, minDn ) 
             del self.variations[var]
             self.addVariation( var, 'up', up)
             self.addVariation( var, 'down', down)
