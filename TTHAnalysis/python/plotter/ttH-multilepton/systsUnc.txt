@@ -166,7 +166,8 @@ CMS_ttHl18_btag_HFStats2   : $PromptFromMC : .* : templateAsymm; AddWeights=['bt
 # Diboson background
 # 2lss: 
 # these below for 3l final state are when not using the WZ and ZZ CR
-CMS_ttHl_EWK_btag : WZ|ZZ : .*3l* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.1\, 1.4)'
+CMS_ttHl_EWK_btag : WZ|ZZ : .* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.1\, 1.4)'
+CMS_ttHl_EWK_jet  : WZ|ZZ : .* : templateSymm ; AddWeight='if3(nJet25<=2\, 1.\, 1.3)'
 # these are when using the CRs, and split WZ/ZZ
 CMS_ttHl_WZ_lnU  : WZ : .*          : normSymm : 1.3 ; lnU=True
 CMS_ttHl_WZ_theo : WZ : .*3l.*      : normSymm : 1.07
@@ -271,13 +272,6 @@ CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.20
 CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_mm.* : none
 CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
 CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.1\, 1.0\,1.0)'
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss_ee.* : none
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss_em_bl.* : none
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss_em_bt.* : normSymm : 1.1
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss_mm* : none
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.1)'
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*3l_bl.* : none
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.1
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.15\, 1.3)'
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_ee.* : none
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_em.* : normSymm : 1.15
@@ -294,16 +288,12 @@ CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bl.* : none
 CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 
 # 4) Closure: QCD vs. TT fake rate, shape
-# CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.5\,1.25\,1.0)\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)/ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.2\,1.1\,1.0)' 
-# CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_ee.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)/1.2' 
-# CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.25\, kinMVA_2lss_ttbar_withBDTrTT\,-1\,1)/1.1' 
-# CMS_ttHl17_Clos_e_shape : $FRAll  : .*2lss_mm.* : none
-# CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.5\,1.8)\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.23\,1.35)' 
-# CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_ee.* : none
-# CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_em.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.5\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.24' 
-# CMS_ttHl17_Clos_m_shape : $FRAll  : .*2lss_mm.* : templateSymm ; Normalize=False, AddWeight='lnN1D_p1(1.8\, kinMVA_2lss_ttV_withHj_rTT\,-1\,1)/1.35' 
+CMS_ttHl18_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=False, AddWeight='if3(abs(LepGood1_conePt)==11\,lnN1D_p1(1.024\,LepGood1_conePt\,40\,120)\,1)*if3(abs(LepGood2_conePt)==11\,lnN1D_p1(1.024\,LepGood2_conePt\,40\,120)\,1) ', year="2018"
+CMS_ttHl18_Clos_e_shape : $FRAll  : .*3l.*    : templateSymm ; Normalize=False, AddWeight='if3(abs(LepGood1_conePt)==11\,lnN1D_p1(1.024\,LepGood1_conePt\,40\,120)\,1)*if3(abs(LepGood2_conePt)==11\,lnN1D_p1(1.024\,LepGood2_conePt\,40\,120)\,1)*if3(abs(LepGood3_conePt)==11\,lnN1D_p1(1.024\,LepGood3_conePt\,40\,120)\,1)', year="2018" 
+
 
 CMS_ttHl_thu_shape_WZ : WZ : .* : envelope ; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt']
+CMS_ttHl_thu_shape_ZZ : ZZ : .* : envelope ; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt']
 
 CMS_ttHl_thu_shape_ttH : $ttH : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt']
 CMS_ttHl_thu_shape_ttZ : TTZ  : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt'] 
