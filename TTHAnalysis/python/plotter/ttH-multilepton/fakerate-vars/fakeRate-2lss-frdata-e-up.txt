@@ -4,6 +4,6 @@ weight: fakeRateWeight_short_2lss_ii(fetchFR_ii(LepGood_conePt[iLepFO_Recl[0]],L
 load-histo: FR_mu_i00 : $DATA/fakerate/fr_2016.root : FR_mva085_mu_data_comb: 2016
 load-histo: FR_mu_i01 : $DATA/fakerate/fr_2017.root : FR_mva085_mu_data_comb: 2017
 load-histo: FR_mu_i02 : $DATA/fakerate/fr_2018.root : FR_mva085_mu_data_comb: 2018
-load-histo: FR_el_i10 : $DATA/fakerate/fr_2016.root : FR_mva080_el_data_comb_NC_up: 2016
-load-histo: FR_el_i11 : $DATA/fakerate/fr_2017.root : FR_mva080_el_data_comb_NC_up: 2017
-load-histo: FR_el_i12 : $DATA/fakerate/fr_2018.root : FR_mva080_el_data_comb_NC_up: 2018
+load-histo: FR_el_i10 : $DATA/fakerate/fr_2016_recorrected.root : FR_mva080_el_data_comb_NC_recorrected_up: 2016
+load-histo: FR_el_i11 : $DATA/fakerate/fr_2017_recorrected.root : FR_mva080_el_data_comb_NC_recorrected_up: 2017
+load-histo: FR_el_i12 : $DATA/fakerate/fr_2018_recorrected.root : FR_mva080_el_data_comb_NC_recorrected_up: 2018
