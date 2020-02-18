@@ -15,33 +15,46 @@ $alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 
 ### Uncertainties
 # lumi from https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
-lumi_2016		: $PromptFromMC : .* : normSymm : 1.022; year="2016"
-lumi_2017		: $PromptFromMC : .* : normSymm : 1.020; year="2017"
-lumi_2018		: $PromptFromMC : .* : normSymm : 1.015; year="2018"
-lumi_2016_2017_2018     : $PromptFromMC : .* : normSymm : 1.009; year="2016"
-lumi_2016_2017_2018     : $PromptFromMC : .* : normSymm : 1.008; year="2017"
-lumi_2016_2017_2018     : $PromptFromMC : .* : normSymm : 1.020; year="2018"
-lumi_2017_2018     : $PromptFromMC : .* : normSymm : 1.004; year="2017"
-lumi_2017_2018     : $PromptFromMC : .* : normSymm : 1.003; year="2018"
-lumi_2016_2017     : $PromptFromMC : .* : normSymm : 1.008; year="2016"
-lumi_2016_2017     : $PromptFromMC : .* : normSymm : 1.006; year="2017"
+lumi_13TeV_2016		: $PromptFromMC : .* : normSymm : 1.022; year="2016"
+lumi_13TeV_2017		: $PromptFromMC : .* : normSymm : 1.020; year="2017"
+lumi_13TeV_2018		: $PromptFromMC : .* : normSymm : 1.015; year="2018"
+
+lumi_13TeV_XY		: $PromptFromMC : .* : normSymm : 1.009; year="2016"
+lumi_13TeV_XY		: $PromptFromMC : .* : normSymm : 1.008; year="2017"
+lumi_13TeV_XY		: $PromptFromMC : .* : normSymm : 1.020; year="2018"
+
+lumi_13TeV_LS		: $PromptFromMC : .* : normSymm : 1.003; year="2017"
+lumi_13TeV_LS		: $PromptFromMC : .* : normSymm : 1.002; year="2018"
+
+lumi_13TeV_BBD		: $PromptFromMC : .* : normSymm : 1.004; year="2016" 
+lumi_13TeV_BBD		: $PromptFromMC : .* : normSymm : 1.004; year="2017" 
+
+lumi_13TeV_DB 		: $PromptFromMC : .* : normSymm : 1.005; year="2016"
+lumi_13TeV_DB 		: $PromptFromMC : .* : normSymm : 1.005; year="2017" 
+
+lumi_13TeV_BCC 		: $PromptFromMC : .* : normSymm : 1.003; year="2017"
+lumi_13TeV_BCC 		: $PromptFromMC : .* : normSymm : 1.002; year="2018" 
+
+lumi_13TeV_GS 		: $PromptFromMC : .* : normSymm : 1.004; year="2016"
+lumi_13TeV_GS 		: $PromptFromMC : .* : normSymm : 1.001; year="2017"
+
 
 # lepton efficiencies
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_up/leptonSF_2lss'\,'leptonSF_2lss_mu_dn/leptonSF_2lss']
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*3l.*    : templateAsymm ; AddWeights=['leptonSF_3l_mu_up/leptonSF_3l'\,'leptonSF_3l_mu_dn/leptonSF_3l']
-CMS_ttHl_lepEff_muloose : $PromptFromMC : .*4l.*    : templateAsymm ; AddWeights=['leptonSF_4l_mu_up/leptonSF_4l'\,'leptonSF_4l_mu_dn/leptonSF_4l']            
+CMS_eff_ttHl_mloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_up/leptonSF_2lss'\,'leptonSF_2lss_mu_dn/leptonSF_2lss']
+CMS_eff_ttHl_mloose : $PromptFromMC : .*3l.*    : templateAsymm ; AddWeights=['leptonSF_3l_mu_up/leptonSF_3l'\,'leptonSF_3l_mu_dn/leptonSF_3l']
+CMS_eff_ttHl_mloose : $PromptFromMC : .*4l.*    : templateAsymm ; AddWeights=['leptonSF_4l_mu_up/leptonSF_4l'\,'leptonSF_4l_mu_dn/leptonSF_4l']            
 
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_up/leptonSF_2lss'\,'leptonSF_2lss_el_dn/leptonSF_2lss']   
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*3l.*    : templateAsymm ; AddWeights=['leptonSF_3l_el_up/leptonSF_3l'\,'leptonSF_3l_el_dn/leptonSF_3l']	     
-CMS_ttHl_lepEff_elloose : $PromptFromMC : .*4l.*    : templateAsymm ; AddWeights=['leptonSF_4l_el_up/leptonSF_4l'\,'leptonSF_4l_el_dn/leptonSF_4l']            
+CMS_eff_ttHl_eloose : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_up/leptonSF_2lss'\,'leptonSF_2lss_el_dn/leptonSF_2lss']   
+CMS_eff_ttHl_eloose : $PromptFromMC : .*3l.*    : templateAsymm ; AddWeights=['leptonSF_3l_el_up/leptonSF_3l'\,'leptonSF_3l_el_dn/leptonSF_3l']	     
+CMS_eff_ttHl_eloose : $PromptFromMC : .*4l.*    : templateAsymm ; AddWeights=['leptonSF_4l_el_up/leptonSF_4l'\,'leptonSF_4l_el_dn/leptonSF_4l']            
 
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_mu_loosetotight_dn/leptonSF_2lss']
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_mu_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_mu_loosetotight_dn/leptonSF_3l']
-CMS_ttHl_lepEff_mutight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_mu_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_mu_loosetotight_dn/leptonSF_4l']
+CMS_eff_ttHl_mtight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_mu_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_mu_loosetotight_dn/leptonSF_2lss']
+CMS_eff_ttHl_mtight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_mu_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_mu_loosetotight_dn/leptonSF_3l']
+CMS_eff_ttHl_mtight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_mu_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_mu_loosetotight_dn/leptonSF_4l']
 
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_el_loosetotight_dn/leptonSF_2lss']
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_el_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_el_loosetotight_dn/leptonSF_3l']
-CMS_ttHl_lepEff_eltight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_el_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_el_loosetotight_dn/leptonSF_4l']
+CMS_eff_ttHl_etight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['leptonSF_2lss_el_loosetotight_up/leptonSF_2lss'\,'leptonSF_2lss_el_loosetotight_dn/leptonSF_2lss']
+CMS_eff_ttHl_etight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_el_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_el_loosetotight_dn/leptonSF_3l']
+CMS_eff_ttHl_etight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_el_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_el_loosetotight_dn/leptonSF_4l']
 
 
 ## L1 ECAL prefiring
@@ -72,72 +85,72 @@ CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.*_2017 : normSymm : 1.01
 CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.*_2018 : normSymm : 1.01
 
 
-CMS_ttHl_JESHF        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_HF        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesHFUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHFDown.txt'], \
                          AddWeights=['btagSF_shape_up_jesHF/btagSF_shape'\,'btagSF_shape_down_jesHF/btagSF_shape']
-CMS_ttHl_JESBBEC1_2016        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_BBEC1_2016        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesBBEC1_year/btagSF_shape'\,'btagSF_shape_down_jesBBEC1_year/btagSF_shape'], year="2016"
-CMS_ttHl_JESBBEC1_2017        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_BBEC1_2017        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesBBEC1_year/btagSF_shape'\,'btagSF_shape_down_jesBBEC1_year/btagSF_shape'], year="2017"
-CMS_ttHl_JESBBEC1_2018        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_BBEC1_2018        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesBBEC1_year/btagSF_shape'\,'btagSF_shape_down_jesBBEC1_year/btagSF_shape'], year="2018"
-CMS_ttHl_JESFlavorQCD        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_FlavorQCD        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesFlavorQCDUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesFlavorQCDDown.txt'], \
                          AddWeights=['btagSF_shape_up_jesFlavorQCD/btagSF_shape'\,'btagSF_shape_down_jesFlavorQCD/btagSF_shape']
-CMS_ttHl_JESRelativeSample_2016        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_RelativeSample_2016        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesRelativeSample_year/btagSF_shape'\,'btagSF_shape_down_jesRelativeSample_year/btagSF_shape'], year="2016"
-CMS_ttHl_JESRelativeSample_2017        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_RelativeSample_2017        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesRelativeSample_year/btagSF_shape'\,'btagSF_shape_down_jesRelativeSample_year/btagSF_shape'], year="2017"
-CMS_ttHl_JESRelativeSample_2018        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_RelativeSample_2018        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeSample_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesRelativeSample_year/btagSF_shape'\,'btagSF_shape_down_jesRelativeSample_year/btagSF_shape'], year="2018"
-CMS_ttHl_JESEC2        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_EC2        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2Up.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2Down.txt'], \
                          AddWeights=['btagSF_shape_up_jesEC2/btagSF_shape'\,'btagSF_shape_down_jesEC2/btagSF_shape']
-CMS_ttHl_JESHF_2016        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_HF_2016        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesHF_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHF_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesHF_year/btagSF_shape'\,'btagSF_shape_down_jesHF_year/btagSF_shape'], year="2016"
-CMS_ttHl_JESHF_2017        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_HF_2017        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesHF_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHF_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesHF_year/btagSF_shape'\,'btagSF_shape_down_jesHF_year/btagSF_shape'], year="2017"
-CMS_ttHl_JESHF_2018        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_HF_2018        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesHF_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHF_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesHF_year/btagSF_shape'\,'btagSF_shape_down_jesHF_year/btagSF_shape'], year="2018"
-CMS_ttHl_JESRelativeBal        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_RelativeBal        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesRelativeBalUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesRelativeBalDown.txt'], \
                          AddWeights=['btagSF_shape_up_jesRelativeBal/btagSF_shape'\,'btagSF_shape_down_jesRelativeBal/btagSF_shape']
-CMS_ttHl_JESAbsolute_2016        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_Absolute_2016        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsolute_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsolute_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesAbsolute_year/btagSF_shape'\,'btagSF_shape_down_jesAbsolute_year/btagSF_shape'], year="2016"
-CMS_ttHl_JESAbsolute_2017        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_Absolute_2017        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsolute_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsolute_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesAbsolute_year/btagSF_shape'\,'btagSF_shape_down_jesAbsolute_year/btagSF_shape'], year="2017"
-CMS_ttHl_JESAbsolute_2018        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_Absolute_2018        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsolute_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsolute_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesAbsolute_year/btagSF_shape'\,'btagSF_shape_down_jesAbsolute_year/btagSF_shape'], year="2018"
-CMS_ttHl_JESBBEC1        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_BBEC1        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesBBEC1Up.txt'\,'ttH-multilepton/frs-jecs/fr-jesBBEC1Down.txt'], \
                          AddWeights=['btagSF_shape_up_jesBBEC1/btagSF_shape'\,'btagSF_shape_down_jesBBEC1/btagSF_shape']
-CMS_ttHl_JESEC2_2016        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_EC2_2016        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesEC2_year/btagSF_shape'\,'btagSF_shape_down_jesEC2_year/btagSF_shape'], year="2016"
-CMS_ttHl_JESEC2_2017        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_EC2_2017        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesEC2_year/btagSF_shape'\,'btagSF_shape_down_jesEC2_year/btagSF_shape'], year="2017"
-CMS_ttHl_JESEC2_2018        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_EC2_2018        : $PromptFromMC : .* : templateAsymm; \
                              FakeRates=['ttH-multilepton/frs-jecs/fr-jesEC2_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesEC2_yearDown.txt'], \
                              AddWeights=['btagSF_shape_up_jesEC2_year/btagSF_shape'\,'btagSF_shape_down_jesEC2_year/btagSF_shape'], year="2018"
-CMS_ttHl_JESAbsolute        : $PromptFromMC : .* : templateAsymm; \
+CMS_scale_j_Absolute        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsoluteUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsoluteDown.txt'], \
                          AddWeights=['btagSF_shape_up_jesAbsolute/btagSF_shape'\,'btagSF_shape_down_jesAbsolute/btagSF_shape']
 
 
-CMS_ttHl_JER	: $PromptFromMC : .* : templateAsymm; \
+CMS_res_j	: $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
 
 CMS_ttHl_UnclusteredEn : $PromptFromMC : .* : templateAsymm; \
