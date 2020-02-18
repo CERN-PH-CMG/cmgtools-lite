@@ -45,7 +45,7 @@ else:
        report = mca.getPlotsRaw("x", cexpr+":"+args[2], makeBinningProductString(args[3],cbins), cuts.allCuts(), nodata=options.asimov) 
     else:
        report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov) 
-    for p,h in report.iteritems(): h.cropNegativeBins()
+    for p,h in report.iteritems(): h.cropNegativeBins(threshold=1e-5)
 
 if options.savefile:
     savefile = ROOT.TFile(outdir+binname+".bare.root","recreate")
@@ -125,6 +125,11 @@ for binname, report in allreports.iteritems():
                     hv.Add(h.raw()); hv.Scale(0.5)
                 elif k < 0.2 or k > 5:
                     print "Warning: big shift in template for %s %s %s %s: kappa = %g " % (binname, p, name, d, k)
+            # prevent variations from going to zero by symmetrizing
+            for bin in range(1,h.GetXaxis().GetNbins()+1):
+                for d in range(2):
+                    if variants[d].GetBinContent( bin ) == 0: 
+                        variants[d].SetBinContent( bin, h.raw().GetBinContent( bin )**2/variants[1-d].GetBinContent(bin))
             effshape[p] = variants 
     if isShape:
         if options.regularize: 
