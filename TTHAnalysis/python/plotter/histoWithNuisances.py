@@ -21,19 +21,19 @@ def _projectionXNoDir(hist2d,name,y1,y2):
         proj.SetBinError(ix, sqrt(sum(hist2d.GetBinError(ix,y)**2 for y in ys)))
     return proj
 
-def cropNegativeBins(histo):
+def cropNegativeBins(histo,threshold=0.):
             if "TH1" in histo.ClassName():
                 for b in xrange(0,histo.GetNbinsX()+2):
-                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
+                    if histo.GetBinContent(b) < threshold: histo.SetBinContent(b, threshold)
             elif "TH2" in histo.ClassName():
                 for bx in xrange(0,histo.GetNbinsX()+2):
                     for by in xrange(0,histo.GetNbinsY()+2):
-                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
+                        if histo.GetBinContent(bx,by) < threshold: histo.SetBinContent(bx,by, threshold)
             elif "TH3" in histo.ClassName():
                 for bx in xrange(0,histo.GetNbinsX()+2):
                     for by in xrange(0,histo.GetNbinsY()+2):
                         for bz in xrange(0,histo.GetNbinsZ()+2):
-                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
+                            if histo.GetBinContent(bx,by,bz) < threshold: histo.SetBinContent(bx,by,bz, threshold)
 
 def _isNullHistogram(h):
     if h.Integral() != 0: return False
@@ -405,12 +405,12 @@ class HistoWithNuisances:
             ret.SetPoint(i, x, y)
             ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
         return ret
-    def cropNegativeBins(self, allVariations=True):
-        cropNegativeBins(self.nominal)
+    def cropNegativeBins(self, allVariations=True, threshold=0., alsoVariations=False):
+        cropNegativeBins(self.nominal,threshold=threshold)
         if allVariations:
-            cropNegativeBins(self.central)
+            cropNegativeBins(self.central,threshold=threshold)
             for hs in self.variations.itervalues():
-                for h in hs: cropNegativeBins(h)
+                for h in hs: cropNegativeBins(h, threshold=threshold if alsoVariations else 0.)
     def getCentral(self):
         return self.central
     def getVariation(self,alternate):
@@ -478,8 +478,9 @@ class HistoWithNuisances:
                 y0 = h0.GetBinContent(b)
                 y  =  h.GetBinContent(b)
                 if debug: 
-                    print "  bin %3d  nominal %9.4f  varied %9.4f   ratio %8.5f   diff %8.5f" % (
-                                b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
+                    if 'ZZ' in self.name: 
+                        print "  bin %3d  nominal %9.4f  varied %9.4f   ratio %8.5f   diff %8.5f" % (
+                            b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
                 if (y0 == 0):
                     if (y != 0): return True
                 elif y == 0: 
@@ -637,7 +638,6 @@ class HistoWithNuisances:
                     maxUp = self.central.GetBinContent( ibin )
                     minDn = self.central.GetBinContent( ibin ) 
                     for hvar in self.getVariation(var):
-                        print hvar.Integral()
                         cont = hvar.GetBinContent(ibin)
                         if cont-maxUp > 0: maxUp = cont
                         if cont-minDn < 0: minDn = cont
