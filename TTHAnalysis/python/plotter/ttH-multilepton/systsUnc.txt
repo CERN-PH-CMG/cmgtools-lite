@@ -151,8 +151,12 @@ CMS_scale_j_Absolute        : $PromptFromMC : .* : templateAsymm; \
                          AddWeights=['btagSF_shape_up_jesAbsolute/btagSF_shape'\,'btagSF_shape_down_jesAbsolute/btagSF_shape']
 
 
-CMS_res_j	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
+CMS_res_j_2016	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2016"
+CMS_res_j_2017	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2017"
+CMS_res_j_2018	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2018"
 
 CMS_ttHl_UnclusteredEn : $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-unclUp.txt'\,'ttH-multilepton/fr-unclDn.txt']
