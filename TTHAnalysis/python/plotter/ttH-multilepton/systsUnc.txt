@@ -84,6 +84,7 @@ CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.*_2016 : normSymm : 1.01
 CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.*_2017 : normSymm : 1.01
 CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.*_2018 : normSymm : 1.01
 
+CMS_ttHl_pileup : $PromptFromMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
 
 CMS_scale_j_HF        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesHFUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesHFDown.txt'], \
@@ -150,16 +151,20 @@ CMS_scale_j_Absolute        : $PromptFromMC : .* : templateAsymm; \
                          AddWeights=['btagSF_shape_up_jesAbsolute/btagSF_shape'\,'btagSF_shape_down_jesAbsolute/btagSF_shape']
 
 
-CMS_res_j	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt']
+CMS_res_j_2016	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2016"
+CMS_res_j_2017	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2017"
+CMS_res_j_2018	: $PromptFromMC : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2018"
 
 CMS_ttHl_UnclusteredEn : $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-unclUp.txt'\,'ttH-multilepton/fr-unclDn.txt']
 
-CMS_ttHl16_btag_LF    : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_lf/btagSF_shape'\,'btagSF_shape_down_lf/btagSF_shape']
-CMS_ttHl16_btag_HF    : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_hf/btagSF_shape'\,'btagSF_shape_down_hf/btagSF_shape']
-CMS_ttHl16_btag_cErr1   : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_cferr1/btagSF_shape'\,'btagSF_shape_down_cferr1/btagSF_shape']
-CMS_ttHl16_btag_cErr2   : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_cferr2/btagSF_shape'\,'btagSF_shape_down_cferr2/btagSF_shape']
+CMS_ttHl_btag_LF    : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_lf/btagSF_shape'\,'btagSF_shape_down_lf/btagSF_shape']
+CMS_ttHl_btag_HF    : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_hf/btagSF_shape'\,'btagSF_shape_down_hf/btagSF_shape']
+CMS_ttHl_btag_cErr1   : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_cferr1/btagSF_shape'\,'btagSF_shape_down_cferr1/btagSF_shape']
+CMS_ttHl_btag_cErr2   : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_cferr2/btagSF_shape'\,'btagSF_shape_down_cferr2/btagSF_shape']
 
 
 CMS_ttHl16_btag_LFStats1   : $PromptFromMC : .* : templateAsymm; AddWeights=['btagSF_shape_up_lfstats1/btagSF_shape'\,'btagSF_shape_down_lfstats1/btagSF_shape'], year="2016"
@@ -284,21 +289,11 @@ CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.40
 CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.20
 CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_mm.* : none
 CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
-CMS_ttHl_Clos_e_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.1\, 1.0\,1.0)'
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.15\, 1.3)'
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_ee.* : none
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_em.* : normSymm : 1.15
 CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_mm.* : normSymm : 1.30
 CMS_ttHl_Clos_m_norm : $FRAll : .*3l.* : normSymm : 1.25
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.20\, 1.0\,1.40)'
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*2lss_ee.*    : none
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*2lss_em_bl.* : none
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*2lss_em_bt.* : normSymm : 1.20
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*2lss_mm_bl.* : none
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*2lss_mm_bt.* : normSymm : 1.40
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.2)'
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bl.* : none
-CMS_ttHl_Clos_m_bt_norm : $FRAll : .*3l_bt.* : normSymm : 1.2
 
 # 4) Closure: QCD vs. TT fake rate, shape
 CMS_ttHl18_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=False, AddWeight='if3(abs(LepGood1_conePt)==11\,lnN1D_p1(1.024\,LepGood1_conePt\,40\,120)\,1)*if3(abs(LepGood2_conePt)==11\,lnN1D_p1(1.024\,LepGood2_conePt\,40\,120)\,1) ', year="2018"

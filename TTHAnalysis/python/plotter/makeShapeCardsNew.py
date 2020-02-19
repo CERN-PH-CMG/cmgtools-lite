@@ -129,7 +129,12 @@ for binname, report in allreports.iteritems():
             for bin in range(1,h.GetXaxis().GetNbins()+1):
                 for d in range(2):
                     if variants[d].GetBinContent( bin ) == 0: 
-                        variants[d].SetBinContent( bin, h.raw().GetBinContent( bin )**2/variants[1-d].GetBinContent(bin))
+                        shift = variants[1-d].GetBinContent(bin); shift = max(5e-6, shift)
+                        variants[d].SetBinContent( bin, h.raw().GetBinContent( bin )**2/shift)
+                    if variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin) > 100: 
+                        print "Warning: big shift in template for %s %s %s %s in bin %d: variation = %g"%( binname, p, name, d, bin, variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin))
+                        variants[d].SetBinContent( bin, 10*h.raw().GetBinContent(bin) )
+
             effshape[p] = variants 
     if isShape:
         if options.regularize: 
