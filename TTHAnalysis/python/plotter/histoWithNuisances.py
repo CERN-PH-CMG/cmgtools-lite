@@ -478,11 +478,11 @@ class HistoWithNuisances:
                 y0 = h0.GetBinContent(b)
                 y  =  h.GetBinContent(b)
                 if debug: 
-                    if 'ZZ' in self.name: 
-                        print "  bin %3d  nominal %9.4f  varied %9.4f   ratio %8.5f   diff %8.5f" % (
-                            b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
-                if (y0 == 0):
-                    if (y != 0): return True
+                    print "  bin %3d  nominal %9.4f  varied %9.4f   ratio %8.5f   diff %8.5f" % (
+                        b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
+                if (y0 <= 1e-5):
+                    if (y > 1e-5):
+                        return True
                 elif y == 0: 
                     return True
                 else:
