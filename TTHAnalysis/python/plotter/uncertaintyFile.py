@@ -99,22 +99,20 @@ class Uncertainty:
             print self.name
             raise RuntimeError("Trying to get trivial from a non trivial variation")
         return getattr(self,self.trivialFunc[idx])(results)
-    def postProcess(self,central,up,down):
+    def postProcess(self,central,variations):
         if self._postProcess == None:
             return
         if self._postProcess == "Normalize":
             h0 = central.Integral()
             if h0 != 0:
-                if up.Integral(): 
-                    up.Scale(h0/up.Integral())
-                else:   
-                    up.Reset(); up.Add(h0) 
-                if down.Integral(): 
-                    down.Scale(h0/down.Integral())
-                else:             
-                    down.Reset(); down.Add(h0) 
+                for var in variations: 
+                    if var.Integral():
+                        var.Scale(h0/var.Integral())
+                    else: 
+                        var.Reset(); var.Add(h0)
             else:
-                up.Scale(0); down.Scale(0);
+                for var in variations: 
+                    var.Scale(0)
                 
 
     def isNorm(self):
