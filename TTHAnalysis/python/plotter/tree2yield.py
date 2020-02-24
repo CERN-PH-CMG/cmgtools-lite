@@ -326,7 +326,10 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         for tf_tree, tf_filename in self._listFriendTrees():
-            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')),
+            if not os.path.isfile(tf_filename):
+                tf_filename = tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')
+                print '[WARNING]: Falling back to ', tf_filename
+            tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
     def _close(self):
