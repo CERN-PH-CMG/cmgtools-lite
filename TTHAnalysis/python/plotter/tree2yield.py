@@ -532,7 +532,9 @@ class TreeToYield:
                 if var.unc_type != 'envelope': 
                     if 'up'   not in variations: variations['up']    = var.getTrivial("up",  [nominal,None,None])
                     if 'down' not in variations: variations['down']  = var.getTrivial("down",  [nominal,variations['up'],None])
-                    var.postProcess(nominal, variations['up'], variations['down'])
+                    var.postProcess(nominal, [variations['up'], variations['down']])
+                else: 
+                    var.postProcess(nominal, [v for k,v in variations.iteritems()])
                 for k,v in variations.iteritems(): 
                     ret.addVariation(var.name, k, v)
 
