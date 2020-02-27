@@ -3,20 +3,16 @@ from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, 
 
 gROOT.SetBatch(True)
     ## open files 
-#f1  = TFile("./skimmedTrees_16/2lss_diff_NoTop-tagged/TTHnobb_fxfx_Friend.root")    #v6
-#f1  = TFile("./skimmedTrees_v5_16/2lss_diff_NoTop-tagged/TTHnobb_pow_Friend.root")  #v5
-f1  = TFile("./skimmedTrees_v4_16/2016/evVarFriend_TTHnobb_2016.root")               #v4
+f1  = TFile("./skimmedTrees_16/testing/TTHnobb_fxfx_Friend.root")    #v6 under full event selection
 if not f1:
     raise ValueError('File not opened')
-tr1 = f1.Get("sf/t")
+tr1 = f1.Get("Friends")
 if not tr1:
     raise ValueError('Tree not loaded')
-#f2  = TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")    #v6
-#f2  = TFile("/nfs/user/elfaham/104X/2016/2lss_diff_Top-tagged/TTHnobb_pow_Friend.root")        #v5
-f2  = TFile("~/CMSSW_9_4_4/src/CMGTools/TTHAnalysis/macros/2016/evVarFriend_TTHnobb_2016.root") #v4
+f2  = TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")    #v6 under loose skim
 if not f2:
     raise ValueError('File not opened')
-tr2 = f2.Get("sf/t")
+tr2 = f2.Get("Friends")
 if not tr2:
     raise ValueError('Tree not loaded')
 plotlist = [
@@ -33,7 +29,7 @@ plotlist = [
     ["Hreco_pTHvis"                             ,"Hreco_pTHvis>=0"                       ,"pTHvis"        , 100, 0., 400.],
  ]
  
-    ## compare the same var from different ntuples versions
+    ## compare skimming from the same ntuples version in different variables
 comparisonplotlist1 = [
     ["Hreco_pTHgen"     , "Hreco_pTHgen>=0"     ,"pTHgen"   ,100, 0., 400.],
 ]
@@ -53,14 +49,14 @@ comparisonplotlist5 = [
 comparisonplotlist6 = [
     ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" ,"delR_q2l" , 100, 0., 10.],
 ]
-
-def draw_plot(var,cut,fname,nbins,lowbin, highbin):
-    c = TCanvas()
-    c.cd()
-    theplot = TH1F(var,var, nbins, lowbin, highbin)
-    tr1.Draw("%s>>%s"%(var,var),cut)
-    theplot.Draw()
-    c.Print("%s/%s.png"%("./test_compare_skim/",fname)) 
+#TODO remove
+#def draw_plot(var,cut,fname,nbins,lowbin, highbin):
+    #c = TCanvas()
+    #c.cd()
+    #theplot = TH1F(var,var, nbins, lowbin, highbin)
+    #tr1.Draw("%s>>%s"%(var,var),cut)
+    #theplot.Draw()
+    #c.Print("%s/%s.png"%("./test_compare_skim/",fname)) 
 
 def draw_comparison(var,cut, fname, nbins, lowbin, highbin):
     c   = TCanvas()
@@ -78,8 +74,8 @@ def draw_comparison(var,cut, fname, nbins, lowbin, highbin):
     leg.AddEntry(theplot_1,"full_event_selection")
     leg.AddEntry(theplot_2,"loose_skim_only")
     leg.Draw()
-    c.Print("%s/%s_comp_skim.png"%("./test_compare_skim/v4",fname)) # Avoid overwriting single var plots
-
+    c.Print("%s/%s_comp_skim.png"%("./test_compare_skim/v6",fname)) # Avoid overwriting single var plots
+#TODO remove
 #for var, cut, fname, nbins, lowbin, highbin in plotlist:
     #draw_plot(var, cut, fname, nbins, lowbin, highbin )
 for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist1:
@@ -88,14 +84,14 @@ for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist1:
 for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist2:
     draw_comparison(var, cut, fname, nbins, lowbin, highbin )
 
-#for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist3:
-    #draw_comparison(var, cut, fname, nbins, lowbin, highbin )
+for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist3:
+    draw_comparison(var, cut, fname, nbins, lowbin, highbin )
 
-#for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist4:
-    #draw_comparison(var, cut, fname, nbins, lowbin, highbin )
+for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist4:
+    draw_comparison(var, cut, fname, nbins, lowbin, highbin )
 
-#for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist5:
-    #draw_comparison(var, cut, fname, nbins, lowbin, highbin )
+for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist5:
+    draw_comparison(var, cut, fname, nbins, lowbin, highbin )
 
-#for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist6:
-    #draw_comparison(var, cut, fname, nbins, lowbin, highbin )
+for var, cut, fname, nbins, lowbin, highbin  in comparisonplotlist6:
+    draw_comparison(var, cut, fname, nbins, lowbin, highbin )

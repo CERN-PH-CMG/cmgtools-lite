@@ -6,9 +6,8 @@ gROOT.SetBatch(True)
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 # common options, independent of the flavour chosen
-#parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
-parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_v5_16/2lss_diff_Top-tagged/TTHnobb_pow_Friend.root", help="Friend tree with the needed information");
-parser.add_option("-o", "--outputDir", dest="outputDir",  type="string", default="./rootplots_v5", help="Friend tree with the needed information");
+parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/testing/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
+parser.add_option("-o", "--outputDir", dest="outputDir",  type="string", default="./rootplots", help="Friend tree with the needed information");
 (options, args) = parser.parse_args()
 
 if not os.path.isdir(options.outputDir):
@@ -28,11 +27,11 @@ plotlist = [
     ["Hreco_delR_H_j1l"                         ,"Hreco_delR_H_j1l>=0"                   ,"delR_j1l"      , 100, 0., 10. ],
     ["Hreco_delR_H_j2l"                         ,"Hreco_delR_H_j2l>=0"                   ,"delR_j2l"      , 100, 0., 10. ],
     ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0"  ,"all_score_test", 100, 0., 10. ],
-    #["HTXS_Higgs_pt"                            ,"HTXS_Higgs_pt>=0"                      ,"gen_STXS_pTH"  , 100, 0., 400.],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10. ],
-    ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons>=0"              ,"hden_no_top"   , 100, 0., 10. ],
-]
+    ["Hreco_pTHvis"                             ,"Hreco_pTHvis>=0"                       ,"pTHvis"        , 100, 0., 400.],
+    ["Hreco_pTHgen"                             ,"Hreco_pTHgen>=0"                       ,"pTHgen"        , 100, 0., 400.],
+    ]
 
 comparisonplotlist1 = [
     ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2", 100, 0., 10.],
@@ -78,6 +77,7 @@ def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     theplot = TH1F(var,var, nbins, lowbin, highbin)
     tr.Draw("%s>>%s"%(var,var),cut)
     theplot.Draw()
+    print (theplot.Integral())
     c.Print("%s/%s.png"%(options.outputDir,fname)) 
 
 def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin): #TODO the hist title is always the first var--> confusing when comparing two different vars
