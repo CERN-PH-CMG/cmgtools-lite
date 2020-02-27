@@ -212,25 +212,17 @@ class HiggsRecoTTH(Module):
             best = min(candidates) if len(candidates) else None
             for q1,q2 in itertools.combinations(QFromWFromH,2):
                 delR_H_partons = q1.p4().DeltaR(q2.p4())
-            def Extract(lst):
+            def ExtractIndex(lst):
                 return [item[1] for item in lst]
+            def ExtractpT(lst):
+                return [item[0] for item in lst]
             if best:
                 jetmat1 = jets[best[5]] 
                 jetmat2 = jets[best[6]]
                 testing_list.extend(([jetmat1.p4().Pt(),best[5]],[jetmat2.p4().Pt(),best[6]]))
-                #print "not sorted => " + str(testing_list)
                 lst=sorted(testing_list,reverse=True)
-                print(Extract(lst))
-                #for item in testing_list_sorted:
-                    #print(item[1])
-                print "sorted => " + str(lst)
-                #for jet1pT,jet2pT in itertools.combinations(testing_list_sorted,2):
-                    #jet1pT = testing_list_sorted[0]
-                    #jet2pT = testing_list_sorted[1]
-                    #if jet1pT< jet2pT:
-                        #print ("WARNING: jet1 pT is lower than jet2 pT")
-                    #else:
-                        #print ("sorting successful: jet1 pT > jet2 pT")
+                print(ExtractIndex(lst))
+                print(ExtractpT(lst))
                 delR_H_j1l = leps[best[4]].p4().DeltaR(jetmat1.p4())
                 delR_H_j2l = leps[best[4]].p4().DeltaR(jetmat2.p4())
                 for q1,q2 in itertools.combinations(QFromWFromH,2):
@@ -282,10 +274,10 @@ class HiggsRecoTTH(Module):
             ret["Hreco_pTTrueGen%s"                   %self.systsJEC[var]] = pTTrueGen   
             ret["Hreco_pTTrueGenplusNu%s"             %self.systsJEC[var]] = pTTrueGenplusNu 
             ret["Hreco_deltaM_trueGen_H%s"            %self.systsJEC[var]] = deltaM_trueGen_H 
-            ret['Hreco_nQFromWFromH%s'                      %self.systsJEC[var]] = len(QFromWFromH)
-            ret['Hreco_nLFromWFromH%s'                      %self.systsJEC[var]] = len(LFromWFromH)
-            ret['Hreco_nQFromWFromT%s'                      %self.systsJEC[var]] = len(QFromWFromT)
-            ret['Hreco_nLFromWFromT%s'                      %self.systsJEC[var]] = len(LFromWFromT)
+            ret['Hreco_nQFromWFromH%s'                %self.systsJEC[var]] = len(QFromWFromH)
+            ret['Hreco_nLFromWFromH%s'                %self.systsJEC[var]] = len(LFromWFromH)
+            ret['Hreco_nQFromWFromT%s'                %self.systsJEC[var]] = len(QFromWFromT)
+            ret['Hreco_nLFromWFromT%s'                %self.systsJEC[var]] = len(LFromWFromT)
             #for mylep in [0, 1]:
                 #ret["Hreco_l%s_fj_deltaR%s"      %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][0] if len(closestFatJetToLeptonVars) == 2 else -99
                 #ret["Hreco_l%s_fj_lepIsFromH%s"  %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][1] if len(closestFatJetToLeptonVars) == 2 else -99
