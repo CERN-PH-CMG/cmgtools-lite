@@ -65,24 +65,24 @@ CMS_ttHl17_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreF
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)', year="2016"
-CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2016"
-CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2016"
+CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)', year="2016"
+CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2016"
+CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2016"
 
-CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2017"
-CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2017"
-CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)', year="2017"
+CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2017"
+CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2017"
+CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)', year="2017"
 	 
-CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2018"
-CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2018"
-CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2018"
+CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2018"
+CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2018"
+CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2018"
 
-CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.*_2016 : normSymm : 1.01
-CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.*_2017 : normSymm : 1.01
-CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.*_2018 : normSymm : 1.01
-CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.*_2016 : normSymm : 1.01
-CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.*_2017 : normSymm : 1.01
-CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.*_2018 : normSymm : 1.01
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2016"
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2017"
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2018"
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2016"
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2017"
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2018"
 
 CMS_ttHl_pileup : $PromptFromMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
 

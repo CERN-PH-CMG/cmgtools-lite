@@ -17,6 +17,7 @@ parser.add_option("--savefile", dest="savefile", action="store_true", default=Fa
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
 parser.add_option("--threshold", dest="threshold", type=float, default=0.0, help="Minimum event yield to consider processes")
+parser.add_option("--filter", dest="filter", type="string", default=None, help="File with list of processes to be removed from the datacards")
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
@@ -78,6 +79,18 @@ if options.categ:
 else:
     allreports = {binname:report}
 
+if options.filter: 
+    toremove=[]
+    with open(options.filter, 'r') as f:
+        for l in f.readlines(): 
+            binname,proc = l.split(':')
+            procpattern = re.compile( proc.rstrip() ) 
+            if binname in allreports:
+                for p in allreports[binname]:
+                    if procpattern.match(p):
+                        toremove.append( (binname, p))
+    for binname,p in toremove:
+        allreports[binname].pop(p)
 
 for binname, report in allreports.iteritems():
   if options.bbb:

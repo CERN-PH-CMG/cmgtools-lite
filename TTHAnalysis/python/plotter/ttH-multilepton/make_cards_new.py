@@ -1,5 +1,5 @@
 import os, sys
-nCores=16
+nCores=32
 submit = '{command}' 
 submit = '''sbatch -c %d -p batch  --wrap '{command}' '''%nCores
 
@@ -39,17 +39,21 @@ T4L=T2L
 SYSTS="--unc ttH-multilepton/systsUnc.txt --amc --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU"
 MCAOPTION=""
 MCAOPTION="-splitdecays"
-ASIMOV="signal"
+ASIMOV="--asimov signal"
+#ASIMOV="" 
 SCRIPT= "makeShapeCardsNew.py"
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
 if "scan" in OTHER:         
-    ASIMOV="tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz,HH" 
+    ASIMOV="--asimov tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz,HH" 
     SCRIPT = "makeShapeCardsNewScan.py"
     MCAOPTION="-ctcv"
     SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
 
+if 'unblind' in OTHER:
+    ASIMOV=""
+
 print "We are using the asimov dataset"
-OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg --asimov {ASIMOV} --threshold 0.01 ".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin #  
+OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg   --threshold 0.01 {ASIMOV} --filter ttH-multilepton/filter-processes.txt ".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin #  
 CATPOSTFIX=""
 
 FUNCTION_2L="ttH_catIndex_2lss_MVA(LepGood1_pdgId,LepGood2_pdgId,DNN_2lss_predictions_ttH,DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ,DNN_2lss_predictions_Rest)"
