@@ -77,12 +77,12 @@ CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=
 CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2018"
 CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2018"
 
-CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01, year="2016"
-CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01, year="2017"
-CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01, year="2018"
-CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01, year="2016"
-CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01, year="2017"
-CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01, year="2018"
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2016"
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2017"
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2018"
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2016"
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2017"
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2018"
 
 CMS_ttHl_pileup : $PromptFromMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
 
