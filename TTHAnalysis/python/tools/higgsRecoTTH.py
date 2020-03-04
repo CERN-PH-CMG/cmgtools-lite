@@ -211,7 +211,7 @@ class HiggsRecoTTH(Module):
                 return [item[1] for item in lst]
             def ExtractpT(lst):
                 return [item[0] for item in lst]
-            if best: #TODO: what does that actually do compared ot "if best else -99"
+            if best: #TODO: what does that actually do compared to "if best else -99"
                 jetreco1 = jets[best[5]] 
                 jetreco2 = jets[best[6]]
                 testing_list.extend(([jetreco1.p4().Pt(),best[5]],[jetreco2.p4().Pt(),best[6]]))

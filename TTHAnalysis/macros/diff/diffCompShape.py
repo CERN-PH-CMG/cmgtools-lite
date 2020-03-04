@@ -2,8 +2,6 @@ import os
 from ROOT import TCanvas, TROOT, TH1D, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, kBlack, kMagenta, TLegend, gStyle
 
 gROOT.SetBatch(True)
-    ## open files 
-#f1  = TFile("./skimmedTrees_16_mm/testing/TTHnobb_fxfx_Friend.root")
 f1  = TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")
 if not f1:
     raise ValueError('File not opened')
@@ -12,10 +10,10 @@ if not tr:
     raise ValueError('Tree not loaded')
 comparisonplotlist1 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis > 0 "                                   , 
-        "Hreco_pTHgen"          , "Hreco_pTHgen > 0 && Hreco_pTHvis >= 0 "              , 
+        "Hreco_pTHgen"          , "Hreco_pTHgen > 0 && Hreco_pTHvis >= 0 "              ,
         "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu > 0"                               , 
-        "Hreco_pTTrueGenplusNu" , "Hreco_pTTrueGenplusNu > 0 && Hreco_pTHvis >= 0"      ,
-        "Hreco_pTTrueGen"       , "Hreco_pTTrueGen > 0 && Hreco_pTHvis >= 0"            , 
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu > 0 && Hreco_pTHvis >= 0"      ,
+        "Hreco_pTTrueGen"       , "Hreco_pTTrueGen > 0 && Hreco_pTHvis >= 0"            ,
         "pTH"                   ,
          200, 0., 600.   ],
 ]
@@ -23,7 +21,7 @@ comparisonplotlist2 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis >= 0             && Hreco_pTHvis < 60"                                 ,
         "Hreco_pTHgen"          , "Hreco_pTHgen >= 0             && Hreco_pTHgen < 60            && Hreco_pTHvis >= 0" ,
         "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu >= 0        && Hreco_pTVisPlusNu < 60"                            ,
-        "Hreco_pTTrueGenplusNu" , "Hreco_pTTrueGenplusNu >= 0    && Hreco_pTTrueGenplusNu < 60   && Hreco_pTHvis >= 0" ,
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu >= 0    && Hreco_pTTrueGenPlusNu < 60   && Hreco_pTHvis >= 0" ,
         "Hreco_pTTrueGen"       , "Hreco_pTTrueGen >= 0          && Hreco_pTTrueGen < 60         && Hreco_pTHvis >= 0" ,
         "pTH_0_60"              ,
          40, 0., 60. ], 
@@ -33,7 +31,7 @@ comparisonplotlist3 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis >= 60           && Hreco_pTHvis < 120"                                  ,
         "Hreco_pTHgen"          , "Hreco_pTHgen >= 60           && Hreco_pTHgen < 120            && Hreco_pTHvis >= 0"  ,
         "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu >= 60      && Hreco_pTVisPlusNu < 120"                             ,
-        "Hreco_pTTrueGenplusNu" , "Hreco_pTTrueGenplusNu >= 60  && Hreco_pTTrueGenplusNu < 120   && Hreco_pTHvis >= 0"  ,
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu >= 60  && Hreco_pTTrueGenPlusNu < 120   && Hreco_pTHvis >= 0"  ,
         "Hreco_pTTrueGen"       , "Hreco_pTTrueGen >= 60        && Hreco_pTTrueGen < 120         && Hreco_pTHvis >= 0"  ,
         "pTH_60_120"            ,
          40, 60., 120. ],
@@ -43,7 +41,7 @@ comparisonplotlist4 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis >= 120          && Hreco_pTHvis < 200"                                  ,
         "Hreco_pTHgen"          , "Hreco_pTHgen >= 120          && Hreco_pTHgen < 200            && Hreco_pTHvis >= 0"  ,
         "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu  >= 120    && Hreco_pTVisPlusNu < 200"                             ,
-        "Hreco_pTTrueGenplusNu" , "Hreco_pTTrueGenplusNu >= 120 && Hreco_pTTrueGenplusNu < 200   && Hreco_pTHvis >= 0"  ,
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu >= 120 && Hreco_pTTrueGenPlusNu < 200   && Hreco_pTHvis >= 0"  ,
         "Hreco_pTTrueGen"       , "Hreco_pTTrueGen >= 120       && Hreco_pTTrueGen < 200         && Hreco_pTHvis >= 0"  ,
         "pTH_120_200"           ,
          40, 120., 200. ],
@@ -53,7 +51,7 @@ comparisonplotlist5 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis >= 200          && Hreco_pTHvis < 300"                                  ,
         "Hreco_pTHgen"          , "Hreco_pTHgen >= 200          && Hreco_pTHgen < 300            && Hreco_pTHvis >= 0"  ,
         "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu  >= 200    && Hreco_pTVisPlusNu < 300"                             ,
-        "Hreco_pTTrueGenplusNu" , "Hreco_pTTrueGenplusNu >= 200 && Hreco_pTTrueGenplusNu < 300   && Hreco_pTHvis >= 0"  ,
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu >= 200 && Hreco_pTTrueGenPlusNu < 300   && Hreco_pTHvis >= 0"  ,
         "Hreco_pTTrueGen"       , "Hreco_pTTrueGen >= 200       && Hreco_pTTrueGen < 300         && Hreco_pTHvis >= 0"  ,
         "pTH_200_300"           ,
          40, 200., 300. ],
@@ -63,7 +61,7 @@ comparisonplotlist6 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis >= 300          && Hreco_pTHvis < 450"                                  , 
         "Hreco_pTHgen"          , "Hreco_pTHgen >= 300          && Hreco_pTHgen < 450            && Hreco_pTHvis >= 0"  ,
         "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu  >= 300    && Hreco_pTVisPlusNu < 450"                             ,
-        "Hreco_pTTrueGenplusNu" , "Hreco_pTTrueGenplusNu >= 300 && Hreco_pTTrueGenplusNu < 450   && Hreco_pTHvis >= 0"  ,
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu >= 300 && Hreco_pTTrueGenPlusNu < 450   && Hreco_pTHvis >= 0"  ,
         "Hreco_pTTrueGen"       , "Hreco_pTTrueGen >= 300       && Hreco_pTTrueGen < 450         && Hreco_pTHvis >= 0"  ,
         "pTH_300_450"           ,
          40, 300., 450. ],
