@@ -27,7 +27,7 @@ HH+ : GluGluToHHTo4Tau   : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0
 HH+ : GluGluToHHTo2V2Tau : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0; FillColor=ROOT.kAzure-9, years="2017\,2018"
 HH+ : GluGluToHHTo4V     : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0; FillColor=ROOT.kAzure-9, years="2017"
 
-LepGood1_mcMatchId!=0
+
 TTWW	: TTWW : 0.006981 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kGreen-5, Label="ttWW  "
 
 TTW     : TTWToLNu_fxfx : 0.1960 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"
