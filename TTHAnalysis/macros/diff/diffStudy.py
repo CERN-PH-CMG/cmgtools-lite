@@ -6,7 +6,7 @@ gROOT.SetBatch(True)
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 # common options, independent of the flavour chosen
-parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/testing/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
+parser.add_option("-i", "--inputFile", dest="inputFile",  type="string", default="./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root", help="Friend tree with the needed information");
 parser.add_option("-o", "--outputDir", dest="outputDir",  type="string", default="./rootplots", help="Friend tree with the needed information");
 (options, args) = parser.parse_args()
 
@@ -24,8 +24,8 @@ plotlist = [
     ["Hreco_delR_H_q1l"                         ,"Hreco_delR_H_q1l>=0"                   ,"delR_q1l"      , 100, 0., 10. ],
     ["Hreco_delR_H_q2l"                         ,"Hreco_delR_H_q2l>=0"                   ,"delR_q2l"      , 100, 0., 10. ],
     ["Hreco_delR_H_partons"                     ,"Hreco_delR_H_partons>=0"               ,"delR_partons"  , 100, 0., 10. ],
-    ["Hreco_delR_H_j1l"                         ,"Hreco_delR_H_j1l>=0"                   ,"delR_j1l"      , 100, 0., 10. ],
-    ["Hreco_delR_H_j2l"                         ,"Hreco_delR_H_j2l>=0"                   ,"delR_j2l"      , 100, 0., 10. ],
+    ["Hreco_delR_H_j1l_reco"                         ,"Hreco_delR_H_j1l_reco>=0"                   ,"delR_j1l"      , 100, 0., 10. ],
+    ["Hreco_delR_H_j2l_reco"                         ,"Hreco_delR_H_j2l_reco>=0"                   ,"delR_j2l"      , 100, 0., 10. ],
     ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0"  ,"all_score_test", 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10. ],
     ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10. ],
@@ -37,26 +37,26 @@ comparisonplotlist1 = [
     ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2", 100, 0., 10.],
 ]
 comparisonplotlist2 = [
-    ["Hreco_delR_H_j1l" , "Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l" , 100, 0., 10.],
+    ["Hreco_delR_H_j1l_reco" , "Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l" , 100, 0., 10.],
 ]
 comparisonplotlist3 = [
-    ["Hreco_delR_H_j2l" , "Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l" , 100, 0., 10.],
+    ["Hreco_delR_H_j2l_reco" , "Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l" , 100, 0., 10.],
 ]
 comparisonplotlist4 = [
-    ["Hreco_delR_H_q1l" , "Hreco_delR_H_q1l>=0" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q1j1l" , 100, 0., 10.],
+    ["Hreco_delR_H_q1l" , "Hreco_delR_H_q1l>=0" , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons==2 " ,"delR_q1j1l" , 100, 0., 10.],
 ]
 comparisonplotlist5 = [
-    ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
+    ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
 ]
 ## another lists for scatter
 scatterplotlist1 = [
     ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2_diff_cuts", 100, 0., 10.],
 ]
 scatterplotlist2 = [
-    ["Hreco_delR_H_j1l" , "Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l_diff_cuts" , 100, 0., 10.],
+    ["Hreco_delR_H_j1l_reco" , "Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l_diff_cuts" , 100, 0., 10.],
 ]
 scatterplotlist3 = [
-    ["Hreco_delR_H_j2l" , "Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l_diff_cuts" , 100, 0., 10.],
+    ["Hreco_delR_H_j2l_reco" , "Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l_diff_cuts" , 100, 0., 10.],
 ]
 scatterplotlist4 = [
     ["Hreco_delR_H_q1l" , "Hreco_delR_H_q1l>=0" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q1j1l" , 100, 0., 10.],
@@ -65,10 +65,10 @@ scatterplotlist5 = [
     ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
 ]
 scatterplotlist6 = [
-    ["Hreco_delR_H_j1l"     , "Hreco_delR_H_j1l>=0  && Hreco_nmatchedpartons==1"        , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1l_vs_j2l"     , 100, 0., 10.],
+    ["Hreco_delR_H_j1l_reco"     , "Hreco_delR_H_j1l_reco>=0  && Hreco_nmatchedpartons==1"        , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1l_vs_j2l"     , 100, 0., 10.],
 ]
 scatterplotlist7 = [
-    ["Hreco_delR_H_j1j2"    , "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons==2"        , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1j2_vs_j1l"    , 100, 0., 10.],
+    ["Hreco_delR_H_j1j2"    , "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons==2"        , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1j2_vs_j1l"    , 100, 0., 10.],
 ]
 
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):

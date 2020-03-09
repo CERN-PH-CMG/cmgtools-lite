@@ -1,16 +1,16 @@
 # vim: syntax=sh
 2lep_2DpT_stxs: Hreco_pTHvis\:Hreco_pTHgen :  [0,60,120,200,300,450]*[0,60,120,200,300,450]         ;                  XTitle="pTHvis (GeV)",  YTitle="pTHgen (GeV)" , Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ TEXT', IncludeOverflows=True
-2lep_2DpT: Hreco_pTHvis\:Hreco_pTHgen            :  [25,35,50,70,90,110,130,160,200,300,450,600]*[25,35,50,70,90,110,130,160,200,300,450,600] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
+2lep_2DpT: Hreco_pTHvis\:Hreco_pTHgen            :  [25,35,50,70,90,110,130,160,200,300,450]*[25,35,50,70,90,110,130,160,200,300,450] ; XTitle="pTHvis (GeV)", YTitle="pTHgen (GeV)", Legend='TL', LegendCutoff=1e-5, PlotMode='COLZ', IncludeOverflows=True
 
 2lep_pTHvis_stxs         	:  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,60,120,200,300,450];     XTitle="pT of reconstructed Higgs (GeV)"  , Legend='TL', MoreY=1.8	, IncludeOverflows=False
 2lep_pTHvis_stxs_log          	:  if3(nLepFO>1, Hreco_pTHvis,-99) : [0,60,120,200,300,450];     XTitle="pT of reconstructed Higgs (GeV)"  , Legend='TL', MoreY=20	, IncludeOverflows=False, Logy
 2lep_pTHgen_stxs         	:  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,60,120,200,300,450];     XTitle="pT of generator Higgs (GeV)"      , Legend='TL', MoreY=1.8	, IncludeOverflows=False
 2lep_pTHgen_stxs_log          	:  if3(nLepFO>1, Hreco_pTHgen,-99) : [0,60,120,200,300,450];     XTitle="pT of generator Higgs (GeV)"      , Legend='TL', MoreY=20	, IncludeOverflows=False, Logy
 
-2lep_pTHvis                   	:  if3(nLepFO>1, Hreco_pTHvis,-99) : 200,0,600;    	XTitle="pT of reconstructed Higgs (GeV)"      	,Legend='TL'	,MoreY=1.8	, IncludeOverflows=False
-2lep_pTHvis_log                	:  if3(nLepFO>1, Hreco_pTHvis,-99) : 200,0,600;        	XTitle="pT of reconstructed Higgs (GeV)"      	,Legend='TL'	,MoreY=20	, IncludeOverflows=False, Logy
-2lep_pTHgen         		:  if3(nLepFO>1, Hreco_pTHgen,-99) : 200,0,600; 	XTitle="pT of generator Higgs (GeV)"		,Legend='TL'	,MoreY=1.8	, IncludeOverflows=False
-2lep_pTHgen_log   		:  if3(nLepFO>1, Hreco_pTHgen,-99) : 200,0,600; 	XTitle="pT of generator Higgs (GeV)"		,Legend='TL'	,MoreY=20	, IncludeOverflows=False, Logy
+2lep_pTHvis                   	:  if3(nLepFO>1, Hreco_pTHvis,-99) : 200,0,450;    	XTitle="pT of reconstructed Higgs (GeV)"      	,Legend='TL'	,MoreY=1.8	, IncludeOverflows=False
+2lep_pTHvis_log                	:  if3(nLepFO>1, Hreco_pTHvis,-99) : 200,0,450;        	XTitle="pT of reconstructed Higgs (GeV)"      	,Legend='TL'	,MoreY=20	, IncludeOverflows=False, Logy
+2lep_pTHgen         		:  if3(nLepFO>1, Hreco_pTHgen,-99) : 200,0,450; 	XTitle="pT of generator Higgs (GeV)"		,Legend='TL'	,MoreY=1.8	, IncludeOverflows=False
+2lep_pTHgen_log   		:  if3(nLepFO>1, Hreco_pTHgen,-99) : 200,0,450; 	XTitle="pT of generator Higgs (GeV)"		,Legend='TL'	,MoreY=20	, IncludeOverflows=False, Logy
 
 #STXS by bin
 2lep_pTHvis_STXS_bin1                          	:  if3(nLepFO>1, Hreco_pTHvis,-99) : [0  ,60[;     	XTitle="pT of reconstructed Higgs (GeV)"   , Legend='TL', MoreY=1.8, IncludeOverflows=False
