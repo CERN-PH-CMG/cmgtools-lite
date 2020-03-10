@@ -113,6 +113,10 @@ def haddNano(odir, idirs, firstTime=True):
                     if fname.endswith(".root") and os.path.isfile(os.path.join(chunk, fname)):
                         files.append(os.path.join(chunk, fname))
                         found = True
+                    elif fname.endswith(".root.url") and os.path.isfile(os.path.join(chunk, fname)):
+                        with open(os.path.join(chunk, fname)) as urlfile:
+                            files.append(urlfile.read().rstrip())
+                        found=True
                 if not found: 
                     raise RuntimeError("Error, chunk %s doesn't contain any root file" % chunk)
             elif chunk.endswith(".root"):
