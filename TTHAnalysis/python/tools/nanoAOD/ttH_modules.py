@@ -69,7 +69,7 @@ def ttH_idEmu_cuts_E3(lep):
 
 def conept_TTH(lep):
     if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
-    if (abs(lep.pdgId)==13 and lep.mediumId>0 and lep.mvaTTH > 0.85) or (abs(lep.pdgId) == 11 and lep.mvaTTH > 0.80)): return lep.pt
+    if (abs(lep.pdgId)==13 and lep.mediumId>0 and lep.mvaTTH > 0.85) or (abs(lep.pdgId) == 11 and lep.mvaTTH > 0.80): return lep.pt
     else: return 0.90 * lep.pt * (1 + lep.jetRelIso)
 
 def smoothBFlav(jetpt,ptmin,ptmax,year,scale_loose=1.0):
