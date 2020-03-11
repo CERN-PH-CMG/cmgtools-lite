@@ -107,7 +107,8 @@ if options.filter:
             if binname in allreports:
                 for p in allreports[binname]:
                     if procpattern.match(p):
-                        toremove.append( (binname, p))
+                        if (binname,p) not in toremove:
+                            toremove.append( (binname, p))
     for binname,p in toremove:
         allreports[binname].pop(p)
 
