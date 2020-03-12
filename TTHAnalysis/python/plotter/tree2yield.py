@@ -379,7 +379,7 @@ class TreeToYield:
             if var == None: 
                 exprs = [(expr,0)]
             else: 
-                exprs = [(fr._altNorm if fr else expr, idx) for idx,fr in enumerate(var.fakerate) ]
+                exprs = [('(%s)*(%s)'%(fr._altNorm if fr else '1',expr), idx) for idx,fr in enumerate(var.fakerate) ]
             for theExpr, idx in exprs:
                 if var: 
                     if var.unc_type == 'envelope':
