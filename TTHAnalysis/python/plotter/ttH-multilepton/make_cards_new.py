@@ -1,5 +1,5 @@
 import os, sys
-nCores=32
+nCores=16
 submit = '{command}' 
 submit = '''sbatch -c %d -p batch  --wrap '{command}' '''%nCores
 
@@ -44,7 +44,7 @@ ASIMOV="--asimov signal"
 SCRIPT= "makeShapeCardsNew.py"
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub"
 if "scan" in OTHER:         
-    ASIMOV="--asimov tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz,HH" 
+    ASIMOV="--asimov tHq_ct_1p0_cv_1p0_hww,tHq_ct_1p0_cv_1p0_htt,tHq_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_hww,ttH_ct_1p0_cv_1p0_hzz,ttH_ct_1p0_cv_1p0_htt,ttH_ct_1p0_cv_1p0_hmm,ttH_ct_1p0_cv_1p0_hzg,tHW_ct_1p0_cv_1p0_hww,tHW_ct_1p0_cv_1p0_hzz,tHW_ct_1p0_cv_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz" 
     SCRIPT = "makeShapeCardsNewScan.py"
     MCAOPTION="-ctcv"
     SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
