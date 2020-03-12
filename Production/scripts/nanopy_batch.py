@@ -37,7 +37,7 @@ fi"""
 
    if remoteDir=='':
       cpCmd=dirCopy
-   elif  remoteDir.startswith("root://eoscms.cern.ch//eos/cms/store/"):
+   elif  remoteDir.startswith("root://eoscms.cern.ch//eos/cms/store/") or remoteDir.startswith("root://eosuser.cern.ch//eos/user/"):
        cpCmd="""echo '==== sending root files to remote dir ===='
 echo
 export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH # 
@@ -49,6 +49,7 @@ do
    echo $ff
    export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
    source $VO_CMS_SW_DIR/cmsset_default.sh
+   {eosenv}
    for try in `seq 1 3`; do
       echo "Stageout try $try"
       echo "eos mkdir {srm}"
@@ -70,7 +71,7 @@ do
       fi
       echo "everything ok"
       rm $f
-      echo root://eoscms.cern.ch/{srm}/${{ff}}_{idx}.root > $f.url
+      echo {addr}/{srm}/${{ff}}_{idx}.root > $f.url
       break
    done
 done
@@ -80,8 +81,10 @@ echo
 {dirCopy}
 """.format(
           idx = jobDir[jobDir.find("_Chunk")+6:].strip("/") if '_Chunk' in jobDir else 'all',
-          srm = (""+remoteDir+jobDir[ jobDir.rfind("/") : (jobDir.find("_Chunk") if '_Chunk' in jobDir else len(jobDir)) ]).replace("root://eoscms.cern.ch/",""),
-          dirCopy = dirCopy
+          srm = (""+remoteDir+jobDir[ jobDir.rfind("/") : (jobDir.find("_Chunk") if '_Chunk' in jobDir else len(jobDir)) ]).replace("root://eoscms.cern.ch/","").replace("root://eosuser.cern.ch/",""),
+          dirCopy = dirCopy,
+          addr="root://eoscms.cern.ch" if remoteDir.startswith("root://eoscms.cern.ch") else "root://eosuser.cern.ch",
+          eosenv = "export EOS_MGM_URL=root://eosuser.cern.ch" if not remoteDir.startswith('root://eoscms.cern.ch/') else ''
           )
    else:
        print("chosen location not supported yet: "+ remoteDir)

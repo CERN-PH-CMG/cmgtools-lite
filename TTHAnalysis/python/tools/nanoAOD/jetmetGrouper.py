@@ -70,34 +70,58 @@ class jetmetGrouper(Module):
 
 moreVars = [
     {'name' : 'Jet_pt_nom'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+    {'name' : 'MET_pt_jer'   ,'rootBranchType' : 'F'},
     {'name' : 'MET_pt_nom'   ,'rootBranchType' : 'F'},
     {'name' : 'MET_pt_unclustEnUp'   ,'rootBranchType' : 'F'},
     {'name' : 'MET_pt_unclustEnDown'   ,'rootBranchType' : 'F'},
     {'name' : 'MET_phi_unclustEnUp'   ,'rootBranchType' : 'F'},
     {'name' : 'MET_phi_unclustEnDown'   ,'rootBranchType' : 'F'},
-    {'name' : 'Jet_pt_jerUp'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
-    {'name' : 'MET_pt_jerUp'   ,'rootBranchType' : 'F'},
-    {'name' : 'MET_phi_jerUp'  ,'rootBranchType' : 'F'},
-    {'name' : 'Jet_pt_jerDown' ,'rootBranchType' : 'F','lenVar': 'nJet'},
-    {'name' : 'MET_pt_jerDown' ,'rootBranchType' : 'F'},
-    {'name' : 'MET_phi_jerDown','rootBranchType' : 'F'},
 ]
 
 
 moreVars2017 = [
     {'name' : 'Jet_pt_nom'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
     {'name' : 'METFixEE2017_pt_nom'   ,'rootBranchType' : 'F'},
+    {'name' : 'METFixEE2017_pt_jer'   ,'rootBranchType' : 'F'},
     {'name' : 'METFixEE2017_pt_unclustEnUp'   ,'rootBranchType' : 'F'},
     {'name' : 'METFixEE2017_pt_unclustEnDown'   ,'rootBranchType' : 'F'},
     {'name' : 'METFixEE2017_phi_unclustEnUp'   ,'rootBranchType' : 'F'},
     {'name' : 'METFixEE2017_phi_unclustEnDown'   ,'rootBranchType' : 'F'},
-    {'name' : 'Jet_pt_jerUp'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
-    {'name' : 'METFixEE2017_pt_jerUp'   ,'rootBranchType' : 'F'},
-    {'name' : 'METFixEE2017_phi_jerUp'  ,'rootBranchType' : 'F'},
-    {'name' : 'Jet_pt_jerDown' ,'rootBranchType' : 'F','lenVar': 'nJet'},
-    {'name' : 'METFixEE2017_pt_jerDown' ,'rootBranchType' : 'F'},
-    {'name' : 'METFixEE2017_phi_jerDown','rootBranchType' : 'F'},
 ]
+
+for jer in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']:
+    for var in ['Up','Down']:
+        moreVars.extend( [
+            {'name' : 'Jet_pt_jer%s%s'%(jer,var)   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+            {'name' : 'MET_pt_jer%s%s'%(jer,var)   ,'rootBranchType' : 'F'},
+            {'name' : 'MET_phi_jer%s%s'%(jer,var)  ,'rootBranchType' : 'F'},
+        ])
+moreVars.extend( [
+    {'name' : 'Jet_pt_HEMUp'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+    {'name' : 'MET_pt_HEMUp'   ,'rootBranchType' : 'F'},
+    {'name' : 'MET_phi_HEMUp'  ,'rootBranchType' : 'F'},
+    {'name' : 'Jet_pt_HEMDown'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+    {'name' : 'MET_pt_HEMDown'   ,'rootBranchType' : 'F'},
+    {'name' : 'MET_phi_HEMDown'  ,'rootBranchType' : 'F'},
+])
+
+for jer in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']:
+    for var in ['Up','Down']:
+        moreVars2017.extend( [
+            {'name' : 'Jet_pt_jer%s%s'%(jer,var)   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+            {'name' : 'METFixEE2017_pt_jer%s%s'%(jer,var)   ,'rootBranchType' : 'F'},
+            {'name' : 'METFixEE2017_phi_jer%s%s'%(jer,var)  ,'rootBranchType' : 'F'},
+        ])
+moreVars2017.extend( [
+    {'name' : 'Jet_pt_HEMUp'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+    {'name' : 'METFixEE2017_pt_HEMUp'   ,'rootBranchType' : 'F'},
+    {'name' : 'METFixEE2017_phi_HEMUp'  ,'rootBranchType' : 'F'},
+    {'name' : 'Jet_pt_HEMDown'   ,'rootBranchType' : 'F','lenVar': 'nJet'},
+    {'name' : 'METFixEE2017_pt_HEMDown'   ,'rootBranchType' : 'F'},
+    {'name' : 'METFixEE2017_phi_HEMDown'  ,'rootBranchType' : 'F'},
+])
+
+
 
 groups = {'HF'                 : ['PileUpPtHF', 'RelativeJERHF', 'RelativePtHF'], 
           'BBEC1_year'         : ['RelativeJEREC1', 'RelativePtEC1', 'RelativeStatEC'],

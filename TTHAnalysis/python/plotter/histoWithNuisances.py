@@ -21,6 +21,19 @@ def _projectionXNoDir(hist2d,name,y1,y2):
         proj.SetBinError(ix, sqrt(sum(hist2d.GetBinError(ix,y)**2 for y in ys)))
     return proj
 
+def _getHistoInRangeNoDir(hist, name, bin1, bin2): # bin1 is included, bin2 is not included
+    nx = hist.GetNbinsX()
+    ax = hist.GetXaxis()
+    bins =  [(ax.GetBinLowEdge(b+1) if b < nx else ax.GetBinUpEdge(b)) for b in xrange(0,nx+1)]
+    xbins = array('f',bins[bin1-1:bin2])
+    print xbins, len(xbins)-1
+    proj = ROOT.TH1D(name,name,len(xbins)-1,xbins); proj.SetDirectory(None)
+    proj.GetXaxis().SetTitle(ax.GetTitle()) # in case
+    for bx in xrange(1,bin2-bin1+1):
+        proj.SetBinContent( bx, hist.GetBinContent(bx+bin1-1))
+        proj.SetBinError  ( bx, hist.GetBinError  (bx+bin1-1))
+    return proj
+
 def cropNegativeBins(histo,threshold=0.):
             if "TH1" in histo.ClassName():
                 for b in xrange(0,histo.GetNbinsX()+2):
@@ -715,6 +728,25 @@ class HistoWithNuisances:
         h._postFit = self._postFit
         h._usePostFit = self._usePostFit
         return h
+    def getHistoInRange(self, name, bin1, bin2): # first bin is included, second is not
+        h = HistoWithNuisances(_getHistoInRangeNoDir( self.central, name, bin1,bin2))
+        h.central.SetDirectory(None)
+        for v,p in self.variations.iteritems():
+            h.variations[v] = (_getHistoInRangeNoDir(p[0], "%s_%s_up"   % (name,v), bin1,bin2),
+                               _getHistoInRangeNoDir(p[1], "%s_%s_down" % (name,v), bin1,bin2))
+            for hi in h.variations[v]: hi.SetDirectory(None)
+        if self.nominal == self.central:
+            h.nominal = h.central
+        else:
+            h.nominal = _getHistoInRangeNoDir(self.nominal, name+"_nominal", bin1,bin2)
+            h.nominal.SetDirectory(None)
+        if self._rooFit: h.setupRooFit(self._rooFit["context"])
+        h._postFit = self._postFit
+        h._usePostFit = self._usePostFit
+        return h
+        
+                               
+
     def writeToFile(self,tfile,writeVariations=True,takeOwnership=True):
         tfile.WriteTObject(self.nominal, self.nominal.GetName())
         for key,vals in self.variations.iteritems():
