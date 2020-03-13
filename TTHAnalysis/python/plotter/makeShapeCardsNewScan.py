@@ -15,6 +15,7 @@ parser.add_option("--autoMCStatsThreshold", dest="autoMCStatsValue", type="int",
 parser.add_option("--infile", dest="infile", action="store_true", default=False, help="Read histograms to file")
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
+parser.add_option("--categorize-by-ranges", dest="categ_ranges", type="string", nargs=2, default=None, help="Split in categories according to the signal extraction variables. Requires 2 arguments: binning (in bin numbers), bin labels")
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
 parser.add_option("--threshold", dest="threshold", type=float, default=0.0, help="Minimum event yield to consider processes")
 parser.add_option("--scanregex", dest="scanregex", type="string", default="ct_(?P<kt>.*)_cv_(?P<kv>.*)", help="Regex expression to parse parameters of the scan")
@@ -94,6 +95,17 @@ if options.categ:
     if len(catlabels) != report["data_obs"].GetNbinsY(): raise RuntimeError("Mismatch between category labels and bins")
     for ic,lab in enumerate(catlabels):
         allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
+elif options.categ_ranges: 
+    allreports = dict()
+    catlabels = options.categ_ranges[1].split(',')
+    catbinning = eval( options.categ_ranges[0] ) 
+    
+    for ic,lab in enumerate(catlabels):
+        kk = {} 
+        for (k,h) in report.iteritems(): 
+            kk[k] = h.getHistoInRange( "x_"+k, catbinning[ic],catbinning[ic+1])
+        allreports["%s_%s"%(binname,lab)] = kk
+
 else:
     allreports = {binname:report}
 
