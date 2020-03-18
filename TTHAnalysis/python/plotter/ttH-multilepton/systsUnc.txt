@@ -331,16 +331,14 @@ CMS_ttHl_FRm_pt : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilept
 CMS_ttHl_FRm_be : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be2.txt"], \
         RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt", DoesNotChangeEventSelection=True
 
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.40\, 1.2\, 1.0)'
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.40
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.20
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_mm.* : none
-CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.15\, 1.3)'
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_ee.* : none
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_em.* : normSymm : 1.15
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_mm.* : normSymm : 1.30
-CMS_ttHl_Clos_m_norm : $FRAll : .*3l.* : normSymm : 1.25
+CMS_ttHl_Clos_e_norm : $FRAll : .*2lss.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-elclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
+CMS_ttHl_Clos_m_norm : $FRAll : .*2lss.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-muclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
+CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-elclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
+CMS_ttHl_Clos_m_norm : $FRAll : .*3l.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-muclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 
 # 4) Closure: QCD vs. TT fake rate, shape
 CMS_ttHl18_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=False, AddWeight='if3(abs(LepGood1_conePt)==11\,lnN1D_p1(1.024\,LepGood1_conePt\,40\,120)\,1)*if3(abs(LepGood2_conePt)==11\,lnN1D_p1(1.024\,LepGood2_conePt\,40\,120)\,1) ', year="2018"
