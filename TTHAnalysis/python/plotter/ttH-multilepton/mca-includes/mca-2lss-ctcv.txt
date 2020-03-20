@@ -1,7 +1,7 @@
 ttH_ct_1p0_cv_1p0+   : TTH_ctcvcp    : xsec*LHEReweightingWeight[11]             : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge;  FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
-tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp  : 0.07096*LHEReweightingWeight[11]*3 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0); FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_", years="2018"
-tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp  : 0.07096*LHEReweightingWeight[11] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_", years="2016\,2017"
-tHW_ct_1p0_cv_1p0+   : THW_ctcvcp  : 0.01561*LHEReweightingWeight[11] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kBlue, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
+tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp_new  : 0.07096*LHEReweightingWeight[11]*3 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0); FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_", years="2018"
+tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp_new  : 0.07096*LHEReweightingWeight[11] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_", years="2016\,2017"
+tHW_ct_1p0_cv_1p0+   : THW_ctcvcp_new  : 0.01561*LHEReweightingWeight[11] : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kBlue, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
 TTWW	: TTWW : 0.006981 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen
 
 TTW     : TTWToLNu_fxfx : 0.1960 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"
@@ -18,7 +18,7 @@ ZZ      : ZZTo4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCh
 
 
 
-Rares: GGHZZ4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: GGHZZ4L_new : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: VHToNonbb : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: qqHZZ4L : xsec : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) ; FillColor=ROOT.kAzure-9
 Rares: TTTT : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9, years="2016\,2018"

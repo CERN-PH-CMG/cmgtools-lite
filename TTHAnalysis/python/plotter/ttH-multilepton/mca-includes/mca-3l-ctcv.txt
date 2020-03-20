@@ -1,6 +1,6 @@
 ttH_ct_1p0_cv_1p0+   : TTH_ctcvcp    : xsec*LHEReweightingWeight[11]                  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
-tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp  : 0.07096*LHEReweightingWeight[11] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
-tHW_ct_1p0_cv_1p0+   : THW_ctcvcp  : 0.01561*LHEReweightingWeight[11] :LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ; FillColor=ROOT.kBlue, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
+tHq_ct_1p0_cv_1p0+   : THQ_ctcvcp_new  : 0.07096*LHEReweightingWeight[11] : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kRed, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
+tHW_ct_1p0_cv_1p0+   : THW_ctcvcp_new  : 0.01561*LHEReweightingWeight[11] :LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0  ; FillColor=ROOT.kBlue, genSumWeightName="LHEReweightingSumw_[11]/LHEScaleSumw_[4]*genEventSumw_"
 TTWW	: TTWW : 0.006981 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kGreen
 
 TTW     : TTWToLNu_fxfx : 0.1960 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"
