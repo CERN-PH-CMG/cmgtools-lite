@@ -26,7 +26,6 @@ def _getHistoInRangeNoDir(hist, name, bin1, bin2): # bin1 is included, bin2 is n
     ax = hist.GetXaxis()
     bins =  [(ax.GetBinLowEdge(b+1) if b < nx else ax.GetBinUpEdge(b)) for b in xrange(0,nx+1)]
     xbins = array('f',bins[bin1-1:bin2])
-    print xbins, len(xbins)-1
     proj = ROOT.TH1D(name,name,len(xbins)-1,xbins); proj.SetDirectory(None)
     proj.GetXaxis().SetTitle(ax.GetTitle()) # in case
     for bx in xrange(1,bin2-bin1+1):
