@@ -37,8 +37,9 @@ class PlotFile:
                 (line,more) = line.split(";")[:2]
                 more = more.replace("\\,",";")
                 for setting in [f.strip().replace(";",",") for f in more.split(',')]:
+                    setting = setting.replace("==","_____")
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        (key,val) = [f.strip().replace("_____","==") for f in setting.split("=")]
                         try:
                             extra[key] = eval(val)
                         except:
