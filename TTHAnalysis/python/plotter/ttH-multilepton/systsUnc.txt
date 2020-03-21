@@ -65,24 +65,24 @@ CMS_ttHl17_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreF
 #CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)', year="2016"
-CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2016"
-CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2016"
+CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)', year="2016"
+CMS_ttHl16_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2016"
+CMS_ttHl16_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2016"
 
-CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2017"
-CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2017"
-CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)', year="2017"
+CMS_ttHl17_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2017"
+CMS_ttHl17_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2017"
+CMS_ttHl17_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.02)', year="2017"
 	 
-CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2018"
-CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2018"
-CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.*_2016 : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2018"
+CMS_ttHl18_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.01\,1.0\,1.0)', year="2018"
+CMS_ttHl18_trigger_em      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.01\,1.0)', year="2018"
+CMS_ttHl18_trigger_mm      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.0\,1.0\,1.01)', year="2018"
 
-CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.*_2016 : normSymm : 1.01
-CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.*_2017 : normSymm : 1.01
-CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.*_2018 : normSymm : 1.01
-CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.*_2016 : normSymm : 1.01
-CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.*_2017 : normSymm : 1.01
-CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.*_2018 : normSymm : 1.01
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2016"
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2017"
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*3l.* : normSymm : 1.01; year="2018"
+CMS_ttHl16_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2016"
+CMS_ttHl17_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2017"
+CMS_ttHl18_trigger_3l      : $PromptFromMC : .*4l.* : normSymm : 1.01; year="2018"
 
 CMS_ttHl_pileup : $PromptFromMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
 
@@ -150,13 +150,60 @@ CMS_scale_j_Absolute        : $PromptFromMC : .* : templateAsymm; \
                          FakeRates=['ttH-multilepton/frs-jecs/fr-jesAbsoluteUp.txt'\,'ttH-multilepton/frs-jecs/fr-jesAbsoluteDown.txt'], \
                          AddWeights=['btagSF_shape_up_jesAbsolute/btagSF_shape'\,'btagSF_shape_down_jesAbsolute/btagSF_shape']
 
-
-CMS_res_j_2016	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2016"
-CMS_res_j_2017	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2017"
-CMS_res_j_2018	: $PromptFromMC : .* : templateAsymm; \
-        FakeRates=['ttH-multilepton/fr-jerUp.txt'\,'ttH-multilepton/fr-jerDn.txt'], year="2018"
+CMS_res_j_barrel_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_barrel_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_barrel_yearDown.txt'], \
+                             year="2016"
+CMS_res_j_barrel_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_barrel_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_barrel_yearDown.txt'], \
+                             year="2017"
+CMS_res_j_barrel_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_barrel_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_barrel_yearDown.txt'], \
+                             year="2018"
+CMS_res_j_endcap1_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap1_yearDown.txt'], \
+                             year="2016"
+CMS_res_j_endcap1_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap1_yearDown.txt'], \
+                             year="2017"
+CMS_res_j_endcap1_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap1_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap1_yearDown.txt'], \
+                             year="2018"
+CMS_res_j_endcap2highpt_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap2highpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap2highpt_yearDown.txt'], \
+                             year="2016"
+CMS_res_j_endcap2highpt_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap2highpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap2highpt_yearDown.txt'], \
+                             year="2017"
+CMS_res_j_endcap2highpt_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap2highpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap2highpt_yearDown.txt'], \
+                             year="2018"
+CMS_res_j_endcap2lowpt_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap2lowpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap2lowpt_yearDown.txt'], \
+                             year="2016"
+CMS_res_j_endcap2lowpt_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap2lowpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap2lowpt_yearDown.txt'], \
+                             year="2017"
+CMS_res_j_endcap2lowpt_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_endcap2lowpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_endcap2lowpt_yearDown.txt'], \
+                             year="2018"
+CMS_res_j_forwardhighpt_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_forwardhighpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_forwardhighpt_yearDown.txt'], \
+                             year="2016"
+CMS_res_j_forwardhighpt_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_forwardhighpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_forwardhighpt_yearDown.txt'], \
+                             year="2017"
+CMS_res_j_forwardhighpt_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_forwardhighpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_forwardhighpt_yearDown.txt'], \
+                             year="2018"
+CMS_res_j_forwardlowpt_2016        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_forwardlowpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_forwardlowpt_yearDown.txt'], \
+                             year="2016"
+CMS_res_j_forwardlowpt_2017        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_forwardlowpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_forwardlowpt_yearDown.txt'], \
+                             year="2017"
+CMS_res_j_forwardlowpt_2018        : $PromptFromMC : .* : templateAsymm; \
+                             FakeRates=['ttH-multilepton/frs-jecs/fr-res_j_forwardlowpt_yearUp.txt'\,'ttH-multilepton/frs-jecs/fr-res_j_forwardlowpt_yearDown.txt'], \
+                             year="2018"
 
 CMS_ttHl_UnclusteredEn : $PromptFromMC : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-unclUp.txt'\,'ttH-multilepton/fr-unclDn.txt']
@@ -284,16 +331,14 @@ CMS_ttHl_FRm_pt : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilept
 CMS_ttHl_FRm_be : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be2.txt"], \
         RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt", DoesNotChangeEventSelection=True
 
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.40\, 1.2\, 1.0)'
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_ee.* : normSymm : 1.40
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_em.* : normSymm : 1.20
-CMS_ttHl_Clos_e_norm : $FRAll : .*2lss_mm.* : none
-CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : normSymm : 1.1
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.15\, 1.3)'
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_ee.* : none
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_em.* : normSymm : 1.15
-CMS_ttHl_Clos_m_norm : $FRAll : .*2lss_mm.* : normSymm : 1.30
-CMS_ttHl_Clos_m_norm : $FRAll : .*3l.* : normSymm : 1.25
+CMS_ttHl_Clos_e_norm : $FRAll : .*2lss.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-elclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
+CMS_ttHl_Clos_m_norm : $FRAll : .*2lss.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-muclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
+CMS_ttHl_Clos_e_norm : $FRAll : .*3l.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-elclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
+CMS_ttHl_Clos_m_norm : $FRAll : .*3l.* : templateSymm; FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-muclosure.txt",\
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 
 # 4) Closure: QCD vs. TT fake rate, shape
 CMS_ttHl18_Clos_e_shape : $FRAll  : .*2lss.*    : templateSymm ; Normalize=False, AddWeight='if3(abs(LepGood1_conePt)==11\,lnN1D_p1(1.024\,LepGood1_conePt\,40\,120)\,1)*if3(abs(LepGood2_conePt)==11\,lnN1D_p1(1.024\,LepGood2_conePt\,40\,120)\,1) ', year="2018"

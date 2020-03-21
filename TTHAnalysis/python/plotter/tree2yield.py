@@ -326,7 +326,10 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         for tf_tree, tf_filename in self._listFriendTrees():
-            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')),
+            if not os.path.isfile(tf_filename):
+                tf_filename = tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')
+                print '[WARNING]: Falling back to ', tf_filename
+            tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
     def _close(self):
@@ -376,7 +379,7 @@ class TreeToYield:
             if var == None: 
                 exprs = [(expr,0)]
             else: 
-                exprs = [(fr._altNorm if fr else expr, idx) for idx,fr in enumerate(var.fakerate) ]
+                exprs = [('(%s)*(%s)'%(fr._altNorm if (fr and fr._altNorm) else '1',expr), idx) for idx,fr in enumerate(var.fakerate) ]
             for theExpr, idx in exprs:
                 if var: 
                     if var.unc_type == 'envelope':
@@ -532,7 +535,9 @@ class TreeToYield:
                 if var.unc_type != 'envelope': 
                     if 'up'   not in variations: variations['up']    = var.getTrivial("up",  [nominal,None,None])
                     if 'down' not in variations: variations['down']  = var.getTrivial("down",  [nominal,variations['up'],None])
-                    var.postProcess(nominal, variations['up'], variations['down'])
+                    var.postProcess(nominal, [variations['up'], variations['down']])
+                else: 
+                    var.postProcess(nominal, [v for k,v in variations.iteritems()])
                 for k,v in variations.iteritems(): 
                     ret.addVariation(var.name, k, v)
 

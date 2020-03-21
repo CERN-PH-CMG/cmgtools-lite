@@ -1,0 +1,38 @@
+{
+    "name" : "nll_scan",
+    "inputdir" : ".",
+    "tag2" : "$\\mathrm{H}\\to\\mathrm{W}\\mathrm{W}/\\mathrm{Z}\\mathrm{Z}/\\mathrm{\\tau}\\mathrm{\\tau}$",
+    "tag3" : "",
+    "tag4" : "",
+    "header_left" : "$\\mathbf{CMS} Preliminary$",
+    "header_right": "137.2 $\\mathrm{fb}^{-1}$ (13 TeV)",
+    "xaxis"    :"cf",
+    "entries" : [
+        {
+            "csv_file" : "nll_scan1p0.csv",
+            "label" : "$\\kappa_{\\mathrm{V}}=1.0$",
+            "color" : "black",
+            "line_width" : 2.0,
+            "line_style" : "--",
+            "marker_style" : "."
+        },
+           {
+            "csv_file" : "nll_scan0p5.csv",
+            "label" : "$\\kappa_{\\mathrm{V}}=0.5$",
+            "color" : "green",
+            "line_width" : 2.0,
+            "line_style" : "--",
+            "marker_style" : "."
+        },
+           {
+            "csv_file" : "nll_scan1p5.csv",
+            "label" : "$\\kappa_{\\mathrm{V}}=1.5$",
+            "color" : "red",
+            "line_width" : 2.0,
+            "line_style" : "--",
+            "marker_style" : "."
+        }
+   
+    ]
+}
+

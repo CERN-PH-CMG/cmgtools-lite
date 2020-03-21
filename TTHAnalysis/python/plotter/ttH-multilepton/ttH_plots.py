@@ -6,10 +6,10 @@ import os
 ODIR=sys.argv[1]
 YEAR=sys.argv[2]
 lumis = {
-'2016': '35.9',
-'2017': '41.4',
-'2018': '59.7',
-'all' : '35.9,41.4,59.7',
+    '2016': '35.9',
+    '2017': '41.4',
+    '2018': '59.7',
+    'all' : '35.9,41.4,59.7',
 }
 
 
@@ -23,8 +23,8 @@ P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
 #if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data1/peruzzi"
 nCores = 32
 if 'fanae' in os.environ['HOSTNAME']:
-    nCores = 32
-    submit = 'sbatch -c %d -p short  --wrap "{command}"'%nCores
+    nCores = 16
+    submit = 'sbatch -c %d -p cpupower  --wrap "{command}"'%nCores
     P0     = "/pool/ciencias/HeppyTrees/EdgeZ/TTH/"
 if 'gae' in os.environ['HOSTNAME']: 
     P0     = "/pool/ciencias/HeppyTrees/EdgeZ/TTH/"
@@ -32,12 +32,12 @@ if 'gae' in os.environ['HOSTNAME']:
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     P0 = "/nfs/user/pvischia/tth/v5pre/"
 
-TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors_jecSum --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --Fs {P}/6_mva2lss --Fs {P}/6_mva3l_updated/ --Fs {P}/6_mva4l --Fs {P}/4_evtVars --Fs {P}/5_BDThtt_reco "  #_new
+TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --FDs {P}/1_recl --FMCs {P}/1_recl_allvars --FMCs {P}/2_btag_SFs --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount --Fs {P}/4_evtVars  --Fs {P}/5_BDThtt_reco_new_blah --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l  "  #_new
 YEARDIR=YEAR if YEAR != 'all' else ''
-TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)            + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
-TREESONLYSKIM     = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix_skim2lss/%s "%(YEARDIR,)  + "-P "+P0+"/NanoTrees_TTH_091019_v6pre_skim2lss/%s "%(YEARDIR,)
-TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)           + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)
-TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_090120_v6_triggerFix/%s "%(YEARDIR,)           + "-P "+P0+"/NanoTrees_TTH_091019_v6pre/%s "%(YEARDIR,)            
+TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_091019_v6/%s "%(YEARDIR,)         
+TREESONLYSKIM     = "-P "+P0+"/NanoTrees_TTH_090120_091019_v6_skim2lss/%s "%(YEARDIR,)
+TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_090120_091019_v6/%s "%(YEARDIR,)         
+TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_090120_091019_v6/%s "%(YEARDIR,)         
 
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" 
@@ -48,14 +48,6 @@ if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
 
 def base(selection):
     THETREES = TREESALL
-    if dojeccomps:
-        THETREES = THETREES.replace("--FMCs {P}/0_jmeUnc_v1", "--FMCs {P}/0_jmeUnc_v1_sources" )
-        THETREES = THETREES.replace("--Fs {P}/1_recl","--FMCs {P}/1_recl_sources --FDs {P}/1_recl" )
-        THETREES = THETREES.replace("--FMCs {P}/2_scalefactors_jecSum","--FMCs {P}/2_scalefactors_jecAllVars" )
-        THETREES = THETREES.replace("--Fs {P}/4_evtVars", "--FMCs {P}/4_evtVars_allVars --FDs {P}/4_evtVars")
-        THETREES = THETREES.replace("--Fs {P}/5_BDThtt_reco", "--FDs {P}/5_BDThtt_reco --FMCs {P}/5_BDThtt_reco_allVars")
-        THETREES = THETREES.replace("--Fs {P}/6_mva2lss", "--FDs {P}/6_mva2lss --FMCs {P}/6_mva2lss_allVars/")
-
     CORE=' '.join([THETREES,TREESONLYSKIM])
     CORE+=" -f -j %d -l %s -L ttH-multilepton/functionsTTH.cc --tree NanoAOD --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim --year %s  --mcc ttH-multilepton/mcc-METFixEE2017.txt"%(nCores, lumis[YEAR],YEAR if YEAR!='all' else '2016,2017,2018')# --neg" --s2v 
     RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
@@ -158,7 +150,16 @@ if __name__ == '__main__':
 
         if '_splitfakes' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-flavsplit.txt')
-            
+    
+        if '_fakerate_closure' in torun:
+            x = x.replace("mca-2lss-mc.txt","mca-2lss-frcomparison.txt")
+            x = x.replace('--showRatio', ' --plotmode norm ')
+            x = x.replace("--legendColumns 3","")
+            x = add(x, ' --sP ^muo_fake_fr --sP ^ele_fake_fr -I ^TT ')
+            x = add(x,"-p TT_FR_QCD -p TT_FR_TT")
+            if '_mufake' in torun: x = add(x,"-E ^mm -A alwaystrue mufake '(abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0)'")
+            if '_elfake' in torun: x = add(x,"-E ^ee -A alwaystrue elfake '(abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0)) || (abs(LepGood2_pdgId)==11 && (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0))'")
+
         if '_closuretest' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
             x = x.replace("--maxRatioRange 0.6  1.99 --ratioYNDiv 210", "--maxRatioRange 0.0 2.49 --fixRatioRange ")
@@ -213,6 +214,9 @@ if __name__ == '__main__':
             x = add(x,'--plotmode norm')
             x = add(x,"--sP kinMVA_input_BDTv8_eventReco_X_mass --sP kinMVA_2lss_ttbar_withBDTv8 --sP kinMVA_input_BDTv8_eventReco_MT_HadLepTop_MET")
 
+        if '_DNNnodes' in torun:
+            x = add(x, "--sP 'kinMVA_2lss_cat.*'")
+
         runIt(x,'%s'%torun)
         if '_flav' in torun:
             for flav in ['mm','ee','em']: 
@@ -254,6 +258,9 @@ if __name__ == '__main__':
                 x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-table.txt')
         if '_table' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-table.txt')
+
+        if '_DNNnodes' in torun:
+            x = add(x, "--sP 'kinMVA_3l_cat.*'")
 
         if '_closuretest' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
@@ -399,6 +406,19 @@ if __name__ == '__main__':
         for flav in ['mm','ee','em']:
             plots = ['nJet25_from0','nJet40_from0'] # 'lep1_.*','lep2_.*']# ,'2lep_.*','tot_weight','era']
             runIt(add(x,'-E ^%s -X ^4j'%flav),'%s/%s'%(torun,flav),plots)
+    print 'here'
+    if 'cr_dilep' in torun:
+        x = base('2lss')
+        x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
+        x = x.replace('--maxRatioRange 0.6  1.99','--maxRatioRange 0.8 1.2')
+        x = x.replace('--rebin 4','')
+        x = add(x, " -X ^exclusive -X ^same-sign -X ^Zee_veto -X ^metLDee -X ^Z_veto -X ^eleID -X ^muTightCharge -X ^4j -X ^2b1B -X ^tauveto ")
+        x = x.replace("_skim2lss","")
+        x = x.replace("--FMCs {P}/0_jmeUnc_v1_sources --FMCs {P}/1_recl_sources --FDs {P}/1_recl --FMCs {P}/2_scalefactors_jecAllVars --FMCs {P}/2_scalefactors_lep --Fs {P}/3_tauCount  --FDs {P}/6_mva2lss --FMCs {P}/6_mva2lss_allVars/ --Fs {P}/6_mva3l_updated/ --Fs {P}/6_mva4l --FMCs {P}/4_evtVars_allVars --FDs {P}/4_evtVars --FDs {P}/5_BDThtt_reco --FMCs {P}/5_BDThtt_reco_allVars", "--Fs {P}/1_recl/ --FMCs {P}/2_scalefactors --FMCs {P}/2_scalefactors_lep")
+        for flav in ['mm','ee','em']:
+            plots = ['2lep_mll'] # 'lep1_.*','lep2_.*']# ,'2lep_.*','tot_weight','era']
+            runIt(x + ' -E ^%s'%flav,'%s/%s'%(torun,flav),plots)
+
 
     if 'cr_wz' in torun:
         x = base('3l')
@@ -440,6 +460,7 @@ if __name__ == '__main__':
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         #plots = ['lep2_pt','met','nJet25','mZ1']
         #plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM','era','kinMVA_3l.*']
+
         plots=['kinMVA_3l_score_.*','kinMVA_3l_input_.*']
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^gt2b -E ^1B ")
         if '_1fwd' in torun:

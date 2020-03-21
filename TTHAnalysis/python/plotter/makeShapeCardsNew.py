@@ -15,8 +15,11 @@ parser.add_option("--autoMCStatsThreshold", dest="autoMCStatsValue", type="int",
 parser.add_option("--infile", dest="infile", action="store_true", default=False, help="Read histograms to file")
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
+parser.add_option("--categorize-by-ranges", dest="categ_ranges", type="string", nargs=2, default=None, help="Split in categories according to the signal extraction variables. Requires 2 arguments: binning (in bin numbers), bin labels")
+
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
 parser.add_option("--threshold", dest="threshold", type=float, default=0.0, help="Minimum event yield to consider processes")
+parser.add_option("--filter", dest="filter", type="string", default=None, help="File with list of processes to be removed from the datacards")
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
@@ -75,9 +78,33 @@ if options.categ:
     if len(catlabels) != report["data_obs"].GetNbinsY(): raise RuntimeError("Mismatch between category labels and bins")
     for ic,lab in enumerate(catlabels):
         allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
+elif options.categ_ranges: 
+    allreports = dict()
+    catlabels = options.categ_ranges[1].split(',')
+    catbinning = eval( options.categ_ranges[0] ) 
+    
+    for ic,lab in enumerate(catlabels):
+        kk = {} 
+        for (k,h) in report.iteritems(): 
+            kk[k] = h.getHistoInRange( "x_"+k, catbinning[ic],catbinning[ic+1])
+        allreports["%s_%s"%(binname,lab)] = kk
 else:
     allreports = {binname:report}
 
+
+if options.filter: 
+    toremove=[]
+    with open(options.filter, 'r') as f:
+        for l in f.readlines(): 
+            binname,proc = l.split(':')
+            procpattern = re.compile( proc.rstrip() ) 
+            if binname in allreports:
+                for p in allreports[binname]:
+                    if procpattern.match(p):
+                        if (binname,p) not in toremove:
+                           toremove.append( (binname, p))
+    for binname,p in toremove:
+        allreports[binname].pop(p)
 
 for binname, report in allreports.iteritems():
   if options.bbb:
@@ -131,9 +158,12 @@ for binname, report in allreports.iteritems():
                     if variants[d].GetBinContent( bin ) == 0: 
                         shift = variants[1-d].GetBinContent(bin); shift = max(5e-6, shift)
                         variants[d].SetBinContent( bin, h.raw().GetBinContent( bin )**2/shift)
-                    if variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin) > 100: 
+                    if variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin) > 10: 
                         print "Warning: big shift in template for %s %s %s %s in bin %d: variation = %g"%( binname, p, name, d, bin, variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin))
                         variants[d].SetBinContent( bin, 10*h.raw().GetBinContent(bin) )
+                    if variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin) < 0.1: 
+                        print "Warning: big shift in template for %s %s %s %s in bin %d: variation = %g"%( binname, p, name, d, bin, variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin))
+                        variants[d].SetBinContent( bin, 0.1*h.raw().GetBinContent(bin) )
 
             effshape[p] = variants 
     if isShape:
