@@ -21,7 +21,7 @@ dowhat = "plots"
 dojeccomps=True
 P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
 #if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data1/peruzzi"
-nCores = 8
+nCores = 32
 if 'fanae' in os.environ['HOSTNAME']:
     nCores = 32
     submit = 'sbatch -c %d -p short  --wrap "{command}"'%nCores
@@ -54,6 +54,7 @@ def base(selection):
         THETREES = THETREES.replace("--FMCs {P}/2_scalefactors_jecSum","--FMCs {P}/2_scalefactors_jecAllVars" )
         THETREES = THETREES.replace("--Fs {P}/4_evtVars", "--FMCs {P}/4_evtVars_allVars --FDs {P}/4_evtVars")
         THETREES = THETREES.replace("--Fs {P}/5_BDThtt_reco", "--FDs {P}/5_BDThtt_reco --FMCs {P}/5_BDThtt_reco_allVars")
+        THETREES = THETREES.replace("--Fs {P}/6_mva2lss", "--FDs {P}/6_mva2lss --FMCs {P}/6_mva2lss_allVars/")
 
     CORE=' '.join([THETREES,TREESONLYSKIM])
     CORE+=" -f -j %d -l %s -L ttH-multilepton/functionsTTH.cc --tree NanoAOD --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim --year %s  --mcc ttH-multilepton/mcc-METFixEE2017.txt"%(nCores, lumis[YEAR],YEAR if YEAR!='all' else '2016,2017,2018')# --neg" --s2v 
@@ -119,7 +120,7 @@ def fulltrees(x):
 def doprescale3l(x,torun):
     return x.replace(TREESONLYSKIM,TREESONLYMEMZPEAK if any([(_y in torun) for _y in ['cr_wz','cr_ttz','cr_fourlep_onZ','_Zpeak']]) else TREESONLYMEMZVETO)
 
-allow_unblinding = False
+allow_unblinding = True
 
 if __name__ == '__main__':
 
@@ -322,17 +323,25 @@ if __name__ == '__main__':
 
     if 'cr_3j' in torun:
         x = base('2lss')
+        x = add(x, ' --Fs  {P}/A_HjDummy/ ')
         if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
         if '_appl' in torun: x = add(x,'-I ^TT ')
         if '_frdata' in torun:
             x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
-        x = add(x,"-R ^4j 3j 'nJet25+nFwdJet==3'")
+        if 'cr_3j_old' in torun:
+            x = add(x,"-R ^4j 3j 'nJet25==3'")
+        else: 
+            x = add(x,"-R ^4j 3j 'nJet25+nFwdJet==3'")
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt  --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU")
+            if '_postfit' in torun:
+                x = add(x, "--aefr fitDiagnostics.root fit_s --aefrl Postfit --peg-process TTZ r_ttZ --peg-process TTW r_ttW")
+        if '_1fwd' in torun:
+            x = add(x, "-A ^alwaystrue fwdjet1 'nFwdJet>0'")
 
-        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar.*','kinMVA_2lss_ttV.*','kinMVA_2lss_bins7','kinMVA_2lss_input.*','era']
+        plots = ['kinMVA_2lss_input.*', 'kinMVA_2lss_score.*']
         runIt(x,'%s'%torun,plots)
         if '_flav' in torun:
             for flav in ['mm','ee','em']:
@@ -405,6 +414,9 @@ if __name__ == '__main__':
             print "ERROR: cr_wz with MC backgrounds does not work."
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt  --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU")
+            if '_postfit' in torun:
+                x = add(x, "--aefr fitDiagnostics.root fit_s --aefrl Postfit --peg-process TTZ r_ttZ --peg-process TTW r_ttW")
+
         if '_fit' in torun:
             if not '_data' in torun: raise RuntimeError
             x = add(x,"--sP tot_weight --preFitData tot_weight --sp WZ ")
@@ -412,7 +424,8 @@ if __name__ == '__main__':
             if '_unc' not in torun:
                 print "Will just float WZ freely"
                 x = add(x,"--flp WZ")
-        plots = ['kinMVA_3l_input_leadFwdJet_eta']
+        #plots = ['kinMVA_3l_input_.*','kinMVA_3l_score_.*']
+        plots=['kinMVA_3l_input_.*leadFwdJet.*']
         if '_more' in torun:
             plots += ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW','kinMVA.*','htJet25j','nJet25','era']
             plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM','kinMVA_3l.*']
@@ -427,10 +440,15 @@ if __name__ == '__main__':
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         #plots = ['lep2_pt','met','nJet25','mZ1']
         #plots += ['3lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_3l_ttbar','kinMVA_3l_ttV','kinMVA_3l_ttV_withMEM','era','kinMVA_3l.*']
-        plots=['kinMVA_3l_input_leadFwdJet_eta']
+        plots=['kinMVA_3l_score_.*','kinMVA_3l_input_.*']
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^gt2b -E ^1B ")
+        if '_1fwd' in torun:
+            x = add(x, "-A ^alwaystrue fwdjet1 'nFwdJet>0'")
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt  --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU")
+            if '_postfit' in torun:
+                x = add(x, "--aefr fitDiagnostics.root fit_s --aefrl Postfit --peg-process TTZ r_ttZ --peg-process TTW r_ttW")
+
         if '_4j' in torun:
             x = add(x,"-E ^4j ")
             runIt(x,'%s/4j'%torun,plots)
@@ -480,6 +498,9 @@ if __name__ == '__main__':
         plots = ['cr_3l']
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt  --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU")
+            if '_postfit' in torun:
+                x = add(x, "--aefr fitDiagnostics.root fit_s --aefrl Postfit --peg-process TTZ r_ttZ --peg-process TTW r_ttW")
+
         runIt(x,'%s'%torun,plots)
     if 'cr_4l' in torun:
         x = base('4l')
@@ -491,6 +512,9 @@ if __name__ == '__main__':
             raise RuntimeError, 'Fakes estimation not implemented for 4l'
         if '_unc' in torun:
             x = add(x,"--unc ttH-multilepton/systsUnc.txt  --xu CMS_ttHl_TTZ_lnU,CMS_ttHl_TTW_lnU")
+            if '_postfit' in torun:
+                x = add(x, "--aefr fitDiagnostics.root fit_s --aefrl Postfit --peg-process TTZ r_ttZ --peg-process TTW r_ttW")
+
         plots = ['cr_4l']
         runIt(x,'%s'%torun,plots)
        
