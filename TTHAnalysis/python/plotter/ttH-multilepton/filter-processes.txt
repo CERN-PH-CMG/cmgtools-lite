@@ -3,6 +3,7 @@ ttH_2lss_0tau_mm_ttWnode_2016:ttH.*_hmm
 ttH_2lss_0tau_ee_ttWnode_2017:Convs
 ttH_2lss_0tau_ee_ttHnode_2017:Convs
 ttH_2lss_0tau_ee_Restnode_2017:ZZ
+ttH_2lss_0tau_ee_Restnode_2017:Convs
 ttH_2lss_0tau_mm_ttHnode_2017:WZ
 ttH_2lss_0tau_mm_ttHnode_2017:ZZ
 ttH_2lss_0tau_em_ttHnode_2017:Convs
@@ -76,3 +77,4 @@ ttH_2lss_0tau_mm_ttWnode_2018:ttH_.*hzz
 ttH_3l_0tau_rest_emm_bl_2018:ttH_.*hmm
 ttH_cr_3l_2017_mmm_cr:WH_hzz
 ttH_3l_0tau_tH_bl_2017:ttH_.*hzz
+ttH_2lss_3j_2018_ee:WH_hww
