@@ -2,20 +2,20 @@ import os
 from ROOT import TCanvas, TROOT, TH1D, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, kBlack, kMagenta, TLegend, gStyle
 
 gROOT.SetBatch(True)
-f1  = TFile("/nfs/user/elfaham/104X/v6/2016/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")
+f1  = TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")
 if not f1:
     raise ValueError('File not opened')
 tr = f1.Get("Friends")
 if not tr:
     raise ValueError('Tree not loaded')
 comparisonplotlist1 = [
-    [   "Hreco_pTHvis"          , "Hreco_pTHvis > 0 "                                   , 
-        "Hreco_pTHgen"          , "Hreco_pTHgen > 0 && Hreco_pTHvis >= 0 "              ,
-        "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu > 0"                               , 
-        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu > 0 && Hreco_pTHvis >= 0"      ,
-        "Hreco_pTTrueGen"       , "Hreco_pTTrueGen > 0 && Hreco_pTHvis >= 0"            ,
+    [   "Hreco_pTHvis"          , "Hreco_pTHvis > 0                                     && Hreco_nmatchedpartons == 1"         , 
+        "Hreco_pTHgen"          , "Hreco_pTHgen > 0             && Hreco_pTHvis >= 0    && Hreco_nmatchedpartons == 1"         ,
+        "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu > 0                                && Hreco_nmatchedpartons == 1"         , 
+        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu > 0    && Hreco_pTHvis >= 0    && Hreco_nmatchedpartons == 1"         ,
+        "Hreco_pTTrueGen"       , "Hreco_pTTrueGen > 0          && Hreco_pTHvis >= 0    && Hreco_nmatchedpartons == 1"         ,
         "pTH"                   ,
-         200, 0., 600.   ],
+         200, 0., 400.   ],
 ]
 comparisonplotlist2 = [
     [   "Hreco_pTHvis"          , "Hreco_pTHvis >= 0             && Hreco_pTHvis < 60"                                 ,

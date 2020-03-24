@@ -21,56 +21,32 @@ if not tr:
     raise ValueError('Tree not loaded')
 
 plotlist = [
-    ["Hreco_delR_H_q1l"                         ,"Hreco_delR_H_q1l>=0"                   ,"delR_q1l"      , 100, 0., 10. ],
-    ["Hreco_delR_H_q2l"                         ,"Hreco_delR_H_q2l>=0"                   ,"delR_q2l"      , 100, 0., 10. ],
-    ["Hreco_delR_H_partons"                     ,"Hreco_delR_H_partons>=0"               ,"delR_partons"  , 100, 0., 10. ],
-    ["Hreco_delR_H_j1l_reco"                         ,"Hreco_delR_H_j1l_reco>=0"                   ,"delR_j1l"      , 100, 0., 10. ],
-    ["Hreco_delR_H_j2l_reco"                         ,"Hreco_delR_H_j2l_reco>=0"                   ,"delR_j2l"      , 100, 0., 10. ],
-    ["Hreco_BDThttTT_eventReco_mvaValue"        ,"Hreco_BDThttTT_eventReco_mvaValue>=0"  ,"all_score_test", 100, 0., 10. ],
-    ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==1"              ,"hnum_top_1"    , 100, 0., 10. ],
-    ["Hreco_nmatchedpartons"                    ,"Hreco_nmatchedpartons==2"              ,"hnum_top_2"    , 100, 0., 10. ],
-    ["Hreco_pTHvis"                             ,"Hreco_pTHvis>=0"                       ,"pTHvis"        , 100, 0., 400.],
-    ["Hreco_pTHgen"                             ,"Hreco_pTHgen>=0"                       ,"pTHgen"        , 100, 0., 400.],
+    ["Hreco_delR_H_partons"                         ,"Hreco_delR_H_partons>=0"                                                  ,"delR_partons"         , 100, 0., 10. ],
+    ["Hreco_delR_H_j1j2"                            ,"Hreco_delR_H_j1j2>=0"                                                     ,"delR_H_j1j2"          , 100, 0., 10. ],
+    ["Hreco_delR_H_partons"                         ,"Hreco_delR_H_partons>=0   && Hreco_nmatchedpartons ==1"                   ,"delR_partons_cut"     , 100, 0., 10. ],
+    ["Hreco_delR_H_j1j2"                            ,"Hreco_delR_H_j1j2>=0      && Hreco_nmatchedpartons ==1"                   ,"delR_H_j1j2_cut"      , 100, 0., 10. ],
+    ["Hreco_nmatchedpartons"                        ,"Hreco_nmatchedpartons==1"                                                 ,"hnum_top_1"           , 100, 0., 10. ],
+    ["Hreco_pTHvis"                                 ,"Hreco_pTHvis>=0"                                                          ,"pTHvis"               , 100, 0., 400.],
+    ["Hreco_pTHgen"                                 ,"Hreco_pTHgen>=0"                                                          ,"pTHgen"               , 100, 0., 400.],
     ]
 
 comparisonplotlist1 = [
-    ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2", 100, 0., 10.],
+    [   "Hreco_delR_H_j1j2"     ,   "Hreco_delR_H_j1j2>=0"                                ,
+        "Hreco_delR_H_partons"  ,   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1",
+        "delR_j1j2_q1q2_cut"    ,
+        100, 0., 10.],
 ]
 comparisonplotlist2 = [
-    ["Hreco_delR_H_j1l_reco" , "Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l" , 100, 0., 10.],
-]
-comparisonplotlist3 = [
-    ["Hreco_delR_H_j2l_reco" , "Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l" , 100, 0., 10.],
-]
-comparisonplotlist4 = [
-    ["Hreco_delR_H_q1l" , "Hreco_delR_H_q1l>=0" , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons==2 " ,"delR_q1j1l" , 100, 0., 10.],
-]
-comparisonplotlist5 = [
-    ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
-]
-## another lists for scatter
-scatterplotlist1 = [
-    ["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2_diff_cuts", 100, 0., 10.],
-]
-scatterplotlist2 = [
-    ["Hreco_delR_H_j1l_reco" , "Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j1l_diff_cuts" , 100, 0., 10.],
-]
-scatterplotlist3 = [
-    ["Hreco_delR_H_j2l_reco" , "Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==1" , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons ==2" ,"delR_j2l_diff_cuts" , 100, 0., 10.],
-]
-scatterplotlist4 = [
-    ["Hreco_delR_H_q1l" , "Hreco_delR_H_q1l>=0" , "Hreco_delR_H_j1l" ,"Hreco_delR_H_j1l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q1j1l" , 100, 0., 10.],
-]
-scatterplotlist5 = [
-    ["Hreco_delR_H_q2l" , "Hreco_delR_H_q2l>=0" , "Hreco_delR_H_j2l" ,"Hreco_delR_H_j2l>=0 && Hreco_nmatchedpartons==2 " ,"delR_q2j2l" , 100, 0., 10.],
-]
-scatterplotlist6 = [
-    ["Hreco_delR_H_j1l_reco"     , "Hreco_delR_H_j1l_reco>=0  && Hreco_nmatchedpartons==1"        , "Hreco_delR_H_j2l_reco" ,"Hreco_delR_H_j2l_reco>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1l_vs_j2l"     , 100, 0., 10.],
-]
-scatterplotlist7 = [
-    ["Hreco_delR_H_j1j2"    , "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons==2"        , "Hreco_delR_H_j1l_reco" ,"Hreco_delR_H_j1l_reco>=0 && Hreco_nmatchedpartons==1 " ,"delR_j1j2_vs_j1l"    , 100, 0., 10.],
+    [   "Hreco_delR_H_j1j2"     ,   "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1"     , 
+        "Hreco_delR_H_partons"  ,   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1"  ,
+        "delR_j1j2_cut_q1q2_cut",
+         100, 0., 10.],
 ]
 
+## another lists for scatter
+#scatterplotlist1 = [
+    #["Hreco_delR_H_j1j2", "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1", "Hreco_delR_H_j1j2","Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==2","delR_j1j2_diff_cuts", 100, 0., 10.],
+#]
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     c = TCanvas()
     c.cd()
@@ -97,7 +73,7 @@ def draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin): #TOD
     leg.AddEntry(theplot_2,"%s"%(cut2))
     leg.Draw()
     c.Print("%s/%s_comp.png"%(options.outputDir,fname)) # Avoid overwriting single var plots
-
+'''
 def draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     c   = TCanvas()
     c.cd()
@@ -108,7 +84,7 @@ def draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin):
     theplot_scat.Draw("COL")
     theplot_scat.SetTitle("%s_Vs_%s"%(var1,var2))
     c.Print("%s/%s_2D.png"%(options.outputDir,fname))
-
+'''
 
 for var, cut, fname, nbins, lowbin, highbin in plotlist:
     draw_plot(var, cut, fname, nbins, lowbin, highbin )
@@ -118,33 +94,6 @@ for var, cut, fname, nbins, lowbin, highbin in plotlist:
 
     for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist2:
         draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
-    
-    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist3:
-        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
-    
-    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist4:
-        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
-    
-    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist5:
-        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
-
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist1:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
-
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist2:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
         
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist3:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
-        
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist4:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
-        
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist5:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
-
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist6:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
-        
-        for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist7:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
+        #for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in scatterplotlist1:
+            #draw_scatter(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin)
