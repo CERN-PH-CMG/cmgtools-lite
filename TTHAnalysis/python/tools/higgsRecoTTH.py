@@ -4,7 +4,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 import copy
-from genParticleProducer import * 
+#from genParticleProducer import * 
 import ROOT, itertools
 from math import *
 import sys
@@ -423,7 +423,7 @@ class HiggsRecoTTH(Module):
                 if (len(QFromWFromH)>2):
                     print("WARNING: we have not two but ",len(QFromWFromH), "quarks from W from H. I am in the if best")
                 for quark in QFromWFromH: #TODO: iterate over both quarks and fill nbothmatchedpartons
-                    if quark.p4().DeltaR(jetreco1.p4()) < 0.5 or quark.p4().DeltaR(jetreco2.p4()) < 0.5:
+                    if quark.p4().DeltaR(jetreco1.p4()) < 0.3 or quark.p4().DeltaR(jetreco2.p4()) < 0.3:
                         nmatchedpartons +=1
                 if (len(LFromWFromH)>1):
                     print("WARNING: we have not one but ",len(LFromWFromH), "leptons from W from H. I am in the if best")
