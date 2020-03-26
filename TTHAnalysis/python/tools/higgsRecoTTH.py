@@ -122,6 +122,7 @@ class HiggsRecoTTH(Module):
         NuFromWFromH = []
         NuFromWFromT = []
         genlep=[]
+        closestJetToQFromWFromH=[]
         tfromhardprocess=[]
         nmatchedpartons           = 0
         nbothmatchedpartons       = 0 
@@ -423,8 +424,29 @@ class HiggsRecoTTH(Module):
                 if (len(QFromWFromH)>2):
                     print("WARNING: we have not two but ",len(QFromWFromH), "quarks from W from H. I am in the if best")
                 for quark in QFromWFromH: #TODO: iterate over both quarks and fill nbothmatchedpartons
-                    if quark.p4().DeltaR(jetreco1.p4()) < 0.5 or quark.p4().DeltaR(jetreco2.p4()) < 0.5:
+                    if quark.p4().DeltaR(jetreco1.p4()) < 0.1 or quark.p4().DeltaR(jetreco2.p4()) < 0.1:
                         nmatchedpartons +=1
+                
+                print ("len of jet in collection" + str(len(jetsNoTopNoB)))
+                if len(QFromWFromH)==2:
+                    for quark in QFromWFromH:
+                        minDeltaR=99 
+                        jet_idx=-1
+                        for jet in jetsNoTopNoB:
+                            if quark.p4().DeltaR(jet.p4()) < minDeltaR:
+                                minDeltaR=quark.p4().DeltaR(jet.p4())
+                                jet_idx=jetsNoTopNoB.index(jet)
+                                print (jet_idx)
+                        closestJetToQFromWFromH.append(jet_idx)
+                    #print (len(closestJetToQFromWFromH))
+                    print (closestJetToQFromWFromH)
+
+                    #for goodjet in jetsmatchquarks: 
+                        #if goodjet.p4().DeltaR(jetreco1.p4()) < 0.3 or goodjet.p4().DeltaR(jetreco2.p4()) < 0.3:
+                            #print("at least one of the good jets you selected above does match within 0.3 with the jets reconstructed")
+                        #else:
+                            #print("non does")
+                
                 if (len(LFromWFromH)>1):
                     print("WARNING: we have not one but ",len(LFromWFromH), "leptons from W from H. I am in the if best")
                 for l in LFromWFromH:
