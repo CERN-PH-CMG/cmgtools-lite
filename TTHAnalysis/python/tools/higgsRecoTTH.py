@@ -3,8 +3,6 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as NanoAODCollection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
-import copy
-from genParticleProducer import * 
 import ROOT, itertools
 from math import *
 import sys
@@ -21,19 +19,32 @@ class HiggsRecoTTH(Module):
         self.label = label
         self.branches = []
         self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown"} if doSystJEC else {0:""}
-        for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["minDRlj","visHmass","Wmass","lepIdx","j1Idx","j2Idx","pTHvis", "pTVisPlusNu",
-                                                                                                      "nmatchedpartons","nbothmatchedpartons","nmismatchedtoptaggedjets","nmatchedleptons",
-                                                                                                      "delR_H_partons","delR_H_j1j2","delR_H_q1l", "delR_H_q2l", "delR_H_j1l_reco", "delR_H_j2l_reco",
-                                                                                                      "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT", "nNuFromWFromH",
-                                                                                                      "deltaM_trueGen_H","BDThttTT_eventReco_mvaValue",
-                                                                                                      "pTHgen","pTtgen","pTTrueGen","pTTrueGenPlusNu",
-                                                                                                      "pTHgen_no_cond","pTtgen_no_cond","pTTrueGen_no_cond","pTTrueGenPlusNu_no_cond"]]) 
+        for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in [
+            "minDRlj","visHmass","Wmass","lepIdx","j1Idx","j2Idx","pTHvis", "pTVisPlusNu",
+                                                                                                      
+            "nmatchedpartons","nbothmatchedpartons","nmismatchedtoptaggedjets","nmatchedleptons",
+                                                                                                      
+            "delR_H_partons","delR_H_j1j2","delR_H_q1l", "delR_H_q2l", "delR_H_j1l_reco", "delR_H_j2l_reco",
+                                                                                                      
+            "delR_H_partons_no_cond","delR_H_q1l_no_cond", "delR_H_q2l_no_cond",
+                                                                                                      
+            "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT", "nNuFromWFromH", "nNuFromWFromT",
+                                                                                                      
+            "nQFromWFromH_no_cond","nLFromWFromH_no_cond","nQFromWFromT_no_cond","nLFromWFromT_no_cond", "nNuFromWFromH_no_cond","nNuFromWFromT_no_cond",
+                                                                                                      
+            "deltaM_trueGen_H","BDThttTT_eventReco_mvaValue",
+                                                                                                      
+            "pTHgen","pTtgen","pTTrueGen","pTTrueGenPlusNu","quark1pT","quark2pT",
+                                                                                                      
+            "pTHgen_no_cond","pTtgen_no_cond","pTTrueGen_no_cond","pTTrueGenPlusNu_no_cond","quark1pT_no_cond","quark2pT_no_cond"]]) 
 
         for mylep in [0, 1]:
-            for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in ["l%s_fj_deltaR"%mylep, "l%s_fj_lepIsFromH"%mylep,"l%s_fj_pt"%mylep,"l%s_fj_eta"%mylep,
-                                                                                                          "l%s_fj_phi"%mylep,"l%s_fj_mass"%mylep,"l%s_fj_msoftdrop"%mylep,"l%s_fj_tau1"%mylep,
-                                                                                                          "l%s_fj_tau2"%mylep,"l%s_fj_tau3"%mylep,"l%s_fj_tau4"%mylep]])
-
+            for var in self.systsJEC: self.branches.extend(["Hreco_%s%s"%(x,self.systsJEC[var]) for x in [
+                "l%s_fj_deltaR"%mylep, "l%s_fj_lepIsFromH"%mylep,"l%s_fj_pt"%mylep,"l%s_fj_eta"%mylep,
+                                                                                                          
+                "l%s_fj_phi"%mylep,"l%s_fj_mass"%mylep,"l%s_fj_msoftdrop"%mylep,"l%s_fj_tau1"%mylep,
+                                                                                                          
+                "l%s_fj_tau2"%mylep,"l%s_fj_tau3"%mylep,"l%s_fj_tau4"%mylep]])
 
         self.cut_BDT_rTT_score = cut_BDT_rTT_score
         self.cuts_mW_had = cuts_mW_had
@@ -115,14 +126,15 @@ class HiggsRecoTTH(Module):
         tauFromW=[]
         WFromH=[]
         WFromT=[]
-        QFromWFromH  = []
-        LFromWFromH  = []
-        QFromWFromT  = []
-        LFromWFromT  = []
-        NuFromWFromH = []
-        NuFromWFromT = []
+        QFromWFromH  = [] #filled
+        LFromWFromH  = [] #filled
+        QFromWFromT  = [] #filled
+        LFromWFromT  = [] #filled
+        NuFromWFromH = [] #filled
+        NuFromWFromT = [] #filled
         genlep=[]
-        closestJetToQFromWFromH=[]
+        closestJetToQ1FromWFromH=[]
+        closestJetToQ2FromWFromH=[]
         tfromhardprocess=[]
         nmatchedpartons           = 0
         nbothmatchedpartons       = 0 
@@ -133,6 +145,8 @@ class HiggsRecoTTH(Module):
         pTVisPlusNu     = 0
         pTTrueGen       = 0
         pTTrueGenplusNu = 0
+        quark1pT=0
+        quark2pT=0
         #massHgen = 0
         #deltaM_trueGen_H = 0
         delR_H_partons      = -99
@@ -258,20 +272,20 @@ class HiggsRecoTTH(Module):
                     if self.debug: print "the mother of this W is a hard top"
                     LFromWFromT.append(part)
         
-        # revise this sanity check #TODO 
+        #TODO revise this sanity check  
         #if len(LFromWFromH) + len(LFromWFromT) != len(LFromW):
             #sys.exit("something is going wrong with leptons")
         
-        # revise this sanity check since there might be another W's from which quarks might arise than the W's from top and the W's from Higgs #TODO
+        #TODO revise this sanity check since there might be another W's from which quarks might arise than the W's from top and the W's from Higgs 
         #if len(QFromWFromH) + len(QFromWFromT) != len(QFromW):
             #sys.exit("error: quarks from W from H plus quarks from W from top are not equal total quarks from W's")
         
-        # sanity check on neutrinos but should be checked against leptons from W from tops and higgs only #TODO
+        #TODO sanity check on neutrinos but should be checked against leptons from W from tops and higgs only 
         #if len(NuFromWFromH) + len(NuFromWFromT) != len(LFromW):
             #print("from higgs " + str(len(NuFromWFromH)) + " neutrinos and from top " + str(len(NuFromWFromT)) + " while total leptons are " + str(len(LFromW)))
             #sys.exit("error: you don't have matching number of nu's to leptons!")
         
-        # all below #TODO
+        #TODO all block commented below 
         '''
         # taus
         for part in genpar:
@@ -374,9 +388,9 @@ class HiggsRecoTTH(Module):
                     Hvisconstr = lep+Wconstr
                     mHvisconstr = Hvisconstr.M()
                     pTHvisconstr = Hvisconstr.Pt()
-                    #print("I am just before the warning. QFromWFromH is " + str(len(QFromWFromH)))
-                    if (len(NuFromWFromH)>1):
-                        print("WARNING! we have not one but " + str(len(NuFromWFromH)) + " neutrinos from W from H. I am in reconstruction loop. QFromWFromH is " + str(len(QFromWFromH)))
+                    #TODO print("I am just before the warning. QFromWFromH is " + str(len(QFromWFromH)))
+                    #if (len(NuFromWFromH)>1):
+                        #print("WARNING! we have not one but " + str(len(NuFromWFromH)) + " neutrinos from W from H. I am in reconstruction loop. QFromWFromH is " + str(len(QFromWFromH)))
                     for neutrino in NuFromWFromH:
                         VisPlusNu = Hvisconstr+neutrino.p4() 
                         pTVisPlusNu = VisPlusNu.Pt()
@@ -392,67 +406,97 @@ class HiggsRecoTTH(Module):
                             #jets tagged as coming from top didn't match with true partons coming from top"
                             nmismatchedtoptaggedjets +=1 #only with respect to the hadronic top where W -> qq, this is what being matched here
             best = min(candidates) if len(candidates) else None
+            
+            # function for sorting lists
             #def ExtractIndex(lst):
                 #return [item[1] for item in lst]
             #def ExtractpT(lst):
                 #return [item[0] for item in lst]
+
+            #TODO should I add if len(QFromWFromH)==2 here? 
+            for q1,q2 in itertools.combinations(QFromWFromH,2):
+                delR_H_partons = q1.p4().DeltaR(q2.p4())
+                #TODO if (len(LFromWFromH)>1):
+                    #print("WARNING: we have not one but ",len(LFromWFromH), "leptons from W from H. I am in the if best")
+                #TODO should I add a cut conditon here?
+                for lepton in LFromWFromH:
+                    delR_H_q1l = q1.p4().DeltaR(lepton.p4())  
+                    delR_H_q2l = q2.p4().DeltaR(lepton.p4()) 
+                    trueGenSum = lepton.p4()+q1.p4()+q2.p4()
+                    pTTrueGen  = trueGenSum.Pt()
+                    #massTrueGen= trueGenSum.M()
+                    #deltaM_trueGen_H = massTrueGen-massHgen
+                    #TODO if (len(NuFromWFromH)>1):
+                        #print("WARNING: we have not one but ",len(NuFromWFromH), "neutrinos from W from H. I am in the if best")
+                    #TODO should I add a cut condition here?
+                    for nu in NuFromWFromH:
+                        TrueGenplusNu = trueGenSum+nu.p4() 
+                        pTTrueGenplusNu = TrueGenplusNu.Pt()
+            #TODO if (len(QFromWFromH)>2):
+                #TODO print("WARNING: we have not two but ",len(QFromWFromH), "quarks from W from H. I am in the if best")
+            
+            #print(var)
+            if len(QFromWFromH)==2 and var==0:
+                quark1pT=QFromWFromH[0].p4().Pt()
+                print("quark1pT =" + str(quark1pT))
+                quark2pT=QFromWFromH[1].p4().Pt()
+                print("quark2pT =" + str(quark2pT))
+                print("the whole quarks list = " + str(QFromWFromH))
+                for quark in QFromWFromH:
+                    quark=QFromWFromH[0]
+                    print("quark1 = " +str(quark))
+                    minDeltaR1=99 
+                    jet_idx1=-1
+                    for jet1 in jetsNoTopNoB:
+                        if quark.p4().DeltaR(jet1.p4()) < minDeltaR1:
+                            minDeltaR1=quark.p4().DeltaR(jet1.p4())
+                            jet_idx1=jetsNoTopNoB.index(jet1)
+                            print ("jet1 index = " + str(jet_idx1))
+                    closestJetToQ1FromWFromH.append((jet_idx1))
+                    if len(closestJetToQ1FromWFromH)==1: break
+                for quark in QFromWFromH:
+                    quark=QFromWFromH[1]
+                    print("quark2 = " +str(quark))
+                    minDeltaR2=99 
+                    jet_idx2=-1
+                    for jet2 in jetsNoTopNoB:
+                        if quark.p4().DeltaR(jet2.p4()) < minDeltaR2:
+                            minDeltaR2=quark.p4().DeltaR(jet2.p4())
+                            jet_idx2=jetsNoTopNoB.index(jet2)
+                            print ("jet2 index = " + str(jet_idx2))
+                    closestJetToQ2FromWFromH.append((jet_idx2))
+                    if len(closestJetToQ2FromWFromH)==1: break
+                print ("closest to q1 = " +str(closestJetToQ1FromWFromH))
+                print ("closest to q2 = " +str(closestJetToQ2FromWFromH))
+                #for goodjet in jetsmatchquarks: 
+                    #if goodjet.p4().DeltaR(jetreco1.p4()) < 0.3 or goodjet.p4().DeltaR(jetreco2.p4()) < 0.3:
+                        #print("at least one of the good jets you selected above does match within 0.3 with the jets reconstructed")
+                    #else:
+                        #print("non does")
+            
             if best: #TODO: what does that actually do compared to "if best else -99"
                 jetreco1 = jets[best[5]] 
                 jetreco2 = jets[best[6]]
+                delR_H_j1l_reco = leps[best[4]].p4().DeltaR(jetreco1.p4())
+                delR_H_j2l_reco = leps[best[4]].p4().DeltaR(jetreco2.p4())
+                
                 #testing_list.extend(([jetreco1.p4().Pt(),best[5]],[jetreco2.p4().Pt(),best[6]]))
                 #lst=sorted(testing_list,reverse=True)
                 #print(ExtractIndex(lst))
                 #print(ExtractpT(lst))
-                delR_H_j1l_reco = leps[best[4]].p4().DeltaR(jetreco1.p4())
-                delR_H_j2l_reco = leps[best[4]].p4().DeltaR(jetreco2.p4())
-                for q1,q2 in itertools.combinations(QFromWFromH,2):
-                    delR_H_partons = q1.p4().DeltaR(q2.p4())
-                    if (len(LFromWFromH)>1):
-                        print("WARNING: we have not one but ",len(LFromWFromH), "leptons from W from H. I am in the if best")
-                    for lepton in LFromWFromH:
-                        delR_H_q1l = q1.p4().DeltaR(lepton.p4())  
-                        delR_H_q2l = q2.p4().DeltaR(lepton.p4()) 
-                        trueGenSum = lepton.p4()+q1.p4()+q2.p4()
-                        pTTrueGen  = trueGenSum.Pt()
-                        #massTrueGen= trueGenSum.M()
-                        #deltaM_trueGen_H = massTrueGen-massHgen
-                        if (len(NuFromWFromH)>1):
-                            print("WARNING: we have not one but ",len(NuFromWFromH), "neutrinos from W from H. I am in the if best")
-                        for nu in NuFromWFromH:
-                            TrueGenplusNu = trueGenSum+nu.p4() 
-                            pTTrueGenplusNu = TrueGenplusNu.Pt()
-                if (len(QFromWFromH)>2):
-                    print("WARNING: we have not two but ",len(QFromWFromH), "quarks from W from H. I am in the if best")
+                
                 for quark in QFromWFromH: #TODO: iterate over both quarks and fill nbothmatchedpartons
                     if quark.p4().DeltaR(jetreco1.p4()) < 0.1 or quark.p4().DeltaR(jetreco2.p4()) < 0.1:
                         nmatchedpartons +=1
                 
-                print ("len of jet in collection" + str(len(jetsNoTopNoB)))
-                if len(QFromWFromH)==2:
-                    for quark in QFromWFromH:
-                        minDeltaR=99 
-                        jet_idx=-1
-                        for jet in jetsNoTopNoB:
-                            if quark.p4().DeltaR(jet.p4()) < minDeltaR:
-                                minDeltaR=quark.p4().DeltaR(jet.p4())
-                                jet_idx=jetsNoTopNoB.index(jet)
-                                print (jet_idx)
-                        closestJetToQFromWFromH.append(jet_idx)
-                    #print (len(closestJetToQFromWFromH))
-                    print (closestJetToQFromWFromH)
-
-                    #for goodjet in jetsmatchquarks: 
-                        #if goodjet.p4().DeltaR(jetreco1.p4()) < 0.3 or goodjet.p4().DeltaR(jetreco2.p4()) < 0.3:
-                            #print("at least one of the good jets you selected above does match within 0.3 with the jets reconstructed")
-                        #else:
-                            #print("non does")
-                
-                if (len(LFromWFromH)>1):
-                    print("WARNING: we have not one but ",len(LFromWFromH), "leptons from W from H. I am in the if best")
+                #TODO if (len(LFromWFromH)>1):
+                    #print("WARNING: we have not one but ",len(LFromWFromH), "leptons from W from H. I am in the if best")
                 for l in LFromWFromH:
                     if l.p4().DeltaR(leps[best[4]].p4()) < 0.1 or l.p4().DeltaR(leps[best[4]].p4()) < 0.1:
                         nmatchedleptons +=1
+            
             else: pass  
+            #reconstruction loop dependent vars
             ret["Hreco_minDRlj%s"                     %self.systsJEC[var]] = best[0 ] if best else -99
             ret["Hreco_delR_H_j1j2%s"                 %self.systsJEC[var]] = best[3 ] if best else -99
             ret["Hreco_visHmass%s"                    %self.systsJEC[var]] = best[1 ] if best else -99
@@ -462,30 +506,49 @@ class HiggsRecoTTH(Module):
             ret["Hreco_j2Idx%s"                       %self.systsJEC[var]] = best[6 ] if best else -99
             ret["Hreco_pTVisPlusNu%s"                 %self.systsJEC[var]] = best[7 ] if best else -99 
             ret["Hreco_pTHvis%s"                      %self.systsJEC[var]] = best[8 ] if best else -99
-            ret["Hreco_delR_H_partons%s"              %self.systsJEC[var]] = delR_H_partons             if best else -99 
             ret["Hreco_nmatchedleptons%s"             %self.systsJEC[var]] = nmatchedleptons            if best else -99 
-            ret["Hreco_pTtgen%s"                      %self.systsJEC[var]] = pTtgen                     if best else -99
             ret["Hreco_nmatchedpartons%s"             %self.systsJEC[var]] = nmatchedpartons            if best else -99 
-            ret["Hreco_pTHgen%s"                      %self.systsJEC[var]] = pTHgen                     if best else -99 
             ret["Hreco_nmismatchedtoptaggedjets%s"    %self.systsJEC[var]] = nmismatchedtoptaggedjets   if best else -99
-            ret["Hreco_delR_H_q1l%s"                  %self.systsJEC[var]] = delR_H_q1l                 if best else -99 
-            ret["Hreco_delR_H_q2l%s"                  %self.systsJEC[var]] = delR_H_q2l                 if best else -99
             ret["Hreco_delR_H_j1l_reco%s"             %self.systsJEC[var]] = delR_H_j1l_reco            if best else -99 
             ret["Hreco_delR_H_j2l_reco%s"             %self.systsJEC[var]] = delR_H_j2l_reco            if best else -99
-            ret["Hreco_pTTrueGen%s"                   %self.systsJEC[var]] = pTTrueGen                  if best else -99
-            ret["Hreco_pTTrueGenPlusNu%s"             %self.systsJEC[var]] = pTTrueGenplusNu            if best else -99
-            #ret["Hreco_deltaM_trueGen_H%s"            %self.systsJEC[var]] = deltaM_trueGen_H           if best else -99 #TODO
+            #delR vars (if best and none)
+            ret["Hreco_delR_H_partons%s"              %self.systsJEC[var]] = delR_H_partons             if best else -99 
+            ret["Hreco_delR_H_q1l%s"                  %self.systsJEC[var]] = delR_H_q1l                 if best else -99 
+            ret["Hreco_delR_H_q2l%s"                  %self.systsJEC[var]] = delR_H_q2l                 if best else -99
+            ret["Hreco_delR_H_partons_no_cond%s"      %self.systsJEC[var]] = delR_H_partons             if best else -99 
+            ret["Hreco_delR_H_q1l_no_cond%s"          %self.systsJEC[var]] = delR_H_q1l                 if best else -99 
+            ret["Hreco_delR_H_q2l_no_cond%s"          %self.systsJEC[var]] = delR_H_q2l                 if best else -99
+            #lists from gen loop (if best and none) 
             ret['Hreco_nQFromWFromH%s'                %self.systsJEC[var]] = len(QFromWFromH)           if best else -99
             ret['Hreco_nLFromWFromH%s'                %self.systsJEC[var]] = len(LFromWFromH)           if best else -99
             ret['Hreco_nQFromWFromT%s'                %self.systsJEC[var]] = len(QFromWFromT)           if best else -99
             ret['Hreco_nLFromWFromT%s'                %self.systsJEC[var]] = len(LFromWFromT)           if best else -99
             ret['Hreco_nNuFromWFromH%s'               %self.systsJEC[var]] = len(NuFromWFromH)          if best else -99
+            ret['Hreco_nNuFromWFromT%s'               %self.systsJEC[var]] = len(NuFromWFromT)          if best else -99
+            ret['Hreco_nQFromWFromH_no_cond%s'        %self.systsJEC[var]] = len(QFromWFromH)           
+            ret['Hreco_nLFromWFromH_no_cond%s'        %self.systsJEC[var]] = len(LFromWFromH)           
+            ret['Hreco_nQFromWFromT_no_cond%s'        %self.systsJEC[var]] = len(QFromWFromT)           
+            ret['Hreco_nLFromWFromT_no_cond%s'        %self.systsJEC[var]] = len(LFromWFromT)          
+            ret['Hreco_nNuFromWFromH_no_cond%s'       %self.systsJEC[var]] = len(NuFromWFromH)        
+            ret['Hreco_nNuFromWFromT_no_cond%s'       %self.systsJEC[var]] = len(NuFromWFromT)       
+            #pT vars (if best and none) 
+            ret["Hreco_pTTrueGen%s"                   %self.systsJEC[var]] = pTTrueGen                  if best else -99
+            ret["Hreco_pTTrueGenPlusNu%s"             %self.systsJEC[var]] = pTTrueGenplusNu            if best else -99
+            ret["Hreco_pTtgen%s"                      %self.systsJEC[var]] = pTtgen                     if best else -99
+            ret["Hreco_pTHgen%s"                      %self.systsJEC[var]] = pTHgen                     if best else -99
+            ret["Hreco_quark1pT%s"                    %self.systsJEC[var]] = quark1pT                   if best else -99
+            ret["Hreco_quark2pT%s"                    %self.systsJEC[var]] = quark2pT                   if best else -99
             ret["Hreco_pTTrueGen_no_cond%s"           %self.systsJEC[var]] = pTTrueGen                  
             ret["Hreco_pTTrueGenPlusNu_no_cond%s"     %self.systsJEC[var]] = pTTrueGenplusNu          
             ret["Hreco_pTtgen_no_cond%s"              %self.systsJEC[var]] = pTtgen                   
-            ret["Hreco_pTHgen_no_cond%s"              %self.systsJEC[var]] = pTHgen             
-            ret["Hreco_BDThttTT_eventReco_mvaValue%s" %self.systsJEC[var]] = score # if best?
-            #ret["Hreco_nbothmatchedpartons%s"         %self.systsJEC[var]] = nbothmatchedpartons        if best else -99 #TODO
+            ret["Hreco_pTHgen_no_cond%s"              %self.systsJEC[var]] = pTHgen
+            ret["Hreco_quark1pT_no_cond%s"            %self.systsJEC[var]] = quark1pT
+            ret["Hreco_quark2pT_no_cond%s"            %self.systsJEC[var]] = quark2pT
+            # other vars
+            #TODO ret["Hreco_deltaM_trueGen_H%s"            %self.systsJEC[var]] = deltaM_trueGen_H           if best else -99 
+            #TODO ret["Hreco_nbothmatchedpartons%s"         %self.systsJEC[var]] = nbothmatchedpartons        if best else -99 
+            #TODO ret["Hreco_BDThttTT_eventReco_mvaValue%s" %self.systsJEC[var]] = score # if best?
+            
             #for mylep in [0, 1]:
                 #ret["Hreco_l%s_fj_deltaR%s"      %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][0] if len(closestFatJetToLeptonVars) == 2 else -99
                 #ret["Hreco_l%s_fj_lepIsFromH%s"  %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][1] if len(closestFatJetToLeptonVars) == 2 else -99
