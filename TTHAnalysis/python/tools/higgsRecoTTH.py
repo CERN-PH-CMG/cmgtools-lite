@@ -458,7 +458,7 @@ class HiggsRecoTTH(Module):
                 closestJet_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
                 closestJet_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
                 for idx, quark in enumerate(QFromWFromH):
-                    print idx
+                    #print idx
                     selquark=QFromWFromH[idx]
                     quarkpt=QFromWFromH[idx].p4().Pt()
                     #closestjet=jetsNoTopNoB[closestJetToQFromWFromH[idx]]
