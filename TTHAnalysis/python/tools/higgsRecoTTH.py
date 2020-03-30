@@ -438,9 +438,7 @@ class HiggsRecoTTH(Module):
             if len(QFromWFromH)==2 and var==0:
                 closestJetToQFromWFromH = [-1 for i in QFromWFromH]
                 quark1pT=QFromWFromH[0].p4().Pt()
-                #print("quark1pT =" + str(quark1pT))
                 quark2pT=QFromWFromH[1].p4().Pt()
-                #print("quark2pT =" + str(quark2pT))
                 print("the whole quarks list = " + str(QFromWFromH))
                 for quark_idx, quark in enumerate(QFromWFromH):
                     minDeltaR=99 
@@ -450,15 +448,29 @@ class HiggsRecoTTH(Module):
                         if deltaRqj < minDeltaR:
                             minDeltaR=deltaRqj
                             jet_idx=jetsNoTopNoB.index(jet)
-                            print("jet index = " +str(jet_idx))
+                            #print("jet index = " +str(jet_idx))
                     closestJetToQFromWFromH[quark_idx]=jet_idx
-                    print(closestJetToQFromWFromH)
-                #for goodjet in jetsmatchquarks: 
-                    #if goodjet.p4().DeltaR(jetreco1.p4()) < 0.3 or goodjet.p4().DeltaR(jetreco2.p4()) < 0.3:
-                        #print("at least one of the good jets you selected above does match within 0.3 with the jets reconstructed")
-                    #else:
-                        #print("non does")
+                    print("the closest jets list = " + str(closestJetToQFromWFromH))
             
+            # this loop could have been attached to the above one 
+            if len(QFromWFromH)==2 and var==0:
+                closestJet_pt_ToQFromWFromH     = [-99 for i in QFromWFromH]
+                closestJet_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
+                closestJet_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
+                for idx, quark in enumerate(QFromWFromH):
+                    print idx
+                    selquark=QFromWFromH[idx]
+                    quarkpt=QFromWFromH[idx].p4().Pt()
+                    #closestjet=jetsNoTopNoB[closestJetToQFromWFromH[idx]]
+                    #ptres=(closestjet.p4().Pt()-selquark.p4().Pt())/selquark.p4().Pt()
+                    #delRqj=selquark.p4().DeltaR(closestjet.p4())
+                    closestJet_pt_ToQFromWFromH[idx]     = quarkpt
+                    #closestJet_ptres_ToQFromWFromH[idx]  = ptres
+                    #closestJet_delR_ToQFromWFromH[idx]   = delRqj
+                    print (closestJet_pt_ToQFromWFromH)
+               
+            #quark1pT=QFromWFromH[0].p4().Pt()
+            #quark2pT=QFromWFromH[1].p4().Pt()
             if best: #TODO: what does that actually do compared to "if best else -99"
                 jetreco1 = jets[best[5]] 
                 jetreco2 = jets[best[6]]
