@@ -133,8 +133,7 @@ class HiggsRecoTTH(Module):
         NuFromWFromH = [] #filled
         NuFromWFromT = [] #filled
         genlep=[]
-        closestJetToQ1FromWFromH=[]
-        closestJetToQ2FromWFromH=[]
+        #closestJetToQFromWFromH=[]
         tfromhardprocess=[]
         nmatchedpartons           = 0
         nbothmatchedpartons       = 0 
@@ -437,37 +436,23 @@ class HiggsRecoTTH(Module):
             
             #print(var)
             if len(QFromWFromH)==2 and var==0:
+                closestJetToQFromWFromH = [-1 for i in QFromWFromH]
                 quark1pT=QFromWFromH[0].p4().Pt()
-                print("quark1pT =" + str(quark1pT))
+                #print("quark1pT =" + str(quark1pT))
                 quark2pT=QFromWFromH[1].p4().Pt()
-                print("quark2pT =" + str(quark2pT))
+                #print("quark2pT =" + str(quark2pT))
                 print("the whole quarks list = " + str(QFromWFromH))
-                for quark in QFromWFromH:
-                    quark=QFromWFromH[0]
-                    print("quark1 = " +str(quark))
-                    minDeltaR1=99 
-                    jet_idx1=-1
-                    for jet1 in jetsNoTopNoB:
-                        if quark.p4().DeltaR(jet1.p4()) < minDeltaR1:
-                            minDeltaR1=quark.p4().DeltaR(jet1.p4())
-                            jet_idx1=jetsNoTopNoB.index(jet1)
-                            print ("jet1 index = " + str(jet_idx1))
-                    closestJetToQ1FromWFromH.append((jet_idx1))
-                    if len(closestJetToQ1FromWFromH)==1: break
-                for quark in QFromWFromH:
-                    quark=QFromWFromH[1]
-                    print("quark2 = " +str(quark))
-                    minDeltaR2=99 
-                    jet_idx2=-1
-                    for jet2 in jetsNoTopNoB:
-                        if quark.p4().DeltaR(jet2.p4()) < minDeltaR2:
-                            minDeltaR2=quark.p4().DeltaR(jet2.p4())
-                            jet_idx2=jetsNoTopNoB.index(jet2)
-                            print ("jet2 index = " + str(jet_idx2))
-                    closestJetToQ2FromWFromH.append((jet_idx2))
-                    if len(closestJetToQ2FromWFromH)==1: break
-                print ("closest to q1 = " +str(closestJetToQ1FromWFromH))
-                print ("closest to q2 = " +str(closestJetToQ2FromWFromH))
+                for quark_idx, quark in enumerate(QFromWFromH):
+                    minDeltaR=99 
+                    jet_idx=-1
+                    for jet in jetsNoTopNoB:
+                        deltaRqj=quark.p4().DeltaR(jet.p4())
+                        if deltaRqj < minDeltaR:
+                            minDeltaR=deltaRqj
+                            jet_idx=jetsNoTopNoB.index(jet)
+                            print("jet index = " +str(jet_idx))
+                    closestJetToQFromWFromH[quark_idx]=jet_idx
+                    print(closestJetToQFromWFromH)
                 #for goodjet in jetsmatchquarks: 
                     #if goodjet.p4().DeltaR(jetreco1.p4()) < 0.3 or goodjet.p4().DeltaR(jetreco2.p4()) < 0.3:
                         #print("at least one of the good jets you selected above does match within 0.3 with the jets reconstructed")
