@@ -21,13 +21,21 @@ if not tr:
     raise ValueError('Tree not loaded')
 
 plotlist = [
-    ["Hreco_delR_H_partons"                         ,"Hreco_delR_H_partons>=0"                                                  ,"delR_partons"         , 100, 0., 10. ],
-    ["Hreco_delR_H_j1j2"                            ,"Hreco_delR_H_j1j2>=0"                                                     ,"delR_H_j1j2"          , 100, 0., 10. ],
-    ["Hreco_delR_H_partons"                         ,"Hreco_delR_H_partons>=0   && Hreco_nmatchedpartons ==1"                   ,"delR_partons_cut"     , 100, 0., 10. ],
-    ["Hreco_delR_H_j1j2"                            ,"Hreco_delR_H_j1j2>=0      && Hreco_nmatchedpartons ==1"                   ,"delR_H_j1j2_cut"      , 100, 0., 10. ],
-    ["Hreco_nmatchedpartons"                        ,"Hreco_nmatchedpartons==1"                                                 ,"hnum_top_1"           , 100, 0., 10. ],
-    ["Hreco_pTHvis"                                 ,"Hreco_pTHvis>=0"                                                          ,"pTHvis"               , 100, 0., 400.],
-    ["Hreco_pTHgen"                                 ,"Hreco_pTHgen>=0"                                                          ,"pTHgen"               , 100, 0., 400.],
+    ["Hreco_delR_H_partons"                             ,"Hreco_delR_H_partons>=0"                                ,"delR_partons"                                  , 100, 0., 10. ],
+    ["Hreco_delR_H_j1j2"                                ,"Hreco_delR_H_j1j2>=0"                                   ,"delR_H_j1j2"                                   , 100, 0., 10. ],
+    ["Hreco_delR_H_partons"                             ,"Hreco_delR_H_partons>=0   && Hreco_nmatchedpartons ==1" ,"delR_partons_cut"                              , 100, 0., 10. ],
+    ["Hreco_delR_H_j1j2"                                ,"Hreco_delR_H_j1j2>=0      && Hreco_nmatchedpartons ==1" ,"delR_H_j1j2_cut"                               , 100, 0., 10. ],
+    ["Hreco_nmatchedpartons"                            ,"Hreco_nmatchedpartons==1"                               ,"hnum_top_1"                                    , 100, 0., 10. ],
+    ["Hreco_pTHvis"                                     ,"Hreco_pTHvis>=0"                                        ,"pTHvis"                                        , 100, 0., 400.],
+    ["Hreco_pTHgen"                                     ,"Hreco_pTHgen>=0"                                        ,"pTHgen"                                        , 100, 0., 400.],
+    ["Hreco_quark1pT_no_cond"                           ,"Hreco_quark1pT_no_cond>=0"                              ,"Hreco_quark1pT_no_cond"                        , 100, 0., 400.],
+    ["Hreco_quark2pT_no_cond"                           ,"Hreco_quark2pT_no_cond>=0"                              ,"Hreco_quark2pT_no_cond"                        , 100, 0., 400.],
+    ["Hreco_closestJet_pt_ToQ1FromWFromH_no_cond"       ,"Hreco_closestJet_pt_ToQ1FromWFromH_no_cond>=0"          ,"Hreco_closestJet_pt_ToQ1FromWFromH_no_cond>=0" , 100, 0., 400.],
+    ["Hreco_closestJet_pt_ToQ2FromWFromH_no_cond"       ,"Hreco_closestJet_pt_ToQ2FromWFromH_no_cond>=0"          ,"Hreco_closestJet_pt_ToQ2FromWFromH_no_cond>=0" , 100, 0., 400.],
+    ["Hreco_closestJet_ptres_ToQ1FromWFromH_no_cond"    ,""                                                       ,"Hreco_closestJet_ptres_ToQ1FromWFromH_no_cond" , -10, 0., 10. ],
+    ["Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond"    ,""                                                       ,"Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond" , -10, 0., 10. ],
+    ["Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond>=0"        ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"  , 100, 0., 10. ],
+    ["Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond>=0"        ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"  , 100, 0., 10. ],
     ]
 
 comparisonplotlist1 = [
