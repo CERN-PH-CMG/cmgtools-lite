@@ -448,26 +448,29 @@ class HiggsRecoTTH(Module):
                         if deltaRqj < minDeltaR:
                             minDeltaR=deltaRqj
                             jet_idx=jetsNoTopNoB.index(jet)
-                            #print("jet index = " +str(jet_idx))
                     closestJetToQFromWFromH[quark_idx]=jet_idx
-                    print("the closest jets list = " + str(closestJetToQFromWFromH))
-            
-            # this loop could have been attached to the above one 
-            if len(QFromWFromH)==2 and var==0:
-                closestJet_pt_ToQFromWFromH     = [-99 for i in QFromWFromH]
-                closestJet_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
-                closestJet_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
-                for idx, quark in enumerate(QFromWFromH):
-                    #print idx
-                    selquark=QFromWFromH[idx]
-                    quarkpt=QFromWFromH[idx].p4().Pt()
-                    #closestjet=jetsNoTopNoB[closestJetToQFromWFromH[idx]]
-                    #ptres=(closestjet.p4().Pt()-selquark.p4().Pt())/selquark.p4().Pt()
-                    #delRqj=selquark.p4().DeltaR(closestjet.p4())
-                    closestJet_pt_ToQFromWFromH[idx]     = quarkpt
-                    #closestJet_ptres_ToQFromWFromH[idx]  = ptres
-                    #closestJet_delR_ToQFromWFromH[idx]   = delRqj
-                    print (closestJet_pt_ToQFromWFromH)
+                    print("the closest jets list = " + str(closestJetToQFromWFromH)) #why does this sometimes print jets with indicies -1,-1
+                if -1 not in closestJetToQFromWFromH:
+                    print("no no!")
+                    #sys.exit("no no!")
+                    #closestjetq1=jetsNoTopNoB[closestJetToQFromWFromH[0]]
+                    #closestjetq2=jetsNoTopNoB[closestJetToQFromWFromH[1]]
+                    closestJet_pt_ToQFromWFromH     = [-99 for i in QFromWFromH]
+                    closestJet_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
+                    closestJet_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
+                    for idx in range(len(QFromWFromH)):
+                        selquark=QFromWFromH[idx]
+                        quarkpt=QFromWFromH[idx].p4().Pt()
+                        closestjet_idx=closestJetToQFromWFromH[idx]
+                        closestjet=jetsNoTopNoB[closestjet_idx]
+                        ptres=(closestjet.p4().Pt()-selquark.p4().Pt())/selquark.p4().Pt()
+                        delRqj=selquark.p4().DeltaR(closestjet.p4())
+                        closestJet_pt_ToQFromWFromH[idx]     = quarkpt
+                        closestJet_ptres_ToQFromWFromH[idx]  = ptres
+                        closestJet_delR_ToQFromWFromH[idx]   = delRqj
+                        print (closestJet_pt_ToQFromWFromH)
+                        print (closestJet_ptres_ToQFromWFromH)
+                        print (closestJet_delR_ToQFromWFromH)
                
             #quark1pT=QFromWFromH[0].p4().Pt()
             #quark2pT=QFromWFromH[1].p4().Pt()
