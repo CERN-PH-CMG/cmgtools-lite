@@ -34,8 +34,8 @@ plotlist = [
     ["Hreco_closestJet_pt_ToQ2FromWFromH_no_cond"       ,"Hreco_closestJet_pt_ToQ2FromWFromH_no_cond>=0"          ,"Hreco_closestJet_pt_ToQ2FromWFromH_no_cond"    , 100, 0., 400.],
     ["Hreco_closestJet_ptres_ToQ1FromWFromH_no_cond"    ,""                                                       ,"Hreco_closestJet_ptres_ToQ1FromWFromH_no_cond" , 100, -10, 10.],
     ["Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond"    ,""                                                       ,"Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond" , 100, -10, 10.],
-    ["Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond>=0"        ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"  , 100, 0., 10. ],
-    ["Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond>=0"        ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"  , 100, 0., 10. ],
+    ["Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond>=0"        ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"  , 100, -1., 10. ],
+    ["Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond>=0"        ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"  , 100, -1., 10. ],
     ]
 
 comparisonplotlist1 = [
