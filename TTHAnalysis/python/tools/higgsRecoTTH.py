@@ -179,15 +179,15 @@ class HiggsRecoTTH(Module):
                 Higgses.append(part)
                 #TODO: consider the pt of the stxs higgs
                 pTHgen = part.p4().Pt() 
-        if len(Higgses)>1:
-            sys.exit("error: more than one higgs!")
+        #if len(Higgses)>1:
+            #sys.exit("error: more than one higgs!")
         # tops
         for part in genpar:
              if abs(part.pdgId) == 6 and part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
                  tfromhardprocess.append(part)
                  pTtgen = part.p4().Pt()
-        if len(tfromhardprocess)!=2:
-            sys.exit("error: not only two hard tops!")
+        #if len(tfromhardprocess)!=2:
+            #sys.exit("error: not only two hard tops!")
         
         # W from higgs
         for part in genpar:
@@ -202,8 +202,8 @@ class HiggsRecoTTH(Module):
                     and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 6):
                 if self.debug: print "it is a hard W coming from a top"
                 WFromT.append(part)
-        if len(tfromhardprocess) == 2 and len(WFromT) != 2:
-            sys.exit("error: you don't have exactly two W's from the two hard tops!")
+        #if len(tfromhardprocess) == 2 and len(WFromT) != 2:
+            #sys.exit("error: you don't have exactly two W's from the two hard tops!")
         
         # W decays to quarks
         for part in genpar:
@@ -498,8 +498,8 @@ class HiggsRecoTTH(Module):
                         #print (quarkpTinQFromWFromH)
 
             if best: #TODO: what does that actually do compared to "if best else -99"
-                if -1 not in jets_match_quarks:
-                    print jets_match_quarks 
+                #if -1 not in jets_match_quarks:
+                    #print jets_match_quarks 
                 jetreco1 = jets[best[5]] 
                 jetreco2 = jets[best[6]]
                 delR_H_j1l_reco = leps[best[4]].p4().DeltaR(jetreco1.p4())

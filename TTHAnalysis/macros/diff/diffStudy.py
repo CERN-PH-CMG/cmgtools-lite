@@ -40,8 +40,8 @@ plotlist = [
     ["Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"     ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond>=0.05"     ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond_cut_0.05"          , 100, -1., 10. ],
     ["Hreco_closestJet_delR_ToQ1FromWFromH_no_cond"     ,""                                                       ,"Hreco_closestJet_delR_ToQ1FromWFromH_no_cond_no_cut_at_zero"    , 100, -1., 10. ],
     ["Hreco_closestJet_delR_ToQ2FromWFromH_no_cond"     ,""                                                       ,"Hreco_closestJet_delR_ToQ2FromWFromH_no_cond_no_cut_at_zero"    , 100, -1., 10. ],
-    ["Hreco_jet_matches_quark1"                         ,"Hreco_jet_matches_quark1>=0"                            ,"Hreco_jet_matches_quark1"                                       , 100, -1., 10. ],
-    ["Hreco_jet_matches_quark2"                         ,"Hreco_jet_matches_quark2>=0"                            ,"Hreco_jet_matches_quark2"                                       , 100, -1., 10. ],
+    ["Hreco_jet_matches_quark1_two_cond"                ,"Hreco_jet_matches_quark1_two_cond>=0"                   ,"Hreco_jet_matches_quark1"                                       , 100, -1., 10. ],
+    ["Hreco_jet_matches_quark2_two_cond"                ,"Hreco_jet_matches_quark2_two_cond>=0"                   ,"Hreco_jet_matches_quark2"                                       , 100, -1., 10. ],
     ["Hreco_j1Idx"                                      ,"Hreco_j1Idx>=0"                                         ,"Hreco_j1Idx"                                                    , 100, -1., 10. ],
     ["Hreco_j2Idx"                                      ,"Hreco_j2Idx>=0"                                         ,"Hreco_j2Idx"                                                    , 100, -1., 10. ],
     ]
@@ -79,10 +79,10 @@ scatterplotlist6 = [
     ["Hreco_quark2pT_no_cond", "Hreco_quark2pT_no_cond>=0", "Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond","","quark2pt_vs_pTres_q2", 100, -2., 10.,100,0,100],
 ]
 scatterplotlist7 = [
-    ["Hreco_jet_matches_quark1", "Hreco_jet_matches_quark1>=0", "Hreco_j1Idx","Hreco_j1Idx>=0","jm1_j1", 10, -1., 10.,10,-1,10],
+    ["Hreco_jet_matches_quark1_two_cond", "Hreco_jet_matches_quark1_two_cond>=0", "Hreco_j1Idx","Hreco_j1Idx>=0","jm1_j1", 10, -1., 10.,10,-1,10],
 ]
 scatterplotlist8 = [
-    ["Hreco_jet_matches_quark2", "Hreco_jet_matches_quark2>=0", "Hreco_j2Idx","Hreco_j1Idx>=0","jm2_j2", 10, -1., 10.,10,-1,10],
+    ["Hreco_jet_matches_quark2_two_cond", "Hreco_jet_matches_quark2_two_cond>=0", "Hreco_j2Idx","Hreco_j1Idx>=0","jm2_j2", 10, -1., 10.,10,-1,10],
 ]
 def draw_plot(var,cut,fname,nbins,lowbin, highbin):
     c = TCanvas()
