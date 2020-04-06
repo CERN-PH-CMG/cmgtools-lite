@@ -498,6 +498,8 @@ class HiggsRecoTTH(Module):
                         #print (quarkpTinQFromWFromH)
 
             if best: #TODO: what does that actually do compared to "if best else -99"
+                if -1 not in jets_match_quarks:
+                    print jets_match_quarks 
                 jetreco1 = jets[best[5]] 
                 jetreco2 = jets[best[6]]
                 delR_H_j1l_reco = leps[best[4]].p4().DeltaR(jetreco1.p4())
