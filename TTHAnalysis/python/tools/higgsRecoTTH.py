@@ -365,6 +365,12 @@ class HiggsRecoTTH(Module):
             jetsTopNoB=None
             jetsNoTopNoB=None
 
+            ### *............................................................................*
+            ### *Br    9 :Muon_genPartFlav :                                                 *
+            ### *         | UChar_t Flavour of genParticle for MC matching to status==1 muons:*
+            ### *         |  1 = prompt muon (including gamma*->mu mu), 15 = muon from prompt tau, 5 = muon from b, 4 = muon from c, 3 = muon from light or unknown, 0 = unmatched*
+            ### *Entries :   295099 : Total  Size=    1789156 bytes  File Size  =     875839 *
+
             # Delicate: here the logic is built such that if one does not use the top tagger then 
             # some variables are left empty to suppress code into "if variable:" blocks
             if self.useTopTagger:
