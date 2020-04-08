@@ -358,7 +358,8 @@ class HiggsRecoTTH(Module):
        
         for var in self.systsJEC:
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%self.systsJEC[var])
-            candidates=[]
+            candidateMinimizers=[];
+            candidateBranchValues=[];
             testing_list=[] 
             fatjetsNoB   = [b for b in fatjets if b.btagDeepB<self.btagDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
             jetsTopNoB=None
@@ -414,7 +415,8 @@ class HiggsRecoTTH(Module):
                     if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
                     mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
                     delR_H_j1j2 = j1.DeltaR(j2)
-                    candidates.append((mindR,mHvisconstr,mW,delR_H_j1j2,_lep,_j1,_j2,pTVisPlusNu,pTHvisconstr))
+                    candidateMinimizers.append((mindR,abs(mHvisconstr-125.0),abs(mW-80.4),delR_H_j1j2,_lep,_j1,_j2,pTVisPlusNu,pTHvisconstr))
+                    candidateBranchValues.append((mindR,mHvisconstr,mW,delR_H_j1j2,_lep,_j1,_j2,pTVisPlusNu,pTHvisconstr))
             
             if self.useTopTagger:
                 for topjet in jetsTopNoB:
@@ -422,7 +424,8 @@ class HiggsRecoTTH(Module):
                         if topjet.p4().DeltaR(gentopquark.p4()) > 0.5:
                             #jets tagged as coming from top didn't match with true partons coming from top"
                             nmismatchedtoptaggedjets +=1 #only with respect to the hadronic top where W -> qq, this is what being matched here
-            best = min(candidates) if len(candidates) else None
+            minCandidate = min(candidateMinimizers) if len(candidateMinimizers) else None
+            best = candidateBranchValues[candidateMinimizers.index(minCandidate)] if len(candidateMinimizers) else None
             
             # function for sorting lists
             #def ExtractIndex(lst):
