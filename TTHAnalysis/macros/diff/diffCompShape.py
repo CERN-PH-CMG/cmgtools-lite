@@ -1,5 +1,5 @@
 import os
-from ROOT import TCanvas, TROOT, TH1D, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, kBlack, kMagenta, TLegend, gStyle
+from ROOT import TCanvas, TROOT, TH1D, TH1F, TH2F, TFile, TTree, gROOT, kRed, kGreen, kBlack, kMagenta, kBlue, TLegend, gStyle
 
 gROOT.SetBatch(True)
 f1  = TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")
@@ -8,12 +8,23 @@ if not f1:
 tr = f1.Get("Friends")
 if not tr:
     raise ValueError('Tree not loaded')
+#comparisonplotlist1 = [
+    #[   "Hreco_pTHvis"                  , "Hreco_pTHvis > 0                                                 && Hreco_nmatchedpartons == 1"         , 
+        #"Hreco_pTHgen"                  , "Hreco_pTHgen > 0             && Hreco_pTHvis             >= 0    && Hreco_nmatchedpartons == 1"         ,
+        #"Hreco_pTVisPlusNu"             , "Hreco_pTVisPlusNu > 0                                            && Hreco_nmatchedpartons == 1"         , 
+        #"Hreco_pTTrueGenPlusNu"         , "Hreco_pTTrueGenPlusNu > 0    && Hreco_pTHvis             >= 0    && Hreco_nmatchedpartons == 1"         ,
+        #"Hreco_pTTrueGen"               , "Hreco_pTTrueGen > 0          && Hreco_pTHvis             >= 0    && Hreco_nmatchedpartons == 1"         ,
+        #"Hreco_pTVis_jets_match"        , "Hreco_pTVis_jets_match > 0   && Hreco_pTVis_jets_match   >= 0    && Hreco_nmatchedpartons == 1"         ,
+        #"pTH"                   ,
+         #200, 0., 400.   ],
+#]
 comparisonplotlist1 = [
-    [   "Hreco_pTHvis"          , "Hreco_pTHvis > 0                                     && Hreco_nmatchedpartons == 1"         , 
-        "Hreco_pTHgen"          , "Hreco_pTHgen > 0             && Hreco_pTHvis >= 0    && Hreco_nmatchedpartons == 1"         ,
-        "Hreco_pTVisPlusNu"     , "Hreco_pTVisPlusNu > 0                                && Hreco_nmatchedpartons == 1"         , 
-        "Hreco_pTTrueGenPlusNu" , "Hreco_pTTrueGenPlusNu > 0    && Hreco_pTHvis >= 0    && Hreco_nmatchedpartons == 1"         ,
-        "Hreco_pTTrueGen"       , "Hreco_pTTrueGen > 0          && Hreco_pTHvis >= 0    && Hreco_nmatchedpartons == 1"         ,
+    [   "Hreco_pTHvis"                  , "Hreco_pTHvis > 0                                                 "         , 
+        "Hreco_pTHgen"                  , "Hreco_pTHgen > 0             && Hreco_pTHvis             >= 0    "         ,
+        "Hreco_pTVisPlusNu"             , "Hreco_pTVisPlusNu > 0                                            "         , 
+        "Hreco_pTTrueGenPlusNu"         , "Hreco_pTTrueGenPlusNu > 0    && Hreco_pTHvis             >= 0    "         ,
+        "Hreco_pTTrueGen"               , "Hreco_pTTrueGen > 0          && Hreco_pTHvis             >= 0    "         ,
+        "Hreco_pTVis_jets_match"        , "Hreco_pTVis_jets_match > 0   && Hreco_pTVis_jets_match   >= 0    "         ,
         "pTH"                   ,
          200, 0., 400.   ],
 ]
@@ -66,7 +77,7 @@ comparisonplotlist6 = [
         "pTH_300_450"           ,
          40, 300., 450. ],
 ]
-def draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin):
+def draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, var6, cut6, fname, nbins, lowbin, highbin):
     gStyle.SetOptTitle(0)
     gStyle.SetOptStat(0) 
     c   = TCanvas()
@@ -82,10 +93,13 @@ def draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, 
     tr.Draw("%s>>%s_4"%(var4,var4),cut4)
     theplot_5 = TH1F("%s_5"%var5,var5, nbins, lowbin, highbin) # Avoid issues with same name
     tr.Draw("%s>>%s_5"%(var5,var5),cut5)
+    theplot_6 = TH1F("%s_6"%var6,var6, nbins, lowbin, highbin) # Avoid issues with same name
+    tr.Draw("%s>>%s_6"%(var6,var6),cut6)
     theplot_2.SetLineColor(kRed)
     theplot_3.SetLineColor(kGreen)
     theplot_4.SetLineColor(kBlack)
     theplot_5.SetLineColor(kMagenta)
+    theplot_6.SetLineColor(kBlue)
     theplot_1.GetXaxis().SetTitle("pTH(GeV)")
     theplot_1.GetYaxis().SetTitle("a.u.")
     theplot_1.Draw("HIST")
@@ -98,28 +112,31 @@ def draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, 
     theplot_4.Scale(1./theplot_4.Integral()) if theplot_4.Integral() != 0 else -99
     theplot_5.Draw("HIST SAME")
     theplot_5.Scale(1./theplot_5.Integral()) if theplot_5.Integral() != 0 else -99
+    theplot_6.Draw("HIST SAME")
+    theplot_6.Scale(1./theplot_6.Integral()) if theplot_6.Integral() != 0 else -99
     leg.AddEntry(theplot_1,"reco")
     leg.AddEntry(theplot_2,"gen")
     leg.AddEntry(theplot_3,"reco+gen(nu)")
     leg.AddEntry(theplot_4,"gen(q1)+gen(q2)+gen(l)+gen(nu)")
     leg.AddEntry(theplot_5,"gen(q1)+gen(q2)+gen(l)")
+    leg.AddEntry(theplot_6,"jm1+jm2+best_lep")
     leg.Draw()
     c.Print("%s/%s_comp.png"%("./test_compare_stxs/",fname)) # Avoid overwriting single var plots
 
-for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin in comparisonplotlist1:
-    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
+for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, var6, cut6, fname, nbins, lowbin, highbin in comparisonplotlist1:
+    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, var6, cut6, fname, nbins, lowbin, highbin )
 
-for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist2:
-    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
+#for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist2:
+    #draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
 
-for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist3:
-    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
+#for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist3:
+    #draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
 
-for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist4:
-    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
+#for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist4:
+    #draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
 
-for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist5:
-    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
+#for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist5:
+    #draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
 
-for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist6:
-    draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
+#for var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin  in comparisonplotlist6:
+    #draw_comparison(var1, cut1, var2, cut2, var3, cut3, var4, cut4, var5, cut5, fname, nbins, lowbin, highbin )
