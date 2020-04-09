@@ -7,13 +7,8 @@ import ROOT, itertools
 from math import *
 import sys
 
-#bTagCut 
-#= 0.3093 if year==2016 
-#= 0.3033 if year==2017 
-#= 0.2770 if year==2018
-
 class HiggsRecoTTH(Module):
-    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 0.3093, doSystJEC=True, useTopTagger=True, debug=False):
+    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = -1000, doSystJEC=True, useTopTagger=True, debug=False):
         self.debug = debug
         self.useTopTagger = useTopTagger
         self.label = label
