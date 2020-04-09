@@ -383,8 +383,9 @@ class HiggsRecoTTH(Module):
                     jetsNoTopNoB = []
             else:
                 jetsNoTopNoB = [j for j in jets if j.btagDeepB<self.btagDeepCSVveto]
-                
+
             for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
+                lep.SetPtEtaPhiM(getattr(lepsFO[_lep],'conePt'),lep.Eta(), lep.Phi(), lep.M())
                 iClosestFatJetToLep = -99
                 minDeltaRfatJetLep = 1000.
                 for _j, j in [(ix,x.p4()) for ix,x in enumerate(fatjetsNoB)]: # Find the fat jet closest to the lepton
