@@ -6,9 +6,10 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 import ROOT, itertools
 from math import *
 import sys
+from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs as HiggsRecoTTHbtagwps
 
 class HiggsRecoTTH(Module):
-    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = -1000, doSystJEC=True, useTopTagger=True, debug=False):
+    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 'L', doSystJEC=True, useTopTagger=True, debug=False):
         self.debug = debug
         self.useTopTagger = useTopTagger
         self.label = label
@@ -76,6 +77,8 @@ class HiggsRecoTTH(Module):
     # code
     def run(self,event,Collection):
 
+        year=getattr(event,"year")
+        btagvetoval= HiggsRecoTTHbtagwps["DeepFlav_%d_%s"%(year,self.btagDeepCSVveto)][1]
         statusFlagsMap = {
           # Comments taken from:
           # DataFormats/HepMCCandidate/interface/GenParticle.h
@@ -356,7 +359,7 @@ class HiggsRecoTTH(Module):
             candidateMinimizers=[];
             candidateBranchValues=[];
             testing_list=[] 
-            fatjetsNoB   = [b for b in fatjets if b.btagDeepB<self.btagDeepCSVveto] # I think we want already to exclude bjets, possibly remove the requirement.
+            fatjetsNoB   = [b for b in fatjets if b.btagDeepB<btagvetoval] # I think we want already to exclude bjets, possibly remove the requirement.
             jetsTopNoB=None
             jetsNoTopNoB=None
 
@@ -372,13 +375,13 @@ class HiggsRecoTTH(Module):
                 j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%self.systsJEC[var])
                 j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%self.systsJEC[var])
                 j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%self.systsJEC[var])
-                jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<self.btagDeepCSVveto] #it is a jet coming from top and not a b-jet
+                jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<btagvetoval] #it is a jet coming from top and not a b-jet
                 if score>self.cut_BDT_rTT_score:
-                    jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagDeepCSVveto]
+                    jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<btagvetoval]
                 else:
                     jetsNoTopNoB = []
             else:
-                jetsNoTopNoB = [j for j in jets if j.btagDeepB<self.btagDeepCSVveto]
+                jetsNoTopNoB = [j for j in jets if j.btagDeepB<btagvetoval]
 
             for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                 lep.SetPtEtaPhiM(getattr(lepsFO[_lep],'conePt'),lep.Eta(), lep.Phi(), lep.M())
