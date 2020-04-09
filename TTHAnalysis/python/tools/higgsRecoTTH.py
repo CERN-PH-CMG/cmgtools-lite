@@ -65,6 +65,7 @@ class HiggsRecoTTH(Module):
         self.cuts_mH_vis = cuts_mH_vis
         self.btagDeepCSVveto = btagDeepCSVveto
 
+
     # old interface
     def listBranches(self):
         return self.branches
