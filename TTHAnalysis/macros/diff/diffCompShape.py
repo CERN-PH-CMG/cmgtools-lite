@@ -120,7 +120,6 @@ def draw_comparison(args):
         p.Draw("HIST SAME")
 
     leg.Draw()
-    print('ymax', ymax)
     #c.SetLogy()
     c.Modified()
     c.Update()
