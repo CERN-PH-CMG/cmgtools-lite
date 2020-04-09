@@ -124,33 +124,33 @@ def draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbins
 for var, cut, fname, nbins, lowbin, highbin in plotlist:
     draw_plot(var, cut, fname, nbins, lowbin, highbin )
 
-    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist1:
-        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist1:
+    draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
 
-    for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist2:
-        draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
+for var1, cut1, var2, cut2, fname, nbins, lowbin, highbin  in comparisonplotlist2:
+    draw_comparison(var1, cut1, var2, cut2, fname, nbins, lowbin, highbin )
         
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist1:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
-        
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist2:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
-        
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist3:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
-        
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist4:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
-        
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist5:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
-        
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist6:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist1:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
 
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist7:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist2:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
 
-        for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist8:
-            draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist3:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist4:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist5:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist6:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist7:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
+
+for var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny  in scatterplotlist8:
+    draw_scatter(var1, cut1, var2, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
         
