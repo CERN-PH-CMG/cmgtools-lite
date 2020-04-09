@@ -18,7 +18,7 @@ fi
 ######################################
 ######################################
 if [ "$1" == "sig_16_TopTagged" ]; then
-for i in TTHnobb_fxfx TTH_ctcvcp 
+for i in TTHnobb_fxfx #TTH_ctcvcp 
 do
 python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root --env uclouvain -q cp3 
 #python ../prepareEventVariablesFriendTree.py -t NanoAOD -d $i /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ $2 -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsRecoTTH -j 4 -F Friends {P}0_jmeUnc_v1/{cname}_Friend.root -F Friends {P}2_scalefactors/{cname}_Friend.root -F Friends {P}3_tauCount/{cname}_Friend.root -F Friends {P}1_recl/{cname}_Friend.root -F Friends {P}5_BDThtt_reco/{cname}_Friend.root  

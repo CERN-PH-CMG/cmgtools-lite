@@ -302,32 +302,14 @@ higgsDecay = lambda : higgsDecayFinder()
 # scaleFactorSequence_2018
 
 # 5_evtVars_v0
-#from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco #not sure whether H commented this
+#from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco # H commented this
 
 from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
-#from CMGTools.TTHAnalysis.tools.higgsRecoTTH_94X import HiggsRecoTTH_94X
-from CMGTools.TTHAnalysis.tools.higgsRecoTTH_v5 import HiggsRecoTTH_v5
 higgsRecoTTH = lambda : HiggsRecoTTH(label="_Recl",
                                      cut_BDT_rTT_score = 0.0,
                                      cuts_mW_had = (60.,100.),
                                      cuts_mH_vis = (80.,140.),
                                      btagDeepCSVveto = 0.1522)
-higgsRecoTTH_v5 = lambda : HiggsRecoTTH_v5(label="_Recl",
-                                     cut_BDT_rTT_score = 0.0,
-                                     cuts_mW_had = (60.,100.),
-                                     cuts_mH_vis = (80.,140.),
-                                     btagDeepCSVveto = 0.1522)
-higgsRecoTTH_v5NoTopTagger = lambda : HiggsRecoTTH_v5(label="_Recl",
-                                     cut_BDT_rTT_score = 0.0,
-                                     cuts_mW_had = (60.,100.),
-                                     cuts_mH_vis = (80.,140.),
-                                     btagDeepCSVveto = 0.1522,
-                                     useTopTagger=False)
-#higgsRecoTTH_94X = lambda : HiggsRecoTTH_94X(label="_Recl",
-                                     #cut_BDT_rTT_score = 0.0,
-                                     #cuts_mW_had = (60.,100.),
-                                     #cuts_mH_vis = (80.,140.),
-                                     #btagDeepCSVveto = 0.1522)
 higgsRecoTTHNoTopTagger = lambda : HiggsRecoTTH(label="_Recl",
                                                 cut_BDT_rTT_score = 0.0,
                                                 cuts_mW_had = (60.,100.),
