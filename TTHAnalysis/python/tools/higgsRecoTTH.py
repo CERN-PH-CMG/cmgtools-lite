@@ -77,7 +77,6 @@ class HiggsRecoTTH(Module):
     def analyze(self, event):
         writeOutput(self, self.run(event, NanoAODCollection))
         return True
-    
     # code
     def run(self,event,Collection):
 
@@ -131,6 +130,7 @@ class HiggsRecoTTH(Module):
                                                      # but not guaranteed, to carry the momentum after ISR;
                                                      # only really makes sense for outgoing particles
         }
+        # Return dictionary 
         ret      = {} 
         genpar = Collection(event,"GenPart","nGenPart") 
         closestFatJetToLeptonVars = []
@@ -345,7 +345,6 @@ class HiggsRecoTTH(Module):
             #if jet.p4().Pt() > 30 and abs(jet.p4().Eta()) < 2.5:  # bit extreme cuts, I think supposed to be 24 and 2.4
                #gengoodJets.append(jet)
                #print "jet flavour = " + str(jet.partonFlavour) + " and mass = " + str(jet.p4().M()) + " GeV and pT = " + str(jet.p4().Pt())
-        
         #MET_pt   = getattr(event,"MET_pt")
         #mhtJet25 = getattr(event,"mhtJet25_Recl")
         nleps    = getattr(event,"nLepGood")
