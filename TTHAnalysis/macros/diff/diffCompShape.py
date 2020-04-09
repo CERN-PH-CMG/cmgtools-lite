@@ -3,6 +3,12 @@ from ROOT import TCanvas, TROOT, TH1D, TH1F, TH2F, TFile, TTree, gROOT, kRed, kG
 from copy import deepcopy
 
 gROOT.SetBatch(True)
+odir="./test_compare_stxs/"
+
+if not os.path.isdir(odir):
+    os.mkdir(odir)
+    print('Output directory %s did not exist. I now created it.')
+
 f1  = TFile("./skimmedTrees_16/2lss_diff_Top-tagged/TTHnobb_fxfx_Friend.root")
 if not f1:
     raise ValueError('File not opened')
@@ -118,7 +124,7 @@ def draw_comparison(args):
     #c.SetLogy()
     c.Modified()
     c.Update()
-    c.Print("%s/%s_comp.png"%("./test_compare_stxs/",fname)) # Avoid overwriting single var plots
+    c.Print("%s/%s_comp.png"%(odir,fname)) # Avoid overwriting single var plots
 
 
 draw_comparison(comparisonplotlists[0])
