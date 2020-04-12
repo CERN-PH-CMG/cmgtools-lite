@@ -9,7 +9,7 @@ import sys
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs as HiggsRecoTTHbtagwps
 
 class HiggsRecoTTH(Module):
-    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 'L', doSystJEC=True, useTopTagger=True, debug=False):
+    def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 'L', doSystJEC=False, useTopTagger=True, debug=False):
         self.debug = debug
         self.useTopTagger = useTopTagger
         self.label = label
@@ -32,19 +32,33 @@ class HiggsRecoTTH(Module):
                                                                                                       
             "pTHgen","pTtgen","pTTrueGen","pTTrueGenPlusNu","quark1pT","quark2pT", "pTVis_jets_match","quark1pT_no_cond", "quark2pT_no_cond",
 
-            "closestJet_pt_ToQ1FromWFromH","closestJet_pt_ToQ2FromWFromH",
-            
-            "closestJet_pt_ToQ1FromWFromH_no_cond","closestJet_pt_ToQ2FromWFromH_no_cond",
+            "closestJetInDelR_pt_ToQ1FromWFromH","closestJetInDelR_pt_ToQ2FromWFromH",
 
-            "closestJet_ptres_ToQ1FromWFromH","closestJet_ptres_ToQ2FromWFromH",
-            
-            "closestJet_ptres_ToQ1FromWFromH_no_cond","closestJet_ptres_ToQ2FromWFromH_no_cond",
+            "closestJetInPTRes_pt_ToQ1FromWFromH","closestJetInPTRes_pt_ToQ2FromWFromH",
 
-            "closestJet_delR_ToQ1FromWFromH","closestJet_delR_ToQ2FromWFromH",
-            
-            "closestJet_delR_ToQ1FromWFromH_no_cond","closestJet_delR_ToQ2FromWFromH_no_cond",
+            "closestJetInDelR_pt_ToQ1FromWFromH_no_cond","closestJetInDelR_pt_ToQ2FromWFromH_no_cond",
 
-            "jet_matches_quark1", "jet_matches_quark2", "jet_matches_quark1_two_cond","jet_matches_quark2_two_cond",
+            "closestJetInPTRes_pt_ToQ1FromWFromH_no_cond","closestJetInPTRes_pt_ToQ2FromWFromH_no_cond",
+
+            "closestJetInDelR_ptres_ToQ1FromWFromH","closestJetInDelR_ptres_ToQ2FromWFromH",
+
+            "closestJetInPTRes_ptres_ToQ1FromWFromH","closestJetInPTRes_ptres_ToQ2FromWFromH",
+            
+            "closestJetInDelR_ptres_ToQ1FromWFromH_no_cond","closestJetInDelR_ptres_ToQ2FromWFromH_no_cond",
+
+            "closestJetInPTRes_ptres_ToQ1FromWFromH_no_cond","closestJetInPTRes_ptres_ToQ2FromWFromH_no_cond",
+
+            "closestJetInDelR_delR_ToQ1FromWFromH","closestJetInDelR_delR_ToQ2FromWFromH",
+
+            "closestJetInPTRes_delR_ToQ1FromWFromH","closestJetInPTRes_delR_ToQ2FromWFromH",
+            
+            "closestJetInDelR_delR_ToQ1FromWFromH_no_cond","closestJetInDelR_delR_ToQ2FromWFromH_no_cond",
+
+            "closestJetInPTRes_delR_ToQ1FromWFromH_no_cond","closestJetInPTRes_delR_ToQ2FromWFromH_no_cond",
+
+            "jet_matches_quark1_delr", "jet_matches_quark2_delr", "jet_matches_quark1_delr_two_cond","jet_matches_quark2_delr_two_cond",
+
+            "jet_matches_quark1_ptres", "jet_matches_quark2_ptres", "jet_matches_quark1_ptres_two_cond","jet_matches_quark2_ptres_two_cond",
                                                                                                       
             "pTHgen_no_cond","pTtgen_no_cond","pTTrueGen_no_cond","pTTrueGenPlusNu_no_cond","quark1pT_no_cond","quark2pT_no_cond"]]) 
 
@@ -146,7 +160,7 @@ class HiggsRecoTTH(Module):
         NuFromWFromH = [] 
         NuFromWFromT = [] 
         genlep=[]
-        #closestJetToQFromWFromH=[]
+        #closestJetInDelRToQFromWFromH=[]
         tfromhardprocess=[]
         nmatchedpartons           = 0
         nbothmatchedpartons       = 0 
@@ -158,10 +172,13 @@ class HiggsRecoTTH(Module):
         pTTrueGen       = 0
         pTTrueGenplusNu = 0
         pTVis_jets_match= 0
-        closestJet_pt_ToQFromWFromH     =   [-99    ,-99]
-        closestJet_ptres_ToQFromWFromH  =   [-99    ,-99]
+        closestJetInDelR_pt_ToQFromWFromH      =   [-99    ,-99]
+        closestJetInDelR_ptres_ToQFromWFromH   =   [-99    ,-99]
+        closestJetInPTRes_pt_ToQFromWFromH     =   [-99    ,-99]
+        closestJetInPTRes_ptres_ToQFromWFromH  =   [-99    ,-99]
         quarkpTinQFromWFromH            =   [-99    ,-99]
-        jets_match_quarks               =   [-99    ,-99]
+        jets_match_quarks_delr               =   [-99    ,-99]
+        jets_match_quarks_ptres              =   [-99    ,-99]
         #massHgen = 0
         #deltaM_trueGen_H = 0
         delR_H_partons      = -99
@@ -170,7 +187,8 @@ class HiggsRecoTTH(Module):
         delR_H_q2l          = -99
         delR_H_j1l_reco     = -99
         delR_H_j2l_reco     = -99
-        closestJet_delR_ToQFromWFromH   =   [-99    ,-99]
+        closestJetInDelR_delR_ToQFromWFromH    =   [-99    ,-99]
+        closestJetInPTRes_delR_ToQFromWFromH   =   [-99    ,-99]
         
         # higgs
         for part in genpar:
@@ -462,42 +480,62 @@ class HiggsRecoTTH(Module):
             
             #print(var)
             if len(QFromWFromH)==2 and var==0:
-                closestJetToQFromWFromH = [-1 for i in QFromWFromH]
+                closestJetInDelRToQFromWFromH = [-1 for i in QFromWFromH]
+                closestJetInPTResToQFromWFromH = [-1 for i in QFromWFromH]
                 quark1pT=QFromWFromH[0].p4().Pt()
                 quark2pT=QFromWFromH[1].p4().Pt()
                 #print("the whole quarks list = " + str(QFromWFromH))
                 for quark_idx, quark in enumerate(QFromWFromH):
-                    minDeltaR=99 
-                    jet_idx=-1
+                    minDeltaR=99
+                    jet_idx_DeltaR=-1
+                    minDeltaPT=99
+                    jet_idx_DeltaPT=-1
                     for jet in jetsNoTopNoB:
                         deltaRqj=quark.p4().DeltaR(jet.p4())
                         if deltaRqj < minDeltaR:
                             minDeltaR=deltaRqj
-                            jet_idx=jetsNoTopNoB.index(jet)
-                    closestJetToQFromWFromH[quark_idx]=jet_idx
-                    #print("the closest jets list before = " + str(closestJetToQFromWFromH)) #why does this sometimes print jets with indicies -1,-1
-                if -1 not in closestJetToQFromWFromH:
+                            jet_idx_DeltaR=jetsNoTopNoB.index(jet)
+                        deltaPTqj=(jet.p4().Pt()-quark.p4().Pt())/quark.p4().Pt()
+                        if abs(deltaPTqj) < abs(minDeltaPT):
+                            minDeltaPT=deltaPTqj
+                            jet_idx_DeltaPT=jetsNoTopNoB.index(jet)
+                    closestJetInDelRToQFromWFromH[quark_idx]=jet_idx_DeltaR
+                    closestJetInPTResToQFromWFromH[quark_idx]=jet_idx_DeltaPT
+                    #print("the closest jets list before = " + str(closestJetInDelRToQFromWFromH)) #why does this sometimes print jets with indicies -1,-1
+                if -1 not in closestJetInDelRToQFromWFromH:
                     #print(" you have a selected jet with an index of -1!")
                     #sys.exit("you have a selected with an index of -1!")
 
-                    #print("the closest jets list after = " + str(closestJetToQFromWFromH)) #why does this sometimes print jets with indicies -1,-1
-                    closestJet_pt_ToQFromWFromH     = [-99 for i in QFromWFromH]
-                    closestJet_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
-                    closestJet_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
+                    #print("the closest jets list after = " + str(closestJetInDelRToQFromWFromH)) #why does this sometimes print jets with indicies -1,-1
+                    closestJetInDelR_pt_ToQFromWFromH     = [-99 for i in QFromWFromH]
+                    closestJetInDelR_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
+                    closestJetInDelR_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
+                    closestJetInPTRes_pt_ToQFromWFromH     = [-99 for i in QFromWFromH]
+                    closestJetInPTRes_ptres_ToQFromWFromH  = [-99 for i in QFromWFromH]
+                    closestJetInPTRes_delR_ToQFromWFromH   = [-99 for i in QFromWFromH]
                     quarkpTinQFromWFromH            = [-99 for i in QFromWFromH]
-                    jets_match_quarks               = [-1 for i in QFromWFromH]
+                    jets_match_quarks_delr               = [-1 for i in QFromWFromH]
+                    jets_match_quarks_ptres               = [-1 for i in QFromWFromH]
                     for idx in range(len(QFromWFromH)):
-                        quarkpT         =   QFromWFromH[idx].p4().Pt()
-                        closestjetpT    =   jetsNoTopNoB[closestJetToQFromWFromH[idx]].p4().Pt()
-                        ptres           =   (closestjetpT-quarkpT)/quarkpT
-                        delRqj          =   QFromWFromH[idx].p4().DeltaR(jetsNoTopNoB[closestJetToQFromWFromH[idx]].p4())
+                        quarkpT              =   QFromWFromH[idx].p4().Pt()
+                        closestjetindelrpT   =   jetsNoTopNoB[closestJetInDelRToQFromWFromH[idx]].p4().Pt()
+                        closestjetinptrespT  =   jetsNoTopNoB[closestJetInPTResToQFromWFromH[idx]].p4().Pt()
+                        ptres_delr           =   (closestjetindelrpT-quarkpT)/quarkpT
+                        ptres_ptres          =   (closestjetinptrespT-quarkpT)/quarkpT
+                        delRqj_delr          =   QFromWFromH[idx].p4().DeltaR(jetsNoTopNoB[closestJetInDelRToQFromWFromH[idx]].p4())
+                        delRqj_ptres         =   QFromWFromH[idx].p4().DeltaR(jetsNoTopNoB[closestJetInPTResToQFromWFromH[idx]].p4())
                         # filling
-                        closestJet_pt_ToQFromWFromH[idx]     = closestjetpT
-                        closestJet_ptres_ToQFromWFromH[idx]  = ptres
-                        closestJet_delR_ToQFromWFromH[idx]   = delRqj
-                        quarkpTinQFromWFromH[idx]            = quarkpT
-                        if delRqj < 0.3 and ptres < 0.3: #this is a matched quark
-                            jets_match_quarks[idx]=closestJetToQFromWFromH[idx]
+                        closestJetInDelR_pt_ToQFromWFromH[idx]      = closestjetindelrpT
+                        closestJetInDelR_ptres_ToQFromWFromH[idx]   = ptres_delr
+                        closestJetInDelR_delR_ToQFromWFromH[idx]    = delRqj_delr
+                        closestJetInPTRes_pt_ToQFromWFromH[idx]     = closestjetinptrespT
+                        closestJetInPTRes_ptres_ToQFromWFromH[idx]  = ptres_ptres
+                        closestJetInPTRes_delR_ToQFromWFromH[idx]   = delRqj_ptres
+                        quarkpTinQFromWFromH[idx]                   = quarkpT
+                        if delRqj_delr < 0.3 and ptres_delr < 0.3: #this is a matched quark
+                            jets_match_quarks_delr[idx]=closestJetInDelRToQFromWFromH[idx]
+                        if delRqj_ptres < 0.3 and ptres_ptres < 0.3: #this is a matched quark
+                            jets_match_quarks_ptres[idx]=closestJetInPTResToQFromWFromH[idx]
                             #print jets_match_quarks
                             #print("saved index of the jet that match the quark")
                         #print (closestJet_pt_ToQFromWFromH)
@@ -518,8 +556,8 @@ class HiggsRecoTTH(Module):
                 #print(ExtractpT(lst))
                 
                 if len(QFromWFromH)==2 and var==0:
-                    if -1 not in jets_match_quarks:
-                        pTVis_jets_match=(jetsNoTopNoB[jets_match_quarks[0]].p4()+jetsNoTopNoB[jets_match_quarks[1]].p4()+leps[best[4]].p4()).Pt()
+                    if -1 not in jets_match_quarks_delr:
+                        pTVis_jets_match=(jetsNoTopNoB[jets_match_quarks_delr[0]].p4()+jetsNoTopNoB[jets_match_quarks_delr[1]].p4()+leps[best[4]].p4()).Pt()
                 
                 # TODO full-fledged matching but we are studying it first
                 # TODO: iterate over both quarks and fill nbothmatchedpartons
@@ -552,17 +590,21 @@ class HiggsRecoTTH(Module):
             ret["Hreco_delR_H_j1l_reco%s"             %self.systsJEC[var]] = delR_H_j1l_reco            if best else -99 
             ret["Hreco_delR_H_j2l_reco%s"             %self.systsJEC[var]] = delR_H_j2l_reco            if best else -99
             #delR vars (if best and none)
-            ret["Hreco_delR_H_partons%s"                                %self.systsJEC[var]] = delR_H_partons                       if best else -99 
-            ret["Hreco_delR_H_q1l%s"                                    %self.systsJEC[var]] = delR_H_q1l                           if best else -99 
-            ret["Hreco_delR_H_q2l%s"                                    %self.systsJEC[var]] = delR_H_q2l                           if best else -99
-            ret["Hreco_closestJet_delR_ToQ1FromWFromH%s"                %self.systsJEC[var]] = closestJet_delR_ToQFromWFromH[0]     if best else -99
-            ret["Hreco_closestJet_delR_ToQ2FromWFromH%s"                %self.systsJEC[var]] = closestJet_delR_ToQFromWFromH[1]     if best else -99
+            ret["Hreco_delR_H_partons%s"                                %self.systsJEC[var]] = delR_H_partons                              if best else -99 
+            ret["Hreco_delR_H_q1l%s"                                    %self.systsJEC[var]] = delR_H_q1l                                  if best else -99 
+            ret["Hreco_delR_H_q2l%s"                                    %self.systsJEC[var]] = delR_H_q2l                                  if best else -99
+            ret["Hreco_closestJetInDelR_delR_ToQ1FromWFromH%s"          %self.systsJEC[var]] = closestJetInDelR_delR_ToQFromWFromH[0]      if best else -99
+            ret["Hreco_closestJetInDelR_delR_ToQ2FromWFromH%s"          %self.systsJEC[var]] = closestJetInDelR_delR_ToQFromWFromH[1]      if best else -99
+            ret["Hreco_closestJetInPTRes_delR_ToQ1FromWFromH%s"         %self.systsJEC[var]] = closestJetInPTRes_delR_ToQFromWFromH[0]     if best else -99
+            ret["Hreco_closestJetInPTRes_delR_ToQ2FromWFromH%s"         %self.systsJEC[var]] = closestJetInPTRes_delR_ToQFromWFromH[1]     if best else -99
             
-            ret["Hreco_delR_H_partons_no_cond%s"                        %self.systsJEC[var]] = delR_H_partons              
-            ret["Hreco_delR_H_q1l_no_cond%s"                            %self.systsJEC[var]] = delR_H_q1l                  
-            ret["Hreco_delR_H_q2l_no_cond%s"                            %self.systsJEC[var]] = delR_H_q2l                 
-            ret["Hreco_closestJet_delR_ToQ1FromWFromH_no_cond%s"        %self.systsJEC[var]] = closestJet_delR_ToQFromWFromH[0]
-            ret["Hreco_closestJet_delR_ToQ2FromWFromH_no_cond%s"        %self.systsJEC[var]] = closestJet_delR_ToQFromWFromH[1]
+            ret["Hreco_delR_H_partons_no_cond%s"                               %self.systsJEC[var]] = delR_H_partons              
+            ret["Hreco_delR_H_q1l_no_cond%s"                                   %self.systsJEC[var]] = delR_H_q1l                  
+            ret["Hreco_delR_H_q2l_no_cond%s"                                   %self.systsJEC[var]] = delR_H_q2l                 
+            ret["Hreco_closestJetInDelR_delR_ToQ1FromWFromH_no_cond%s"         %self.systsJEC[var]] = closestJetInDelR_delR_ToQFromWFromH[0]
+            ret["Hreco_closestJetInDelR_delR_ToQ2FromWFromH_no_cond%s"         %self.systsJEC[var]] = closestJetInDelR_delR_ToQFromWFromH[1]
+            ret["Hreco_closestJetInPTRes_delR_ToQ1FromWFromH_no_cond%s"        %self.systsJEC[var]] = closestJetInPTRes_delR_ToQFromWFromH[0]
+            ret["Hreco_closestJetInPTRes_delR_ToQ2FromWFromH_no_cond%s"        %self.systsJEC[var]] = closestJetInPTRes_delR_ToQFromWFromH[1]
 
             #lists from gen loop (if best and none) 
             ret['Hreco_nQFromWFromH%s'                %self.systsJEC[var]] = len(QFromWFromH)           if best else -99
@@ -579,31 +621,43 @@ class HiggsRecoTTH(Module):
             ret['Hreco_nNuFromWFromH_no_cond%s'       %self.systsJEC[var]] = len(NuFromWFromH)        
             ret['Hreco_nNuFromWFromT_no_cond%s'       %self.systsJEC[var]] = len(NuFromWFromT)       
             #pT vars (if best and none) 
-            ret["Hreco_pTTrueGen%s"                                     %self.systsJEC[var]] = pTTrueGen                                    if best else -99
-            ret["Hreco_pTTrueGenPlusNu%s"                               %self.systsJEC[var]] = pTTrueGenplusNu                              if best else -99
-            ret["Hreco_pTtgen%s"                                        %self.systsJEC[var]] = pTtgen                                       if best else -99
-            ret["Hreco_pTHgen%s"                                        %self.systsJEC[var]] = pTHgen                                       if best else -99
-            ret["Hreco_quark1pT%s"                                      %self.systsJEC[var]] = quarkpTinQFromWFromH[0]                      if best else -99
-            ret["Hreco_quark2pT%s"                                      %self.systsJEC[var]] = quarkpTinQFromWFromH[1]                      if best else -99
-            ret["Hreco_closestJet_pt_ToQ1FromWFromH%s"                  %self.systsJEC[var]] = closestJet_pt_ToQFromWFromH[0]               if best else -99
-            ret["Hreco_closestJet_pt_ToQ2FromWFromH%s"                  %self.systsJEC[var]] = closestJet_pt_ToQFromWFromH[1]               if best else -99
-            ret["Hreco_closestJet_ptres_ToQ1FromWFromH%s"               %self.systsJEC[var]] = closestJet_ptres_ToQFromWFromH[0]            if best else -99
-            ret["Hreco_closestJet_ptres_ToQ2FromWFromH%s"               %self.systsJEC[var]] = closestJet_ptres_ToQFromWFromH[1]            if best else -99
-            #ret["Hreco_jet_matches_quark1%s"                            %self.systsJEC[var]] = jets_match_quarks[0]                         if best else -99
-            #ret["Hreco_jet_matches_quark2%s"                            %self.systsJEC[var]] = jets_match_quarks[1]                         if best else -99
+            ret["Hreco_pTTrueGen%s"                                            %self.systsJEC[var]] = pTTrueGen                                    if best else -99
+            ret["Hreco_pTTrueGenPlusNu%s"                                      %self.systsJEC[var]] = pTTrueGenplusNu                              if best else -99
+            ret["Hreco_pTtgen%s"                                               %self.systsJEC[var]] = pTtgen                                       if best else -99
+            ret["Hreco_pTHgen%s"                                               %self.systsJEC[var]] = pTHgen                                       if best else -99
+            ret["Hreco_quark1pT%s"                                             %self.systsJEC[var]] = quarkpTinQFromWFromH[0]                      if best else -99
+            ret["Hreco_quark2pT%s"                                             %self.systsJEC[var]] = quarkpTinQFromWFromH[1]                      if best else -99
+            ret["Hreco_closestJetInDelR_pt_ToQ1FromWFromH%s"                   %self.systsJEC[var]] = closestJetInDelR_pt_ToQFromWFromH[0]         if best else -99
+            ret["Hreco_closestJetInDelR_pt_ToQ2FromWFromH%s"                   %self.systsJEC[var]] = closestJetInDelR_pt_ToQFromWFromH[1]         if best else -99
+            ret["Hreco_closestJetInPTRes_pt_ToQ1FromWFromH%s"                  %self.systsJEC[var]] = closestJetInPTRes_pt_ToQFromWFromH[0]        if best else -99
+            ret["Hreco_closestJetInPTRes_pt_ToQ2FromWFromH%s"                  %self.systsJEC[var]] = closestJetInPTRes_pt_ToQFromWFromH[1]        if best else -99
+            ret["Hreco_closestJetInDelR_ptres_ToQ1FromWFromH%s"                %self.systsJEC[var]] = closestJetInDelR_ptres_ToQFromWFromH[0]      if best else -99
+            ret["Hreco_closestJetInDelR_ptres_ToQ2FromWFromH%s"                %self.systsJEC[var]] = closestJetInDelR_ptres_ToQFromWFromH[1]      if best else -99
+            ret["Hreco_closestJetInPTRes_ptres_ToQ1FromWFromH%s"               %self.systsJEC[var]] = closestJetInPTRes_ptres_ToQFromWFromH[0]     if best else -99
+            ret["Hreco_closestJetInPTRes_ptres_ToQ2FromWFromH%s"               %self.systsJEC[var]] = closestJetInPTRes_ptres_ToQFromWFromH[1]     if best else -99
+            ret["Hreco_jet_matches_quark1_delr%s"                              %self.systsJEC[var]] = jets_match_quarks_delr[0]                    if best else -99
+            ret["Hreco_jet_matches_quark2_delr%s"                              %self.systsJEC[var]] = jets_match_quarks_delr[1]                    if best else -99
+            ret["Hreco_jet_matches_quark1_ptres%s"                             %self.systsJEC[var]] = jets_match_quarks_ptres[0]                   if best else -99
+            ret["Hreco_jet_matches_quark2_ptres%s"                             %self.systsJEC[var]] = jets_match_quarks_ptres[1]                   if best else -99
             
-            ret["Hreco_pTTrueGen_no_cond%s"                             %self.systsJEC[var]] = pTTrueGen                  
-            ret["Hreco_pTTrueGenPlusNu_no_cond%s"                       %self.systsJEC[var]] = pTTrueGenplusNu          
-            ret["Hreco_pTtgen_no_cond%s"                                %self.systsJEC[var]] = pTtgen                   
-            ret["Hreco_pTHgen_no_cond%s"                                %self.systsJEC[var]] = pTHgen
-            ret["Hreco_quark1pT_no_cond%s"                              %self.systsJEC[var]] = quarkpTinQFromWFromH[0]
-            ret["Hreco_quark2pT_no_cond%s"                              %self.systsJEC[var]] = quarkpTinQFromWFromH[1]
-            ret["Hreco_closestJet_pt_ToQ1FromWFromH_no_cond%s"          %self.systsJEC[var]] = closestJet_pt_ToQFromWFromH[0]
-            ret["Hreco_closestJet_pt_ToQ2FromWFromH_no_cond%s"          %self.systsJEC[var]] = closestJet_pt_ToQFromWFromH[1]
-            ret["Hreco_closestJet_ptres_ToQ1FromWFromH_no_cond%s"       %self.systsJEC[var]] = closestJet_ptres_ToQFromWFromH[0]
-            ret["Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond%s"       %self.systsJEC[var]] = closestJet_ptres_ToQFromWFromH[1]
-            ret["Hreco_jet_matches_quark1_two_cond%s"                   %self.systsJEC[var]] = jets_match_quarks[0] if -1 not in jets_match_quarks and best else -99
-            ret["Hreco_jet_matches_quark2_two_cond%s"                   %self.systsJEC[var]] = jets_match_quarks[1] if -1 not in jets_match_quarks and best else -99
+            ret["Hreco_pTTrueGen_no_cond%s"                                    %self.systsJEC[var]] = pTTrueGen                  
+            ret["Hreco_pTTrueGenPlusNu_no_cond%s"                              %self.systsJEC[var]] = pTTrueGenplusNu          
+            ret["Hreco_pTtgen_no_cond%s"                                       %self.systsJEC[var]] = pTtgen                   
+            ret["Hreco_pTHgen_no_cond%s"                                       %self.systsJEC[var]] = pTHgen
+            ret["Hreco_quark1pT_no_cond%s"                                     %self.systsJEC[var]] = quarkpTinQFromWFromH[0]
+            ret["Hreco_quark2pT_no_cond%s"                                     %self.systsJEC[var]] = quarkpTinQFromWFromH[1]
+            ret["Hreco_closestJetInDelR_pt_ToQ1FromWFromH_no_cond%s"           %self.systsJEC[var]] = closestJetInDelR_pt_ToQFromWFromH[0]
+            ret["Hreco_closestJetInDelR_pt_ToQ2FromWFromH_no_cond%s"           %self.systsJEC[var]] = closestJetInDelR_pt_ToQFromWFromH[1]
+            ret["Hreco_closestJetInPTRes_pt_ToQ1FromWFromH_no_cond%s"          %self.systsJEC[var]] = closestJetInPTRes_pt_ToQFromWFromH[0]
+            ret["Hreco_closestJetInPTRes_pt_ToQ2FromWFromH_no_cond%s"          %self.systsJEC[var]] = closestJetInPTRes_pt_ToQFromWFromH[1]
+            ret["Hreco_closestJetInDelR_ptres_ToQ1FromWFromH_no_cond%s"        %self.systsJEC[var]] = closestJetInDelR_ptres_ToQFromWFromH[0]
+            ret["Hreco_closestJetInDelR_ptres_ToQ2FromWFromH_no_cond%s"        %self.systsJEC[var]] = closestJetInDelR_ptres_ToQFromWFromH[1]
+            ret["Hreco_closestJetInPTRes_ptres_ToQ1FromWFromH_no_cond%s"       %self.systsJEC[var]] = closestJetInPTRes_ptres_ToQFromWFromH[0]
+            ret["Hreco_closestJetInPTRes_ptres_ToQ2FromWFromH_no_cond%s"       %self.systsJEC[var]] = closestJetInPTRes_ptres_ToQFromWFromH[1]
+            ret["Hreco_jet_matches_quark1_delr_two_cond%s"                     %self.systsJEC[var]] = jets_match_quarks_delr[0] if -1 not in jets_match_quarks_delr and best else -99
+            ret["Hreco_jet_matches_quark2_delr_two_cond%s"                     %self.systsJEC[var]] = jets_match_quarks_delr[1] if -1 not in jets_match_quarks_delr and best else -99
+            ret["Hreco_jet_matches_quark1_ptres_two_cond%s"                    %self.systsJEC[var]] = jets_match_quarks_ptres[0] if -1 not in jets_match_quarks_ptres and best else -99
+            ret["Hreco_jet_matches_quark2_ptres_two_cond%s"                    %self.systsJEC[var]] = jets_match_quarks_ptres[1] if -1 not in jets_match_quarks_ptres and best else -99
 
             # other vars
             #TODO ret["Hreco_deltaM_trueGen_H%s"            %self.systsJEC[var]] = deltaM_trueGen_H           if best else -99 
