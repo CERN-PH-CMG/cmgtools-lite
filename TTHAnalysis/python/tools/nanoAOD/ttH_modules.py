@@ -309,12 +309,13 @@ higgsRecoTTH = lambda : HiggsRecoTTH(label="_Recl",
                                      cut_BDT_rTT_score = 0.0,
                                      cuts_mW_had = (60.,100.),
                                      cuts_mH_vis = (80.,140.),
-                                     btagDeepCSVveto = 0.1522)
+                                     btagDeepCSVveto = 'L', # or 'M'
+                                     useTopTagger=True)
 higgsRecoTTHNoTopTagger = lambda : HiggsRecoTTH(label="_Recl",
                                                 cut_BDT_rTT_score = 0.0,
                                                 cuts_mW_had = (60.,100.),
                                                 cuts_mH_vis = (80.,140.),
-                                                btagDeepCSVveto = 0.1522,
+                                                btagDeepCSVveto = 'L', # or 'M'
                                                 useTopTagger=False)
 
 from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import HiggsRegressionTTH
