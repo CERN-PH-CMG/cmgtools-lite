@@ -23,6 +23,8 @@ class HiggsRecoTTH(Module):
             "delR_H_partons","delR_H_j1j2","delR_H_q1l", "delR_H_q2l", "delR_H_j1l_reco", "delR_H_j2l_reco",
                                                                                                       
             "delR_H_partons_no_cond","delR_H_q1l_no_cond", "delR_H_q2l_no_cond",
+
+            "delR_lep_jm1","delR_lep_jm2", "inv_mass_jm1jm2", "inv_mass_jm1jm2_no_cond",
                                                                                                       
             "nQFromWFromH","nLFromWFromH","nQFromWFromT","nLFromWFromT", "nNuFromWFromH", "nNuFromWFromT",
                                                                                                       
@@ -164,12 +166,15 @@ class HiggsRecoTTH(Module):
         jets_match_quarks               =   [-99    ,-99]
         #massHgen = 0
         #deltaM_trueGen_H = 0
+        inv_mass_jm1jm2     = -99
         delR_H_partons      = -99
         delR_H_j1j2         = -99
         delR_H_q1l          = -99
         delR_H_q2l          = -99
         delR_H_j1l_reco     = -99
         delR_H_j2l_reco     = -99
+        delR_lep_jm1        = -99
+        delR_lep_jm2        = -99
         closestJet_delR_ToQFromWFromH   =   [-99    ,-99]
         
         # higgs
@@ -504,6 +509,9 @@ class HiggsRecoTTH(Module):
                         #print (closestJet_ptres_ToQFromWFromH)
                         #print (closestJet_delR_ToQFromWFromH)
                         #print (quarkpTinQFromWFromH)
+                    if len(QFromWFromH)==2 and var==0:
+                        if -1 not in jets_match_quarks:
+                            inv_mass_jm1jm2=(jetsNoTopNoB[jets_match_quarks[0]].p4()+jetsNoTopNoB[jets_match_quarks[1]].p4()).M()
 
             if best: #TODO: what does that actually do compared to "if best else -99"
                 #if -1 not in jets_match_quarks:
@@ -519,6 +527,8 @@ class HiggsRecoTTH(Module):
                 
                 if len(QFromWFromH)==2 and var==0:
                     if -1 not in jets_match_quarks:
+                        delR_lep_jm1=leps[best[4]].p4().DeltaR(jetsNoTopNoB[jets_match_quarks[0]].p4())
+                        delR_lep_jm2=leps[best[4]].p4().DeltaR(jetsNoTopNoB[jets_match_quarks[1]].p4())
                         pTVis_jets_match=(jetsNoTopNoB[jets_match_quarks[0]].p4()+jetsNoTopNoB[jets_match_quarks[1]].p4()+leps[best[4]].p4()).Pt()
                 
                 # TODO full-fledged matching but we are studying it first
@@ -551,6 +561,9 @@ class HiggsRecoTTH(Module):
             ret["Hreco_nmismatchedtoptaggedjets%s"    %self.systsJEC[var]] = nmismatchedtoptaggedjets   if best else -99
             ret["Hreco_delR_H_j1l_reco%s"             %self.systsJEC[var]] = delR_H_j1l_reco            if best else -99 
             ret["Hreco_delR_H_j2l_reco%s"             %self.systsJEC[var]] = delR_H_j2l_reco            if best else -99
+
+            ret["Hreco_delR_lep_jm1%s"             %self.systsJEC[var]] = delR_lep_jm1            if best else -99 
+            ret["Hreco_delR_lep_jm2%s"             %self.systsJEC[var]] = delR_lep_jm2            if best else -99
             #delR vars (if best and none)
             ret["Hreco_delR_H_partons%s"                                %self.systsJEC[var]] = delR_H_partons                       if best else -99 
             ret["Hreco_delR_H_q1l%s"                                    %self.systsJEC[var]] = delR_H_q1l                           if best else -99 
@@ -591,6 +604,9 @@ class HiggsRecoTTH(Module):
             ret["Hreco_closestJet_ptres_ToQ2FromWFromH%s"               %self.systsJEC[var]] = closestJet_ptres_ToQFromWFromH[1]            if best else -99
             #ret["Hreco_jet_matches_quark1%s"                            %self.systsJEC[var]] = jets_match_quarks[0]                         if best else -99
             #ret["Hreco_jet_matches_quark2%s"                            %self.systsJEC[var]] = jets_match_quarks[1]                         if best else -99
+            
+            ret["Hreco_inv_mass_jm1jm2%s"                               %self.systsJEC[var]] = inv_mass_jm1jm2 if best else -99                  
+            ret["Hreco_inv_mass_jm1jm2_no_cond%s"                       %self.systsJEC[var]] = inv_mass_jm1jm2                  
             
             ret["Hreco_pTTrueGen_no_cond%s"                             %self.systsJEC[var]] = pTTrueGen                  
             ret["Hreco_pTTrueGenPlusNu_no_cond%s"                       %self.systsJEC[var]] = pTTrueGenplusNu          
