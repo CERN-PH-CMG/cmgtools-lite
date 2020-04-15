@@ -501,7 +501,7 @@ class HiggsRecoTTH(Module):
                         closestJet_ptres_ToQFromWFromH[idx]  = ptres
                         closestJet_delR_ToQFromWFromH[idx]   = delRqj
                         quarkpTinQFromWFromH[idx]            = quarkpT
-                        if delRqj < 0.3 and ptres < 0.3: #this is a matched quark
+                        if delRqj < 0.3 and abs(ptres) < 0.3: #this is a matched quark
                             jets_match_quarks[idx]=closestJetToQFromWFromH[idx]
                             #print jets_match_quarks
                             #print("saved index of the jet that match the quark")
