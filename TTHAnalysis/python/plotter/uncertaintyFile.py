@@ -6,7 +6,7 @@ from array import array
 from copy import deepcopy
 
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
-
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import _cloneNoDir
 class Uncertainty:
     def __init__(self,name,procmatch,binmatch,unc_type,more_args=None,extra=None,options=None):
         self.name = name
@@ -26,6 +26,7 @@ class Uncertainty:
         self.normUnc=[None,None]
         self._postProcess = None
         self._nontrivialSelectionChange = False
+        self._year = None
         lnU_byname = name.endswith("_lnU")
         lnU_byextra = extra != None and ('lnU' in extra) and bool(extra['lnU'])
         if lnU_byname != lnU_byextra: raise RuntimeError("Inconsistent declaration of %s: is it a lnU or not? by name %r, by options %r" % (name,lnU_byname,lnU_byextra))
@@ -67,6 +68,12 @@ class Uncertainty:
             self.trivialFunc = ['apply_norm_up','apply_norm_dn']
             self.normUnc[0] = float(self.args[0])
             self.normUnc[1] = 1.0/self.normUnc[0]
+        elif self.unc_type=='envelope':
+            if 'FakeRates' not in self.extra: 
+                raise RuntimeError("A set of FakeRates are needed for envelope")
+            self.fakerate = [ FakeRate( fr, loadFilesNow=False, year=self._options.year) for fr in self.extra['FakeRates'] ]
+
+
         elif self.unc_type=='none':
             pass
         else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
@@ -77,6 +84,8 @@ class Uncertainty:
                 self._postProcess = "Normalize"
         if 'DoesNotChangeEventSelection' in self.extra and self.extra['DoesNotChangeEventSelection']:
             self._nontrivialSelectionChange = False
+        if 'year' in self.extra: 
+            self._year = self.extra['year']
     def isDummy(self):
         return  self.unc_type == 'none'
     def isTrivial(self,sign):
@@ -86,24 +95,26 @@ class Uncertainty:
         return self._nontrivialSelectionChange
     def getTrivial(self,sign,results):
         idx = 0 if sign=='up' else 1
-        if self.getFR(sign) or (self.trivialFunc[idx]==None): raise RuntimeError
+        if self.getFR(sign) or (self.trivialFunc[idx]==None):
+            print self.name
+            raise RuntimeError("Trying to get trivial from a non trivial variation")
         return getattr(self,self.trivialFunc[idx])(results)
-    def postProcess(self,central,up,down):
+    def postProcess(self,central,variations):
         if self._postProcess == None:
             return
         if self._postProcess == "Normalize":
             h0 = central.Integral()
             if h0 != 0:
-                if up.Integral(): 
-                    up.Scale(h0/up.Integral())
-                else:   
-                    up.Reset(); up.Add(h0) 
-                if down.Integral(): 
-                    down.Scale(h0/down.Integral())
-                else:             
-                    down.Reset(); down.Add(h0) 
+                for var in variations: 
+                    if var.Integral():
+                        var.Scale(h0/var.Integral())
+                    else: 
+                        var.Reset(); var.Add(h0)
             else:
-                up.Scale(0); down.Scale(0);
+                for var in variations: 
+                    var.Scale(0)
+                
+
     def isNorm(self):
         return (self.normUnc!=[None,None])
 
@@ -133,8 +144,13 @@ class Uncertainty:
         return self._binmatch
     def unc_type(self):
         return self.unc_type
+    def year(self):
+        return self._year
     def getFR(self,sign):
-        FR = self.fakerate[0 if sign=='up' else 1]
+        if self.unc_type == 'envelope':
+            FR = self.fakerate[int('%s'%(sign.replace('var','')))]
+        else:
+            FR = self.fakerate[0 if sign=='up' else 1]
         if FR: FR.loadFiles()
         return FR
     def getFRToRemove(self):
@@ -211,3 +227,4 @@ class UncertaintyFile:
     def add(self,uncertainty):
         if uncertainty.name in [u.name for u in self._uncertainty]: raise RuntimeError, 'Uncertainty with name %s is already present' % uncertainty.name
         self._uncertainty.append(uncertainty)
+ 

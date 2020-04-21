@@ -21,19 +21,31 @@ def _projectionXNoDir(hist2d,name,y1,y2):
         proj.SetBinError(ix, sqrt(sum(hist2d.GetBinError(ix,y)**2 for y in ys)))
     return proj
 
-def cropNegativeBins(histo):
+def _getHistoInRangeNoDir(hist, name, bin1, bin2): # bin1 is included, bin2 is not included
+    nx = hist.GetNbinsX()
+    ax = hist.GetXaxis()
+    bins =  [(ax.GetBinLowEdge(b+1) if b < nx else ax.GetBinUpEdge(b)) for b in xrange(0,nx+1)]
+    xbins = array('f',bins[bin1-1:bin2])
+    proj = ROOT.TH1D(name,name,len(xbins)-1,xbins); proj.SetDirectory(None)
+    proj.GetXaxis().SetTitle(ax.GetTitle()) # in case
+    for bx in xrange(1,bin2-bin1+1):
+        proj.SetBinContent( bx, hist.GetBinContent(bx+bin1-1))
+        proj.SetBinError  ( bx, hist.GetBinError  (bx+bin1-1))
+    return proj
+
+def cropNegativeBins(histo,threshold=0.):
             if "TH1" in histo.ClassName():
                 for b in xrange(0,histo.GetNbinsX()+2):
-                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
+                    if histo.GetBinContent(b) < threshold: histo.SetBinContent(b, threshold)
             elif "TH2" in histo.ClassName():
                 for bx in xrange(0,histo.GetNbinsX()+2):
                     for by in xrange(0,histo.GetNbinsY()+2):
-                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
+                        if histo.GetBinContent(bx,by) < threshold: histo.SetBinContent(bx,by, threshold)
             elif "TH3" in histo.ClassName():
                 for bx in xrange(0,histo.GetNbinsX()+2):
                     for by in xrange(0,histo.GetNbinsY()+2):
                         for bz in xrange(0,histo.GetNbinsZ()+2):
-                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
+                            if histo.GetBinContent(bx,by,bz) < threshold: histo.SetBinContent(bx,by,bz, threshold)
 
 def _isNullHistogram(h):
     if h.Integral() != 0: return False
@@ -216,8 +228,8 @@ class HistoWithNuisances:
         if self.nominal != self.central:
             ret['nominal'] = self.nominal; 
         variations = []
-        for (x,(v1,v2)) in self.variations.iteritems():
-            variations.append((x,(v1,v2)))
+        for (x,y) in self.variations.iteritems():
+            variations.append((x,y))
         ret['variations'] = variations
         return ret
     def __setstate__(self,state):
@@ -225,10 +237,11 @@ class HistoWithNuisances:
         self.central = _cloneNoDir(state['central'], state['name'])
         self.nominal = _cloneNoDir(state['nominal'], state['name']+"_nominal") if (state['nominal'] != None) else self.central
         self.variations = dict()
-        for (x,(v1,v2)) in state['variations']:
-            v1c = _cloneNoDir(v1, "%s_%s_up"   % (self.central.GetName(),x))
-            v2c = _cloneNoDir(v2, "%s_%s_down" % (self.central.GetName(),x))
-            self.variations[x] = (v1c, v2c)
+        for (x,y) in state['variations']:
+            self.variations[x] = []
+            for i,h in enumerate(y): 
+                self.variations[x].append( _cloneNoDir(h, "%s_%s_%d"   % (self.central.GetName(),x,i)) )
+                
         self._rooFit  = None
         self._postFit = None
         self._usePostFit = True
@@ -404,12 +417,12 @@ class HistoWithNuisances:
             ret.SetPoint(i, x, y)
             ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
         return ret
-    def cropNegativeBins(self, allVariations=True):
-        cropNegativeBins(self.nominal)
+    def cropNegativeBins(self, allVariations=True, threshold=0., alsoVariations=False):
+        cropNegativeBins(self.nominal,threshold=threshold)
         if allVariations:
-            cropNegativeBins(self.central)
+            cropNegativeBins(self.central,threshold=threshold)
             for hs in self.variations.itervalues():
-                for h in hs: cropNegativeBins(h)
+                for h in hs: cropNegativeBins(h, threshold=threshold if alsoVariations else 0.)
     def getCentral(self):
         return self.central
     def getVariation(self,alternate):
@@ -421,9 +434,15 @@ class HistoWithNuisances:
     def getVariationList(self):
         return self.variations.keys()
     def addVariation(self,name,sign,histo_varied, clone=True):
-        idx = 0 if sign=='up' else 1
-        if name not in self.variations: self.variations[name] = [None,None]
-        self.variations[name][idx] = _cloneNoDir(histo_varied) if clone else histo_varied
+        if sign in ['up', 'down']:
+            if name not in self.variations: self.variations[name] = [None,None]
+            idx = 0 if sign=='up' else 1
+            self.variations[name][idx] = _cloneNoDir(histo_varied) if clone else histo_varied
+        else:  # is an envelope
+            if name not in self.variations: 
+                self.variations[name] = []
+            self.variations[name].append( _cloneNoDir(histo_varied) if clone else histo_varied ) 
+            setattr(self.variations[name][-1], 'isEnvelope', True) 
         # invalidate caches
         if self._rooFit or self._postFit:
             print "WARNING: adding a variantion on an object that already has roofit/postfit info"
@@ -472,9 +491,10 @@ class HistoWithNuisances:
                 y  =  h.GetBinContent(b)
                 if debug: 
                     print "  bin %3d  nominal %9.4f  varied %9.4f   ratio %8.5f   diff %8.5f" % (
-                                b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
-                if (y0 == 0):
-                    if (y != 0): return True
+                        b, y0, y, (y/y0 if y0 else 1), y/y0-ratio if (ratio != None and y0 != 0) else 0)
+                if (y0 <= 1e-5):
+                    if (y > 1e-4):
+                        return True
                 elif y == 0: 
                     return True
                 else:
@@ -618,6 +638,28 @@ class HistoWithNuisances:
         self._rooFit["nuisances"] = nuisances
         self._rooFit["templates"] = templates
         self._rooFit["scaleFactors"] = {}
+
+    def buildEnvelopes(self):
+        for var in self.getVariationList():
+            if len( self.getVariation(var) ) < 3: continue
+            up   = _cloneNoDir( self.central, self.central.GetName() + 'envUp' )
+            down = _cloneNoDir( self.central, self.central.GetName() + 'envDown' )
+            for x in range(1, self.central.GetNbinsX()+1):
+                for y in range(1,self.central.GetNbinsY()+1):
+                    ibin  = self.central.GetBin(x,y)
+                    maxUp = self.central.GetBinContent( ibin )
+                    minDn = self.central.GetBinContent( ibin ) 
+                    for hvar in self.getVariation(var):
+                        cont = hvar.GetBinContent(ibin)
+                        if cont-maxUp > 0: maxUp = cont
+                        if cont-minDn < 0: minDn = cont
+                    up.SetBinContent( ibin, maxUp ) 
+                    down.SetBinContent( ibin, minDn ) 
+            del self.variations[var]
+            self.addVariation( var, 'up', up)
+            self.addVariation( var, 'down', down)
+
+
     def _dropPdfAndNorm(self):
         if self._rooFit:
             for k in "norm", "pdf", "nuisances", "templates", "scaleFactors":
@@ -633,8 +675,8 @@ class HistoWithNuisances:
         vars2 = copy(x.variations)
         for var in set(vars1.keys()+vars2.keys()):
             if var not in vars1: 
-                vars1[var] = [_cloneNoDir(self.central),_cloneNoDir(self.central)]
-            if var not in vars2: vars2[var] = [x.central,x.central]
+                vars1[var] = [_cloneNoDir(self.central) for _ in vars2[var] ]
+            if var not in vars2: vars2[var] = [x.central for _ in vars1[var] ]
         def adder(v1,v2):
             if "TGraph" in v1.ClassName():
                 other = ROOT.TList()
@@ -649,7 +691,7 @@ class HistoWithNuisances:
             self.nominal = _cloneNoDir(self.central,self.central.GetName())
             adder(self.nominal,x.nominal)
         for var in set(vars1.keys()+vars2.keys()):
-            for idx in xrange(2): adder(vars1[var][idx],vars2[var][idx])
+            for idx in xrange(len(vars1[var])): adder(vars1[var][idx],vars2[var][idx])
         if self._rooFit and "pdf" in self._rooFit and x._rooFit:
             print "Would be good to be able to add roofit objects"
         self._dropPdfAndNorm()
@@ -685,6 +727,25 @@ class HistoWithNuisances:
         h._postFit = self._postFit
         h._usePostFit = self._usePostFit
         return h
+    def getHistoInRange(self, name, bin1, bin2): # first bin is included, second is not
+        h = HistoWithNuisances(_getHistoInRangeNoDir( self.central, name, bin1,bin2))
+        h.central.SetDirectory(None)
+        for v,p in self.variations.iteritems():
+            h.variations[v] = (_getHistoInRangeNoDir(p[0], "%s_%s_up"   % (name,v), bin1,bin2),
+                               _getHistoInRangeNoDir(p[1], "%s_%s_down" % (name,v), bin1,bin2))
+            for hi in h.variations[v]: hi.SetDirectory(None)
+        if self.nominal == self.central:
+            h.nominal = h.central
+        else:
+            h.nominal = _getHistoInRangeNoDir(self.nominal, name+"_nominal", bin1,bin2)
+            h.nominal.SetDirectory(None)
+        if self._rooFit: h.setupRooFit(self._rooFit["context"])
+        h._postFit = self._postFit
+        h._usePostFit = self._usePostFit
+        return h
+        
+                               
+
     def writeToFile(self,tfile,writeVariations=True,takeOwnership=True):
         tfile.WriteTObject(self.nominal, self.nominal.GetName())
         for key,vals in self.variations.iteritems():

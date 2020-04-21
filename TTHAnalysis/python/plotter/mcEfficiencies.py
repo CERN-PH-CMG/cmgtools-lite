@@ -13,6 +13,7 @@ def addMCEfficiencyOptions(parser):
     parser.add_option("--select-plot", "--sP", dest="plotselect", action="append", default=[], help="Select only these plots out of the full file")
     parser.add_option("--exclude-plot", "--xP", dest="plotexclude", action="append", default=[], help="Exclude these plots from the full file")
     parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
+    parser.add_option("--weightNumerator", dest="weightNumerator", default=None, help="Adds a weight only to the numerator (MC only) for closures tests of scale factors")
     parser.add_option("--rebin", dest="globalRebin", type="int", default="0", help="Rebin all plots by this factor")
     parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
     parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
@@ -54,15 +55,21 @@ def doLegend(rocs,options,textSize=0.035,header=None):
         legend_ = leg 
         return leg
 
-def effFromH2D(h2d,options,uncertainties="CP"):
+def effFromH2D(h2d,options,uncertainties="CP", customNum=None, name=None):
     points = []
     for xbin in xrange(1,h2d.GetNbinsX()+1):
         xval = h2d.GetXaxis().GetBinCenter(xbin)
         if options.xcut and (xval < options.xcut[0] or xval > options.xcut[1]):
             continue
         xerrs = h2d.GetXaxis().GetBinLowEdge(xbin)-xval, h2d.GetXaxis().GetBinUpEdge(xbin)-xval 
-        ypass,ypassErr, yfail,yfailErr = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
-        yall = ypass+yfail
+        if customNum and 'data' not in name: 
+            ypass,ypassErr, yfail,yfailErr = customNum.GetBinContent(xbin,2),customNum.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
+            ypass2,ypassErr2 = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2)
+            yall = ypass2+yfail
+            
+        else:
+            ypass,ypassErr, yfail,yfailErr = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
+            yall = ypass+yfail
         if yall <= 0: continue
         if ypass < 0:
             print "Warning: effFromH2D for %s at x = %g: ypass = %g +- %g  yfail = %g +- %g\n" % (h2d.GetName(), xval, ypass, ypassErr, yfail, yfailErr)
@@ -351,13 +358,32 @@ def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="a
                      mybins,
                      options) 
     report = mca.getPlots(pspec,cut,makeSummary=True)
+    if mainOptions.weightNumerator:
+        pspec_num = PlotSpec("%s_vs_%s_fornum"  % (idplot.name, xvarplot.name), 
+                             "%s:%s" % (idplot.expr,xvarplot.expr),
+                             mybins,
+                             options) 
+        pspec_num.extracut ='(%s)'%mainOptions.weightNumerator
+        report_num = mca.getPlots(pspec_num,cut,makeSummary=True)
+        if 'signal' in report_num and 'background' in report_num:
+            report_num['total'] = mergePlots(pspec.name+"_total", [ report_num[s] for s in ('signal','background') ] )
+        if 'data' in report_num and 'background' in report_num:
+            makeDataSub(report_num, mca)
+        
+    
+
     if 'signal' in report and 'background' in report:
         report['total'] = mergePlots(pspec.name+"_total", [ report[s] for s in ('signal','background') ] )
     if 'data' in report and 'background' in report:
         makeDataSub(report, mca)
-    if notDoProfile and not returnSeparatePassFail:
-        if is2D: report = dict([(title, effFromH3D(hist,mainOptions)) for (title, hist) in report.iteritems()])
-        else:    report = dict([(title, effFromH2D(hist,mainOptions)) for (title, hist) in report.iteritems()])
+    if mainOptions.weightNumerator:
+        if notDoProfile and not returnSeparatePassFail:
+            if is2D: report = dict([(title, effFromH3D(hist,mainOptions, customNum=report_num[title], name=title)) for (title, hist) in report.iteritems()])
+            else:    report = dict([(title, effFromH2D(hist,mainOptions, customNum=report_num[title], name=title)) for (title, hist) in report.iteritems()])
+    else: 
+        if notDoProfile and not returnSeparatePassFail:
+            if is2D: report = dict([(title, effFromH3D(hist,mainOptions)) for (title, hist) in report.iteritems()])
+            else:    report = dict([(title, effFromH2D(hist,mainOptions)) for (title, hist) in report.iteritems()])
     return report
 
 def styleEffsByProc(effmap,procs,mca):

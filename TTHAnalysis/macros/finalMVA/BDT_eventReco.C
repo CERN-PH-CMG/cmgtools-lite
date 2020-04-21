@@ -41,7 +41,7 @@ class BDT_EventReco_Jet : public eObj {
     _qgl = -0.2;
   };
   BDT_EventReco_Jet(float pt,float eta, float phi, float mass, float csv, float deepcsv, float deepjet, float cvsl, float cvsb, float ptD, float axis1, int mult, float qgl): eObj(pt,eta,phi,mass),
-    _deepcsv(deepcsv), _cvsl(cvsl), _cvsb(cvsb), _ptD(ptD), _axis1(std::exp(-axis1)), _mult(mult) {
+																					      _deepcsv(deepcsv), _deepjet(deepjet), _cvsl(cvsl), _cvsb(cvsb), _ptD(ptD), _axis1(std::exp(-axis1)), _mult(mult) {
   // pass axis1 = -log(sqrt(...)), training uses definition of axis1 without -log
     _csv = std::max(float(-0.1),csv);
     _qgl = std::max(float(-0.1),qgl);
@@ -1004,7 +1004,7 @@ std::vector<float> BDT_EventReco::CalcHjTagger(char* _permlep, char* _x, std::ve
 	
       float dr_lep0 = dR(lep_fromTop.get(),jet_fromHiggs->p4());
       float dr_lep1 = dR(lep_fromHig.get(),jet_fromHiggs->p4());
-	
+
       iv1_1 = std::min(dr_lep0,dr_lep1);
       iv1_2 = std::max(hjLegacyTraining ? jet_fromHiggs->deepjet() : (hj2017training ? jet_fromHiggs->deepcsv() : jet_fromHiggs->csv()) ,float(0));
       iv1_3 = std::max(jet_fromHiggs->qgl(),float(0));

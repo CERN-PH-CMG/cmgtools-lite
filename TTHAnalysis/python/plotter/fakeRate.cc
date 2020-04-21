@@ -17,6 +17,7 @@ TH2 * FR4_el = 0;
 TH2 * FR5_el = 0;
 TH2 * QF_el = 0;
 TH2 * FRi_mu[99], *FRi_el[99], *FRi_tau[6];
+TH2 * QFi_el[99];
 TH2 * FR_tau = 0;
 TH2 * FR2_tau = 0;
 TH2 * FR3_tau = 0;
@@ -58,7 +59,7 @@ TH2 * MUSF3 = 0;
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
     TH2 **histo = 0, **hptr2 = 0;
-    TH2 * FR_temp = 0;
+    TH2 * FR_temp = 0; TH2* QF_el_temp =0 ;
     if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
     else if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
@@ -74,6 +75,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR5_el") { histo = & FR5_el; hptr2 = & FRi_el[5]; }
     else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
     else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
+    else if (TString(histoName).BeginsWith("QF_el_"))  {histo = & QF_el_temp; hptr2 = & QFi_el[TString(histoName).ReplaceAll("QF_el_","").Atoi()];}
     else if (histoName == "QF_el") histo = & QF_el;
     else if (histoName == "FR_mu_FO1_QCD")  { histo = &FR_mu_FO1_QCD ;  hptr2 = & FRi_FO_mu[0]; }
     else if (histoName == "FR_mu_FO1_insitu")  { histo = &FR_mu_FO1_insitu ;  hptr2 = & FRi_FO_mu[1]; }
@@ -224,6 +226,25 @@ float chargeFlipWeight_2lss(float l1pt, float l1eta, int l1pdgId,
         int ptbin  = std::max(1, std::min(QF_el->GetNbinsX(), QF_el->GetXaxis()->FindBin(l2pt)));
         int etabin = std::max(1, std::min(QF_el->GetNbinsY(), QF_el->GetYaxis()->FindBin(std::abs(l2eta))));
         w += QF_el->GetBinContent(ptbin,etabin);
+    }
+    return w;
+}
+
+float chargeFlipWeight_2lss_i(float l1pt, float l1eta, int l1pdgId, 
+			      float l2pt, float l2eta, int l2pdgId, int year) 
+{
+    if (l1pdgId * l2pdgId > 0) return 0.;
+    int indx = year-2015;
+    double w = 0;
+    if (abs(l1pdgId) == 11) {
+        int ptbin  = std::max(1, std::min(QFi_el[indx]->GetNbinsX(), QFi_el[indx]->GetXaxis()->FindBin(l1pt)));
+        int etabin = std::max(1, std::min(QFi_el[indx]->GetNbinsY(), QFi_el[indx]->GetYaxis()->FindBin(std::abs(l1eta))));
+        w += QFi_el[indx]->GetBinContent(ptbin,etabin);
+    }
+    if (abs(l2pdgId) == 11) {
+        int ptbin  = std::max(1, std::min(QFi_el[indx]->GetNbinsX(), QFi_el[indx]->GetXaxis()->FindBin(l2pt)));
+        int etabin = std::max(1, std::min(QFi_el[indx]->GetNbinsY(), QFi_el[indx]->GetYaxis()->FindBin(std::abs(l2eta))));
+        w += QFi_el[indx]->GetBinContent(ptbin,etabin);
     }
     return w;
 }

@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <map>
 
 float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
 
@@ -68,31 +69,107 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 
 float returnInputX(float x, float y) {return x;}
 
-int ttH_catIndex_2lss(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nBJetMedium25){
+float mvaCat(float ttH, float rest, float ttW, float thq){
+  float ret = 0; 
+  if (ttH > rest && ttH > ttW && ttH > thq){
+    ret =  ttH;
+  }
+  if (ttW > ttH && ttW > rest && ttW > thq){
+    ret= ttW+1;
+  }
+  if (thq > ttH && thq > ttW && thq > rest){
+    ret= thq+2;
+  }
+  if (rest > ttH && rest > thq && rest > ttW){
+    ret= rest+3;
+  }
+  return ret;
 
-//2lss_ee_neg
-//2lss_ee_pos
-//2lss_em_bl_neg
-//2lss_em_bl_pos
-//2lss_em_bt_neg
-//2lss_em_bt_pos
-//2lss_mm_bl_neg
-//2lss_mm_bl_pos
-//2lss_mm_bt_neg
-//2lss_mm_bt_pos
-   
-  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0) return 2-1;
-  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0) return 3-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2) return 4-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2) return 5-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2) return 6-1;
-  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2) return 7-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2) return 8-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2) return 9-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2) return 10-1;
-  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2) return 11-1;
+}
 
- return -1;
+int ttH_catIndex_2lss(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
+{
+
+//2lss_ee_ttH
+//2lss_ee_rest
+//2lss_ee_ttw
+//2lss_ee_thq
+//2lss_em_ttH
+//2lss_em_rest
+//2lss_em_ttw
+//2lss_em_thq
+//2lss_mm_ttH
+//2lss_mm_rest
+//2lss_mm_ttw
+//2lss_mm_thq  
+  int flch = 0;
+  int procch = 0;
+
+  if (abs(LepGood1_pdgId)+abs(LepGood2_pdgId) == 22)
+    flch = 0;
+  else if (abs(LepGood1_pdgId)+abs(LepGood2_pdgId) == 24)
+    flch = 1;
+  else if (abs(LepGood1_pdgId)+abs(LepGood2_pdgId) == 26)
+    flch = 2;
+  else
+    cout << "[2lss]: It shouldnt be here. pdgids are " << abs(LepGood1_pdgId) << " " << abs(LepGood2_pdgId)  << endl;
+
+  if (tth >= ttw && tth >= thq && tth >= rest)
+    procch = 0;
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    procch = 1;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    procch = 2;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    procch = 3;
+  else 
+    cout << "[2lss]: It shouldnt be here. DNN scores are " << tth << " " << rest << " " << ttw << " " << thq << endl;
+      
+  return flch*4+procch+1;
+
+}
+
+std::map<TString,int> bins2lss = {{"ee_ttHnode",5},{"ee_Restnode",8},{"ee_ttWnode",6},{"ee_tHQnode",4},
+				  {"em_ttHnode",13},{"em_Restnode",8},{"em_ttWnode",19},{"em_tHQnode",11},
+				  {"mm_ttHnode",13},{"mm_Restnode",11},{"mm_ttWnode",15},{"mm_tHQnode",7}};
+std::vector<TString> bin2lsslabels = {
+  "ee_ttHnode","ee_Restnode","ee_ttWnode","ee_tHQnode",
+  "em_ttHnode","em_Restnode","em_ttWnode","em_tHQnode",
+  "mm_ttHnode","mm_Restnode","mm_ttWnode","mm_tHQnode"
+};
+
+std::map<TString, TH1F*> binHistos2lss;
+std::map<TString, int> bins2lsscumul;
+TFile* f2lssBins;
+
+
+int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
+{
+  if (!f2lssBins){
+    int offset = 0;
+    f2lssBins = TFile::Open("../../data/kinMVA/DNNBin_v3_xmas.root");
+    for (auto & la : bin2lsslabels){
+      int bins = bins2lss[la];
+      binHistos2lss[la] = (TH1F*) f2lssBins->Get(Form("%s_2018_Map_nBin%d", la.Data(), bins));
+      bins2lsscumul[la] = offset;
+      offset += bins;
+    }
+  }
+  
+  int idx = ttH_catIndex_2lss(LepGood1_pdgId, LepGood2_pdgId, tth,ttw, thq,rest); 
+  TString binLabel = bin2lsslabels[idx-1];
+  float mvavar = 0;
+  if (tth >= ttw && tth >= thq && tth >= rest)
+    mvavar = tth;
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    mvavar =rest;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    mvavar = ttw;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    mvavar = thq;
+  else 
+    cout << "It shouldnt be here" << endl;
+  return binHistos2lss[binLabel]->FindBin( mvavar ) + bins2lsscumul[binLabel];
 
 }
 
@@ -122,20 +199,111 @@ int ttH_catIndex_2lss_SVA(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_c
   return res; // 1-10
 }
 
-int ttH_catIndex_3l(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nBJetMedium25){
+int ttH_catIndex_2lss_SVA_soft(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nJet25){
 
-//3l_bl_neg
-//3l_bl_pos
-//3l_bt_neg
-//3l_bt_pos
+  int res = -2;
 
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2) return 11;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2) return 12;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2) return 13;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2) return 14;
+  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11) res = 1;
+  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0) res = 3;
+  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0) res = 5;
+  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0) res = 7;
+  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0) res = 9;
+  if (nJet25>3) res+=1;
 
- return -1;
+  return res; // 1-10
+}
 
+
+int ttH_catIndex_3l(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
+{
+
+  int sumpdgId = abs(lep1_pdgId)+abs(lep2_pdgId)+abs(lep3_pdgId);
+  
+  if (ttH >= rest && ttH >= tH){
+    if (nBMedium < 2)
+      return 1; // ttH_bl
+    else
+      return 2; // ttH_bt
+  }
+  else if (tH >= ttH && tH >= rest){
+    if (nBMedium < 2){
+      return 3; // tH_bl
+    }
+    else{
+      return 4; // tH_bt
+    }
+  }
+  else if (rest >= ttH && rest >= tH){
+    if ( sumpdgId == 33){ // rest_eee
+      return 5;
+    }
+    else if (sumpdgId == 35){ 
+      if (nBMedium < 2)
+	return 6; // rest_eem_bl
+      else
+	return 7; // rest_eem_bt
+    }
+    else if (sumpdgId == 37){ // emm
+      if (nBMedium < 2)
+	return 8; // rest_emm_bl
+      else
+	return 9; // rest_emm_bt
+    }
+    else if (sumpdgId == 39){ // mmm
+      if (nBMedium < 2)
+	return 10; // rest_mmm_bl
+      else
+	return 11; // rest_mmm_bt
+    }
+  }
+
+  
+  cout << "[ttH_catIndex_3l]: It should not be here" << endl;
+  return -1;
+
+}
+
+
+std::vector<TString> bin3llabels = {"ttH_bl",  "ttH_bt",  "tH_bl",  "tH_bt",  "rest_eee",  "rest_eem_bl",  "rest_eem_bt",  "rest_emm_bl",  "rest_emm_bt",  "rest_mmm_bl",  "rest_mmm_bt"};
+
+std::map<TString, TH1F*> binHistos3l;
+std::map<TString, int> bins3lcumul;
+TFile* f3lBins;
+
+
+int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
+{
+
+  if (!f3lBins){
+    f3lBins=TFile::Open("../../data/kinMVA/binning_3l.root");
+    int count=0;
+    for (auto label : bin3llabels){
+      binHistos3l[label] = (TH1F*) f3lBins->Get(label);
+      bins3lcumul[label] = count;
+      count += binHistos3l[label]->GetNbinsX();
+    }
+  }
+  TString binLabel = bin3llabels[ttH_catIndex_3l(ttH,tH,rest,lep1_pdgId,lep2_pdgId,lep3_pdgId,nBMedium)-1];
+  float mvas[] = { ttH, tH, rest };
+  float mvavar = *std::max_element( mvas, mvas+3 );
+  return binHistos3l[binLabel]->FindBin( mvavar ) + bins3lcumul[binLabel];
+
+  
+  cout << "[ttH_catIndex_3l_MVA]: It should not be here "<< ttH << " " << tH << " " << rest << endl;
+  return -1;
+
+}
+
+float ttH_mva_4l(float score)
+{
+  return 1. / (1. + std::sqrt((1. - score) / (1. + score)));
+
+}
+
+int ttH_catIndex_4l(float bdt, float cut=0.85)
+{
+  if (ttH_mva_4l(bdt) < cut) return 1;
+  else return 2;
 }
 
 int ttH_catIndex_3l_SVA(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nJet25){
@@ -144,6 +312,17 @@ int ttH_catIndex_3l_SVA(int LepGood1_charge, int LepGood2_charge, int LepGood3_c
   if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nJet25 < 4) return 12;
   if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nJet25 >= 4) return 13;
   if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nJet25 >= 4) return 14;
+
+  return -1;
+
+}
+
+int ttH_catIndex_3l_SVA_soft(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nJet25){
+
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nJet25 <= 3) return 11;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nJet25 <= 3) return 12;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nJet25 > 3) return 13;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nJet25 > 3) return 14;
 
   return -1;
 
@@ -343,24 +522,24 @@ float leptonSF_ttH_var(int pdgid, float pt, float eta, int nlep, float var_e, fl
 //TH2Poly* t2poly_triggerSF_ttH_em = NULL;
 //TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float shift = 0){
+// float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float shift = 0){
 
-  if (nlep>=3) return 1.0+shift*0.05;
+//   if (nlep>=3) return 1.0+shift*0.05;
 
-  int comb = abs(pdgid1)+abs(pdgid2);
+//   int comb = abs(pdgid1)+abs(pdgid2);
 
-  if (comb==22) return (pt1<30) ? (0.937+shift*0.027) : (0.991+shift*0.002); // ee
-  else if (comb==24) { // em
-    if (pt1<35) return 0.952+shift*0.008;
-    else if (pt1<50) return 0.983+shift*0.003;
-    else return 1.0+shift*0.001;
-  }
-  else if (comb==26) return (pt1<35) ? (0.972+shift*0.006) : (0.994+shift*0.001); // mm
+//   if (comb==22) return (pt1<30) ? (0.937+shift*0.027) : (0.991+shift*0.002); // ee
+//   else if (comb==24) { // em
+//     if (pt1<35) return 0.952+shift*0.008;
+//     else if (pt1<50) return 0.983+shift*0.003;
+//     else return 1.0+shift*0.001;
+//   }
+//   else if (comb==26) return (pt1<35) ? (0.972+shift*0.006) : (0.994+shift*0.001); // mm
 
-  std::cout << "ERROR: triggerSF_ttH called with wrong input, returning 1" << std::endl;
-  return 1;
+//   std::cout << "ERROR: triggerSF_ttH called with wrong input, returning 1" << std::endl;
+//   return 1;
 
-}
+// }
 
 //float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
 //
@@ -497,7 +676,7 @@ float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, float scale_l
 
 float ttH_4l_clasifier(float nJet25,float nBJetMedium25,float mZ2){
  
-  if ( abs(mZ2-91.2) < 10 && abs(mZ2 -91.2)<10) return 1;
+  if ( abs(mZ2 -91.2)<10) return 1;
   if ((abs(mZ2-91.2) > 10) && nJet25==0) return 2;
   if ( (abs(mZ2-91.2) > 10) && nJet25>=0 && nBJetMedium25==1) return 3;
   if ( (abs(mZ2-91.2) > 10) && nJet25>=1 && nBJetMedium25>1) return 4;
@@ -520,4 +699,56 @@ float ttH_3l_clasifier(float nJet25,float nBJetMedium25){
   if ((nJet25 == 4)*(nBJetMedium25>1))    return 11;
   if ((nJet25>4)*(nBJetMedium25>1))       return 12;
   else return -1;
+}
+
+
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, int year, int var=0){
+  if (nlep == 2){
+    if (abs(pdgid1*pdgid2) == 121){
+      if (year == 2016){
+	if (pt2 < 25){
+	  return 0.98*(1 + var*0.02);
+	}
+      else return 1.*(1 + var*0.02);
+      }
+      if (year == 2017){
+	if (pt2<40) return 0.98*(1 + var*0.01);
+	else return 1*(1 + var*0.01);
+      }
+      if (year == 2018){
+	if (pt2<25){
+	return 0.98*(1 + var*0.01);
+	}
+	else return 1.*(1 + var*0.01);
+      }
+    }
+    
+    else if ( abs(pdgid1*pdgid2) == 143){
+      if (year == 2016) return 1.*(1 + var*0.01);
+      if (year == 2017){
+	if (pt2<40) return 0.98*(1 + var*0.01);
+	else return 0.99*(1 + var*0.01);
+      }
+      if (year == 2018){
+	if (pt2<25) return 0.98*(1 + var*0.01);
+	else        return 1*(1 + var*0.01);
+      }
+    }
+    else{
+      if (year == 2016) return 0.99*(1 + var*0.01);
+      if (year == 2017){
+	if (pt2 < 40) return 0.97*(1 + var*0.02);
+	else if (pt2 < 55 && pt2>40) return 0.995*(1 + var*0.02);
+	else if (pt2 < 70 && pt2>55) return 0.96*(1 + var*0.02);
+	else                         return 0.94*(1 + var*0.02);
+      }
+      if (year == 2018){
+	if (pt1 < 40) return 1.01*(1 + var*0.01);
+	if (pt1 < 70) return 0.995*(1 + var*0.01);
+	else return 0.98*(1 + var*0.01);
+      }
+    }
+    
+  }
+  else return 1.;
 }

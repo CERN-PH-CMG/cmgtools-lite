@@ -12,6 +12,7 @@ metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || MET_pt*0.6 + mh
 Z_veto: abs(mZ1-91.2)>10
 eleID: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
 muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepGood2_pdgId)!=13 || LepGood2_tightCharge>=1)
+muMediumId: (abs(LepGood1_pdgId)!=13 || LepGood1_mediumId!=0) && (abs(LepGood2_pdgId)!=13 || LepGood2_mediumId!=0); Disable=True
 
 tauveto: nTauTight==0
 
