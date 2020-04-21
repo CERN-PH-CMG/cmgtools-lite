@@ -218,7 +218,7 @@ class MCAnalysis:
             variations={}
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
-                    if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
+                    if var.procmatch().match(pname) and var.binmatch().match(options.binname) and ( var.year() == None or options.year == var.year()) : 
                         #if var.name in variations:
                         #    print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
                         #            var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())
@@ -532,6 +532,10 @@ class MCAnalysis:
             if k not in mergemap: mergemap[k] = []
             mergemap[k].append(v)
         ret = dict([ (k,mergePlots(plotspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
+        
+        ## construct envelope variations if any
+        for p,h in ret.iteritems():
+            h.buildEnvelopes() 
 
         rescales = []
         self.compilePlotScaleMap(self._options.plotscalemap,rescales)
@@ -879,11 +883,17 @@ class MCAnalysis:
             for tty in ttys: tasks.append( (igroup, tty, genWName) )
         retlist = self._processTasks(_runSumW, tasks, name="sumw")
         mergemap = defaultdict(float)
-        for (igroup,w) in retlist:
+        mergemap_vars = defaultdict( lambda : defaultdict(float) )
+        for (igroup,(w,var_w)) in retlist:
             mergemap[igroup] += w
+            for var in var_w: 
+                mergemap_vars[igroup][var] += var_w[var]
         for (igroup,total_w) in mergemap.iteritems():
             ttys, _, scale = self._groupsToNormalize[igroup]
-            for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+            for tty in ttys: 
+                tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                for var in mergemap_vars[igroup]:
+                    tty.setVarScaleFactor(var, "%s*%g" % (scale, 1000.0/mergemap_vars[igroup][var]))
         self._groupsToNormalize = []
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):

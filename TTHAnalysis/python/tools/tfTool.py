@@ -21,7 +21,8 @@ class TFTool:
     def __call__(self, ev):
         inp = ROOT.std.map('string','double')()
         ret = {} 
-        for key, var in self.vars.iteritems():
+        for key in self.varorder:
+            var = self.vars[key]
             if self.debug: print key, var(ev) 
             inp[key] = var(ev) 
         res = self.worker(inp)

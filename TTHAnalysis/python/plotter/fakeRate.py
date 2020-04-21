@@ -16,6 +16,7 @@ class FakeRate:
         self._mods = []
         self._cutMods = []
         self._toLoad = []
+        self._altNorm = None
         for file in files:
             if file=='': continue
             stream = open(file,'r')
@@ -31,6 +32,8 @@ class FakeRate:
 	            self._mods.append( SimpleCorrection(fields[1],fields[2],alsoData=True) )
 	        elif fields[0] == "cut-change": 
 	            self._cutMods.append( SimpleCorrection(fields[1],fields[2],onlyForCuts=True,alsoData=True) )
+                elif fields[0] == "alt-norm":
+                    self._altNorm = fields[1] # this only does something when the fr is part of an unc file
 	        elif fields[0] == "load-histo":
 	            data = "%s/src/CMGTools/TTHAnalysis/data/" % os.environ['CMSSW_BASE'];
                     fname = fields[2].replace("$DATA",data)

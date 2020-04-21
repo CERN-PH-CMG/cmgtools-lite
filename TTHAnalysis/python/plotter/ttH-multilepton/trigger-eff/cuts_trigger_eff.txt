@@ -1,0 +1,13 @@
+alwaystrue: 1
+trigger: Trigger_MET
+filters: Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && (Flag_ecalBadCalibFilter || (year == 2016))  $DATA{&& Flag_eeBadScFilter}
+cleanup: minMllAFAS > 12
+dilep: nLepFO>=2
+pt2515: LepGood1_conePt>25 && LepGood2_conePt>15&&LepGood2_conePt>15
+TT: LepGood1_isLepTight && LepGood2_isLepTight
+
+trilep: (nLepFO>=3)&&(LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight)&&LepGood3_conePt>15; Disable=True
+ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
+em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
+mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
+
