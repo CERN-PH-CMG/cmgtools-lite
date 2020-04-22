@@ -15,7 +15,11 @@ parser.add_option("--autoMCStatsThreshold", dest="autoMCStatsValue", type="int",
 parser.add_option("--infile", dest="infile", action="store_true", default=False, help="Read histograms to file")
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
+parser.add_option("--categorize-by-ranges", dest="categ_ranges", type="string", nargs=2, default=None, help="Split in categories according to the signal extraction variables. Requires 2 arguments: binning (in bin numbers), bin labels")
+
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
+parser.add_option("--threshold", dest="threshold", type=float, default=0.0, help="Minimum event yield to consider processes")
+parser.add_option("--filter", dest="filter", type="string", default=None, help="File with list of processes to be removed from the datacards")
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
@@ -44,7 +48,7 @@ else:
        report = mca.getPlotsRaw("x", cexpr+":"+args[2], makeBinningProductString(args[3],cbins), cuts.allCuts(), nodata=options.asimov) 
     else:
        report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov) 
-    for p,h in report.iteritems(): h.cropNegativeBins()
+    for p,h in report.iteritems(): h.cropNegativeBins(threshold=1e-5)
 
 if options.savefile:
     savefile = ROOT.TFile(outdir+binname+".bare.root","recreate")
@@ -74,9 +78,33 @@ if options.categ:
     if len(catlabels) != report["data_obs"].GetNbinsY(): raise RuntimeError("Mismatch between category labels and bins")
     for ic,lab in enumerate(catlabels):
         allreports["%s_%s"%(binname,lab)] = dict( (k, h.projectionX("x_"+k,ic+1,ic+1)) for (k,h) in report.iteritems() )
+elif options.categ_ranges: 
+    allreports = dict()
+    catlabels = options.categ_ranges[1].split(',')
+    catbinning = eval( options.categ_ranges[0] ) 
+    
+    for ic,lab in enumerate(catlabels):
+        kk = {} 
+        for (k,h) in report.iteritems(): 
+            kk[k] = h.getHistoInRange( "x_"+k, catbinning[ic],catbinning[ic+1])
+        allreports["%s_%s"%(binname,lab)] = kk
 else:
     allreports = {binname:report}
 
+
+if options.filter: 
+    toremove=[]
+    with open(options.filter, 'r') as f:
+        for l in f.readlines(): 
+            binname,proc = l.split(':')
+            procpattern = re.compile( proc.rstrip() ) 
+            if binname in allreports:
+                for p in allreports[binname]:
+                    if procpattern.match(p):
+                        if (binname,p) not in toremove:
+                           toremove.append( (binname, p))
+    for binname,p in toremove:
+        allreports[binname].pop(p)
 
 for binname, report in allreports.iteritems():
   if options.bbb:
@@ -93,11 +121,11 @@ for binname, report in allreports.iteritems():
   procs = []; iproc = {}
   for i,s in enumerate(mca.listSignals()):
     if s not in allyields: continue
-    if allyields[s] == 0: continue
+    if allyields[s] <= options.threshold: continue
     procs.append(s); iproc[s] = i-len(mca.listSignals())+1
   for i,b in enumerate(mca.listBackgrounds()):
     if b not in allyields: continue
-    if allyields[b] == 0: continue
+    if allyields[b] <= options.threshold: continue
     procs.append(b); iproc[b] = i+1
   #for p in procs: print "%-10s %10.4f" % (p, allyields[p])
 
@@ -124,6 +152,19 @@ for binname, report in allreports.iteritems():
                     hv.Add(h.raw()); hv.Scale(0.5)
                 elif k < 0.2 or k > 5:
                     print "Warning: big shift in template for %s %s %s %s: kappa = %g " % (binname, p, name, d, k)
+            # prevent variations from going to zero by symmetrizing
+            for bin in range(1,h.GetXaxis().GetNbins()+1):
+                for d in range(2):
+                    if variants[d].GetBinContent( bin ) == 0: 
+                        shift = variants[1-d].GetBinContent(bin); shift = max(5e-6, shift)
+                        variants[d].SetBinContent( bin, h.raw().GetBinContent( bin )**2/shift)
+                    if variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin) > 10: 
+                        print "Warning: big shift in template for %s %s %s %s in bin %d: variation = %g"%( binname, p, name, d, bin, variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin))
+                        variants[d].SetBinContent( bin, 10*h.raw().GetBinContent(bin) )
+                    if variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin) < 0.1: 
+                        print "Warning: big shift in template for %s %s %s %s in bin %d: variation = %g"%( binname, p, name, d, bin, variants[d].GetBinContent( bin )/h.raw().GetBinContent(bin))
+                        variants[d].SetBinContent( bin, 0.1*h.raw().GetBinContent(bin) )
+
             effshape[p] = variants 
     if isShape:
         if options.regularize: 
@@ -151,9 +192,9 @@ for binname, report in allreports.iteritems():
   # make a new list with only the ones that have an effect
   nuisances = sorted(systs.keys())
 
-  datacard = open(outdir+binname+".card.txt", "w"); 
+  datacard = open(outdir+binname+".txt", "w"); 
   datacard.write("## Datacard for cut file %s\n"%args[1])
-  datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+  datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
   datacard.write('##----------------------------------\n')
   datacard.write('bin         %s\n' % binname)
   datacard.write('observation %s\n' % allyields['data_obs'])
@@ -178,10 +219,10 @@ for binname, report in allreports.iteritems():
   if options.autoMCStats: 
     datacard.write('* autoMCStats %d\n' % options.autoMCStatsValue)
 
-  workspace = ROOT.TFile.Open(outdir+binname+".input.root", "RECREATE")
+  workspace = ROOT.TFile.Open(outdir+binname+".root", "RECREATE")
   for h in towrite:
       workspace.WriteTObject(h,h.GetName())
   workspace.Close()
 
-  print "Wrote to {0}.card.txt and {0}.input.root ".format(outdir+binname)
+  print "Wrote to {0}.txt and {0}.root ".format(outdir+binname)
 

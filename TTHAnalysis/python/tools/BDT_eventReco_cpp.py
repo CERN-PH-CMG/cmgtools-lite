@@ -10,20 +10,25 @@ import math
 import os
 
 class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = []):
+    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = [], variations=[]):
 
         self.inputlabel = '_'+recllabel
-        self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown", 2:"_jesTotalUnCorrUp", -2:"_jesTotalUnCorrDown", 3 : 'jerUp', -3:'jerDown'}
+        self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown", 2:"_jesTotalUnCorrUp", -2:"_jesTotalUnCorrDown", 3 : '_jerUp', -3:'_jerDown'}
+        if len(variations):
+            self.systsJEC = {0:""}
+            for i,var in enumerate(variations):
+                self.systsJEC[i+1]   ="_%sUp"%var
+                self.systsJEC[-(i+1)]="_%sDown"%var
         self.selection = selection
 
         if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries():
             ROOT.gSystem.Load("libCommonToolsMVAUtils")
 
-        if "/BDT_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
+        if "/BDT_eventReco_legacy_C.so" not in ROOT.gSystem.GetLibraries():
             if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries(): raise RuntimeError
             ROOT.gSystem.AddIncludePath(" -I/cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gsl/2.2.1-omkpbe2/include ")
             ROOT.gSystem.AddLinkedLibs(" -L//cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gsl/2.2.1-omkpbe2/lib -lgsl -lgslcblas -lm ");
-            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDT_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
+            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDT_eventReco_legacy.C" % os.environ['CMSSW_BASE'],"kO");
 
         algo = getattr(ROOT,algostring)
         hj2017 = ("2017" in weightfile_hj)
@@ -118,7 +123,6 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iLepFO"+self.inputlabel)
         leps = [all_leps[chosen[i]] for i in xrange(nFO)]
-
         for var in self.systsJEC:
             _var = var
             if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
