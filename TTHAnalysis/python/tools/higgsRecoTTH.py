@@ -512,6 +512,22 @@ class HiggsRecoTTH(Module):
                     if len(QFromWFromH)==2 and var==0:
                         if -1 not in jets_match_quarks:
                             inv_mass_jm1jm2=(jetsNoTopNoB[jets_match_quarks[0]].p4()+jetsNoTopNoB[jets_match_quarks[1]].p4()).M()
+                    
+                    #TODO some troubleshooting, to remove if not necessary
+                    #cleanjets=[]
+                    #print ("jets_match_quarks before cut len = " + str(len(jets_match_quarks)) + " while object = " + str(jets_match_quarks))
+                    #print ("jetsNoTopNoB before cut len = " + str(len(jetsNoTopNoB)) + " while object = " + str(jetsNoTopNoB))
+                    #if -1 not in jets_match_quarks:
+                        #print ("jets_match_quarks after cut len = " + str(len(jets_match_quarks)) + " while object = " + str(jets_match_quarks))
+                        #print ("jetsNoTopNoB after cut len = " + str(len(jetsNoTopNoB)) + " while object = " + str(jetsNoTopNoB))
+                        #for i in range(len(jets_match_quarks)):
+                            #cleanjets.append(jetsNoTopNoB[jets_match_quarks[i]])
+                            #print jetsNoTopNoB
+                            #print ("clean = " +str(len(cleanjets)))
+                            #print ("clean_jets = " +str(cleanjets))
+                            #print ("jm = " + str(len(jets_match_quarks)))
+                            #print ("jm_jets = " +str(jets_match_quarks))
+             
 
             if best: #TODO: what does that actually do compared to "if best else -99"
                 #if -1 not in jets_match_quarks:
@@ -530,7 +546,29 @@ class HiggsRecoTTH(Module):
                         delR_lep_jm1=leps[best[4]].p4().DeltaR(jetsNoTopNoB[jets_match_quarks[0]].p4())
                         delR_lep_jm2=leps[best[4]].p4().DeltaR(jetsNoTopNoB[jets_match_quarks[1]].p4())
                         pTVis_jets_match=(jetsNoTopNoB[jets_match_quarks[0]].p4()+jetsNoTopNoB[jets_match_quarks[1]].p4()+leps[best[4]].p4()).Pt()
-                
+
+                if len(QFromWFromH)==2 and var==0:
+                    if -1 not in jets_match_quarks:
+                        print ("the original list" + str(jets_match_quarks)) 
+                        closest_jm_to_lep = [-1 for i in jets_match_quarks]
+                        #print jets_match_quarks
+                        for j,idx in enumerate(jets_match_quarks):
+                            delR_jm_lep=99 
+                            jm_closest_to_lep_idx=-1
+                            #print ("is number" +str(j))
+                            #print ("is actual index" +str(idx))
+                            for jet in [jetsNoTopNoB[x] for x in jets_match_quarks]:
+                                #print ("and the jet" +str(jet))
+                                #print ("and the lep" +str(leps[best[4]]))
+                                delR_j_lep=leps[best[4]].p4().DeltaR(jet.p4())
+                                #print ("delR between jet in hand and lep is" +str(delR_j_lep))
+                                print ("if  " + str(delR_j_lep) + "  <  " + str(delR_jm_lep))
+                                if delR_j_lep < delR_jm_lep:
+                                    delR_jm_lep=delR_j_lep
+                                    jm_closest_to_lep_idx=jetsNoTopNoB.index(jet)
+                                    #print ("index of the chosen jet"+ str(jm_closest_to_lep_idx))
+                            closest_jm_to_lep[j]=jm_closest_to_lep_idx
+                        print ("the chosen list" + str(closest_jm_to_lep)) 
                 # TODO full-fledged matching but we are studying it first
                 # TODO: iterate over both quarks and fill nbothmatchedpartons
                 for quark in QFromWFromH: 
