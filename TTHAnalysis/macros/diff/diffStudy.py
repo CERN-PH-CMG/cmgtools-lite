@@ -87,8 +87,10 @@ plotlist = [
     ["Hreco_delR_jm_closest_jm_farthest"            ,""           ,"Hreco_delR_jm_closest_jm_farthest>=0"                        ,"Hreco_delR_jm_closest_jm_farthest"            , 100, 0., 10.  ],
     ["Hreco_inv_mass_jm1jm2"                        ,""           ,"Hreco_inv_mass_jm1jm2>=0"                                    ,"Hreco_inv_mass_jm1jm2"                        , 100, 0., 150. ],
     ["Hreco_inv_mass_jm1jm2_no_cond"                ,""           ,"Hreco_inv_mass_jm1jm2_no_cond>=0"                            ,"Hreco_inv_mass_jm1jm2_no_cond"                , 100, 0., 150. ],
+    ["Hreco_delR_lep_wrong_jet_closest"             ,""           ,"Hreco_delR_lep_wrong_jet_closest>=0"                         ,"Hreco_delR_lep_wrong_jet_closest"             , 100, 0., 10.  ],
+    ["Hreco_delR_lep_wrong_jet_farthest"            ,""           ,"Hreco_delR_lep_wrong_jet_farthest>=0"                        ,"Hreco_delR_lep_wrong_jet_farthest"            , 100, 0., 10.  ],
+    ["Hreco_delR_jm1_jm2"                           ,""           ,"Hreco_delR_jm1_jm2>=0"                                       ,"Hreco_delR_jm1_jm2"                           , 100, 0., 10.  ],
 ]
-
 colours = {
     "Hreco_delR_H_j1j2"    : kRed,
     "Hreco_delR_H_partons" : kBlack,
@@ -108,6 +110,14 @@ comparisonplotlist = [
             "Hreco_delR_H_partons"  :   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1"  ,
         },
         'pars' : { "delR_j1j2_cut_q1q2_cut" : [ 100, 0., 10.],}
+    }
+    {
+        'vars' : {
+            "Hreco_delR_lep_jm_closest"         :   "Hreco_delR_lep_jm_closest>=0"         , 
+            "Hreco_delR_lep_jm_farthest"        :   "Hreco_delR_lep_jm_farthest>=0"        ,
+            "Hreco_delR_lep_wrong_jet_closest"  :   "Hreco_delR_lep_wrong_jet_closest>=0"  ,
+        },
+        'pars' : { "delR_matched_non_matched_comp" : [ 100, 0., 10.],}
     }
 ]
 
@@ -160,7 +170,8 @@ def draw_comparison(args): #TODO the hist title is always the first var--> confu
     for var, val in args['vars'].items():
         ps.append(TH1F(var, var, nbins, lowbin, highbin))
         tr.Draw("%s>>%s"%(var,var),val)
-        ps[ip].GetXaxis().SetTitle("%s [GeV]"%fname)
+        ps[ip].GetXaxis().SetTitle("%s"%fname)
+        #ps[ip].GetXaxis().SetTitle("%s [GeV]"%fname)
         ps[ip].GetYaxis().SetTitle("a.u.")
         ps[ip].SetLineColor(colours[var])
         ps[ip].Scale(1./ps[ip].Integral()) if ps[ip].Integral() != 0 else -99
