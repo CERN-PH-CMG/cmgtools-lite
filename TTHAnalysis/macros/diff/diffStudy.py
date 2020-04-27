@@ -90,14 +90,14 @@ scatterplotdict = {
 
 def draw_plot(args):
     for var, pars in args.items():
-        cut,fname,nbins,lowbin, highbin = pars
+        suffix, cut,fname,nbins,lowbin, highbin = pars
         c = TCanvas()
         c.cd()
         theplot = TH1F(var,var, nbins, lowbin, highbin)
         tr.Draw("%s>>%s"%(var,var),cut)
         theplot.Draw()
         print (theplot.Integral())
-        c.Print("%s/%s.png"%(options.outputDir,fname)) 
+        c.Print("%s/%s_%s.png"%(options.outputDir,fname, suffix)) 
 
 def draw_comparison(args): #TODO the hist title is always the first var--> confusing when comparing two different vars
     fname = args['pars'].keys()[0]
@@ -135,7 +135,7 @@ def draw_comparison(args): #TODO the hist title is always the first var--> confu
 def draw_scatter(args):
     for var, pars in args.items():
         var1, var2 = var
-        cut1, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny = pars
+        suffix, cut1, cut2, fname, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny = pars
         c   = TCanvas()
         c.cd()
         theplot_scat = TH2F(var2,var2, nbinsx, lowbinx, highbinx, nbinsy, lowbiny, highbiny)
@@ -144,7 +144,7 @@ def draw_scatter(args):
         tr.Draw("%s:%s>>%s"%(var1,var2,var2),cut1)
         theplot_scat.Draw("COLZ")
         theplot_scat.SetTitle("%s_Vs_%s"%(var1,var2))
-        c.Print("%s/%s_2D.png"%(options.outputDir,fname))
+        c.Print("%s/%s_%s_2D.png"%(options.outputDir,fname,suffix))
         
      
 draw_plot(plotdict)
