@@ -54,8 +54,7 @@ plotdict = {
     "Hreco_inv_mass_jm1jm2_no_cond"                 : [ "","Hreco_inv_mass_jm1jm2_no_cond>=0"                               ,"Hreco_inv_mass_jm1jm2_no_cond"                              , 100, 0., 150. ],
 }
 '''
-
-
+#vars related to nmatchedpartons are commented because nmatchedpartons is obsolete now.
 plotlist = [
     ["Hreco_delR_H_partons_no_cond"                 ,""           ,"Hreco_delR_H_partons_no_cond>=0"                             ,"delR_partons_no_cond"                         , 100, 0., 10.  ],
     ["Hreco_delR_H_j1j2"                            ,""           ,"Hreco_delR_H_j1j2>=0"                                        ,"delR_H_j1j2"                                  , 100, 0., 10.  ],

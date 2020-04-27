@@ -26,7 +26,8 @@ colours = {
 } # :add more if needed
 
 comparisonplotlists = [
-#first list is an attempt to plot all variables under the same condition
+#TODO first list is an attempt to plot all variables under the same condition, you did that for 0,400 plots, do it for all stxs bins.
+#TODO for all stxs bins, also add Hreco_pTvis_jets_match_plusNu
 #TODO why these plots blow up when the cut is >= 0?
     {
         'vars' : {
@@ -63,7 +64,7 @@ comparisonplotlists = [
     },
     {
         'vars' : {
-        "Hreco_pTHvis"          : ["Hreco_pTHvis >= 60           && Hreco_pTHvis < 120"                                ,  "reco"                          ],
+            "Hreco_pTHvis"          : ["Hreco_pTHvis >= 60           && Hreco_pTHvis < 120"                                ,  "reco"                          ],
             "Hreco_pTHgen"          : ["Hreco_pTHgen >= 60           && Hreco_pTHgen < 120            && Hreco_pTHvis >= 0",  "gen"                           ],
             "Hreco_pTVisPlusNu"     : ["Hreco_pTVisPlusNu >= 60      && Hreco_pTVisPlusNu < 120"                           ,  "reco+gen(nu)"                  ],
             "Hreco_pTTrueGenPlusNu" : ["Hreco_pTTrueGenPlusNu >= 60  && Hreco_pTTrueGenPlusNu < 120   && Hreco_pTHvis >= 0",  "gen(q1)+gen(q2)+gen(l)+gen(nu)"],
@@ -76,7 +77,7 @@ comparisonplotlists = [
             "Hreco_pTHvis"          : [ "Hreco_pTHvis >= 120          && Hreco_pTHvis < 200"                                 , "reco"                          ],
             "Hreco_pTHgen"          : [ "Hreco_pTHgen >= 120          && Hreco_pTHgen < 200            && Hreco_pTHvis >= 0" , "gen"                           ],
             "Hreco_pTVisPlusNu"     : [ "Hreco_pTVisPlusNu  >= 120    && Hreco_pTVisPlusNu < 200"                            , "reco+gen(nu)"                  ],
-        "Hreco_pTTrueGenPlusNu" : [ "Hreco_pTTrueGenPlusNu >= 120 && Hreco_pTTrueGenPlusNu < 200   && Hreco_pTHvis >= 0" , "gen(q1)+gen(q2)+gen(l)+gen(nu)"],
+            "Hreco_pTTrueGenPlusNu" : [ "Hreco_pTTrueGenPlusNu >= 120 && Hreco_pTTrueGenPlusNu < 200   && Hreco_pTHvis >= 0" , "gen(q1)+gen(q2)+gen(l)+gen(nu)"],
             "Hreco_pTTrueGen"       : [ "Hreco_pTTrueGen >= 120       && Hreco_pTTrueGen < 200         && Hreco_pTHvis >= 0" , "gen(q1)+gen(q2)+gen(l)"        ],
         },
         'pars' : {"pTH_120_200" : [40, 120., 200.] },
