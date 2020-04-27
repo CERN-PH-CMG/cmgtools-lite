@@ -156,16 +156,16 @@ mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import jetMetCorrelate2016,jetMetCorrelate2017,jetMetCorrelate2018
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import createJMECorrector
+#from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import createJMECorrector
 
 
-jetmetUncertainties2016All = createJMECorrector(dataYear=2016, jesUncert="All")
-jetmetUncertainties2017All = createJMECorrector(dataYear=2017, jesUncert="All", metBranchName="METFixEE2017")
-jetmetUncertainties2018All = createJMECorrector(dataYear=2016, jesUncert="All")
+#jetmetUncertainties2016All = createJMECorrector(dataYear=2016, jesUncert="All")
+#jetmetUncertainties2017All = createJMECorrector(dataYear=2017, jesUncert="All", metBranchName="METFixEE2017")
+#jetmetUncertainties2018All = createJMECorrector(dataYear=2016, jesUncert="All")
 
-jme2016_allvariations = [jetmetUncertainties2016All,jetMetCorrelate2016] 
-jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
-jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
+#jme2016_allvariations = [jetmetUncertainties2016All,jetMetCorrelate2016] 
+#jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
+#jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
 
 def _fires(ev, path):
     if "/hasfiredtriggers_cc.so" not in ROOT.gSystem.GetLibraries():

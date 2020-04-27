@@ -21,7 +21,7 @@ if not tr:
     raise ValueError('Tree not loaded')
 
 plotdict = {
-    #"Hreco_delR_H_partons_no_cond"                  : [ "Hreco_delR_H_partons_no_cond>=0"                               ,"delR_partons_no_cond"                                         , 100, 0., 10.  ],
+    "Hreco_delR_H_partons_no_cond"                  : [ "Hreco_delR_H_partons_no_cond>=0"                               ,"delR_partons_no_cond"                                         , 100, 0., 10.  ],
     "Hreco_delR_H_j1j2"                             : [ "Hreco_delR_H_j1j2>=0"                                          ,"delR_H_j1j2"                                                  , 100, 0., 10.  ],
     "Hreco_delR_H_partons_no_cond"                  : [ "Hreco_delR_H_partons_no_cond>=0   && Hreco_nmatchedpartons ==1","delR_partons_no_cond_cut"                                     , 100, 0., 10.  ],
     "Hreco_delR_H_j1j2"                             : [ "Hreco_delR_H_j1j2>=0      && Hreco_nmatchedpartons ==1"        ,"delR_H_j1j2_cut"                                              , 100, 0., 10.  ],
@@ -46,6 +46,9 @@ plotdict = {
     "Hreco_j2Idx"                                   : [ "Hreco_j2Idx>=0"                                                ,"Hreco_j2Idx"                                                  , 100, -1., 10. ],
     "Hreco_delR_lep_jm1"                            : [ "Hreco_delR_lep_jm1>=0"                                         ,"Hreco_delR_lep_jm1"                                           , 100, 0., 10.  ],
     "Hreco_delR_lep_jm2"                            : [ "Hreco_delR_lep_jm2>=0"                                         ,"Hreco_delR_lep_jm2"                                           , 100, 0., 10.  ],
+    "Hreco_delR_lep_jm_closest"                     : [ "Hreco_delR_lep_jm_closest>=0"                                  ,"Hreco_delR_lep_jm_closest"                                    , 100, 0., 10.  ],
+    "Hreco_delR_lep_jm_farthest"                    : [ "Hreco_delR_lep_jm_farthest>=0"                                 ,"Hreco_delR_lep_jm_farthest"                                   , 100, 0., 10.  ],
+    "Hreco_delR_jm_closest_jm_farthest"             : [ "Hreco_delR_jm_closest_jm_farthest>=0"                          ,"Hreco_delR_jm_closest_jm_farthest"                            , 100, 0., 10.  ],
     "Hreco_inv_mass_jm1jm2"                         : [ "Hreco_inv_mass_jm1jm2>=0"                                      ,"Hreco_inv_mass_jm1jm2"                                        , 100, 0., 150. ],
     "Hreco_inv_mass_jm1jm2_no_cond"                 : [ "Hreco_inv_mass_jm1jm2_no_cond>=0"                              ,"Hreco_inv_mass_jm1jm2_no_cond"                                , 100, 0., 150. ],
 }
@@ -82,8 +85,8 @@ scatterplotdict = {
     ("Hreco_quark2pT_no_cond"                       , "Hreco_closestJet_ptres_ToQ2FromWFromH_no_cond") : [ "Hreco_quark2pT_no_cond>=0"                      ,"","quark2pt_vs_pTres_q2", 100, -2., 10.,100,0,100],
     ("Hreco_jet_matches_quark1_two_cond"            , "Hreco_j1Idx"                                  ) : [ "Hreco_jet_matches_quark1_two_cond>=0"           ,"Hreco_j1Idx>=0","jm1_j1", 10, -1., 10.,10,-1,10],
     ("Hreco_jet_matches_quark2_two_cond"            , "Hreco_j2Idx"                                  ) : [ "Hreco_jet_matches_quark2_two_cond>=0"           ,"Hreco_j1Idx>=0","jm2_j2", 10, -1., 10.,10,-1,10],
+    ("Hreco_delR_lep_jm_farthest"                   , "Hreco_delR_lep_jm_closest"                    ) : [ "Hreco_delR_lep_jm_farthest>=0"                  ,"Hreco_delR_lep_jm_closest>=0","jm_close_jm_far_from_lepton", 100, 0., 10.,100,0.,10.],
 }
-
 
 def draw_plot(args):
     for var, pars in args.items():
