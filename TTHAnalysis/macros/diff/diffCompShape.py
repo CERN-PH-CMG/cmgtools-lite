@@ -3,7 +3,7 @@ from ROOT import TCanvas, TROOT, TH1D, TH1F, TH2F, TFile, TTree, gROOT, kRed, kG
 from copy import deepcopy
 
 gROOT.SetBatch(True)
-odir="./test_compare_stxs/"
+odir="./test_compare_stxs"
 
 if not os.path.isdir(odir):
     os.mkdir(odir)
@@ -16,33 +16,48 @@ tr = f1.Get("Friends")
 if not tr:
     raise ValueError('Tree not loaded')
 colours = {
-    "Hreco_pTHvis"                  : kRed, 
-    "Hreco_pTHgen"                  : kGreen, 
-    "Hreco_pTVisPlusNu"             : kBlack, 
-    "Hreco_pTTrueGenPlusNu"         : kMagenta, 
-    "Hreco_pTTrueGen"               : kBlue, 
-    "Hreco_pTVis_jets_match"        : kRed-5,
+    "Hreco_pTHvis"                          : kRed, 
+    "Hreco_pTHgen"                          : kGreen, 
+    "Hreco_pTVisPlusNu"                     : kBlack, 
+    "Hreco_pTTrueGenPlusNu"                 : kMagenta, 
+    "Hreco_pTTrueGen"                       : kBlue, 
+    "Hreco_pTVis_jets_match"                : kRed-5,
+    "Hreco_pTVis_jets_match_plusNu"         : kRed+5,
 } # :add more if needed
 
 comparisonplotlists = [
+#first list is an attempt to plot all variables under the same condition
+#TODO why these plots blow up when the cut is >= 0?
     {
         'vars' : {
-            "Hreco_pTHvis"                  : [ "Hreco_pTHvis > 0                                                 " ,  "reco"                           ], 
-            "Hreco_pTHgen"                  : [ "Hreco_pTHgen > 0             && Hreco_pTHvis             >= 0    " ,  "gen"                            ],
-            "Hreco_pTVisPlusNu"             : [ "Hreco_pTVisPlusNu > 0                                            " ,  "reco+gen(nu)"                   ], 
-            "Hreco_pTTrueGenPlusNu"         : [ "Hreco_pTTrueGenPlusNu > 0    && Hreco_pTHvis             >= 0    " ,  "gen(q1)+gen(q2)+gen(l)+gen(nu)" ],
-            "Hreco_pTTrueGen"               : [ "Hreco_pTTrueGen > 0          && Hreco_pTHvis             >= 0    " ,  "gen(q1)+gen(q2)+gen(l)"         ],
-            "Hreco_pTVis_jets_match"        : [ "Hreco_pTVis_jets_match > 0   && Hreco_pTVis_jets_match   >= 0    " ,  "jm1+jm2+best_lep"               ],
-        },
-        'pars' : {"pTH"                   :        [200, 0., 400.]}
+            "Hreco_pTHvis"                  :  [ "Hreco_pTHvis > 0           && Hreco_nQFromWFromH==2"  ,"reco if best and cond. len(QFromWFromH)==2"                                                 ], 
+            "Hreco_pTHgen"                  :  [ "Hreco_pTHgen > 0           && Hreco_nQFromWFromH==2"  ,"gen if best and cond. len(QFromWFromH)==2"                                                  ],
+            "Hreco_pTVisPlusNu"             :  [ "Hreco_pTVisPlusNu > 0      && Hreco_nQFromWFromH==2"  ,"reco+gen(nu) if best and cond. len(QFromWFromH)==2"                                         ], 
+            "Hreco_pTTrueGenPlusNu"         :  [ "Hreco_pTTrueGenPlusNu > 0  && Hreco_nQFromWFromH==2"  ,"gen(q1)+gen(q2)+gen(l)+gen(nu) if best and cond. len(QFromWFromH)==2"                       ],
+            "Hreco_pTTrueGen"               :  [ "Hreco_pTTrueGen > 0        && Hreco_nQFromWFromH==2"  ,"gen(q1)+gen(q2)+gen(l) if best and cond. len(QFromWFromH)==2"                               ],
+            "Hreco_pTVis_jets_match"        :  [ "Hreco_pTVis_jets_match > 0                         "  ,"jm1+jm2+best_lep if best and cond. len(QFromWFromH)==2 and if -1 not in jet_match_quarks"   ],
+            "Hreco_pTVis_jets_match_plusNu" :  [ "Hreco_pTVis_jets_match_plusNu > 0                   " ,"jm1+jm2+best_lep+gen(nu) if best and cond. len(QFromWFromH)==2 and if -1 not in jet_match_quarks"   ],
     },
+        'pars' : {"pTH"                   :        [50, 0., 400.]}
+    },
+    #{
+        #'vars' : {
+            #"Hreco_pTHvis"                  : [ "Hreco_pTHvis > 0                                                 " ,  "reco"                           ], 
+            #"Hreco_pTHgen"                  : [ "Hreco_pTHgen > 0             && Hreco_pTHvis             >= 0    " ,  "gen"                            ],
+            #"Hreco_pTVisPlusNu"             : [ "Hreco_pTVisPlusNu > 0                                            " ,  "reco+gen(nu)"                   ], 
+            #"Hreco_pTTrueGenPlusNu"         : [ "Hreco_pTTrueGenPlusNu > 0    && Hreco_pTHvis             >= 0    " ,  "gen(q1)+gen(q2)+gen(l)+gen(nu)" ],
+            #"Hreco_pTTrueGen"               : [ "Hreco_pTTrueGen > 0          && Hreco_pTHvis             >= 0    " ,  "gen(q1)+gen(q2)+gen(l)"         ],
+            #"Hreco_pTVis_jets_match"        : [ "Hreco_pTVis_jets_match > 0   && Hreco_pTVis_jets_match   >= 0    " ,  "jm1+jm2+best_lep"               ],
+        #},
+        #'pars' : {"pTH"                   :        [200, 0., 400.]}
+    #},
     {
         'vars' : {
-            "Hreco_pTHvis"          : ["Hreco_pTHvis >= 0             && Hreco_pTHvis < 60"                                , "reco"                          ],
-            "Hreco_pTHgen"          : ["Hreco_pTHgen >= 0             && Hreco_pTHgen < 60            && Hreco_pTHvis >= 0", "gen"                           ],
-            "Hreco_pTVisPlusNu"     : ["Hreco_pTVisPlusNu >= 0        && Hreco_pTVisPlusNu < 60"                           , "reco+gen(nu)"                  ],
-            "Hreco_pTTrueGenPlusNu" : ["Hreco_pTTrueGenPlusNu >= 0    && Hreco_pTTrueGenPlusNu < 60   && Hreco_pTHvis >= 0", "gen(q1)+gen(q2)+gen(l)+gen(nu)"],
-            "Hreco_pTTrueGen"       : ["Hreco_pTTrueGen >= 0          && Hreco_pTTrueGen < 60         && Hreco_pTHvis >= 0", "gen(q1)+gen(q2)+gen(l)"        ],
+            "Hreco_pTHvis"          : ["Hreco_pTHvis > 0             && Hreco_pTHvis < 60"                                , "reco"                          ],
+            "Hreco_pTHgen"          : ["Hreco_pTHgen > 0             && Hreco_pTHgen < 60            && Hreco_pTHvis >= 0", "gen"                           ],
+            "Hreco_pTVisPlusNu"     : ["Hreco_pTVisPlusNu > 0        && Hreco_pTVisPlusNu < 60"                           , "reco+gen(nu)"                  ],
+            "Hreco_pTTrueGenPlusNu" : ["Hreco_pTTrueGenPlusNu > 0    && Hreco_pTTrueGenPlusNu < 60   && Hreco_pTHvis >= 0", "gen(q1)+gen(q2)+gen(l)+gen(nu)"],
+            "Hreco_pTTrueGen"       : ["Hreco_pTTrueGen > 0          && Hreco_pTTrueGen < 60         && Hreco_pTHvis >= 0", "gen(q1)+gen(q2)+gen(l)"        ],
         },
         'pars' : {"pTH_0_60" : [40, 0., 60.] } 
     },
@@ -96,7 +111,8 @@ def draw_comparison(args):
     gStyle.SetOptStat(0) 
 
     c   = TCanvas('c', 'c', 800, 800)
-    leg = TLegend(0.6,0.7,0.89,0.89)
+    leg = TLegend(0.4,0.6,0.89,0.89)
+    #leg = TLegend(0.6,0.7,0.89,0.89)
     c.cd()
     ps = [] # This is needed because ROOT is a mess
     h=TH1F('h', '', nbins, lowbin, highbin)
@@ -126,8 +142,8 @@ def draw_comparison(args):
     c.Print("%s/%s_comp.png"%(odir,fname)) # Avoid overwriting single var plots
 
 
-draw_comparison(comparisonplotlists[0])
+#draw_comparison(comparisonplotlists[0])
 
-#for l in comparisonplotlists:
-#    draw_comparison(l)
+for l in comparisonplotlists:
+    draw_comparison(l)
 

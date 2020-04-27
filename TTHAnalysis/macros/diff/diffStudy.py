@@ -1,5 +1,5 @@
 import os
-from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kBlack, kRed, TLegend
+from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kBlack, kRed, kMagenta, TLegend
 
 gROOT.SetBatch(True)
 
@@ -59,9 +59,9 @@ plotdict = {
 plotlist = [
     ["Hreco_delR_H_partons_no_cond"                 ,""           ,"Hreco_delR_H_partons_no_cond>=0"                             ,"delR_partons_no_cond"                         , 100, 0., 10.  ],
     ["Hreco_delR_H_j1j2"                            ,""           ,"Hreco_delR_H_j1j2>=0"                                        ,"delR_H_j1j2"                                  , 100, 0., 10.  ],
-    ["Hreco_delR_H_partons_no_cond"                 ,"_cut"       ,"Hreco_delR_H_partons_no_cond>=0 && Hreco_nmatchedpartons ==1","delR_partons_no_cond"                         , 100, 0., 10.  ],
-    ["Hreco_delR_H_j1j2"                            ,"_cut"       ,"Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1"           ,"delR_H_j1j2"                                  , 100, 0., 10.  ],
-    ["Hreco_nmatchedpartons"                        ,""           ,"Hreco_nmatchedpartons==1"                                    ,"hnum_top_1"                                   , 100, 0., 10.  ],
+    #["Hreco_delR_H_partons_no_cond"                 ,"_cut"       ,"Hreco_delR_H_partons_no_cond>=0 && Hreco_nmatchedpartons ==1","delR_partons_no_cond"                         , 100, 0., 10.  ],
+    #["Hreco_delR_H_j1j2"                            ,"_cut"       ,"Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1"           ,"delR_H_j1j2"                                  , 100, 0., 10.  ],
+    #["Hreco_nmatchedpartons"                        ,""           ,"Hreco_nmatchedpartons==1"                                    ,"hnum_top_1"                                   , 100, 0., 10.  ],
     ["Hreco_pTHvis"                                 ,""           ,"Hreco_pTHvis>=0"                                             ,"pTHvis"                                       , 100, 0., 400. ],
     ["Hreco_pTHgen"                                 ,""           ,"Hreco_pTHgen>=0"                                             ,"pTHgen"                                       , 100, 0., 400. ],
     ["Hreco_quark1pT_no_cond"                       ,""           ,"Hreco_quark1pT_no_cond>=0"                                   ,"Hreco_quark1pT_no_cond"                       , 100, 0., 400. ],
@@ -92,32 +92,33 @@ plotlist = [
     ["Hreco_delR_jm1_jm2"                           ,""           ,"Hreco_delR_jm1_jm2>=0"                                       ,"Hreco_delR_jm1_jm2"                           , 100, 0., 10.  ],
 ]
 colours = {
-    "Hreco_delR_H_j1j2"    : kRed,
-    "Hreco_delR_H_partons" : kBlack,
+    "Hreco_delR_lep_jm_closest"             : kRed,
+    "Hreco_delR_lep_jm_farthest"            : kBlack,
+    "Hreco_delR_lep_wrong_jet_closest"      : kMagenta,
 } # add more if needed
 
 comparisonplotlist = [
-    {
-        'vars' : {
-            "Hreco_delR_H_j1j2"     :   "Hreco_delR_H_j1j2>=0"                                 ,
-            "Hreco_delR_H_partons"  :   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1" ,
-        },
-        'pars' : { "delR_j1j2_q1q2_cut" : [100, 0., 10.],}
-    },
-    {
-        'vars' : {
-            "Hreco_delR_H_j1j2"     :   "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1"     , 
-            "Hreco_delR_H_partons"  :   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1"  ,
-        },
-        'pars' : { "delR_j1j2_cut_q1q2_cut" : [ 100, 0., 10.],}
-    }
+    #{
+        #'vars' : {
+            #"Hreco_delR_H_j1j2"     :   "Hreco_delR_H_j1j2>=0"                                 ,
+            #"Hreco_delR_H_partons"  :   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1" ,
+        #},
+        #'pars' : { "delR_j1j2_q1q2_cut" : [100, 0., 10.],}
+    #},
+    #{
+        #'vars' : {
+            #"Hreco_delR_H_j1j2"     :   "Hreco_delR_H_j1j2>=0 && Hreco_nmatchedpartons ==1"     , 
+            #"Hreco_delR_H_partons"  :   "Hreco_delR_H_partons>=0 && Hreco_nmatchedpartons ==1"  ,
+        #},
+        #'pars' : { "delR_j1j2_cut_q1q2_cut" : [ 100, 0., 10.],}
+    #},
     {
         'vars' : {
             "Hreco_delR_lep_jm_closest"         :   "Hreco_delR_lep_jm_closest>=0"         , 
             "Hreco_delR_lep_jm_farthest"        :   "Hreco_delR_lep_jm_farthest>=0"        ,
             "Hreco_delR_lep_wrong_jet_closest"  :   "Hreco_delR_lep_wrong_jet_closest>=0"  ,
         },
-        'pars' : { "delR_matched_non_matched_comp" : [ 100, 0., 10.],}
+        'pars' : { "delR_matched_non_matched" : [ 100, 0., 10.],}
     }
 ]
 
@@ -142,20 +143,19 @@ def draw_plot(var,suffix,cut,fname,nbins,lowbin, highbin):
         c.Print("%s/%s%s.png"%(options.outputDir,fname,suffix))
 
 #TODO overwrites variables
-'''
-def draw_plot(args):
-    for var,pars in args.items():
-        suffix, cut,fname,nbins,lowbin, highbin = pars
-        c = TCanvas()
-        c.cd()
-        theplot = TH1F("%s_%s"%(var,suffix),var, nbins, lowbin, highbin)
+#def draw_plot(args):
+    #for var,pars in args.items():
+        #suffix, cut,fname,nbins,lowbin, highbin = pars
+        #c = TCanvas()
+        #c.cd()
+        #theplot = TH1F("%s_%s"%(var,suffix),var, nbins, lowbin, highbin)
         #theplot = TH1F(var,var, nbins, lowbin, highbin)
-        tr.Draw("%s>>%s_%s"%(var,var,suffix),cut)
+        #tr.Draw("%s>>%s_%s"%(var,var,suffix),cut)
         #tr.Draw("%s>>%s"%(var,var),cut)
-        theplot.Draw()
-        print (theplot.Integral())
-        c.Print("%s/%s_%s.png"%(options.outputDir,fname, suffix)) 
-'''
+        #theplot.Draw()
+        #print (theplot.Integral())
+        #c.Print("%s/%s_%s.png"%(options.outputDir,fname, suffix)) 
+
 def draw_comparison(args): #TODO the hist title is always the first var--> confusing when comparing two different vars
     fname = args['pars'].keys()[0]
     nbins, lowbin, highbin = args['pars'].values()[0]
@@ -202,7 +202,7 @@ def draw_scatter(args):
         tr.Draw("%s:%s>>%s"%(var1,var2,var2),cut1)
         theplot_scat.Draw("COLZ")
         theplot_scat.SetTitle("%s_Vs_%s"%(var1,var2))
-        c.Print("%s/%s_%s_2D.png"%(options.outputDir,fname,suffix))
+        c.Print("%s/%s%s_2D.png"%(options.outputDir,fname,suffix))
         
 for var, suffix,cut, fname, nbins, lowbin, highbin in plotlist:
         draw_plot(var, suffix,cut, fname, nbins, lowbin, highbin)
