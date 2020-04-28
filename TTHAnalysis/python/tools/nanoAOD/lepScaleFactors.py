@@ -21,8 +21,8 @@ class lepScaleFactors(Module):
                     self.looseToTightUncertainties_pt['%s,%s'%(year, fl)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/uncertainty/SFttbar_%s_%s_pt.root'%(year,fl2), "histo_eff_data")
                     self.recoToLoose['%s,%s'%(year, fl)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/TnP_loose_%s_%s.root'%(fl2, year), "EGamma_SF2D")
                     if fl == 'm': continue
-                    self.recoToLoose['%s,%s,extra'%(year, fl)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/TnP_loose_%s_%s.root'%(fl2,year), "EGamma_SF2D")
-                    self.recoToLoose['%s,%s,reco'%(year, fl)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/TnP_loosettH_%s_%s.root'%(fl2,year), "EGamma_SF2D")
+                    #self.recoToLoose['%s,%s,extra'%(year, fl)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/TnP_loose_%s_%s.root'%(fl2,year), "EGamma_SF2D")
+                    self.recoToLoose['%s,%s,extra'%(year, fl)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/TnP_loosettH_%s_%s.root'%(fl2,year), "EGamma_SF2D")
         self.electronReco    = {
             2016 : [self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/EGM2D_BtoH_GT20GeV_RecoSF_Legacy2016.root', "EGamma_SF2D"),
                       self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/EGM2D_BtoH_low_RecoSF_Legacy2016.root', "EGamma_SF2D")], # first Et > 20, second Et < 20

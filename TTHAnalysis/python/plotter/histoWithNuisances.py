@@ -645,7 +645,7 @@ class HistoWithNuisances:
             up   = _cloneNoDir( self.central, self.central.GetName() + 'envUp' )
             down = _cloneNoDir( self.central, self.central.GetName() + 'envDown' )
             for x in range(1, self.central.GetNbinsX()+1):
-                for y in range(1,self.central.GetNbinsX()+1):
+                for y in range(1,self.central.GetNbinsY()+1):
                     ibin  = self.central.GetBin(x,y)
                     maxUp = self.central.GetBinContent( ibin )
                     minDn = self.central.GetBinContent( ibin ) 
