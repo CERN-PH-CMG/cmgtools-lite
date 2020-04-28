@@ -1,5 +1,5 @@
 import os
-from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, kBlack, kRed, kMagenta, TLegend
+from ROOT import TCanvas, TROOT, TH1F, TH2F, TFile, TTree, gROOT, gStyle, kBlack, kRed, kMagenta, TLegend
 
 gROOT.SetBatch(True)
 
@@ -117,7 +117,7 @@ comparisonplotlist = [
             "Hreco_delR_lep_jm_farthest"        :   "Hreco_delR_lep_jm_farthest>=0"        ,
             "Hreco_delR_lep_wrong_jet_closest"  :   "Hreco_delR_lep_wrong_jet_closest>=0"  ,
         },
-        'pars' : { "delR_matched_non_matched" : [ 100, 0., 10.],}
+        'pars' : { "delR_matched_non_matched" : [ 50, 0., 5.],}
     }
 ]
 
@@ -156,6 +156,7 @@ def draw_plot(var,suffix,cut,fname,nbins,lowbin, highbin):
         #c.Print("%s/%s_%s.png"%(options.outputDir,fname, suffix)) 
 
 def draw_comparison(args): #TODO the hist title is always the first var--> confusing when comparing two different vars
+    gStyle.SetOptStat(0)
     fname = args['pars'].keys()[0]
     nbins, lowbin, highbin = args['pars'].values()[0]
     c   = TCanvas('c', 'c', 800, 800)
@@ -164,6 +165,7 @@ def draw_comparison(args): #TODO the hist title is always the first var--> confu
     ps = [] # This is needed because ROOT is a mess
     h=TH1F('h', '', nbins, lowbin, highbin)
     h.Draw("ICE")
+    h.SetTitle("")
     ip=0
     ymax=0
     for var, val in args['vars'].items():
