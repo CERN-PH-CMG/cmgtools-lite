@@ -74,7 +74,14 @@ ttH_cr_3l_2018_eem_cr:ZZ
 ttH_2lss_0tau_mm_ttWnode_2016:WH_hww
 ttH_2lss_0tau_mm_ttWnode_2018:ttH_.*hmm
 ttH_2lss_0tau_mm_ttWnode_2018:ttH_.*hzz
+ttH_2lss_0tau_mm_ttWnode_2018:WH_hww
 ttH_3l_0tau_rest_emm_bl_2018:ttH_.*hmm
 ttH_cr_3l_2017_mmm_cr:WH_hzz
 ttH_3l_0tau_tH_bl_2017:ttH_.*hzz
 ttH_2lss_3j_2018_ee:WH_hww
+ttH_2lss_0tau_2018_ee_lj:tHq_.*hww
+ttH_2lss_0tau_2018_ee_lj:Convs
+ttH_2lss_0tau_2018_ee_hj:ttH_.*hzz
+ttH_3l_0tau_2017_lj_pos:ZZ
+ttH_3l_0tau_2016_lj_neg:ZZ
+ttH_4l_2016:ZZ
