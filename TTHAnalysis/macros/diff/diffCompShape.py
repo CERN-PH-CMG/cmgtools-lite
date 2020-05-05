@@ -21,7 +21,7 @@ colours = {
     "Hreco_pTHgen_no_cond"                                  : kGreen, 
     "Hreco_pTVisPlusNu"                                     : kBlack, 
     "Hreco_pTVis_jets_match"                                : kBlue,
-    "Hreco_pTVis_jets_match_with_gen_lep_no_cond"           : kBlue
+    "Hreco_pTVis_jets_match_with_gen_lep_no_cond"           : kBlue,
     "Hreco_pTVis_jets_match_plusNu"                         : kMagenta,
     "Hreco_pTVis_jets_match_plusNu_plus_gen_lep_no_cond"    : kMagenta
 } # :add more if needed
@@ -40,11 +40,11 @@ comparisonplotlists = [
     },
     {
         'vars' : {
-            "Hreco_pTHgen_no_cond"                               :  [ "Hreco_pTHgen_no_cond > 0  && Hreco_nQFromWFromH==2"  ,"gen,cond_len(QWH)"                                                        ],
-            "Hreco_pTVis_jets_match_with_gen_lep_no_cond"        :  [ "Hreco_pTVis_jets_match > 0                        "  ,"jm1+jm2+true_lep,cond_len(QWH),-1 not in j_m_q[]"                         ],
-            "Hreco_pTVis_jets_match_plusNu_plus_gen_lep_no_cond" :  [ "Hreco_pTVis_jets_match_plusNu > 0                 "  ,"jm1+jm2+true_lep+MET,cond_len(QWH),-1 not in j_m_q[]"                     ],
+            "Hreco_pTHgen_no_cond"                               :  [ "Hreco_pTHgen_no_cond > 0  && Hreco_nQFromWFromH==2"          ,"gen,cond_len(QWH)"                                                 ],
+            "Hreco_pTVis_jets_match_with_gen_lep_no_cond"        :  [ "Hreco_pTVis_jets_match_with_gen_lep_no_cond > 0"             ,"jm1+jm2+true_lep,cond_len(QWH),-1 not in j_m_q[]"                  ],
+            "Hreco_pTVis_jets_match_plusNu_plus_gen_lep_no_cond" :  [ "Hreco_pTVis_jets_match_plusNu_plus_gen_lep_no_cond > 0"      ,"jm1+jm2+true_lep+MET,cond_len(QWH),-1 not in j_m_q[]"              ],
     },
-        'pars' : {"pTH_no_cond"                                  :        [4, 0., 400.]}
+        'pars' : {"pTH_no_cond"                                  :        [40, 0., 400.]}
     },
     {
         'vars' : {
