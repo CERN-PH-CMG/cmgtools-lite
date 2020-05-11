@@ -89,11 +89,17 @@ plotlist = [
     ["Hreco_delR_lep_wrong_jet_closest"             ,""           ,"Hreco_delR_lep_wrong_jet_closest>=0"                         ,"Hreco_delR_lep_wrong_jet_closest"             , 100, 0., 10.  ],
     ["Hreco_delR_lep_wrong_jet_farthest"            ,""           ,"Hreco_delR_lep_wrong_jet_farthest>=0"                        ,"Hreco_delR_lep_wrong_jet_farthest"            , 100, 0., 10.  ],
     ["Hreco_delR_jm1_jm2"                           ,""           ,"Hreco_delR_jm1_jm2>=0"                                       ,"Hreco_delR_jm1_jm2"                           , 100, 0., 10.  ],
-]
+    ["Hreco_inv_mass_H_jets_match_plusNu"           ,""           ,"Hreco_inv_mass_H_jets_match_plusNu>=0"                       ,"Hreco_inv_mass_H_jets_match_plusNu"           , 100, 0., 250. ],
+    ["Hreco_inv_mass_H_jets_match"                  ,""           ,"Hreco_inv_mass_H_jets_match>=0"                              ,"Hreco_inv_mass_H_jets_match"                  , 100, 0., 250. ],
+    ["Hreco_inv_mass_q1_q2_no_cond"                 ,""           ,"Hreco_inv_mass_q1_q2_no_cond>=0"                             ,"Hreco_inv_mass_q1_q2_no_cond"                 , 100, 0., 150. ],
+    ]
 colours = {
     "Hreco_delR_lep_jm_closest"             : kRed,
     "Hreco_delR_lep_jm_farthest"            : kBlack,
     "Hreco_delR_lep_wrong_jet_closest"      : kMagenta,
+    "Hreco_inv_mass_H_jets_match_plusNu"    : kRed,
+    "Hreco_inv_mass_H_jets_match"           : kBlack,
+    "Hreco_visHmass"                        : kMagenta,
 } # add more if needed
 
 comparisonplotlist = [
@@ -111,6 +117,14 @@ comparisonplotlist = [
         #},
         #'pars' : { "delR_j1j2_cut_q1q2_cut" : [ 100, 0., 10.],}
     #},
+    {
+        'vars' : {
+            "Hreco_inv_mass_H_jets_match_plusNu":   "Hreco_inv_mass_H_jets_match_plusNu>=0"         , 
+            "Hreco_inv_mass_H_jets_match"       :   "Hreco_inv_mass_H_jets_match>=0"                ,
+            "Hreco_visHmass"                    :   "Hreco_visHmass>=0"                             ,
+        },
+        'pars' : { "inv_mass_H" : [ 100, 0., 250.],}
+    }
     {
         'vars' : {
             "Hreco_delR_lep_jm_closest"         :   "Hreco_delR_lep_jm_closest>=0"         , 
