@@ -118,7 +118,7 @@ comparisonplotlist = [
             "Hreco_visHmass"                    :   "Hreco_visHmass>=0"                             ,
         },
         'pars' : { "inv_mass_H" : [ 100, 0., 250.],}
-    }
+    },
     {
         'vars' : {
             "Hreco_delR_lep_jm_closest"         :   "Hreco_delR_lep_jm_closest>=0"         , 
@@ -142,12 +142,6 @@ scatterplotdict = {
 }
 
 def draw_plot(var,suffix,cut,fname,nbins,lowbin, highbin):
-#def draw_plot(args):
-        #var, suffix = lvar
-    #for lvar, pars in args.items():
-    for var, pars in args.items():
-        cut,fname,nbins,lowbin, highbin = pars
-        print(var, suffix)
         c = TCanvas()
         c.cd()
         theplot = TH1F(var,var, nbins, lowbin, highbin)
@@ -155,7 +149,19 @@ def draw_plot(var,suffix,cut,fname,nbins,lowbin, highbin):
         theplot.Draw()
         c.Print("%s/%s%s.png"%(options.outputDir,fname,suffix))
 
-#TODO overwrites variables
+#TODO overwrites variables, which one of the following that doesn't overwrite stuff, i.e. the one fixed by Pietro
+#def draw_plot(args):
+    #var, suffix = lvar
+    #for lvar, pars in args.items():
+        #cut,fname,nbins,lowbin, highbin = pars
+        #print(var, suffix)
+        #c = TCanvas()
+        #c.cd()
+        #theplot = TH1F(var,var, nbins, lowbin, highbin)
+        #tr.Draw("%s>>%s"%(var,var),cut)
+        #theplot.Draw()
+        #c.Print("%s/%s%s.png"%(options.outputDir,fname,suffix))
+
 #def draw_plot(args):
     #for var,pars in args.items():
         #suffix, cut,fname,nbins,lowbin, highbin = pars
