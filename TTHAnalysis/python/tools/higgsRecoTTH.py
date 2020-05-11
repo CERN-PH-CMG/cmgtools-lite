@@ -662,7 +662,6 @@ class HiggsRecoTTH(Module):
             ret["Hreco_pTVisPlusNu%s"                                           %self.systsJEC[var]] = best[7 ]                                 if best else -99 
             ret["Hreco_pTHvis%s"                                                %self.systsJEC[var]] = best[8 ]                                 if best else -99
             
-<<<<<<< HEAD
             # delR vars
             # ----
             ret["Hreco_delR_H_j1l_reco%s"                                       %self.systsJEC[var]] = delR_H_j1l_reco                          if best else -99 
