@@ -1,0 +1,36 @@
+All below is on skimmed samples, i.e. samples with 2lss_tight.txt applied
+########
+73292:
+if -1 not in closestJetToQFromWFromH
+if len(QFromWFromH)==2
+if var ==0
+########
+42759:(*)
+same as above but for values >=0, mainly for pT dist.
+########
+12075:
+if best else -99
+since its for jet indices so it should have a cut at >=0
+########
+349:
+if -1 not in jets_match_quarks
+if len(QFromWFromH)==2
+if var ==0
+if best else -99
+########
+602:
+if -1 not in jets_match_quarks
+if len(QFromWFromH)==2
+if var ==0
+########
+25700:
+if best else -99
+since its for delR so it should have a cut at >=0
+note: of the same plot there will be other versions with different cuts. These latter cuts are on plotting level. We here quote only cuts on module level.
+########
+48756:(*)
+since its for delR so it should have a cut at >=0
+note: of the same plot there will be other versions with different cuts. These latter cuts are on plotting level. We here quote only cuts on module level.
+########
+note how (*) makes sense. Both are gen-level entries and the major difference between them is len(QFromWFromH)==2.
+
