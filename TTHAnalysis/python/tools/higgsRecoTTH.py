@@ -428,8 +428,8 @@ class HiggsRecoTTH(Module):
                     closestFatJetToLeptonVars.append([closestFat_deltaR, closestFat_lepIsFromH, fj.pt, fj.eta, fj.phi, fj.mass, fj.msoftdrop, fj.tau1, fj.tau2, fj.tau3, fj.tau4])
     
                 for _j1,_j2,j1,j2 in [(jets.index(x1),jets.index(x2),x1.p4(),x2.p4()) for x1,x2 in itertools.combinations(jetsNoTopNoB,2)]:
-                    j1.SetPtEtaPhiM(getattr(jets[jets.index(x1)],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
-                    j2.SetPtEtaPhiM(getattr(jets[jets.index(x2)],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
+                    j1.SetPtEtaPhiM(getattr(jets[_j1],'pt%s'%self.systsJEC[var]),j1.Eta(), j1.Phi(), j1.M())
+                    j2.SetPtEtaPhiM(getattr(jets[_j2],'pt%s'%self.systsJEC[var]),j2.Eta(), j2.Phi(), j2.M())
                     W = j1+j2
                     mW = W.M()
                     if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
