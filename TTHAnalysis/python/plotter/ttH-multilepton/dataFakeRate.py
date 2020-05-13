@@ -30,7 +30,7 @@ def addPolySystBands(hwn,amplitude,order,namePattern="{name}_pol{order}", norm=T
         lo.Scale(ytot/lo.Integral())
     name = namePattern.format(name=hwn.GetName(), order=order)
     hwn.addVariation(name, 'up', hi, clone=False)
-    hwn.addVariation(name, 'dn', lo, clone=False)
+    hwn.addVariation(name, 'down', lo, clone=False)
 def addStretchBands(hwn,amplitude,fineSlices=100,namePattern="{name}_stretch", norm=True):
     ref = hwn.getCentral()
     ytot = ref.Integral()
@@ -52,7 +52,7 @@ def addStretchBands(hwn,amplitude,fineSlices=100,namePattern="{name}_stretch", n
         lo.Scale(ytot/lo.Integral())
     name = namePattern.format(name=hwn.GetName())
     hwn.addVariation(name, 'up', hi, clone=False)
-    hwn.addVariation(name, 'dn', lo, clone=False)
+    hwn.addVariation(name, 'down', lo, clone=False)
 
 if __name__ == "__main__":
     from optparse import OptionParser

@@ -173,6 +173,86 @@ int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, flo
 
 }
 
+
+// for plots
+
+int ttH_2lss_node( float tth, float ttw, float thq, float rest ){
+
+  int procch = 0;
+  if (tth >= ttw && tth >= thq && tth >= rest)
+    procch = 0;
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    procch = 1;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    procch = 2;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    procch = 3;
+  else 
+    cout << "[2lss]: It shouldnt be here. DNN scores are " << tth << " " << rest << " " << ttw << " " << thq << endl;
+
+  return procch;
+}
+
+
+std::vector<TString> bin2lsslabels_plots = {
+  "ee_ttHnode" , "em_ttHnode" ,  "mm_ttHnode", 
+  "ee_Restnode", "em_Restnode",  "mm_Restnode",
+  "ee_ttWnode" , "em_ttWnode" ,  "mm_ttWnode",
+  "ee_tHQnode" , "em_tHQnode" ,  "mm_tHQnode",
+
+};
+
+std::map<TString, TH1F*> binHistos2lss_plots;
+TFile* f2lssBins_plots;
+
+
+int ttH_catIndex_2lss_plots(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
+{
+
+  if (!f2lssBins_plots){
+    f2lssBins_plots = TFile::Open("../../data/kinMVA/DNNBin_v3_xmas.root");
+    for (auto & la : bin2lsslabels_plots){
+      int bins = bins2lss[la];
+      binHistos2lss_plots[la] = (TH1F*) f2lssBins_plots->Get(Form("%s_2018_Map_nBin%d", la.Data(), bins));
+    }
+  }
+
+  int idx = ttH_catIndex_2lss(LepGood1_pdgId, LepGood2_pdgId, tth,ttw, thq,rest); 
+  TString binLabel = bin2lsslabels[idx-1];
+  int offset=0;
+  int node = ttH_2lss_node(tth, ttw,thq, rest);
+  if (abs(LepGood1_pdgId*LepGood2_pdgId) == 143){
+    if (node == 0) offset = 5;
+    else if (node == 1) offset = 8;
+    else if (node == 2) offset = 6;
+    else offset = 4;
+  }
+  if (abs(LepGood1_pdgId*LepGood2_pdgId) == 169){
+    if (node == 0) offset = 5+13;
+    else if (node == 1) offset = 8+8;
+    else if (node == 2) offset = 6+19;
+    else offset = 4+11;
+  }
+
+  float mvavar = 0;
+  if (tth >= ttw && tth >= thq && tth >= rest)
+    mvavar = tth;
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    mvavar =rest;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    mvavar = ttw;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    mvavar = thq;
+  else 
+    cout << "It shouldnt be here" << endl;
+
+
+  return binHistos2lss_plots[binLabel]->FindBin( mvavar ) + offset;
+    
+
+}
+
+
 int ttH_catIndex_2lss_nosign(int LepGood1_pdgId, int LepGood2_pdgId, int nBJetMedium25){
 
   if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11) return 1;
@@ -197,6 +277,26 @@ int ttH_catIndex_2lss_SVA(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_c
   if (nJet25>=6) res+=1;
 
   return res; // 1-10
+}
+
+
+int ttH_catIndex_2lss_SVA_forPlots1(int LepGood1_pdgId, int LepGood2_pdgId, int nJet25){
+
+  int res = -2;
+
+  if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11) res = 1;
+  if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId))) res = 3;
+  if (abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13) res = 5;
+  if (nJet25>=6) res+=1;
+
+  return res; // 1-6
+}
+
+int ttH_catIndex_2lss_SVA_forPlots2(int nJet25){
+
+  int res = 1;
+  if (nJet25>=6) res+=1;
+  return res; // 1-6
 }
 
 int ttH_catIndex_2lss_SVA_soft(int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nJet25){
@@ -271,6 +371,7 @@ std::map<TString, int> bins3lcumul;
 TFile* f3lBins;
 
 
+
 int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
 {
 
@@ -294,6 +395,59 @@ int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep
 
 }
 
+int ttH_catIndex_3l_node(float ttH, float tH, float rest){
+  if (ttH >= tH && ttH >= rest){
+    return 0;
+  }
+  else if (tH >= ttH && tH >= rest){
+    return 1;
+  }
+  else if (rest >= ttH && rest >= tH){
+    return 2;
+  }
+}
+
+
+int ttH_catIndex_3l_plots(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium )
+{
+  if (!f3lBins){
+    f3lBins=TFile::Open("../../data/kinMVA/binning_3l.root");
+    int count=0;
+    for (auto label : bin3llabels){
+      binHistos3l[label] = (TH1F*) f3lBins->Get(label);
+      bins3lcumul[label] = count;
+      count += binHistos3l[label]->GetNbinsX();
+    }
+  }
+
+  int offset =0;
+  int pdgSum = abs(lep1_pdgId) + abs(lep2_pdgId) + abs(lep3_pdgId);
+
+  if (ttH_catIndex_3l_node(ttH,tH,rest) == 0){
+    if (nBMedium >= 2) offset=5;
+  }
+  else if (ttH_catIndex_3l_node(ttH,tH,rest) == 1){
+    if (nBMedium >= 2) offset=7;
+  }
+  else{
+    if (nBMedium  < 2){
+      if (pdgSum == 35) offset = 1;
+      else if (pdgSum == 37) offset=1+4;
+      else if (pdgSum == 39) offset=1+4+4;
+    }
+    else{
+      if (pdgSum == 35) offset = 1+4+4+3;
+      if (pdgSum == 37) offset = 1+4+4+3+1;
+      if (pdgSum == 39) offset = 1+4+4+3+1+1;
+    }
+  }
+  TString binLabel = bin3llabels[ttH_catIndex_3l(ttH,tH,rest,lep1_pdgId,lep2_pdgId,lep3_pdgId,nBMedium)-1];
+  float mvas[] = { ttH, tH, rest };
+  float mvavar = *std::max_element( mvas, mvas+3 );
+  return binHistos3l[binLabel]->FindBin( mvavar ) + offset;
+
+}
+
 float ttH_mva_4l(float score)
 {
   return 1. / (1. + std::sqrt((1. - score) / (1. + score)));
@@ -312,6 +466,15 @@ int ttH_catIndex_3l_SVA(int LepGood1_charge, int LepGood2_charge, int LepGood3_c
   if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nJet25 < 4) return 12;
   if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nJet25 >= 4) return 13;
   if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nJet25 >= 4) return 14;
+
+  return -1;
+
+}
+
+int ttH_catIndex_3l_SVAforPlots(int nJet25){
+
+  if (nJet25 < 4) return 1;
+  if (nJet25 >= 4) return 2;
 
   return -1;
 
