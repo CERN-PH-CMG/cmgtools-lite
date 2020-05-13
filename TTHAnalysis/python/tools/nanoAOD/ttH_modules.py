@@ -156,16 +156,16 @@ mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import jetMetCorrelate2016,jetMetCorrelate2017,jetMetCorrelate2018
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import createJMECorrector
+#from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import createJMECorrector
 
 
-jetmetUncertainties2016All = createJMECorrector(dataYear=2016, jesUncert="All")
-jetmetUncertainties2017All = createJMECorrector(dataYear=2017, jesUncert="All", metBranchName="METFixEE2017")
-jetmetUncertainties2018All = createJMECorrector(dataYear=2016, jesUncert="All")
+#jetmetUncertainties2016All = createJMECorrector(dataYear=2016, jesUncert="All")
+#jetmetUncertainties2017All = createJMECorrector(dataYear=2017, jesUncert="All", metBranchName="METFixEE2017")
+#jetmetUncertainties2018All = createJMECorrector(dataYear=2016, jesUncert="All")
 
-jme2016_allvariations = [jetmetUncertainties2016All,jetMetCorrelate2016] 
-jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
-jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
+#jme2016_allvariations = [jetmetUncertainties2016All,jetMetCorrelate2016] 
+#jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
+#jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
 
 def _fires(ev, path):
     if "/hasfiredtriggers_cc.so" not in ROOT.gSystem.GetLibraries():
@@ -430,19 +430,8 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco
 #from CMGTools.TTHAnalysis.tools.topRecoSemiLept import TopRecoSemiLept
 #topRecoModule = lambda : TopRecoSemiLept(constraints=['kWHadMass','kWLepMass','kTopLepMass','kTopHadMass'])
 
-from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
-higgsRecoTTH = lambda : HiggsRecoTTH(label="_Recl",
-                                     cut_BDT_rTT_score = 0.0,
-                                     cuts_mW_had = (60.,100.),
-                                     cuts_mH_vis = (80.,140.),
-                                     btagDeepCSVveto = 'L', # or 'M'
-                                     useTopTagger=True)
-higgsRecoTTHNoTopTagger = lambda : HiggsRecoTTH(label="_Recl",
-                                                cut_BDT_rTT_score = 0.0,
-                                                cuts_mW_had = (60.,100.),
-                                                cuts_mH_vis = (80.,140.),
-                                                btagDeepCSVveto = 'M', # or 'M'
-                                                useTopTagger=False)
-
-from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import HiggsRegressionTTH
-higgsRegressionTTH = lambda : HiggsRegressionTTH(label='_Recl' )
+# TTH differential analysis
+from CMGTools.TTHAnalysis.tools.higgsDiffGenTTH import higgsDiffGenTTH
+#from CMGTools.TTHAnalysis.tools.higgsRecoTTH import higgsRecoTTH
+#from CMGTools.TTHAnalysis.tools.higgsDiffCompTTH import higgsDiffCompTTH
+from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import higgsRegressionTTH

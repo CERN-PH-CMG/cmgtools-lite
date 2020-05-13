@@ -159,3 +159,4 @@ class HiggsRegressionTTH(Module):
             ret["HTXS_Higgs_y%s"%self.systsJEC[var]] = getattr(event,"HTXS_Higgs_y")
         return ret
 
+higgsRegressionTTH = lambda : HiggsRegressionTTH(label='_Recl' )
