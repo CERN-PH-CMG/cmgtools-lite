@@ -16,7 +16,7 @@ class Validation_HiggsDiffGenTTH():
         self.label=label
         self.outdir=outdir
         if not os.path.isdir(self.outdir):
-            os.mkdir(self.outdir)
+            os.makedirs(self.outdir)
         self.p=[]
 
     def printPlotList(self):
@@ -136,8 +136,9 @@ class Validation_HiggsDiffGenTTH():
         self.p.append(['%spTTrueGenPlusNu'%self.label   , 101, -1., 100.])
         
         
-        
-validator = Validation_HiggsDiffGenTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/6_higgsDiffGenTTH/TTHnobb_fxfx_Friend.root', outdir='validationPlots_higgsDiffGenTTH')
-validator.buildPlotListFromBranches()
-validator.printPlotList()
-validator.plotList()
+for year in [2016, 2017, 2018]:
+    validator = Validation_HiggsDiffGenTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffGenTTH/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffGenTTH/%s'%year)
+    validator.buildPlotListFromBranches()
+    validator.printPlotList()
+    validator.plotList()
+    del validator

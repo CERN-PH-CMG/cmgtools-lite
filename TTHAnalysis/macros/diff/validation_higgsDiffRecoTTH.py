@@ -2,7 +2,7 @@ import os
 from ROOT import gROOT, TTree, TFile, TCanvas, TH1F, kBlack, kRed, kBlue, TLegend
 
 
-class Validation_HiggsDiffGenTTH():
+class Validation_HiggsDiffRecoTTH():
     def __init__(self, fname='', tname='Friends', label='Hreco_', outdir='test', doSystJEC=True, altfname=None):
         gROOT.SetBatch()
         self.f = TFile.Open(fname, 'read')
@@ -18,14 +18,15 @@ class Validation_HiggsDiffGenTTH():
         #if altfname and not self.altt:
         #    print('File for Wmass constraint comparison specified but either file or tree not opened: %s'%altfname)
         #    return
-        if self.t and altfname:
+        self.altfname=altfname
+        if self.t and self.altfname:
             self.t.AddFriend('alttree = %s'%tname, altfname)
         self.label=label
         self.outdir=outdir
-        self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown"} if doSystJEC else {0:""}
         if not os.path.isdir(self.outdir):
-            os.mkdir(self.outdir)
+            os.makedirs(self.outdir)
         self.p=[]
+        self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown"} if doSystJEC else {0:""}
 
     def printPlotList(self):
         for plot in self.p:
@@ -56,7 +57,7 @@ class Validation_HiggsDiffGenTTH():
                 h.SetLineColor(kBlack)
                 c.Print('%s/%s.png'%(self.outdir,plotname))
                 del c
-            elif len(plot)==10:
+            elif len(plot)==10 and self.altfname:
                 # Comparison plot
                 name, nbinsd, xlowd, xhighd, nbins, xlow, xhigh, nbinsz, xlowz, xhighz = plot
                 c = TCanvas('c%scomp'%name, name)
@@ -105,9 +106,9 @@ class Validation_HiggsDiffGenTTH():
                 leg = TLegend(0.7, 0.8, 0.9, 0.9)
                 leg.AddEntry(hn, 'Constrained dijet mass', 'l')
                 leg.AddEntry(hnno, 'Unconstrained dijet mass', 'l')
-                leg.Draw()
                 hn.Draw('hist')
                 hnno.Draw('hist same')
+                leg.Draw()
                 c.Print('%s/%s_constraintZoomedComparison.png'%(self.outdir,name))
                 del c
                 
@@ -174,7 +175,12 @@ class Validation_HiggsDiffGenTTH():
         # The comparison
         
 
-validator = Validation_HiggsDiffGenTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/6_higgsDiffRecoTTH/TTHnobb_fxfx_Friend.root', outdir='validationPlots_higgsDiffRecoTTH', altfname='/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/6_higgsDiffRecoTTH_noWmassConstraint/TTHnobb_fxfx_Friend.root')
-validator.buildPlotListFromBranches()
-validator.printPlotList()
-validator.plotList()
+for year in [2016, 2017, 2018]:
+    validator = None
+    if year == 2016:
+        validator = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH/%s'%year, altfname='/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/%s/6_higgsDiffRecoTTH_noWmassConstraint/TTHnobb_fxfx_Friend.root'%year)
+    else:
+        validator = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH/%s'%year)
+    validator.buildPlotListFromBranches()
+    validator.printPlotList()
+    validator.plotList()
