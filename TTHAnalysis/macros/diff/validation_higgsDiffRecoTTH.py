@@ -1,5 +1,5 @@
 import os
-from ROOT import gROOT, TTree, TFile, TCanvas, TH1F, kBlack, kRed, TLegend
+from ROOT import gROOT, TTree, TFile, TCanvas, TH1F, kBlack, kRed, kBlue, TLegend
 
 
 class Validation_HiggsDiffGenTTH():
@@ -56,13 +56,13 @@ class Validation_HiggsDiffGenTTH():
                 h.SetLineColor(kBlack)
                 c.Print('%s/%s.png'%(self.outdir,plotname))
                 del c
-            elif len(plot)==6:
+            elif len(plot)==10:
                 # Comparison plot
-                name, nbins, xlow, xhigh, _, _ = plot
+                name, nbinsd, xlowd, xhighd, nbins, xlow, xhigh, nbinsz, xlowz, xhighz = plot
                 c = TCanvas('c%scomp'%name, name)
                 c.cd()
-                h = TH1F('h%s'%name, name, nbins, xlow, xhigh)
-                self.t.Draw('(%s-%s.varname)>>h%s'%(name,name, name ))
+                h = TH1F('h%s'%name, name, nbinsd, xlowd, xhighd)
+                self.t.Draw('(%s-alttree.%s)>>h%s'%(name,name, name ))
                 #self.t.Draw('%s>>h%s'%(name,name))
                 h.Draw('hist')
                 #hnoconstr = TH1F('h%snoconstr'%name, name, nbins, xlow, xhigh)
@@ -78,7 +78,37 @@ class Validation_HiggsDiffGenTTH():
                 #leg.AddEntry(h, 'Constrained dijet mass', 'l')
                 #leg.AddEntry(hnoconstr, 'Unconstrained dijet mass', 'l')
                 #leg.Draw()
+                c.Print('%s/%s_constraintDifference.png'%(self.outdir,name))
+                hn   = TH1F('hn%s'%name, name, nbins, xlow, xhigh)
+                hnno = TH1F('hnno%s'%name, name, nbins, xlow, xhigh)
+                self.t.Draw('%s>>hn%s'%(name,name ))
+                self.t.Draw('alttree.%s>>hnno%s'%(name,name ))
+                hn.Draw('hist')
+                hnno.Draw('hist same')
+                hn.SetLineColor(kBlue)
+                hnno.SetLineColor(kRed)
+                hn.SetLineWidth(2)
+                hnno.SetLineWidth(2)
+                leg = TLegend(0.7, 0.8, 0.9, 0.9)
+                leg.AddEntry(hn, 'Constrained dijet mass', 'l')
+                leg.AddEntry(hnno, 'Unconstrained dijet mass', 'l')
+                leg.Draw()
                 c.Print('%s/%s_constraintComparison.png'%(self.outdir,name))
+                hn   = TH1F('hn%s'%name, name,   nbinsz, xlowz, xhighz)
+                hnno = TH1F('hnno%s'%name, name, nbinsz, xlowz, xhighz)
+                self.t.Draw('%s>>hn%s'%(name,name ))
+                self.t.Draw('alttree.%s>>hnno%s'%(name,name ))
+                hn.SetLineColor(kBlue)
+                hnno.SetLineColor(kRed)
+                hn.SetLineWidth(2)
+                hnno.SetLineWidth(2)
+                leg = TLegend(0.7, 0.8, 0.9, 0.9)
+                leg.AddEntry(hn, 'Constrained dijet mass', 'l')
+                leg.AddEntry(hnno, 'Unconstrained dijet mass', 'l')
+                leg.Draw()
+                hn.Draw('hist')
+                hnno.Draw('hist same')
+                c.Print('%s/%s_constraintZoomedComparison.png'%(self.outdir,name))
                 del c
                 
 
@@ -95,9 +125,9 @@ class Validation_HiggsDiffGenTTH():
             self.p.append(['%spTHvis%s'%(self.label,jesLabel)                     , 200, -100, 100])
             
             # The comparison (I add two dummy variables to match the array size later)
-            self.p.append(['%svisHmass%s'%(self.label,jesLabel)                   , 200, -5., 5., 0, 0])
-            self.p.append(['%sWmass%s'%(self.label,jesLabel)                      , 200, -5., 5., 0, 0])
-            self.p.append(['%spTHvis%s'%(self.label,jesLabel)                     , 200, -5., 5., 0, 0])
+            self.p.append(['%svisHmass%s'%(self.label,jesLabel)                   , 200, -5., 5., 300, -100., 200., 200, 0., 200.])
+            self.p.append(['%sWmass%s'%(self.label,jesLabel)                      , 200, -5., 5., 300, -100., 200., 200, 0., 200.])
+            self.p.append(['%spTHvis%s'%(self.label,jesLabel)                     , 200, -5., 5., 300, -100., 200., 200, 0., 200.])
 
             self.p.append(['%slepIdx%s'%(self.label,jesLabel)           ,5, -0.5, 4.5])
             self.p.append(['%sj1Idx%s'%(self.label,jesLabel)            ,5, -0.5, 4.5])
