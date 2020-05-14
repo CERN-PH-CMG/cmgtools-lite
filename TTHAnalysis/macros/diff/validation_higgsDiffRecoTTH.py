@@ -62,7 +62,7 @@ class Validation_HiggsDiffGenTTH():
                 c = TCanvas('c%scomp'%name, name)
                 c.cd()
                 h = TH1F('h%s'%name, name, nbins, xlow, xhigh)
-                self.t.Draw('%s - %s.varname>>h%s'%(name,name, name ))
+                self.t.Draw('(%s-%s.varname)>>h%s'%(name,name, name ))
                 #self.t.Draw('%s>>h%s'%(name,name))
                 h.Draw('hist')
                 #hnoconstr = TH1F('h%snoconstr'%name, name, nbins, xlow, xhigh)
