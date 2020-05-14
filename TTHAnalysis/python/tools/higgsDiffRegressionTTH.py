@@ -6,7 +6,7 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 
 import ROOT, itertools
 
-class HiggsRegressionTTH(Module):
+class HiggsDiffRegressionTTH(Module):
     def __init__(self,label="_Recl", cut_BDT_rTT_score = 0.0, btagDeepCSVveto = 0.4941, doSystJEC=False):
         self.label = label
         self.cut_BDT_rTT_score = cut_BDT_rTT_score
@@ -159,4 +159,4 @@ class HiggsRegressionTTH(Module):
             ret["HTXS_Higgs_y%s"%self.systsJEC[var]] = getattr(event,"HTXS_Higgs_y")
         return ret
 
-higgsRegressionTTH = lambda : HiggsRegressionTTH(label='_Recl' )
+higgsDiffRegressionTTH = lambda : HiggsDiffRegressionTTH(label='_Recl' )

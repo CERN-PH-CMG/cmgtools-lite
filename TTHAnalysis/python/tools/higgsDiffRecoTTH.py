@@ -6,9 +6,10 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 import ROOT, itertools
 from math import *
 import sys
+import CMGTools.TTHAnalysis.tools.higgsDiffUtils as diffUtils 
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs as HiggsRecoTTHbtagwps
 
-class HiggsRecoTTH(Module):
+class HiggsDiffRecoTTH(Module):
     def __init__(self,label="_Recl",cut_BDT_rTT_score = 0.0, cuts_mW_had = (50.,110.), cuts_mH_vis = (90.,130.), btagDeepCSVveto = 'L', doSystJEC=True, useTopTagger=True, debug=False):
         self.debug = debug
         self.useTopTagger = useTopTagger
@@ -89,56 +90,6 @@ class HiggsRecoTTH(Module):
 
         year=getattr(event,"year")
         btagvetoval= HiggsRecoTTHbtagwps["DeepFlav_%d_%s"%(year,self.btagDeepCSVveto)][1]
-        statusFlagsMap = {
-          # Comments taken from:
-          # DataFormats/HepMCCandidate/interface/GenParticle.h
-          # PhysicsTools/HepMCCandAlgos/interface/MCTruthHelper.h
-          #
-          # Nomenclature taken from:
-          # PhysicsTools/NanoAOD/python/genparticles_cff.py
-          #
-          #TODO: use this map in other gen-lvl particle selectors as well:
-          # GenLepFromTauFromTop -> isDirectPromptTauDecayProduct &&
-          #                         isDirectHardProcessTauDecayProduct &&
-          #                         isLastCopy &&
-          #                         ! isDirectHadronDecayProduct
-          # GenLepFromTau -> isDirectTauDecayProduct (or isDirectPromptTauDecayProduct?) &&
-          #                  isLastCopy &&
-          #                  ! isDirectHadronDecayProduct
-          #                  (&& maybe isHardProcessTauDecayProduct?)
-          # GenLepFromTop -> isPrompt &&
-          #                  isHardProcess &&
-          #                  (isLastCopy || isLastCopyBeforeFSR) &&
-          #                  ! isDirectHadronDecayProduct
-          #
-          # Not sure whether to choose (isLastCopy or isLastCopyBeforeFSR) or just isFirstCopy:
-          # GenWZQuark, GenHiggsDaughters, GenVbosons
-          #
-          # Not sure what to require from GenTau
-          'isPrompt'                           : 0,  # any decay product NOT coming from hadron, muon or tau decay
-          'isDecayedLeptonHadron'              : 1,  # a particle coming from hadron, muon, or tau decay
-                                                     # (does not include resonance decays like W,Z,Higgs,top,etc)
-                                                     # equivalent to status 2 in the current HepMC standard
-          'isTauDecayProduct'                  : 2,  # a direct or indirect tau decay product
-          'isPromptTauDecayProduct'            : 3,  # a direct or indirect decay product of a prompt tau
-          'isDirectTauDecayProduct'            : 4,  # a direct tau decay product
-          'isDirectPromptTauDecayProduct'      : 5,  # a direct decay product from a prompt tau
-          'isDirectHadronDecayProduct'         : 6,  # a direct decay product from a hadron
-          'isHardProcess'                      : 7,  # part of the hard process
-          'fromHardProcess'                    : 8,  # the direct descendant of a hard process particle of the same pdg id
-          'isHardProcessTauDecayProduct'       : 9,  # a direct or indirect decay product of a tau from the hard process
-          'isDirectHardProcessTauDecayProduct' : 10, # a direct decay product of a tau from the hard process
-          'fromHardProcessBeforeFSR'           : 11, # the direct descendant of a hard process particle of the same pdg id
-                                                     # for outgoing particles the kinematics are those before QCD or QED FSR
-          'isFirstCopy'                        : 12, # the first copy of the particle in the chain with the same pdg id
-          'isLastCopy'                         : 13, # the last copy of the particle in the chain with the same pdg id
-                                                     # (and therefore is more likely, but not guaranteed,
-                                                     # to carry the final physical momentum)
-          'isLastCopyBeforeFSR'                : 14, # the last copy of the particle in the chain with the same pdg id
-                                                     # before QED or QCD FSR (and therefore is more likely,
-                                                     # but not guaranteed, to carry the momentum after ISR;
-                                                     # only really makes sense for outgoing particles
-        }
         # Return dictionary 
         ret      = {} 
         genpar = Collection(event,"GenPart","nGenPart") 
@@ -201,7 +152,7 @@ class HiggsRecoTTH(Module):
         
         # higgs
         for part in genpar:
-            if part.pdgId == 25 and part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
+            if part.pdgId == 25 and part.statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess']):
                 Higgses.append(part)
                 #TODO: consider the pt of the stxs higgs
                 pTHgen = part.p4().Pt() 
@@ -209,7 +160,7 @@ class HiggsRecoTTH(Module):
             #sys.exit("error: more than one higgs!")
         # tops
         for part in genpar:
-             if abs(part.pdgId) == 6 and part.statusFlags &(1 << statusFlagsMap['isHardProcess']):
+             if abs(part.pdgId) == 6 and part.statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess']):
                  tfromhardprocess.append(part)
                  pTtgen = part.p4().Pt()
         #if len(tfromhardprocess)!=2:
@@ -217,14 +168,14 @@ class HiggsRecoTTH(Module):
         
         # W from higgs
         for part in genpar:
-            if (abs(part.pdgId) == 24 and part.statusFlags &(1 << statusFlagsMap['isHardProcess'])
+            if (abs(part.pdgId) == 24 and part.statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])
                     and part.genPartIdxMother >= 0 and  genpar[part.genPartIdxMother].pdgId == 25 ):
                 if self.debug: print "it is a hard W coming from a Higgs"
                 WFromH.append(part)
         
         # W from tops 
         for part in genpar:
-            if (abs(part.pdgId) == 24 and part.statusFlags &(1 << statusFlagsMap['isHardProcess'])
+            if (abs(part.pdgId) == 24 and part.statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])
                     and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 6):
                 if self.debug: print "it is a hard W coming from a top"
                 WFromT.append(part)
@@ -239,16 +190,16 @@ class HiggsRecoTTH(Module):
         
         # gen leptons
         for part in genpar:
-            if (abs(part.pdgId) in [11,13] and part.status == 1 and part.statusFlags &(1 << statusFlagsMap['isLastCopy']) and not part.statusFlags &(1 << statusFlagsMap['isDirectHadronDecayProduct'])):
-                if part.statusFlags &(1 << statusFlagsMap['isPrompt']) or part.statusFlags &(1 << statusFlagsMap['isDirectPromptTauDecayProduct']):
+            if (abs(part.pdgId) in [11,13] and part.status == 1 and part.statusFlags &(1 << diffUtils.statusFlagsMap['isLastCopy']) and not part.statusFlags &(1 << diffUtils.statusFlagsMap['isDirectHadronDecayProduct'])):
+                if part.statusFlags &(1 << diffUtils.statusFlagsMap['isPrompt']) or part.statusFlags &(1 << diffUtils.statusFlagsMap['isDirectPromptTauDecayProduct']):
                     #print (genpar[part.genPartIdxMother].pdgId)
                     if self.debug: print "it is a prompt lepton"
                     genlep.append(part)
         
         # gen leptons from W
         for part in genpar:
-            if (abs(part.pdgId) in [11,13] and part.status == 1 and part.statusFlags &(1 << statusFlagsMap['isLastCopy']) and not part.statusFlags &(1 << statusFlagsMap['isDirectHadronDecayProduct'])):
-                if part.statusFlags &(1 << statusFlagsMap['isPrompt']) or part.statusFlags &(1 << statusFlagsMap['isDirectPromptTauDecayProduct']):
+            if (abs(part.pdgId) in [11,13] and part.status == 1 and part.statusFlags &(1 << diffUtils.statusFlagsMap['isLastCopy']) and not part.statusFlags &(1 << diffUtils.statusFlagsMap['isDirectHadronDecayProduct'])):
+                if part.statusFlags &(1 << diffUtils.statusFlagsMap['isPrompt']) or part.statusFlags &(1 << diffUtils.statusFlagsMap['isDirectPromptTauDecayProduct']):
                     if part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24: 
                         if self.debug: print "it is a prompt lepton"
                         LFromW.append(part)
@@ -278,40 +229,40 @@ class HiggsRecoTTH(Module):
         # quarks from W from H
         for part in genpar:
             if (abs(part.pdgId) in [1,2,3,4,5,6] and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24
-                     and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                     and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                 if self.debug: print "it is a quark coming from a hard W"
                 if (genpar[genpar[part.genPartIdxMother].genPartIdxMother].genPartIdxMother >= 0 and genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId == 25
-                        and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                        and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                     if self.debug: print "the mother of this hard W is a hard Higgs"
                     QFromWFromH.append(part)
 
         # quarks from W from T 
         for part in genpar:
             if (abs(part.pdgId) in [1,2,3,4,5,6] and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24 
-                     and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                     and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                 if self.debug: print "it is a quark coming from a hard W"
                 if (genpar[genpar[part.genPartIdxMother].genPartIdxMother].genPartIdxMother >= 0 and abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6
-                        and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                        and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                     if self.debug: print "the mother of this hard W is a hard top"
                     QFromWFromT.append(part)
 
         # leptons (excl. taus) from W from H 
         for part in genpar:
             if (abs(part.pdgId) in [11,13] and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24 
-                     and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                     and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                 if self.debug: print "it is a lepton coming from a hard W"
                 if (genpar[genpar[part.genPartIdxMother].genPartIdxMother].genPartIdxMother >= 0 and genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId == 25 
-                        and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                        and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                     if self.debug: print "the mother of this hard W is a hard Higgs"
                     LFromWFromH.append(part)
         
         # leptons (excl. taus) from W from top
         for part in genpar:
             if (abs(part.pdgId) in [11,13] and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24
-                     and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                     and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                 if self.debug: print "it is a lepton coming from a hard W"
                 if (genpar[genpar[part.genPartIdxMother].genPartIdxMother].genPartIdxMother >= 0 and abs(genpar[genpar[part.genPartIdxMother].genPartIdxMother].pdgId) == 6 
-                        and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                        and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                     if self.debug: print "the mother of this W is a hard top"
                     LFromWFromT.append(part)
         
@@ -333,17 +284,17 @@ class HiggsRecoTTH(Module):
         # taus
         for part in genpar:
             if (abs(part.pdgId) in [15] and part.genPartIdxMother >= 0 and abs(genpar[part.genPartIdxMother].pdgId) == 24):
-                     and genpar[part.genPartIdxMother].statusFlags &(1 << statusFlagsMap['isHardProcess'])):
+                     and genpar[part.genPartIdxMother].statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])):
                 if self.debug: print "it is a tau coming from a hard W"
                 tauFromW.append(part)
         
         # leptons from top as recommended by gen particle producer
         for part in genpar:
             if (abs(part.pdgId) in [11,13] 
-                     and part.statusFlags &(1 << statusFlagsMap['isPrompt'])
-                     and part.statusFlags &(1 << statusFlagsMap['isHardProcess'])
-                     and part.statusFlags &(1 << statusFlagsMap['isFirstCopy'])
-                     and not part.statusFlags &(1 << statusFlagsMap['isDirectHadronDecayProduct'])):
+                     and part.statusFlags &(1 << diffUtils.statusFlagsMap['isPrompt'])
+                     and part.statusFlags &(1 << diffUtils.statusFlagsMap['isHardProcess'])
+                     and part.statusFlags &(1 << diffUtils.statusFlagsMap['isFirstCopy'])
+                     and not part.statusFlags &(1 << diffUtils.statusFlagsMap['isDirectHadronDecayProduct'])):
                 if self.debug: print "it should be a  lepton coming from top"
                 LFromWFromT.append(part)
         
@@ -782,3 +733,18 @@ class HiggsRecoTTH(Module):
                 #ret["Hreco_l%s_fj_tau3%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][9] if len(closestFatJetToLeptonVars) == 2 else -99
                 #ret["Hreco_l%s_fj_tau4%s"        %(mylep,self.systsJEC[var])] = closestFatJetToLeptonVars[mylep][10] if len(closestFatJetToLeptonVars) == 2 else -99
         return ret
+
+
+
+higgsDiffRecoTTH = lambda : HiggsDiffRecoTTH(label="_Recl",
+                                     cut_BDT_rTT_score = 0.0,
+                                     cuts_mW_had = (60.,100.),
+                                     cuts_mH_vis = (80.,140.),
+                                     btagDeepCSVveto = 'L', # or 'M'
+                                     useTopTagger=True)
+higgsDiffRecoTTHNoTopTagger = lambda : HiggsDiffRecoTTH(label="_Recl",
+                                                cut_BDT_rTT_score = 0.0,
+                                                cuts_mW_had = (60.,100.),
+                                                cuts_mH_vis = (80.,140.),
+                                                btagDeepCSVveto = 'M', # or 'M'
+                                                useTopTagger=False)
