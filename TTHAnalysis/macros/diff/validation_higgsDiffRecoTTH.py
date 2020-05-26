@@ -176,11 +176,18 @@ class Validation_HiggsDiffRecoTTH():
         
 
 for year in [2016, 2017, 2018]:
+    print('With windows, year %s'%year)
     validator = None
-    if year == 2016:
-        validator = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH/%s'%year, altfname='/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/%s/6_higgsDiffRecoTTH_noWmassConstraint/TTHnobb_fxfx_Friend.root'%year)
-    else:
-        validator = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH/%s'%year)
+    #if year == 2016:
+    validator = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH_windows/%s'%year, altfname='/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH_noWmassConstraint/TTHnobb_fxfx_Friend.root'%year)
+    #else:
+    #    validator = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH_nowindows/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH/%s'%year)
     validator.buildPlotListFromBranches()
     validator.printPlotList()
     validator.plotList()
+    
+    print('Without windows, year %s'%year)
+    validator2 = Validation_HiggsDiffRecoTTH('/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH_nowindows/TTHnobb_fxfx_Friend.root'%year, outdir='validationPlots_higgsDiffRecoTTH_nowindows/%s'%year, altfname='/nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss_tight/%s/6_higgsDiffRecoTTH_noWmassConstraint_nowindows/TTHnobb_fxfx_Friend.root'%year)
+    validator2.buildPlotListFromBranches()
+    validator2.printPlotList()
+    validator2.plotList()
