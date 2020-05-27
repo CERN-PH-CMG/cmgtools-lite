@@ -482,7 +482,7 @@ if options.queue:
                 full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
                 subfile = open(full_subfile, "w")
                 subfile.write("""#! /bin/bash
-#SBATCH --ntasks=8
+#SBATCH --ntasks=2
 
 """)
 
