@@ -50,7 +50,6 @@ class HiggsDiffRecoTTH(Module):
             # Useful quadrimomenta
             # We need to save three entire collections, because the triplet selection might select different objects when JEC changes
             for suffix in ["_Pt", "_Eta", "_Phi", "_M"]:
-
                 # The fat jet closest to the lepton
                 self.out.branch('%sfatJetsNearLeptonFromHiggs%s%s'%(self.label,jesLabel,suffix)        , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
                 # The reconstructed visible Higgs (lepton and jets)
@@ -196,18 +195,16 @@ class HiggsDiffRecoTTH(Module):
             self.out.fillBranch('%snJetsFromHiggs%s'%(self.label,jesLabel)   , len(js))    
 
             # Useful quadrimomenta
-            for suffix in ["_Pt", "_Eta", "_Phi", "_M"]:
-
-                # The reconstructed visible Higgs (somehow one lepton will be duplicate. Consider storing the index)
-                self.out.fillBranch('%sleptonFromHiggs_Pt%s'%(self.label,jesLabel) , l.Pt()  if l else -99 ) 
-                self.out.fillBranch('%sleptonFromHiggs_Eta%s'%(self.label,jesLabel), l.Eta() if l else -99 ) 
-                self.out.fillBranch('%sleptonFromHiggs_Phi%s'%(self.label,jesLabel), l.Phi() if l else -99 ) 
-                self.out.fillBranch('%sleptonFromHiggs_M%s'%(self.label,jesLabel)  , l.M()   if l else -99 ) 
-
-                self.out.fillBranch('%sjetsFromHiggs_Pt%s'%(self.label,jesLabel)  , [j1.Pt() , j2.Pt() ] if l else [-99, -99]  )
-                self.out.fillBranch('%sjetsFromHiggs_Eta%s'%(self.label,jesLabel) , [j1.Eta(), j2.Eta()] if l else [-99, -99]  )
-                self.out.fillBranch('%sjetsFromHiggs_Phi%s'%(self.label,jesLabel) , [j1.Phi(), j2.Phi()] if l else [-99, -99]  )
-                self.out.fillBranch('%sjetsFromHiggs_M%s'%(self.label,jesLabel)   , [j1.M()  , j2.M()  ] if l else [-99, -99]  )
+            # The reconstructed visible Higgs (somehow one lepton will be duplicate. Consider storing the index)
+            self.out.fillBranch('%sleptonFromHiggs%s_Pt'%(self.label,jesLabel) , l.Pt()  if l else -99 )
+            self.out.fillBranch('%sleptonFromHiggs%s_Eta'%(self.label,jesLabel), l.Eta() if l else -99 )
+            self.out.fillBranch('%sleptonFromHiggs%s_Phi'%(self.label,jesLabel), l.Phi() if l else -99 )
+            self.out.fillBranch('%sleptonFromHiggs%s_M'%(self.label,jesLabel)  , l.M()   if l else -99 )
+            
+            self.out.fillBranch('%sjetsFromHiggs%s_Pt'%(self.label,jesLabel)  , [j1.Pt() , j2.Pt() ] if l else [-99, -99]  )
+            self.out.fillBranch('%sjetsFromHiggs%s_Eta'%(self.label,jesLabel) , [j1.Eta(), j2.Eta()] if l else [-99, -99]  )
+            self.out.fillBranch('%sjetsFromHiggs%s_Phi'%(self.label,jesLabel) , [j1.Phi(), j2.Phi()] if l else [-99, -99]  )
+            self.out.fillBranch('%sjetsFromHiggs%s_M'%(self.label,jesLabel)   , [j1.M()  , j2.M()  ] if l else [-99, -99]  )
                     
             # The fat jet closest to the lepton
             # (add later, not needed in this moment)
