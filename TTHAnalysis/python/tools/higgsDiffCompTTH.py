@@ -1,6 +1,6 @@
 from __future__ import division
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
-from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as NanoAODCollection
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 import ROOT, itertools
@@ -111,15 +111,23 @@ class HiggsDiffCompTTH(Module):
         
         for jesLabel in self.systsJEC.values():
             # We need to have saved three entire collections, because the triplet selection might select different objects when JEC changes
-            leptonFromHiggs = [ x.p4() for x in Collection(event,'%sleptonFromHiggs%s'%(self.label,jesLabel),1) ]
+            #leptonFromHiggs = [ x.p4() for x in Collection(event,'%sleptonFromHiggs%s'%(self.label,jesLabel),1) ]
+            # Temporary: will fix leptonFromHiggs to be a collection
+            leptonFromHiggs = ROOT.TLorentzVector()
+            leptonFromHiggs.SetPtEtaPhiM(getattr(event,'%sleptonFromHiggs%s_pt'%(self.label,jesLabel)  ),
+                                         getattr(event,'%sleptonFromHiggs%s_eta'%(self.label,jesLabel) ),
+                                         getattr(event,'%sleptonFromHiggs%s_phi'%(self.label,jesLabel) ),
+                                         getattr(event,'%sleptonFromHiggs%s_mass'%(self.label,jesLabel)),
+            )
             jetsFromHiggs   = [ x.p4() for x in Collection(event,'%sjetsFromHiggs%s'%(self.label,jesLabel), '%snJetsFromHiggs%s'%(self.label,jesLabel)) ]
   
-            if len(leptonFromHiggs)==1:
-                leptonFromHiggs = leptonFromHiggs[0]
-            elif len(leptonFromHiggs)>1:
-                print('The reco algorithm selected %s>1 leptons, this by construction should not happen!')
-            else:
-                leptonFromHiggs = None
+            if isinstance(leptonFromHiggs, list):
+                if len(leptonFromHiggs)==1:
+                    leptonFromHiggs = leptonFromHiggs[0]
+                elif len(leptonFromHiggs)>1:
+                    print('The reco algorithm selected %s>1 leptons, this by construction should not happen!')
+                else:
+                    leptonFromHiggs = None
 
             # Apply JEC to jetsNoB
             jetsNoB=[] 
@@ -147,23 +155,23 @@ class HiggsDiffCompTTH(Module):
             # Match the jets and the quarks
             nmatchedpartons=0
             q1, q2 = [None, None]
+            # Closest
+            jm1=None
+            jm2=None
+            dr_closestTo_q1=9999.
+            dr_closestTo_q2=9999.
+            flav_closestTo_q1=99999999. # Avoid high-pdgid-hadrons
+            flav_closestTo_q2=99999999.
+            # Next-to-closest
+            jnm1=None
+            jnm2=None
+            dr_nClosestTo_q1=9999.
+            dr_nClosestTo_q2=9999.
+            flav_nClosestTo_q1=99999999. # Avoid high-pdgid-hadrons
+            flav_nClosestTo_q2=99999999.
             if len(QFromWFromH)==2:
                 q1, q2 = QFromWFromH
 
-                # Closest
-                jm1=None
-                jm2=None
-                dr_closestTo_q1=9999.
-                dr_closestTo_q2=9999.
-                flav_closestTo_q1=99999999. # Avoid high-pdgid-hadrons
-                flav_closestTo_q2=99999999.
-                # Next-to-closest
-                jnm1=None
-                jnm2=None
-                dr_nClosestTo_q1=9999.
-                dr_nClosestTo_q2=9999.
-                flav_nClosestTo_q1=99999999. # Avoid high-pdgid-hadrons
-                flav_nClosestTo_q2=99999999.
                 for x in thejets: # I need these rather than the jetsNoB because I want to allow matching to match the QfromH to b-jets. I need this and not jets[] because I want to access the flavour.
                     j=x.p4()
                     j.SetPtEtaPhiM(getattr(x,'pt%s'%jesLabel), j.Eta(), j.Phi(), j.M()) # Correct the pt
@@ -248,9 +256,9 @@ class HiggsDiffCompTTH(Module):
             dr_ljm2=leptonFromHiggs.DeltaR(jm2) if jm2 else -99.
             closest_jm = jm1 if dr_ljm1<dr_ljm2 else jm2
             farthes_jm = jm2 if dr_ljm1<dr_ljm2 else jm1
-            self.out.branch('%sdelR_lep_jm_closest%s'%(self.label,jesLabel)                  , leptonFromHiggs.DeltaR(closest_jm) if closest_jm                else -99.)
-            self.out.branch('%sdelR_lep_jm_farthest%s'%(self.label,jesLabel)                 , leptonFromHiggs.DeltaR(farthes_jm) if farthes_jm                else -99.)
-            self.out.branch('%sdelR_jm_closest_jm_farthest%s'%(self.label,jesLabel)          , closest_jm.DeltaR(farthes_jm)      if closest_jm and farthes_jm else -99.)
+            self.out.fillBranch('%sdelR_lep_jm_closest%s'%(self.label,jesLabel)                  , leptonFromHiggs.DeltaR(closest_jm) if closest_jm                else -99.)
+            self.out.fillBranch('%sdelR_lep_jm_farthest%s'%(self.label,jesLabel)                 , leptonFromHiggs.DeltaR(farthes_jm) if farthes_jm                else -99.)
+            self.out.fillBranch('%sdelR_jm_closest_jm_farthest%s'%(self.label,jesLabel)          , closest_jm.DeltaR(farthes_jm)      if closest_jm and farthes_jm else -99.)
 
             # Find the closest wrong jet.
             dr_l_closestWrong=9999.
@@ -261,11 +269,11 @@ class HiggsDiffCompTTH(Module):
                 if j==jm1 or j==jm2:
                     continue
                 drlj=leptonFromHiggs.DeltaR(j) 
-                if drlj < dr_l_closestwrong:
-                    dr_l_closestwrong=drlj
+                if drlj < dr_l_closestWrong:
+                    dr_l_closestWrong=drlj
                     j_closestWrong=j
             
-            self.out.branch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel), leptonFromHiggs.DeltaR(j_closestWrong) if j_closestWrong else -99.)
+            self.out.fillBranch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel), leptonFromHiggs.DeltaR(j_closestWrong) if j_closestWrong else -99.)
 
         return True
 
