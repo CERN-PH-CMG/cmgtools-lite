@@ -206,29 +206,27 @@ class HiggsDiffCompTTH(Module):
                         flav_closestTo_q1=99999999. # Avoid high-pdgid-hadrons
                         flav_closestTo_q2=99999999.
 
-                # Before applying matching thresholds, store a few things
-                if jm1:
-                    self.out.fillBranch('%sclosestJet_pt_ToQ1FromWFromH%s'%(self.label,jesLabel)         , jm1.Pt())
-                    self.out.fillBranch('%sclosestJet_ptres_ToQ1FromWFromH%s'%(self.label,jesLabel)      , (jm1.Pt()-q1.Pt())/q1.Pt())
-                    self.out.fillBranch('%sclosestJet_delR_ToQ1FromWFromH%s'%(self.label,jesLabel)       , dr_closestTo_q1)
-                if jm2:
-                    self.out.fillBranch('%sclosestJet_pt_ToQ2FromWFromH%s'%(self.label,jesLabel)         , jm2.Pt())
-                    self.out.fillBranch('%sclosestJet_ptres_ToQ2FromWFromH%s'%(self.label,jesLabel)      , (jm2.Pt()-q2.Pt())/q2.Pt())
-                    self.out.fillBranch('%sclosestJet_delR_ToQ2FromWFromH%s'%(self.label,jesLabel)       , dr_closestTo_q2)
- 
-                # Now apply thresholds: if they don't satisfy matching thresholds, wipe them out
-                # Since I am at it, count how many partons have a jet matched to them
-                nmatchedpartons=0 # nmatchedparsons is set to be -1 if the two quarks are not available for matching, and 0,1,2 if the two quarks are.
-                if jm1:
-                    if dr_closestTo_q1 > 0.3 or abs(jm1.Pt()-q1.Pt())/q1.Pt() > 0.6:
-                        jm1=None
-                    else:
-                        nmatchedpartons+=1
-                if jm2:
-                    if dr_closestTo_q2 > 0.3 or abs(jm2.Pt()-q2.Pt())/q2.Pt() > 0.6:
-                        jm2=None
-                    else:
-                        nmatchedpartons+=1
+            # Before applying matching thresholds, store a few things
+            self.out.fillBranch('%sclosestJet_pt_ToQ1FromWFromH%s'%(self.label,jesLabel)         , jm1.Pt()                   if jm1 else -99.)
+            self.out.fillBranch('%sclosestJet_ptres_ToQ1FromWFromH%s'%(self.label,jesLabel)      , (jm1.Pt()-q1.Pt())/q1.Pt() if jm1 else -99.)
+            self.out.fillBranch('%sclosestJet_delR_ToQ1FromWFromH%s'%(self.label,jesLabel)       , dr_closestTo_q1            if jm1 else -99.)
+            self.out.fillBranch('%sclosestJet_pt_ToQ2FromWFromH%s'%(self.label,jesLabel)         , jm2.Pt()                   if jm2 else -99.)
+            self.out.fillBranch('%sclosestJet_ptres_ToQ2FromWFromH%s'%(self.label,jesLabel)      , (jm2.Pt()-q2.Pt())/q2.Pt() if jm2 else -99.)
+            self.out.fillBranch('%sclosestJet_delR_ToQ2FromWFromH%s'%(self.label,jesLabel)       , dr_closestTo_q2            if jm2 else -99.)
+            
+            # Now apply thresholds: if they don't satisfy matching thresholds, wipe them out
+            # Since I am at it, count how many partons have a jet matched to them
+            nmatchedpartons=0 # nmatchedparsons is set to be -1 if the two quarks are not available for matching, and 0,1,2 if the two quarks are.
+            if jm1:
+                if dr_closestTo_q1 > 0.3 or abs(jm1.Pt()-q1.Pt())/q1.Pt() > 0.6:
+                    jm1=None
+                else:
+                    nmatchedpartons+=1
+            if jm2:
+                if dr_closestTo_q2 > 0.3 or abs(jm2.Pt()-q2.Pt())/q2.Pt() > 0.6:
+                    jm2=None
+                else:
+                    nmatchedpartons+=1
         
             self.out.fillBranch('%snmatchedpartons%s'%(self.label,jesLabel)                      , nmatchedpartons)
 
