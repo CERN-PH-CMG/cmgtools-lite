@@ -277,6 +277,15 @@ higgsDiffCompTTH = lambda : HiggsDiffCompTTH(label="Hreco_",
                                              cut_BDT_rTT_score = 0.0,
                                              cuts_mW_had = (60.,100.),
                                              cuts_mH_vis = (80.,140.),
+                                             use_Wmass_constraint = True,
+                                             attemptDisentangling = True,
+                                             btagDeepCSVveto = 'M', # or 'M'
+                                             useTopTagger=False)
+
+higgsDiffCompTTH_noWmassConstraint = lambda : HiggsDiffCompTTH(label="Hreco_",
+                                             cut_BDT_rTT_score = 0.0,
+                                             cuts_mW_had = (60.,100.),
+                                             cuts_mH_vis = (80.,140.),
                                              use_Wmass_constraint = False,
                                              attemptDisentangling = True,
                                              btagDeepCSVveto = 'M', # or 'M'
