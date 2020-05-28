@@ -142,26 +142,29 @@ class Validation_HiggsDiffRecoTTH():
             
             self.p.append(['%sBDThttTT_eventReco_mvaValue%s'%(self.label,jesLabel), 20, -1., 1.])
 
-
-
-
             # Useful quadrimomenta
-            for suffix in ["_Pt", "_Eta", "_Phi", "_M"]:
+            for suffix in ["_pt", "_eta", "_phi", "_mass"]:
 
-                if ('Pt' in suffix) or ('M' in suffix):
-                    self.p.append(['%sleptonFromHiggs%s%s'%(self.label,suffix,jesLabel), 400, -100, 300])
+                if ('pt' in suffix) or ('mass' in suffix):
                     for obj in [0, 1]:
                         self.p.append(['%sjetFromHiggs%s%s'%(self.label,suffix,jesLabel), '%sjetFromHiggs%s%s%s'%(self.label,obj,suffix,jesLabel) , 400, -100., 300.])
-                    # not needed now, will add later self.out.branch('%sfatJetsNearLeptonFromHiggs%s%s'%(self.label,suffix,jesLabel)        , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
-                if 'Eta' in suffix:
-                    self.p.append(['%sleptonFromHiggs%s%s'%(self.label,suffix,jesLabel), 200, -6, 6])
+                        if obj==0:
+                            self.p.append(['%sleptonFromHiggs%s%s'%(self.label,suffix,jesLabel), '%sleptonFromHiggs%s%s'%(self.label,obj,suffix,jesLabel), 400, -100., 300.])
+
+                        # not needed now, will add later self.out.branch('%sfatJetsNearLeptonFromHiggs%s%s'%(self.label,suffix,jesLabel)        , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
+                if 'eta' in suffix:
                     for obj in [0, 1]:
                         self.p.append(['%sjetFromHiggs%s%s'%(self.label,suffix,jesLabel), '%sjetFromHiggs%s%s%s'%(self.label,obj,suffix,jesLabel) , 200, -6., 6.])
+                        if obj==0:
+                            self.p.append(['%sleptonFromHiggs%s%s'%(self.label,suffix,jesLabel), '%sleptonFromHiggs%s%s'%(self.label,obj,suffix,jesLabel), 200, -6., 6.])
+
                     # not needed now, will add later self.out.branch('%sfatJetsNearLeptonFromHiggs%s%s'%(self.label,suffix,jesLabel)        , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
-                if 'Phi' in suffix:
-                    self.p.append(['%sleptonFromHiggs%s%s'%(self.label,suffix,jesLabel), 200, -6.28, 6.28])
+                if 'phi' in suffix:
                     for obj in [0, 1]:
                         self.p.append(['%sjetFromHiggs%s%s'%(self.label,suffix,jesLabel), '%sjetFromHiggs%s%s%s'%(self.label,obj,suffix,jesLabel) , 200, -6.28, 6.28])
+                        if obj==0:
+                            self.p.append(['%sleptonFromHiggs%s%s'%(self.label,suffix,jesLabel), '%sleptonFromHiggs%s%s'%(self.label,obj,suffix,jesLabel), 200, -6.28, 6.28])
+
                     # not needed now, will add later self.out.branch('%sfatJetsNearLeptonFromHiggs%s%s'%(self.label,suffix,jesLabel)        , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
                 
             # not needed now, will add later self.out.branch('%sfatJetsNearLeptonFromHiggs_deltaR%s'%(self.label,jesLabel)    , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
