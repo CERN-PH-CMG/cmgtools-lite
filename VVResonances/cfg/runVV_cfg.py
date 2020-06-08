@@ -31,6 +31,31 @@ def autoAAA(selectedComponents,runOnlyRemoteSamples=False,forceAAA=False):
     else:
         return selectedComponents
 
+
+def runOnFNAL(selectedComponents,JSON):
+    newComp=[]
+    import re
+    from CMGTools.Production import changeComponentAccessMode
+    from CMGTools.Production.localityChecker import LocalityChecker
+
+    for comp in selectedComponents:
+        print comp.name
+        if comp.isData:
+            comp.json=JSON 
+        if len(comp.files)==0:
+            continue
+        #if it is data attach the local JSON file
+        if not hasattr(comp,'dataset'): continue
+        if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
+        if "/store/" not in comp.files[0]: continue
+        if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
+        changeComponentAccessMode.convertComponent(comp, "root://cms-xrd-global.cern.ch/%s")
+        if 'X509_USER_PROXY' not in os.environ:
+            raise RuntimeError, "X509_USER_PROXY not defined or not pointing to /afs"
+
+    return selectedComponents
+
+
 def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
     import PhysicsTools.HeppyCore.framework.config as cfg
     from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
@@ -65,9 +90,10 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples+dataSamples
 
-#import pdb;pdb.set_trace()
+#selectedComponents  = dataSamplesLNUJ
+selectedComponents  = signalSamples+TTHerwig
+
 
 #-------- Analyzer
 from CMGTools.VVResonances.analyzers.tree_cff import *
@@ -82,40 +108,41 @@ triggerFlagsAna.triggerBits ={
     "ISOMU":triggers_1mu_iso,
     "MU":triggers_1mu_noniso,
     "ISOELE":triggers_1e,
+    "PHOTON":triggers_photon175,
     "ELE":triggers_1e_noniso,
-    "HT800":triggers_HT800,
-    "HT900":triggers_HT900,
-    "JJ":triggers_dijet_fat+triggers_jet_recoverHT,
-    "MET120":triggers_metNoMu120_mhtNoMu120
+    "MET":triggers_metNoMu120_mhtNoMu120
 }
 
 
 #-------- HOW TO RUN
-test = 1
+test = 0
 if test==1:
     # test a single component, using a single thread.
 #    selectedComponents = [BulkGravToWWToWlepWhad_narrow_2000]
-    selectedComponents = [WprimeToWZToWhadZlep_narrow_2000]
+#    selectedComponents = [TTJets]
+    selectedComponents = [TTHerwig[0]]
 #    selectedComponents = [BulkGravToZZToZhadZinv_narrow_1400]
     for c in selectedComponents:
         c.files = c.files[:1]
+#        c.files = ['file:/tmp/bachtis/file.root']
         c.splitFactor = 1
 
 elif test==2:
     # test a single component, using a single thread.
     selectedComponents = [TTJets]
+    selectedComponents = []
 elif test==3:
-    selectedComponents = [WJetsToLNu_HT2500toInf]
+    selectedComponents = [selectedComponents[0]]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
 else:
     # full scale production
     # split samples in a smarter way
-    from CMGTools.HToZZ4L.tools.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 51, 6)  # means 40 ms per event, job to last 3h
+    from CMGTools.RootTools.samples.configTools import configureSplittingFromTime, printSummary
+    configureSplittingFromTime(selectedComponents, 60, 8)  # means 70 ms per event, job to last 12h
     # print summary of components to process
     printSummary(selectedComponents)
 
-selectedComponents=autoAAA(selectedComponents)
+selectedComponents=runOnFNAL(selectedComponents,"$CMSSW_BASE/src/CMGTools/VVResonances/data/JSON2016.txt")
 config=autoConfig(selectedComponents,sequence)
