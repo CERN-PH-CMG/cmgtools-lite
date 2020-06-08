@@ -38,6 +38,8 @@ TTLep_pow_ext = kreator.makeMCComponent("TTLep_pow_ext", "/TTTo2L2Nu_13TeV-powhe
 #TTJets_LO_HT1200to2500_ext = kreator.makeMCComponent("TTJets_LO_HT1200to2500_ext", "/TTJets_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM", "CMS", ".*root", 0.12*831.76/502.2)
 #TTJets_LO_HT2500toInf  = kreator.makeMCComponent("TTJets_LO_HT2500toInf", "/TTJets_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root", 0.001430*831.76/502.2)
 
+TT_Mtt700to1000 = kreator.makeMCComponent("TT_Mtt700to1000", "/TT_Mtt-700to1000_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.)
+TT_Mtt1000toInf = kreator.makeMCComponent("TT_Mtt1000toInf", "/TT_Mtt-1000toInf_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM", "CMS", ".*root", 1.)
 
 TTs = [ 
 TTJets,
@@ -46,6 +48,8 @@ TTJets_reHLT,
 #TTJets_LO,
 TT_pow_ext3,
 TT_pow_ext4,
+TT_Mtt700to1000,
+TT_Mtt1000toInf,
 TTJets_SingleLeptonFromTbar,
 TTJets_SingleLeptonFromTbar_ext,
 TTJets_SingleLeptonFromT,
