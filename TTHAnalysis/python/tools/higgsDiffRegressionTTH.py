@@ -40,6 +40,8 @@ class HiggsDiffRegressionTTH(Module):
             self.out.branch('%smet_phi%s'%(self.label,jesLabel)       , 'F')
             self.out.branch('%sHTXS_Higgs%s_pt'%(self.label,jesLabel) , 'F')
             self.out.branch('%sHTXS_Higgs%s_y'%(self.label,jesLabel)  , 'F')
+            self.out.branch('%sHgen_vis_pt%s'%(self.label,jesLabel)        , 'F')
+            self.out.branch('%sHgen_tru_pt%s'%(self.label,jesLabel)        , 'F')
             self.out.branch('%sevt_tag%s'%(self.label,jesLabel)       , 'F')       
             
 
@@ -72,7 +74,6 @@ class HiggsDiffRegressionTTH(Module):
         lepsFO = [leps[ileps[i]] for i in xrange(nFO)]
         jets = [x for x in Collection(event,"JetSel_Recl","nJetSel_Recl")]
         (met, met_phi)  = event.MET_pt, event.MET_phi
-        ret = {}        
 
         for jesLabel in self.systsJEC.values():
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%jesLabel)
@@ -182,6 +183,9 @@ class HiggsDiffRegressionTTH(Module):
             self.out.fillBranch('%smet_phi%s' %(self.label,jesLabel), met_phi                            )
             self.out.fillBranch('%sHTXS_Higgs_pt%s'%(self.label,jesLabel), getattr(event,"HTXS_Higgs_pt"))
             self.out.fillBranch('%sHTXS_Higgs_y%s' %(self.label,jesLabel), getattr(event,"HTXS_Higgs_y") )
+            self.out.fillBranch)'%sHgen_vis_pt%s'  %(self.label,jesLabel), getattr(event,'Hreco_pTTrueGen'))
+            self.out.fillBranch)'%sHgen_tru_pt%s'  %(self.label,jesLabel), getattr(event,'Hreco_pTTrueGenPlusNu')) # the same as HTXS_Higgs_pt
+
         return True
 
 higgsDiffRegressionTTH = lambda : HiggsDiffRegressionTTH(label='Hreco_',
