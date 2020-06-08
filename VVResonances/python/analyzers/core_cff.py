@@ -10,6 +10,7 @@ from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
 from CMGTools.VVResonances.analyzers.TopMergingAnalyzer import *
 from CMGTools.VVResonances.analyzers.ObjectWeightAnalyzer import *
+from CMGTools.VVResonances.analyzers.L1EcalPrefiringAnalyzer import *
 
 import os
 
@@ -60,9 +61,11 @@ eventFlagsAna = cfg.Analyzer(
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
         "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
+        "globalSuperTightHalo2016Filter" : [ "Flag_globalSuperTightHalo2016Filter" ],
         "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
+        "BadPFMuonFilter" : [ "Flag_BadPFMuonFilter" ],
         "trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
         "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
         "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
@@ -261,7 +264,7 @@ metAna = cfg.Analyzer(
 
 jetAna = cfg.Analyzer(
     JetAnalyzer, name='jetAnalyzer',
-    jetCol = 'slimmedJetsPuppi',
+    jetCol = 'slimmedJets',
     copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
     genJetCol = 'slimmedGenJets',
     rho = ('fixedGridRhoFastjetAll','',''),
@@ -276,9 +279,9 @@ jetAna = cfg.Analyzer(
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
-    recalibrationType = "AK4PFPuppi",
-    mcGT     = "Summer16_23Sep2016V3_MC",
-    dataGT   = [(1,"Summer16_23Sep2016BCDV3_DATA"),(276831,"Summer16_23Sep2016EFV3_DATA"),(278802,"Summer16_23Sep2016GV3_DATA"),(280919,"Summer16_23Sep2016HV3_DATA")],
+    recalibrationType = "AK4PFchs",
+    mcGT     = "Summer16_23Sep2016V4_MC",
+    dataGT   = [(1,"Summer16_23Sep2016BCDV4_DATA"),(276831,"Summer16_23Sep2016EFV4_DATA"),(278802,"Summer16_23Sep2016GV4_DATA"),(280919,"Summer16_23Sep2016HV4_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -316,9 +319,9 @@ jetAnaAK8 = cfg.Analyzer(
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
-    recalibrationType = "AK8PFPuppi",
-    mcGT     = "Summer16_23Sep2016V3_MC",
-    dataGT   = [(1,"Summer16_23Sep2016BCDV3_DATA"),(276831,"Summer16_23Sep2016EFV3_DATA"),(278802,"Summer16_23Sep2016GV3_DATA"),(280919,"Summer16_23Sep2016HV3_DATA")],
+    recalibrationType = "AK8PFchs",
+    mcGT     = "Summer16_23Sep2016V4_MC",
+    dataGT   = [(1,"Summer16_23Sep2016BCDV4_DATA"),(276831,"Summer16_23Sep2016EFV4_DATA"),(278802,"Summer16_23Sep2016GV4_DATA"),(280919,"Summer16_23Sep2016HV4_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -341,6 +344,16 @@ jetAnaAK8 = cfg.Analyzer(
 
 
 
+l1prefireAna = cfg.Analyzer(
+    L1EcalPrefiringAnalyzer,name='l1prefireAna',
+    PhotonMapFile="${CMSSW_BASE}/src/CMGTools/VVResonances/data/L1prefiring_photonpt_2016BtoH.root",
+    PhotonMapHisto="L1prefiring_photonpt_2016BtoH",
+    preFiringSystematic=0.2,
+    JetMapFile="${CMSSW_BASE}/src/CMGTools/VVResonances/data/L1prefiring_jetempt_2016BtoH.root",
+    JetMapHisto="L1prefiring_jetempt_2016BtoH"
+)
+
+
 mergedTruthAna = cfg.Analyzer(TopMergingAnalyzer,name='mergeTruthAna')
 
 
@@ -354,6 +367,7 @@ vvAna = cfg.Analyzer(
     cDiscriminatorL = "pfCombinedCvsLJetTags",
     cDiscriminatorB = "pfCombinedCvsBJetTags",
     btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/CSVv2_Moriond17_B_H.csv",
+    subjetBtagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/subjet_CSVv2_Moriond17_B_H.csv",
     puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
 
 )
@@ -436,6 +450,7 @@ coreSequence = [
     eventFlagsAna,
     triggerFlagsAna,
     mergedTruthAna,
+    l1prefireAna,
     badMuonAna,
     badChargedHadronAna,
 ]
