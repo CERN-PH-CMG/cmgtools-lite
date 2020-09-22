@@ -960,7 +960,7 @@ if dowhat=='step1':
         print basecommand + '-n nominal_%s  ttHmultilep_WS.root --task-name nominal_%s -P %s %s'%(poi,poi,poi,",".join(cumulative))
         print basecommand.replace('--algo grid','--algo none').replace("--points 100","").replace("--job-mode SGE","")+ '-n bestfit_%s --saveWorkspace ttHmultilep_WS.root -P %s '%(poi,poi)
         for group in groupList:
-            cumulative+ = systsGroup[group]
+            cumulative += systsGroup[group]
             print basecommand + ' -P %s '%poi + '-n ' + group + '_%s'%poi + ' higgsCombinebestfit_%s.MultiDimFit.mH125.root --snapshotName MultiDimFit  --freezeParameters %s'%(poi,",".join(cumulative)) + ' --task-name %s_%s'%(group,poi)
 if dowhat=='step2':
     for poi in POIs:
