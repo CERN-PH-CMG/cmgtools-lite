@@ -46,7 +46,7 @@ class TTH_CP(Module):
         gen  = [g for g in Collection(event,"GenPart")]
 
         if len(leps) < 2                                          : return False
-        if leps[0].pt < 25 or leps[0].pt < 20                     : return False # pt2515
+        if leps[0].pt < 25 or leps[1].pt < 15                     : return False # pt2515
         if event.nLepTight_Recl > 2                              : return False # exclusive
         if leps[0].pdgId*leps[1].pdgId < 0                        : return False # same-sign
         if abs(event.mZ1_Recl-91.2)<10                                 : return False # Z_veto
