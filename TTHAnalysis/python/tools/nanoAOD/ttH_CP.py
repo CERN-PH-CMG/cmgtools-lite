@@ -47,9 +47,9 @@ class TTH_CP(Module):
 
         if len(leps) < 2                                          : return False
         if leps[0].pt < 25 or leps[0].pt < 20                     : return False # pt2515
-        if event.nLepTight_Recl <= 3                              : return False # exclusive
-        if leps[0].pdgId*leps[1].pdgId > 0                        : return False # same-sign
-        if abs(event.mZ1-91.2)<10                                 : return False # Z_veto
+        if event.nLepTight_Recl > 2                              : return False # exclusive
+        if leps[0].pdgId*leps[1].pdgId < 0                        : return False # same-sign
+        if abs(event.mZ1_Recl-91.2)<10                                 : return False # Z_veto
         
         if leps[0].genPartFlav != 1 and leps[0].genPartFlav != 15 : return False
         if leps[1].genPartFlav != 1 and leps[1].genPartFlav != 15 : return False
@@ -63,7 +63,7 @@ class TTH_CP(Module):
         self.out.fillBranch('Lep2_eta'  ,leps[1].eta)
         self.out.fillBranch('Lep2_phi'  ,leps[1].phi)
         
-        pts=[]; etas=[]; phis=[]; masses=[]; btags=[]
+        pts=[]; etas=[]; phis=[]; masses=[]; btags=[]; fromTop=[]
         for j in jets: 
             if jets.index(j) in [int(event.BDThttTT_eventReco_iJetSel1), int(event.BDThttTT_eventReco_iJetSel2), int(event.BDThttTT_eventReco_iJetSel3)]:
                 setattr(j, 'fromHadTop', True)
@@ -90,12 +90,10 @@ class TTH_CP(Module):
         self.out.fillBranch('SelJet_phi', phis)
         self.out.fillBranch('SelJet_mass', masses)
         self.out.fillBranch('SelJet_isBtag',btags)
-        self.out.fillBranch('SelJet_isFromHadTop',fromHadTop)
+        self.out.fillBranch('SelJet_isFromHadTop',fromTop)
  
-        all_weights = [w for w in Collection(event,"LHEReweightingWeight")]
-        
-        self.out.fillBranch('weight_SM'    , all_weights[11])
-        self.out.fillBranch('weight_CP_odd', all_weights[59])
+        self.out.fillBranch('weight_SM'    , event.LHEReweightingWeight[11])
+        self.out.fillBranch('weight_CP_odd', event.LHEReweightingWeight[59])
 
         
         return True
