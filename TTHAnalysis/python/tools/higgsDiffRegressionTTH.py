@@ -2,7 +2,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
-
+from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs as HiggsRecoTTHbtagwps
 
 import ROOT, itertools
 
@@ -30,7 +30,7 @@ class HiggsDiffRegressionTTH(Module):
             for suffix in ["_pt", "_eta", "_phi", "_mass"]:
                 self.out.branch('%sLep%s%s'%(self.label,jesLabel,suffix)   , 'F', 3, '%snLeps%s'   %(self.label,jesLabel)) 
                 self.out.branch('%sJet%s%s'%(self.label,jesLabel,suffix)   , 'F', 7, '%snJets%s'   %(self.label,jesLabel))
-                self.out.branch('%sHadTop%s%s'%(self.label,jesLabel,suffix), 'F', 1, '%snHadTops%s'%(self.label,jesLabel))
+                self.out.branch('%sHadTop%s%s'%(self.label,jesLabel,suffix), 'F')
                 
             
             self.out.branch('%sJet%s_btagdiscr'%(self.label,jesLabel), 'F', 7, '%snJets%s'%(self.label,jesLabel))
@@ -99,7 +99,7 @@ class HiggsDiffRegressionTTH(Module):
                 top3 = ROOT.TLorentzVector(); top3.SetPtEtaPhiM(jets[j3top].p4().Pt(),jets[j3top].p4().Eta(), jets[j3top].p4().Phi(), jets[j3top].p4().M())
                 HadTop = top1+top2+top3
                 
-                jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<self.btagvetoval]
+                jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<btagvetoval]
 
                 # Later fill only j1 j2 j3, but for now let's use all jets
                 #for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
@@ -117,10 +117,10 @@ class HiggsDiffRegressionTTH(Module):
                 #        mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
                 #        candidates.append((mindR,mHvisconstr,mW,_lep,_j1,_j2))
                         
-            self.out.fillBranch('%sHadTop_pt%s'  %(self.label,jesLabel), HadTop.Pt()  if HadTop else -99.)
-            self.out.fillBranch('%sHadTop_eta%s' %(self.label,jesLabel), HadTop.Eta() if HadTop else -99.)
-            self.out.fillBranch('%sHadTop_phi%s' %(self.label,jesLabel), HadTop.Phi() if HadTop else -99.)
-            self.out.fillBranch('%sHadTop_m%s'   %(self.label,jesLabel), HadTop.M()   if HadTop else -99.)
+            self.out.fillBranch('%sHadTop%s_pt'  %(self.label,jesLabel), HadTop.Pt()  if HadTop else -99.)
+            self.out.fillBranch('%sHadTop%s_eta' %(self.label,jesLabel), HadTop.Eta() if HadTop else -99.)
+            self.out.fillBranch('%sHadTop%s_phi' %(self.label,jesLabel), HadTop.Phi() if HadTop else -99.)
+            self.out.fillBranch('%sHadTop%s_mass'%(self.label,jesLabel), HadTop.M()   if HadTop else -99.)
             self.out.fillBranch('%sTopScore%s'   %(self.label,jesLabel), score                          ) # else -99? Or not?
 
             evt_tag = 1
@@ -138,17 +138,17 @@ class HiggsDiffRegressionTTH(Module):
                     for j, jp4 in [(ix,x.p4()) for ix,x in enumerate(jets)]:
                         if len(jets) <7: # fix this
                           tdrs.append(lp4.DeltaR(jp4))
-                    drs.appen(tdrs)
+                    drs.append(tdrs)
 
 
             self.out.fillBranch('%snLeps%s' %(self.label,jesLabel), len(selleps))
             self.out.fillBranch('%sLep%s_pt'  %(self.label,jesLabel), [part.Pt()   for part in selleps] )
             self.out.fillBranch('%sLep%s_eta' %(self.label,jesLabel), [part.Eta()  for part in selleps] )
             self.out.fillBranch('%sLep%s_phi' %(self.label,jesLabel), [part.Phi()  for part in selleps] )
-            self.out.fillBranch('%sLep%s_mass'%(self.label,jesLabel), [part.Mass() for part in selleps] )
+            self.out.fillBranch('%sLep%s_mass'%(self.label,jesLabel), [part.M() for part in selleps] )
 
             for l in range(len(drs)):
-                for j in range(len(drs)):
+                for j in range(len(drs[l])):
                     self.out.fillBranch('%sDeltaRl%sj%s%s' %(self.label,l,j,jesLabel), drs[l][j])
             
             self.out.fillBranch('%sevt_tag%s'%(self.label,jesLabel), evt_tag)
@@ -165,18 +165,18 @@ class HiggsDiffRegressionTTH(Module):
                     tjdrs=[]
                     for jo, jpo4 in [(ixo,xo.p4()) for ixo,xo in enumerate(jets)]:
                         if len(jets) <7: # fix this
-                          tdrs.append(jp4.DeltaR(jpo4))
+                          tjdrs.append(jp4.DeltaR(jpo4))
                     jdrs.append(tjdrs)
             
             for j1 in range(len(jdrs)):
                 for j2 in range(len(jdrs)):
-                    self.out.fillBranch('%sDeltaRj%sj%s%s'%(self.label,j1,j2,jesLabel), jdrs[j1,j2])
+                    self.out.fillBranch('%sDeltaRj%sj%s%s'%(self.label,j1,j2,jesLabel), jdrs[j1][j2])
 
             self.out.fillBranch('%snJets%s' %(self.label,jesLabel), len(seljets))
             self.out.fillBranch('%sJet%s_pt'  %(self.label,jesLabel), [part.Pt()   for part in seljets] )
             self.out.fillBranch('%sJet%s_eta' %(self.label,jesLabel), [part.Eta()  for part in seljets] )
             self.out.fillBranch('%sJet%s_phi' %(self.label,jesLabel), [part.Phi()  for part in seljets] )
-            self.out.fillBranch('%sJet%s_mass'%(self.label,jesLabel), [part.Mass() for part in seljets] )
+            self.out.fillBranch('%sJet%s_mass'%(self.label,jesLabel), [part.M() for part in seljets] )
             self.out.fillBranch('%sJet%s_btagdiscr'%(self.label,jesLabel), [x for x in seljetsbtag] )
  
             self.out.fillBranch('%smet%s'     %(self.label,jesLabel), met                                ) 
