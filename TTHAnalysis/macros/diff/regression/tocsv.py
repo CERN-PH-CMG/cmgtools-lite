@@ -21,10 +21,16 @@ def load_data(file, vars):
     print('Opened tree')
     arr = tree2array(ttree)
     print('Loaded tree in array')
-    return pandas.DataFrame(arr, columns=vars)
-
+    
+    thedf = pandas.DataFrame(arr, columns=vars)
+    print(thedf.head())
+    thedf = thedf[thedf['Hreco_nLeps']==2]
+    thedf = thedf[thedf['Hreco_nJets']>5]
+    return thedf
 
 thevars = [
+    'nLeps',
+    'nJets',
     'Lep0_pt', 'Lep0_eta', 'Lep0_phi', 'Lep0_m',
     'Lep1_pt', 'Lep1_eta', 'Lep1_phi', 'Lep1_m',
     'Lep2_pt', 'Lep2_eta', 'Lep2_phi', 'Lep2_m',
