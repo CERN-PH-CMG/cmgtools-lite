@@ -28,12 +28,15 @@ class HiggsDiffRegressionTTH(Module):
             self.out.branch('%snJets%s'%(self.label,jesLabel), 'I')
 
             for suffix in ["_pt", "_eta", "_phi", "_mass"]:
-                self.out.branch('%sLep%s%s'%(self.label,jesLabel,suffix)   , 'F', 3, '%snLeps%s'   %(self.label,jesLabel)) 
-                self.out.branch('%sJet%s%s'%(self.label,jesLabel,suffix)   , 'F', 7, '%snJets%s'   %(self.label,jesLabel))
+                for iLep in range(2):
+                    self.out.branch('%sLep%s%s%s'%(self.label,iLep,jesLabel,suffix)   , 'F') 
+                for iJet in range(6):
+                    self.out.branch('%sJet%s%s%s'%(self.label,iJet,jesLabel,suffix)   , 'F')
                 self.out.branch('%sHadTop%s%s'%(self.label,jesLabel,suffix), 'F')
                 
             
-            self.out.branch('%sJet%s_btagdiscr'%(self.label,jesLabel), 'F', 7, '%snJets%s'%(self.label,jesLabel))
+            for iJet in range(6):
+                self.out.branch('%sJet%s%s_btagdiscr'%(self.label,iJet,jesLabel), 'F')
 
             self.out.branch('%sTopScore%s'%(self.label,jesLabel)      , 'F')      
             self.out.branch('%smet%s'%(self.label,jesLabel)           , 'F')       
@@ -142,10 +145,12 @@ class HiggsDiffRegressionTTH(Module):
 
 
             self.out.fillBranch('%snLeps%s' %(self.label,jesLabel), len(selleps))
-            self.out.fillBranch('%sLep%s_pt'  %(self.label,jesLabel), [part.Pt()   for part in selleps] )
-            self.out.fillBranch('%sLep%s_eta' %(self.label,jesLabel), [part.Eta()  for part in selleps] )
-            self.out.fillBranch('%sLep%s_phi' %(self.label,jesLabel), [part.Phi()  for part in selleps] )
-            self.out.fillBranch('%sLep%s_mass'%(self.label,jesLabel), [part.M() for part in selleps] )
+            for iLep in range(len(selleps)):
+                part = selleps[iLep]
+                self.out.fillBranch('%sLep%s%s_pt'  %(self.label,iLep,jesLabel), part.Pt() )
+                self.out.fillBranch('%sLep%s%s_eta' %(self.label,iLep,jesLabel), part.Eta())
+                self.out.fillBranch('%sLep%s%s_phi' %(self.label,iLep,jesLabel), part.Phi())
+                self.out.fillBranch('%sLep%s%s_mass'%(self.label,iLep,jesLabel), part.M())
 
             for l in range(len(drs)):
                 for j in range(len(drs[l])):
@@ -173,11 +178,13 @@ class HiggsDiffRegressionTTH(Module):
                     self.out.fillBranch('%sDeltaRj%sj%s%s'%(self.label,j1,j2,jesLabel), jdrs[j1][j2])
 
             self.out.fillBranch('%snJets%s' %(self.label,jesLabel), len(seljets))
-            self.out.fillBranch('%sJet%s_pt'  %(self.label,jesLabel), [part.Pt()   for part in seljets] )
-            self.out.fillBranch('%sJet%s_eta' %(self.label,jesLabel), [part.Eta()  for part in seljets] )
-            self.out.fillBranch('%sJet%s_phi' %(self.label,jesLabel), [part.Phi()  for part in seljets] )
-            self.out.fillBranch('%sJet%s_mass'%(self.label,jesLabel), [part.M() for part in seljets] )
-            self.out.fillBranch('%sJet%s_btagdiscr'%(self.label,jesLabel), [x for x in seljetsbtag] )
+            for iJet in range(len(seljets)):
+                part = seljets[iJet]
+                self.out.fillBranch('%sJet%s%s_pt'  %(self.label,iJet,jesLabel), part.Pt() )
+                self.out.fillBranch('%sJet%s%s_eta' %(self.label,iJet,jesLabel), part.Eta())
+                self.out.fillBranch('%sJet%s%s_phi' %(self.label,iJet,jesLabel), part.Phi())
+                self.out.fillBranch('%sJet%s%s_mass'%(self.label,iJet,jesLabel), part.M())
+                self.out.fillBranch('%sJet%s%s_btagdiscr'%(self.label,iJet,jesLabel), seljetsbtag[iJet] )
  
             self.out.fillBranch('%smet%s'     %(self.label,jesLabel), met                                ) 
             self.out.fillBranch('%smet_phi%s' %(self.label,jesLabel), met_phi                            )
