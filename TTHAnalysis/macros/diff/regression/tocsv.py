@@ -18,8 +18,9 @@ def load_data(file, vars):
     
     try: ttree = tfile.Get('Friends')
     except: raise
-
+    print('Opened tree')
     arr = tree2array(ttree)
+    print('Loaded tree in array')
     return pandas.DataFrame(arr, columns=vars)
 
 
@@ -47,6 +48,8 @@ thevars = [
     'TopScore',
     'met','met_phi',
     'HTXS_Higgs_pt','HTXS_Higgs_y',
+    'Hgen_vis_pt',
+    'Hgen_tru_pt',
     'evt_tag'
 ]
 
