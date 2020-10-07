@@ -53,6 +53,8 @@ thevars = [
     'evt_tag'
 ]
 
+thevars = [ 'Hreco_%s'%i for i in thevars]
+
 mydir = args.idir
 
 for f in os.listdir(mydir):
