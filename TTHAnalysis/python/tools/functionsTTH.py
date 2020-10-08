@@ -475,5 +475,3 @@ MODULES.append( ('vtxWeight', lambda : VertexWeightFriend(myfile=None, targetfil
 
 from CMGTools.TTHAnalysis.tools.bestHmmFriend import BestHmm
 MODULES.append( ('bestHmm', lambda : BestHmm(label="_Recl")) )
-from CMGTools.TTHAnalysis.tools.higgsRegressionTTH import HiggsRegressionTTH
-MODULES.append( ('higgsRegressionTTH', lambda : HiggsRegressionTTH(label='_Recl') ))
