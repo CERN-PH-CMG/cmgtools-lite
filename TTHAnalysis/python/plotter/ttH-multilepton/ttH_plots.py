@@ -11,6 +11,8 @@ lumis = {
     '2018': '59.7',
     'all' : '35.9,41.4,59.7',
 }
+
+
 submit = '{command}' 
 dowhat = "plots" 
 #dowhat = "dumps" 

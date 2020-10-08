@@ -22,8 +22,7 @@ JetSel1_(\w+) : JetSel_Recl_\1[0]; AlsoData
 nLepFO\b : nLepFO_Recl; AlsoData
 nLepTight\b : nLepTight_Recl; AlsoData
 nTauFO\b : nTauSel_Recl; AlsoData
-nTauTight\b : nTauSel_Recl_Tight; AlsoData #if you are running on v6
-#nTauTight\b : nTauSel_Recl; AlsoData #if you are running on v5
+nTauTight\b : nTauSel_Recl_Tight; AlsoData
 nJet25\b: nJet25_Recl; AlsoData
 htJet25j\b: htJet25j_Recl; AlsoData
 mhtJet25\b: mhtJet25_Recl; AlsoData
