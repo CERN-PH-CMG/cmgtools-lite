@@ -5,6 +5,7 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs as HiggsRecoTTHbtagwps
 
 import ROOT, itertools
+import numpy as np
 
 class HiggsDiffRegressionTTH(Module):
     def __init__(self,label="_Recl", cut_BDT_rTT_score = 0.0, btagDeepCSVveto = 'M', doSystJEC=False):
@@ -47,10 +48,10 @@ class HiggsDiffRegressionTTH(Module):
             self.out.branch('%sHgen_tru_pt%s'%(self.label,jesLabel)        , 'F')
             self.out.branch('%sevt_tag%s'%(self.label,jesLabel)       , 'F')       
             
-            self.out.branch('%sDeltaRClosestJetToLep0%s'%(self.label,jeslabel) , 'F')
-            self.out.branch('%sDeltaRClosestJetToLep1%s'%(self.label,jeslabel) , 'F')
-            self.out.branch('%sDeltaPtClosestJetToLep0%s'%(self.label,jeslabel) , 'F')
-            self.out.branch('%sDeltaPtClosestJetToLep1%s'%(self.label,jeslabel) , 'F')
+            # Tell the network how to connect the lepton and the closest jet
+            for iLep in range(2):
+                self.out.branch('%sDeltaRClosestJetToLep%s%s'%(self.label,iLep,jesLabel) , 'F')
+                self.out.branch('%sDeltaPtClosestJetToLep%s%s'%(self.label,iLep,jesLabel) , 'F')
 
             for var in ['DeltaRl0l1',
                         
@@ -135,17 +136,19 @@ class HiggsDiffRegressionTTH(Module):
 
             selleps=[]
             drs = []
+            dpts = []
             for l,lp4 in [(ix,x.p4()) for ix,x in enumerate(lepsFO)]:
                 if len(lepsFO)<3:
                     selleps.append(lp4)
                     evt_tag *= lepsFO[l].pdgId
                 
                     tdrs=[]
+                    tdpts=[]
                     for j, jp4 in [(ix,x.p4()) for ix,x in enumerate(jets)]:
-                        if len(jets) <7: # fix this
-                          tdrs.append(lp4.DeltaR(jp4))
+                        tdrs.append(lp4.DeltaR(jp4))
+                        tdpts.append(lp4.Pt()-jp4.Pt())
                     drs.append(tdrs)
-
+                    dpts.append(tdpts)
 
             self.out.fillBranch('%snLeps%s' %(self.label,jesLabel), len(selleps))
             for iLep in range(len(selleps)):
@@ -157,7 +160,8 @@ class HiggsDiffRegressionTTH(Module):
 
             for l in range(len(drs)):
                 for j in range(len(drs[l])):
-                    self.out.fillBranch('%sDeltaRl%sj%s%s' %(self.label,l,j,jesLabel), drs[l][j])
+                    if j<6:
+                        self.out.fillBranch('%sDeltaRl%sj%s%s' %(self.label,l,j,jesLabel), drs[l][j])
             
             self.out.fillBranch('%sevt_tag%s'%(self.label,jesLabel), evt_tag)
 
@@ -189,11 +193,22 @@ class HiggsDiffRegressionTTH(Module):
                 self.out.fillBranch('%sJet%s%s_mass'%(self.label,iJet,jesLabel), part.M())
                 self.out.fillBranch('%sJet%s%s_btagdiscr'%(self.label,iJet,jesLabel), seljetsbtag[iJet] )
 
-            self.out.fillBranch('%sDeltaRClosestJetToLep0%s'%(self.label,jeslabel) ,  -99)
-            self.out.fillBranch('%sDeltaRClosestJetToLep1%s'%(self.label,jeslabel) ,  -99)
-            self.out.fillBranch('%sDeltaPtClosestJetToLep0%s'%(self.label,jeslabel) , -99)
-            self.out.fillBranch('%sDeltaPtClosestJetToLep1%s'%(self.label,jeslabel) , -99)
-
+                
+            if len(drs)==2:
+                for iLep in range(2):
+                    deltars=drs[iLep]
+                    deltapts=dpts[iLep]
+                    idx   = list(range(len(deltars)))
+                    idx.sort(key=deltars.__getitem__)
+                    deltars[:]  = [deltars[i] for i in idx]
+                    deltapts[:] = [deltapts[i] for i in idx]
+                    self.out.fillBranch('%sDeltaRClosestJetToLep%s%s'%(self.label,iLep,jesLabel) ,  deltars[-1] if len(deltars)>0 else -98.)
+                    self.out.fillBranch('%sDeltaPtClosestJetToLep%s%s'%(self.label,iLep,jesLabel) , deltapts[-1]if len(deltars)>0 else -98.)
+            else:
+                for iLep in range(2):
+                    self.out.fillBranch('%sDeltaRClosestJetToLep%s%s'%(self.label,iLep,jesLabel) ,  -99.)
+                    self.out.fillBranch('%sDeltaPtClosestJetToLep%s%s'%(self.label,iLep,jesLabel) , -99.)
+                    
  
             self.out.fillBranch('%smet%s'     %(self.label,jesLabel), met                                ) 
             self.out.fillBranch('%smet_phi%s' %(self.label,jesLabel), met_phi                            )
