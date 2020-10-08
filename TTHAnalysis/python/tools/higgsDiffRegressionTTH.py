@@ -47,7 +47,10 @@ class HiggsDiffRegressionTTH(Module):
             self.out.branch('%sHgen_tru_pt%s'%(self.label,jesLabel)        , 'F')
             self.out.branch('%sevt_tag%s'%(self.label,jesLabel)       , 'F')       
             
-
+            self.out.branch('%sDeltaRClosestJetToLep0%s'%(self.label,jeslabel) , 'F')
+            self.out.branch('%sDeltaRClosestJetToLep1%s'%(self.label,jeslabel) , 'F')
+            self.out.branch('%sDeltaPtClosestJetToLep0%s'%(self.label,jeslabel) , 'F')
+            self.out.branch('%sDeltaPtClosestJetToLep1%s'%(self.label,jeslabel) , 'F')
 
             for var in ['DeltaRl0l1',
                         
@@ -185,6 +188,12 @@ class HiggsDiffRegressionTTH(Module):
                 self.out.fillBranch('%sJet%s%s_phi' %(self.label,iJet,jesLabel), part.Phi())
                 self.out.fillBranch('%sJet%s%s_mass'%(self.label,iJet,jesLabel), part.M())
                 self.out.fillBranch('%sJet%s%s_btagdiscr'%(self.label,iJet,jesLabel), seljetsbtag[iJet] )
+
+            self.out.fillBranch('%sDeltaRClosestJetToLep0%s'%(self.label,jeslabel) ,  -99)
+            self.out.fillBranch('%sDeltaRClosestJetToLep1%s'%(self.label,jeslabel) ,  -99)
+            self.out.fillBranch('%sDeltaPtClosestJetToLep0%s'%(self.label,jeslabel) , -99)
+            self.out.fillBranch('%sDeltaPtClosestJetToLep1%s'%(self.label,jeslabel) , -99)
+
  
             self.out.fillBranch('%smet%s'     %(self.label,jesLabel), met                                ) 
             self.out.fillBranch('%smet_phi%s' %(self.label,jesLabel), met_phi                            )
