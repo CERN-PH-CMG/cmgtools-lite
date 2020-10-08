@@ -33,6 +33,7 @@ TTWW	: TTWW : 0.006981 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCha
 
 TTW     : TTWToLNu_fxfx : 0.1960 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   ", years="2016\,2018"
 TTW     : TTWToLNu_fxfx+TTWToLNu_fxfx_PS : 0.1960 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen-5, Label="ttW ", years="2017"
+TTW     : TTWJetsToLNu_EWK_5f_NLO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed, Label="ttW "
 TTZ     : TTZToLLNuNu_amc : 0.281 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2, Label="ttZ   ", years="2016\,2018"
 TTZ     : TTZToLLNuNu_amc+TTZToLLNuNu_amc_PS : 0.281 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2, Label="ttZ ", years="2017"
 TTZ     : TTZToLLNuNu_m1to10 : 0.082 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2

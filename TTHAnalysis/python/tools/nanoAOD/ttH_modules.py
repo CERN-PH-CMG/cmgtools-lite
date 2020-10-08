@@ -153,7 +153,12 @@ mcMatchId     = lambda : ObjTagger('mcMatchId','LepGood', [lambda l : (l.genPart
 mcPromptGamma = lambda : ObjTagger('mcPromptGamma','LepGood', [lambda l : (l.genPartFlav==22)])
 mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 
-countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
+tauFOs = lambda t : t.decayMode != 5 and t.decayMode != 6 and t.idDeepTau2017v2p1VSe & 1 and t.idDeepTau2017v2p1VSmu & 1
+tauVeto_2lss_1tau = lambda t : tauFOs(t) and t.idDeepTau2017v2p1VSjet & 16
+countTaus_veto             = lambda : ObjTagger('Tight'            ,'TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4]) # to veto in tauless categories
+countTaus_FO               = lambda : ObjTagger('FO'               ,'TauSel_Recl', [tauFOs]                               ) # actual FO (the FO above is used for jet cleaning, and corresponds to the loose)
+countTaus_2lss1tau_Tight   = lambda : ObjTagger('2lss1tau_Veto'    ,'TauSel_Recl', [tauTight_2lss_1tau]                   ) # veto ID for 2lss1tau category 
+
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import jetMetCorrelate2016,jetMetCorrelate2017,jetMetCorrelate2018
 #from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import createJMECorrector
@@ -435,3 +440,5 @@ from CMGTools.TTHAnalysis.tools.higgsDiffGenTTH import higgsDiffGenTTH
 from CMGTools.TTHAnalysis.tools.higgsDiffRecoTTH import higgsDiffRecoTTH, higgsDiffRecoTTH_noWmassConstraint
 from CMGTools.TTHAnalysis.tools.higgsDiffCompTTH import higgsDiffCompTTH
 from CMGTools.TTHAnalysis.tools.higgsDiffRegressionTTH import higgsDiffRegressionTTH
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_CP import ttH_CP

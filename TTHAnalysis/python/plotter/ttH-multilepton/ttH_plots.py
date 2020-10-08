@@ -32,6 +32,9 @@ if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
     P0   = "/nfs/user/pvischia/tth/v6" 
 #TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors --Fs {P}/3_tauCount --Fs {P}/5_BDThtt_reco --Fs /nfs/user/elfaham/104X/v6/%s/%s"%(YEAR,Tag) 
 
+if ".psi.ch" in os.environ['HOSTNAME']:
+    P0 = "/pnfs/psi.ch/cms/trivcat/store/user/sesanche"
+
 TREESALL = "--xf THQ_LHE,THW_LHE,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --FDs {P}/1_recl --FMCs {P}/1_recl_allvars --FMCs {P}/2_btag_SFs --FMCs {P}/2_scalefactors_lep_fixed --Fs {P}/3_tauCount --Fs {P}/4_evtVars  --Fs {P}/5_BDThtt_reco_new_blah --Fs {P}/6_mva2lss --Fs {P}/6_mva3l --Fs {P}/6_mva4l  "  #_new
 YEARDIR=YEAR if YEAR != 'all' else ''
 TREESONLYFULL     = "-P "+P0+"/NanoTrees_TTH_090120_091019_v6/%s "%(YEARDIR,)         
