@@ -24,8 +24,8 @@ def load_data(file, vars):
     
     thedf = pandas.DataFrame(arr, columns=vars)
     print(thedf.head())
-    thedf = thedf[thedf['Hreco_nLeps']==2]
-    thedf = thedf[thedf['Hreco_nJets']>5]
+    #thedf = thedf[thedf['Hreco_nLeps']==2]
+    #thedf = thedf[thedf['Hreco_nJets']>5]
     return thedf
 
 thevars = [
