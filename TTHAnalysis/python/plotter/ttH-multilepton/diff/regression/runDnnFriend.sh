@@ -1,4 +1,7 @@
 #for i in TTHnobb_fxfx TTJets_DiLepton TTJets_SingleLeptonFromT TTJets_SingleLeptonFromTbar TTWToLNu_fxfx TTZToLLNuNu_m1to10 TTZToLLNuNu_m1to10; do
+
+cd $CMSSW_BASE/src/CMGTools/TTHAnalysis/macros/
+
 for i in TTHnobb_fxfx; do
     python prepareEventVariablesFriendTree.py -t NanoAOD /nfs/user/pvischia/tth/v6/NanoTrees_TTH_091019_v6pre_skim2lss/2016/ /home/ucl/cp3/pvischia/cmssw/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/macros/mycensoredword_dnn -I CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules higgsDiffRegressionTTH -j 4 -F Friend {P}/0_jmeUnc_v1/{cname}_Friend.root -F Friend {P}/1_recl/{cname}_Friend.root -F Friend {P}/2_scalefactors/{cname}_Friend.root -F Friend {P}/3_tauCount/{cname}_Friend.root -F Friend {P}/5_BDThtt_reco/{cname}_Friend.root -F Friend {P}/6_higgsDiffGenTTH/{cname}_Friend.root  -D $i 
 #--env uclouvaindef -q cp3
