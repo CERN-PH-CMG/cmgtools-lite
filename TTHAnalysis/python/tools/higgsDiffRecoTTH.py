@@ -72,6 +72,14 @@ class HiggsDiffRecoTTH(Module):
             self.out.branch('%sfatJetsNearLeptonFromHiggs_tau3%s'%(self.label,jesLabel)      , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
             self.out.branch('%sfatJetsNearLeptonFromHiggs_tau4%s'%(self.label,jesLabel)      , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
 
+            # htt quantities
+            self.out.branch('%shtt_PtTop%s'%(self.label,jesLabel)                            , 'F')
+            self.out.branch('%shtt_MTop%s'%(self.label,jesLabel)                             , 'F')
+            self.out.branch('%shtt_PtWFromTop%s'%(self.label,jesLabel)                       , 'F')
+            self.out.branch('%shtt_MWFromTop%s'%(self.label,jesLabel)                        , 'F')
+            self.out.branch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)             , 'F')
+            self.out.branch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)             , 'F')
+
 
     def analyze(self, event):
         # Some useful input parameters
@@ -116,6 +124,13 @@ class HiggsDiffRecoTTH(Module):
             # Delicate: here the logic is built such that if one does not use the top tagger then 
             # some variables are left empty to suppress code into "if variable:" blocks
             # Bottom line is that when self.useTopTagger is False we iterate on all the non-b-jets
+            htt_PtTop = -99
+            htt_MTop  = -99
+            htt_PtWFromTop = -99
+            htt_MWFromTop  = -99
+            htt_HadTop_rightlep_delr = -99
+            htt_HadTop_wronglep_delr = -99
+            score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%jesLabel)
             j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%jesLabel)
             j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%jesLabel)
             j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%jesLabel)
@@ -127,6 +142,19 @@ class HiggsDiffRecoTTH(Module):
                     jetsNoTopNoB = []
             else:
                 jetsNoTopNoB = [j for j in jets if j.btagDeepB<btagvetoval]
+            if score>self.cut_BDT_rTT_score and j1top >= 0 and j2top >= 0 and j3top >= 0:
+                j1 = jets[int(j1top)]
+                j2 = jets[int(j2top)]
+                j3 = jets[int(j3top)]
+                bscores = [j1.btagDeepB, j2.btagDeepB, j3.btagDeepB]
+                bindex = bscores.index(max(bscores))
+                htt_PtTop = (j1.p4()+j2.p4()+j3.p4()).Pt()
+                htt_MTop = (j1.p4()+j2.p4()+j3.p4()).M()
+                htt_PtWFromTop = (j1.p4()*(bindex!=0)+j2.p4()*(bindex!=1)+j3.p4()*(bindex!=2)).Pt()
+                htt_MWFromTop = (j1.p4()*(bindex!=0)+j2.p4()*(bindex!=1)+j3.p4()*(bindex!=2)).M()
+                if len(QFromWFromH)==2 and len(LFromWFromH)==1:
+                    htt_HadTop_rightlep_delr = (j1.p4()+j2.p4()+j3.p4()).DeltaR(leps[rightlep].p4())
+                    htt_HadTop_wronglep_delr = (j1.p4()+j2.p4()+j3.p4()).DeltaR(leps[wronglep].p4())
 
             # Additional logic to experiment with different algorithms
             goodlep = -99
@@ -260,6 +288,14 @@ class HiggsDiffRecoTTH(Module):
             #self.out.branch('%sfatJetsNearLeptonFromHiggs_tau2%s'%(self.label,jesLabel)      , 'F', 2, '%snLeptons%s'%(self.label,jesLabel))
             #self.out.branch('%sfatJetsNearLeptonFromHiggs_tau3%s'%(self.label,jesLabel)      , 'F', 2, '%snLeptons%s'%(self.label,jesLabel))
             #self.out.branch('%sfatJetsNearLeptonFromHiggs_tau4%s'%(self.label,jesLabel)      , 'F', 2, '%snLeptons%s'%(self.label,jesLabel))
+
+            # htt quantities
+            self.out.fillBranch('%shtt_PtTop%s'%(self.label,jesLabel)  , htt_PtTop)
+            self.out.fillBranch('%shtt_MTop%s'%(self.label,jesLabel)  , htt_MTop)
+            self.out.fillBranch('%shtt_PtWFromTop%s'%(self.label,jesLabel)  , htt_PtWFromTop)
+            self.out.fillBranch('%shtt_MWFromTop%s'%(self.label,jesLabel)  , htt_MWFromTop)
+            self.out.fillBranch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)  , htt_HadTop_rightlep_delr)
+            self.out.fillBranch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)  , htt_HadTop_wronglep_delr)
 
 
         return True

@@ -62,13 +62,6 @@ class HiggsDiffCompTTH(Module):
             self.out.branch('%sdelR_lep_jm_farthest%s'%(self.label,jesLabel)                 , 'F')
             self.out.branch('%sdelR_jm_closest_jm_farthest%s'%(self.label,jesLabel)          , 'F')
             self.out.branch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel)            , 'F')
-            # htt quantities
-            self.out.branch('%shtt_PtTop%s'%(self.label,jesLabel)                            , 'F')
-            self.out.branch('%shtt_MTop%s'%(self.label,jesLabel)                             , 'F')
-            self.out.branch('%shtt_PtWFromTop%s'%(self.label,jesLabel)                       , 'F')
-            self.out.branch('%shtt_MWFromTop%s'%(self.label,jesLabel)                        , 'F')
-            self.out.branch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)             , 'F')
-            self.out.branch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)             , 'F')
             # Other quantities
             self.out.branch('%smHrightlep%s'%(self.label,jesLabel)                           , 'F')
             self.out.branch('%smHwronglep%s'%(self.label,jesLabel)                           , 'F')
@@ -150,29 +143,6 @@ class HiggsDiffCompTTH(Module):
             mHwronglep = (leps[wronglep].p4()+QFromWFromH[0]+QFromWFromH[1]).M()
 
         for jesLabel in self.systsJEC.values():
-            htt_PtTop = -99
-            htt_MTop  = -99
-            htt_PtWFromTop = -99
-            htt_MWFromTop  = -99
-            htt_HadTop_rightlep_delr = -99
-            htt_HadTop_wronglep_delr = -99
-            score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%jesLabel)
-            j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%jesLabel)
-            j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%jesLabel)
-            j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%jesLabel)
-            if score>self.cut_BDT_rTT_score and j1top >= 0 and j2top >= 0 and j3top >= 0:
-                j1 = thejets[int(j1top)]
-                j2 = thejets[int(j2top)]
-                j3 = thejets[int(j3top)]
-                bscores = [j1.btagDeepB, j2.btagDeepB, j3.btagDeepB]
-                bindex = bscores.index(max(bscores))
-                htt_PtTop = (j1.p4()+j2.p4()+j3.p4()).Pt()
-                htt_MTop = (j1.p4()+j2.p4()+j3.p4()).M()
-                htt_PtWFromTop = (j1.p4()*(bindex!=0)+j2.p4()*(bindex!=1)+j3.p4()*(bindex!=2)).Pt()
-                htt_MWFromTop = (j1.p4()*(bindex!=0)+j2.p4()*(bindex!=1)+j3.p4()*(bindex!=2)).M()
-                if len(QFromWFromH)==2 and len(LFromWFromH)==1:
-                    htt_HadTop_rightlep_delr = (j1.p4()+j2.p4()+j3.p4()).DeltaR(leps[rightlep].p4())
-                    htt_HadTop_wronglep_delr = (j1.p4()+j2.p4()+j3.p4()).DeltaR(leps[wronglep].p4())
 
             # We need to have saved three entire collections, because the triplet selection might select different objects when JEC changes
             leptonFromHiggs = [ x.p4() for x in Collection(event,'%sleptonsFromHiggs%s'%(self.label,jesLabel),'%snLeptonsFromHiggs%s'%(self.label,jesLabel))]
@@ -353,14 +323,6 @@ class HiggsDiffCompTTH(Module):
                         j_closestWrong=j
             
             self.out.fillBranch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel), leptonFromHiggs.DeltaR(j_closestWrong) if j_closestWrong else -99.)
-
-            # htt quantities
-            self.out.fillBranch('%shtt_PtTop%s'%(self.label,jesLabel)  , htt_PtTop)
-            self.out.fillBranch('%shtt_MTop%s'%(self.label,jesLabel)  , htt_MTop)
-            self.out.fillBranch('%shtt_PtWFromTop%s'%(self.label,jesLabel)  , htt_PtWFromTop)
-            self.out.fillBranch('%shtt_MWFromTop%s'%(self.label,jesLabel)  , htt_MWFromTop)
-            self.out.fillBranch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)  , htt_HadTop_rightlep_delr)
-            self.out.fillBranch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)  , htt_HadTop_wronglep_delr)
 
             # Other quantities
             self.out.fillBranch('%smHrightlep%s'%(self.label,jesLabel)  ,  mHrightlep)
