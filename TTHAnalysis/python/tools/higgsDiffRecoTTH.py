@@ -142,6 +142,7 @@ class HiggsDiffRecoTTH(Module):
                     jetsNoTopNoB = []
             else:
                 jetsNoTopNoB = [j for j in jets if j.btagDeepB<btagvetoval]
+
             if score>self.cut_BDT_rTT_score and j1top >= 0 and j2top >= 0 and j3top >= 0:
                 j1 = jets[int(j1top)]
                 j2 = jets[int(j2top)]
@@ -258,7 +259,7 @@ class HiggsDiffRecoTTH(Module):
 
             # Counters
             self.out.fillBranch('%snLeptonsFromHiggs%s'%(self.label,jesLabel), len(ls))
-            self.out.fillBranch('%snJetsFromHiggs%s'%(self.label,jesLabel)   , len(js))
+            self.out.fillBranch('%snJetsFromHiggs%s'%(self.label,jesLabel)   , len(js))    
             self.out.fillBranch('%snFO%s'%(self.label,jesLabel)              , nFO)
             self.out.fillBranch('%snJetsAfterCuts%s'%(self.label,jesLabel)   , len(jetsNoTopNoB))
 
@@ -322,5 +323,5 @@ higgsDiffRecoTTHLegacyTopTagger = lambda : HiggsDiffRecoTTH(label="Hreco_notopta
                                                             cut_BDT_rTT_score = 0.0,
                                                             cuts_mW_had = (60.,100.),
                                                             cuts_mH_vis = (80.,140.),
-                                                            btagDeepCSVveto = 'M', # or 'M'
+                                                            btagDeepCSVveto = 'M', # or 'M' or 'L' or 99
                                                             useTopTagger=True)

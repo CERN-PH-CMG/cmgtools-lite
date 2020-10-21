@@ -141,7 +141,7 @@ class HiggsDiffCompTTH(Module):
         if len(QFromWFromH)==2 and len(LFromWFromH)==1:
             mHrightlep = (leps[rightlep].p4()+QFromWFromH[0]+QFromWFromH[1]).M()
             mHwronglep = (leps[wronglep].p4()+QFromWFromH[0]+QFromWFromH[1]).M()
-
+        
         for jesLabel in self.systsJEC.values():
 
             # We need to have saved three entire collections, because the triplet selection might select different objects when JEC changes
@@ -284,6 +284,7 @@ class HiggsDiffCompTTH(Module):
             # Compare the matched jets and the reco jets
             # First I want to write down a few quantities
             visHiggs_matched, visHiggsPlusNu_matched = self.makeVisibleHiggs(leptonFromHiggs, jm1, jm2, NuFromWFromH[0] if len(NuFromWFromH)==1 else None)
+
             both_selected_jets_matched = 1 if (jm1 and jm2 and len(jetsFromHiggs)==2 and \
             ((abs(jm1.Pt()-jetsFromHiggs[0].Pt())<1e-10 and abs(jm2.Pt()-jetsFromHiggs[1].Pt())<1e-10) or \
             (abs(jm2.Pt()-jetsFromHiggs[0].Pt())<1e-10 and abs(jm1.Pt()-jetsFromHiggs[1].Pt())<1e-10))) else 0
