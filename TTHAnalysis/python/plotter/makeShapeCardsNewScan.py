@@ -49,13 +49,12 @@ for psig in mca.listSignals(True):
 	continue
         #raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ] 
-    print(point)
     if len(point)>1:
        point[1] = re.sub("_h[a-z]+", '',point[1])
        if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
     elif len(point)==1:
        if point not in scanpoints and 'promptsub' not in psig: scanpoints.append(  point )
-print(scanpoints)
+
 report={}
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
@@ -80,7 +79,7 @@ if options.savefile:
 if options.asimov:
     match = re.compile(pattern_default).search( options.asimov ) 
     if match:
-        print('yes') 
+        
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
@@ -88,10 +87,10 @@ if options.asimov:
         asimovprocesses = mca.listBackgrounds()
     else: raise RuntimeError("the --asimov option requires to specify signal/sig/s/s+b or background/bkg/b/b-only")
     tomerge = None
-    print(asimovprocesses)
+    
     for p in asimovprocesses:
         if p in report:
-            print(p) 
+            
             if tomerge is None: 
                 tomerge = report[p].raw().Clone("x_data_obs"); tomerge.SetDirectory(None)
             else: tomerge.Add(report[p].raw())
@@ -147,7 +146,7 @@ for scanpoint in scanpoints:
         if match: 
         	matchpoint = [match.group(p) for p in options.params.split(',')]
         	if len(matchpoint) >1: matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
-                print(matchpoint)
+                
         	#if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
         	if scanpoint != matchpoint: continue
         if 'promptsub' not in psig: listSignals.append(psig)
