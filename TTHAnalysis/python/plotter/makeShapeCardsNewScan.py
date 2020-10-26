@@ -42,9 +42,7 @@ pattern_default = "ct_(?P<cp>.*)_cv_1p0"
 for psig in mca.listSignals(True):
     match = pattern.search( psig )
     if "ct_1p0_cv_1p0" in psig:
-  
        match = re.compile(pattern_default).search( psig ) 
-     
     if not match: 
 	continue
         #raise RuntimeError("Signal %s does not match the regexp"%psig)
@@ -79,7 +77,6 @@ if options.savefile:
 if options.asimov:
     match = re.compile(pattern_default).search( options.asimov ) 
     if match:
-        
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
@@ -87,10 +84,8 @@ if options.asimov:
         asimovprocesses = mca.listBackgrounds()
     else: raise RuntimeError("the --asimov option requires to specify signal/sig/s/s+b or background/bkg/b/b-only")
     tomerge = None
-    
     for p in asimovprocesses:
-        if p in report:
-            
+        if p in report: 
             if tomerge is None: 
                 tomerge = report[p].raw().Clone("x_data_obs"); tomerge.SetDirectory(None)
             else: tomerge.Add(report[p].raw())
@@ -146,7 +141,6 @@ for scanpoint in scanpoints:
         if match: 
         	matchpoint = [match.group(p) for p in options.params.split(',')]
         	if len(matchpoint) >1: matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
-                
         	#if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
         	if scanpoint != matchpoint: continue
         if 'promptsub' not in psig: listSignals.append(psig)
