@@ -38,14 +38,21 @@ if not os.path.exists(outdir): os.mkdir(outdir)
 
 scanpoints = []
 pattern = re.compile( options.scanregex ) 
+pattern_default = "ct_(?P<cp>.*)_cv_1p0"
 for psig in mca.listSignals(True):
-    match = pattern.search( psig ) 
+    match = pattern.search( psig )
+    if "ct_1p0_cv_1p0" in psig:
+       match = re.compile(pattern_default).search( psig ) 
     if not match: 
 	continue
         #raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ] 
-    point[1] = re.sub("_h[a-z]+", '',point[1])
-    if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
+    if len(point)>1:
+       point[1] = re.sub("_h[a-z]+", '',point[1])
+       if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
+    elif len(point)==1:
+       if point not in scanpoints and 'promptsub' not in psig: scanpoints.append(  point )
+
 report={}
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
@@ -68,8 +75,8 @@ if options.savefile:
     savefile.Close()
 
 if options.asimov:
-    match = pattern.search( options.asimov ) 
-    if match: 
+    match = re.compile(pattern_default).search( options.asimov ) 
+    if match:
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
@@ -129,10 +136,11 @@ for scanpoint in scanpoints:
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
+        if "ct_1p0_cv_1p0" in psig:
+           match = re.compile(pattern_default).search( psig ) 
         if match: 
         	matchpoint = [match.group(p) for p in options.params.split(',')]
-        	matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
-        
+        	if len(matchpoint) >1: matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
         	#if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
         	if scanpoint != matchpoint: continue
         if 'promptsub' not in psig: listSignals.append(psig)
@@ -222,8 +230,11 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        pointname2 = pointname.replace('kt','ct')
-        pointname2 = pointname2.replace('kv','cv')
+        if "kt" in pointname:
+           pointname2 = pointname.replace('kt','ct')
+           pointname2 = pointname2.replace('kv','cv')
+        else:
+           pointname2 = pointname
         if '-' in pointname: 
            pointname = pointname.replace('-','m')
         pointname2=pointname2.replace('m','-') #for sanity
@@ -240,7 +251,7 @@ for scanpoint in scanpoints:
         npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
         datacard.write('##----------------------------------\n')
         datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
-        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','')        for p in procs]))+"\n")
+        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','').replace('ct_1p0_cv_1p0_','')        for p in procs]))+"\n")
         datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
         datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % allyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
