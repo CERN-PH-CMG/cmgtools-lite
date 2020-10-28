@@ -9,10 +9,11 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
 from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class EventVars2LSS(Module):
-    def __init__(self, label="", recllabel='Recl', doSystJEC=True, variations=[]):
+    def __init__(self, label="", recllabel='Recl', doSystJEC=True, variations=[], tauTight_2lss_1tau=None):
         self.namebranches = [ "mindr_lep1_jet",
                               "mindr_lep2_jet",
                               "mindr_lep3_jet",
+                              "mindr_tau_jet",
                               "avg_dr_jet",
                               "MT_met_lep1",
                               "MT_met_lep2",
@@ -40,7 +41,8 @@ class EventVars2LSS(Module):
         if len(self.systsJEC) > 1: 
             self.branches.extend([br+self.label+'_unclustEnUp' for br in self.namebranches if 'met' in br])
             self.branches.extend([br+self.label+'_unclustEnDown' for br in self.namebranches if 'met' in br])
-        self.branches.extend( ['drlep12','drlep13','drlep23', 'hasOSSF4l','hasOSSF3l','m4l'])
+        self.branches.extend( ['drlep12','drlep13','drlep23', 'hasOSSF4l','hasOSSF3l','m4l','Tau_tight2lss1tau_idx'])
+        self.tauTight_2lss_1tau=tauTight_2lss_1tau
 
     # old interface (CMG)
     def listBranches(self):
@@ -95,7 +97,14 @@ class EventVars2LSS(Module):
                     if l1.pdgId * l2.pdgId > 0: continue
                     if abs(l1.pdgId) != abs(l2.pdgId): continue
                     allret['hasOSSF4l'] = True
-
+        taus = [ t for t in Collection(event, 'TauSel'+self.inputlabel)]
+        Tau_tight2lss1tau_idx=-1
+        for t in taus: 
+            if self.tauTight_2lss_1tau(t): 
+                Tau_tight2lss1tau_idx = taus.index(t)
+                break
+        allret['Tau_tight2lss1tau_idx']=Tau_tight2lss1tau_idx
+            
         for var in self.systsJEC:
             # prepare output
             ret = dict([(name,0.0) for name in self.namebranches])
@@ -137,6 +146,8 @@ class EventVars2LSS(Module):
                 ret["mindr_lep1_jet"] = min([deltaR(j,leps[0]) for j in jets]) if nlep >= 1 else 0;
                 ret["mindr_lep2_jet"] = min([deltaR(j,leps[1]) for j in jets]) if nlep >= 2 else 0;
                 ret["mindr_lep3_jet"] = min([deltaR(j,leps[2]) for j in jets]) if nlep >= 3 else 0;
+                if allret['Tau_tight2lss1tau_idx'] > -1: 
+                    ret["mindr_tau_jet"] = min([deltaR(j,taus[allret['Tau_tight2lss1tau_idx']]) for j in jets]) if nlep >= 1 else 0;
             if njet >= 2:
                 sumdr, ndr = 0, 0
                 for i,j in enumerate(jets):
