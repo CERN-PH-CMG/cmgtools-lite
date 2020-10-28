@@ -438,5 +438,9 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_CP import ttH_CP
 
+from CMGTools.TTHAnalysis.tools.nanoAOD.CPmva2lss import CPmva2lss
+cpABCnet = lambda : CPmva2lss()
+
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_2lss1tau_higgsreco import ttH_2lss1tau_higgsreco
 ttH_2lss1tau_reco = lambda : ttH_2lss1tau_higgsreco()
+
