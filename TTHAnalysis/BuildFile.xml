@@ -11,6 +11,8 @@
 <use name="rootminuit2"/>
 <use name="lhapdf"/>
 <use name="tensorflow-cc" />
+<use name="onnxruntime"/>
+<use name="PhysicsTools/ONNXRuntime"/>
 <export>
   <lib   name="1"/>
 </export>
