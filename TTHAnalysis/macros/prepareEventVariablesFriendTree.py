@@ -395,7 +395,7 @@ if options.queue:
     super = ""
     theoutput = args[1]
     if options.env == "psi":
-        super  = "sbatch -p {queue} -N {NAME}".format(queue = options.queue, name=options.name)
+        super  = "sbatch -p {queue} -J {name}".format(queue = options.queue, name=options.name)
         runner = "lxbatch_runner.sh"
     elif options.env == "oviedo":
         super  = "qsub -q {queue} -N {name}".format(queue = options.queue, name=options.name)
@@ -610,7 +610,7 @@ def _runIt(myargs):
 def _runItNano(myargs):
     (name,fin,ofout,data,range,chunk,fineSplit) = myargs
     timer = ROOT.TStopwatch()
-    inpsibatch= 'SLURMD_NODENAME' in os.environ and 't3wn' in os.environ['SLURMD_NODENAME']
+    inpsibatch= 'SLURMD_NODENAME' in os.environ and 't3wn' in os.environ['SLURMD_NODENAME'] and ofout.startswith('/pnfs/psi.ch/')
     if inpsibatch:
         ofout = '/scratch/'+ofout
     command = ["nano_postproc.py", "--friend", os.path.dirname(ofout), "--postfix", os.path.basename(ofout)[len(name):-len(".root")] ]
@@ -651,6 +651,8 @@ def _runItNano(myargs):
         continue
           fi
         echo "everything ok"
+        echo "Removing {fi}"
+        rm {fi}
         break
         done
     '''.format(fi=ofout, fo=ofout[9:]))

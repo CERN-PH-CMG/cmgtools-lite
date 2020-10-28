@@ -75,7 +75,7 @@ class TTH_CP(Module):
             etas.append(j.eta)
             phis.append(j.phi)
             masses.append(j.mass)
-            btags.append( j.btagDeepFlavB < _btagWPs["DeepFlav_%d_M"%event.year] ) 
+            btags.append( j.btagDeepFlavB > _btagWPs["DeepFlav_%d_M"%event.year][1] ) 
             fromTop.append(j.fromHadTop)
             
 
