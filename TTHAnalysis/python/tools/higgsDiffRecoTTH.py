@@ -197,8 +197,7 @@ class HiggsDiffRecoTTH(Module):
                     # Optionally, later constrain the mass to the W PDG mass (although we use this only to build the candidate, and we store it without constraint)
                     W = j1+j2
                     mW = W.M()
-#                    if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
-
+                    #if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
                     Wconstr = W
                     if self.use_Wmass_constraint:
                         Wconstr = ROOT.TLorentzVector()
@@ -208,7 +207,7 @@ class HiggsDiffRecoTTH(Module):
                     Hvisconstr = lep+Wconstr
                     mHvisconstr = Hvisconstr.M()
                     pTHvisconstr = Hvisconstr.Pt()
-#                    if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
+                    #if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
 
                     # Additional logic to experiment with different algorithms
                     lepchoice = 0 if _lep==goodlep else 1

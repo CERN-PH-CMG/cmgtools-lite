@@ -104,7 +104,6 @@ class HiggsDiffGenTTH(Module):
         self.out.branch('%spTTrueGenPlusNu'%self.label   , 'F')
         
     def analyze(self, event):
-
         # Input collections and maps
         genpar = Collection(event,"GenPart","nGenPart") 
         

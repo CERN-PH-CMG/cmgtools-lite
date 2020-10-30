@@ -28,7 +28,6 @@ class HiggsDiffCompTTH(Module):
         self.out = wrappedOutputTree
 
         # Independent on JES
-        
         self.out.branch('%srightlepidx'%self.label                                      , 'I')
         self.out.branch('%swronglepidx'%self.label                                      , 'I')
 
@@ -205,10 +204,10 @@ class HiggsDiffCompTTH(Module):
                 # I need these rather than the jetsNoB because I want to allow matching to match the QfromH to b-jets. 
                 # I need this and not jets[] because I want to access the flavour.
                 for _x,x in enumerate(thejets):
-#                    if x.btagDeepB > 0.3093: continue # Optionally kill > Medium B-Jets
+                    #if x.btagDeepB > 0.3093: continue # Optionally kill > Medium B-Jets
                     j=x.p4()
                     j.SetPtEtaPhiM(getattr(x,'pt%s'%jesLabel), j.Eta(), j.Phi(), j.M()) # Correct the pt
-#                    jflav = getattr(x,'hadronFlavour')
+                    #jflav = getattr(x,'hadronFlavour')
                     jflav = getattr(thejetsmoreskimmed[_x],'partonFlavour')
                     drq1=q1.DeltaR(j)
                     drq2=q2.DeltaR(j)
@@ -324,7 +323,6 @@ class HiggsDiffCompTTH(Module):
                         j_closestWrong=j
             
             self.out.fillBranch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel), leptonFromHiggs.DeltaR(j_closestWrong) if j_closestWrong else -99.)
-
             # Other quantities
             self.out.fillBranch('%smHrightlep%s'%(self.label,jesLabel)  ,  mHrightlep)
             self.out.fillBranch('%smHwronglep%s'%(self.label,jesLabel)  ,  mHwronglep)
