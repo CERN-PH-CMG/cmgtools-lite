@@ -38,11 +38,8 @@ if not os.path.exists(outdir): os.mkdir(outdir)
 
 scanpoints = []
 pattern = re.compile( options.scanregex ) 
-pattern_default = "ct_(?P<cp>.*)_cv_1p0"
 for psig in mca.listSignals(True):
-    match = pattern.search( psig )
-    if "ct_1p0_cv_1p0" in psig:
-       match = re.compile(pattern_default).search( psig ) 
+    match = pattern.search( psig ) 
     if not match: 
 	continue
         #raise RuntimeError("Signal %s does not match the regexp"%psig)
@@ -75,7 +72,7 @@ if options.savefile:
     savefile.Close()
 
 if options.asimov:
-    match = re.compile(pattern_default).search( options.asimov ) 
+    match = pattern.search( options.asimov ) 
     if match:
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
     elif options.asimov in ("s","sig","signal","s+b"):
@@ -136,8 +133,6 @@ for scanpoint in scanpoints:
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
-        if "ct_1p0_cv_1p0" in psig:
-           match = re.compile(pattern_default).search( psig ) 
         if match: 
         	matchpoint = [match.group(p) for p in options.params.split(',')]
         	if len(matchpoint) >1: matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
@@ -251,7 +246,7 @@ for scanpoint in scanpoints:
         npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
         datacard.write('##----------------------------------\n')
         datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
-        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','').replace('ct_1p0_cv_1p0_','')        for p in procs]))+"\n")
+        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','')        for p in procs]))+"\n")
         datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
         datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % allyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
