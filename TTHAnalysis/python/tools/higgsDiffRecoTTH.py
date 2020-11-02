@@ -80,7 +80,6 @@ class HiggsDiffRecoTTH(Module):
             self.out.branch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)             , 'F')
             self.out.branch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)             , 'F')
 
-
     def analyze(self, event):
         # Some useful input parameters
         year=getattr(event,"year")
@@ -112,7 +111,6 @@ class HiggsDiffRecoTTH(Module):
             rightlep = ilist[0]
             wronglep = ilist[-1] # last element in list, usually ilist[1] since len(leps)==2 usually
 
-        
         for jesLabel in self.systsJEC.values():
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%jesLabel)
             ljj_candidates=[];
@@ -208,10 +206,8 @@ class HiggsDiffRecoTTH(Module):
                     mHvisconstr = Hvisconstr.M()
                     pTHvisconstr = Hvisconstr.Pt()
                     #if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
-
                     # Additional logic to experiment with different algorithms
                     lepchoice = 0 if _lep==goodlep else 1
-
                     # Store all non-rejected candidates
                     mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
                     delR_j1j2 = j1.DeltaR(j2)
@@ -296,7 +292,6 @@ class HiggsDiffRecoTTH(Module):
             self.out.fillBranch('%shtt_MWFromTop%s'%(self.label,jesLabel)  , htt_MWFromTop)
             self.out.fillBranch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)  , htt_HadTop_rightlep_delr)
             self.out.fillBranch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)  , htt_HadTop_wronglep_delr)
-
 
         return True
 

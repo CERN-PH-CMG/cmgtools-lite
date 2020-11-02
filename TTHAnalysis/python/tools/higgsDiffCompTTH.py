@@ -30,7 +30,6 @@ class HiggsDiffCompTTH(Module):
         # Independent on JES
         self.out.branch('%srightlepidx'%self.label                                      , 'I')
         self.out.branch('%swronglepidx'%self.label                                      , 'I')
-
         # Somehow dependent on JES
         for jesLabel in self.systsJEC.values():
             self.out.branch('%spTVisCrossCheck%s'%(self.label,jesLabel)                      , 'F')
@@ -142,7 +141,6 @@ class HiggsDiffCompTTH(Module):
             mHwronglep = (leps[wronglep].p4()+QFromWFromH[0]+QFromWFromH[1]).M()
         
         for jesLabel in self.systsJEC.values():
-
             # We need to have saved three entire collections, because the triplet selection might select different objects when JEC changes
             leptonFromHiggs = [ x.p4() for x in Collection(event,'%sleptonsFromHiggs%s'%(self.label,jesLabel),'%snLeptonsFromHiggs%s'%(self.label,jesLabel))]
             jetsFromHiggs   = [ x.p4() for x in Collection(event,'%sjetsFromHiggs%s'%(self.label,jesLabel), '%snJetsFromHiggs%s'%(self.label,jesLabel)) ]
