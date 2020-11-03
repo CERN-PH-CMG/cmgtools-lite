@@ -28,7 +28,8 @@ class HiggsDiffCompTTH(Module):
         self.out = wrappedOutputTree
 
         # Independent on JES
-        
+        self.out.branch('%srightlepidx'%self.label                                      , 'I')
+        self.out.branch('%swronglepidx'%self.label                                      , 'I')
         # Somehow dependent on JES
         for jesLabel in self.systsJEC.values():
             self.out.branch('%spTVisCrossCheck%s'%(self.label,jesLabel)                      , 'F')
@@ -39,6 +40,7 @@ class HiggsDiffCompTTH(Module):
             self.out.branch('%sdelR_lep_jm1%s'%(self.label,jesLabel)                         , 'F')
             self.out.branch('%sdelR_lep_jm2%s'%(self.label,jesLabel)                         , 'F')
             self.out.branch('%sdelR_jm1_jm2%s'%(self.label,jesLabel)                         , 'F')
+            self.out.branch('%sboth_selected_jets_matched%s'%(self.label,jesLabel)           , 'I')
             self.out.branch('%sinv_mass_jm1jm2%s'%(self.label,jesLabel)                      , 'F')
             self.out.branch('%sinv_mass_H_jets_match_plusNu%s'%(self.label,jesLabel)         , 'F')
             self.out.branch('%sinv_mass_H_jets_match%s'%(self.label,jesLabel)                , 'F')
@@ -52,10 +54,15 @@ class HiggsDiffCompTTH(Module):
             self.out.branch('%sclosestJet_ptres_ToQ2FromWFromH%s'%(self.label,jesLabel)      , 'F')
             self.out.branch('%sclosestJet_delR_ToQ1FromWFromH%s'%(self.label,jesLabel)       , 'F')
             self.out.branch('%sclosestJet_delR_ToQ2FromWFromH%s'%(self.label,jesLabel)       , 'F')
+            self.out.branch('%sclosestJet_flavour_ToQ1FromWFromH%s'%(self.label,jesLabel)    , 'F')
+            self.out.branch('%sclosestJet_flavour_ToQ2FromWFromH%s'%(self.label,jesLabel)    , 'F')
             self.out.branch('%sdelR_lep_jm_closest%s'%(self.label,jesLabel)                  , 'F')
             self.out.branch('%sdelR_lep_jm_farthest%s'%(self.label,jesLabel)                 , 'F')
             self.out.branch('%sdelR_jm_closest_jm_farthest%s'%(self.label,jesLabel)          , 'F')
-            self.out.branch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel)           , 'F')
+            self.out.branch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel)            , 'F')
+            # Other quantities
+            self.out.branch('%smHrightlep%s'%(self.label,jesLabel)                           , 'F')
+            self.out.branch('%smHwronglep%s'%(self.label,jesLabel)                           , 'F')
 
     def makeVisibleHiggs(self, l, j1, j2, nu=None):
         if (not j1) or (not j2) or (not l) or (j1.Pt()>9999.) or (j2.Pt()>9999.) or (l.Pt()>9999.):
@@ -80,7 +87,10 @@ class HiggsDiffCompTTH(Module):
     def analyze(self, event):
         # Some useful input parameters
         year=getattr(event,"year")
-        btagvetoval= HiggsRecoTTHbtagwps["DeepFlav_%d_%s"%(year,self.btagDeepCSVveto)][1]
+        if self.btagDeepCSVveto in ['VL','L','M','T','VT']:
+            btagvetoval = HiggsRecoTTHbtagwps["DeepFlav_%d_%s"%(year,self.btagDeepCSVveto)][1]
+        else:
+            btagvetoval = self.btagDeepCSVveto
 
         # Input collections and maps
 
@@ -103,8 +113,32 @@ class HiggsDiffCompTTH(Module):
         pTTrueGen       = getattr(event,'%spTTrueGen'%self.label)
         pTTrueGenPlusNu = getattr(event,'%spTTrueGenPlusNu'%self.label)
         
+        allLeps     = Collection(event,"LepGood","nLepGood")
+        nFO      = getattr(event,"nLepFO_Recl")
+        selLeps    = getattr(event,"iLepFO_Recl")
+        leps   = [allLeps[selLeps[i]] for i in xrange(nFO)]
         thejets     = [x for x in Collection(event,"JetSel_Recl","nJetSel_Recl")]
         thejetsNoB     = [j for j in thejets if j.btagDeepB<btagvetoval]
+        thejetsmore = [x for x in Collection(event,"Jet")]
+        thejetsphieta = [[j.phi, j.eta] for j in thejets]
+        thejetsmoreskimmed = [j for j in thejetsmore if [j.phi,j.eta] in thejetsphieta]
+
+        # Get right & wrong lepton index
+        rightlep = -99
+        wronglep = -99
+        if (len(QFromWFromH)==2 and len(LFromWFromH)==1):
+            ilist=[i[0] for i in sorted(enumerate(leps),key=lambda x:x[1].p4().DeltaR(LFromWFromH[0]))]
+            rightlep = ilist[0]
+            wronglep = ilist[-1] # last element in list, usually ilist[1] since len(leps)==2 usually
+        self.out.fillBranch('%srightlepidx'%self.label                          , rightlep    )
+        self.out.fillBranch('%swronglepidx'%self.label                          , wronglep    )
+
+        # Get higgs mass by combining gen quarks with right & wrong leptons
+        mHrightlep = -99
+        mHwronglep = -99
+        if len(QFromWFromH)==2 and len(LFromWFromH)==1:
+            mHrightlep = (leps[rightlep].p4()+QFromWFromH[0]+QFromWFromH[1]).M()
+            mHwronglep = (leps[wronglep].p4()+QFromWFromH[0]+QFromWFromH[1]).M()
         
         for jesLabel in self.systsJEC.values():
             # We need to have saved three entire collections, because the triplet selection might select different objects when JEC changes
@@ -165,10 +199,14 @@ class HiggsDiffCompTTH(Module):
             if len(QFromWFromH)==2:
                 q1, q2 = QFromWFromH
 
-                for x in thejets: # I need these rather than the jetsNoB because I want to allow matching to match the QfromH to b-jets. I need this and not jets[] because I want to access the flavour.
+                # I need these rather than the jetsNoB because I want to allow matching to match the QfromH to b-jets. 
+                # I need this and not jets[] because I want to access the flavour.
+                for _x,x in enumerate(thejets):
+                    #if x.btagDeepB > 0.3093: continue # Optionally kill > Medium B-Jets
                     j=x.p4()
                     j.SetPtEtaPhiM(getattr(x,'pt%s'%jesLabel), j.Eta(), j.Phi(), j.M()) # Correct the pt
-                    jflav = getattr(x,'hadronFlavour')
+                    #jflav = getattr(x,'hadronFlavour')
+                    jflav = getattr(thejetsmoreskimmed[_x],'partonFlavour')
                     drq1=q1.DeltaR(j)
                     drq2=q2.DeltaR(j)
                     if drq1 < dr_closestTo_q1:
@@ -178,6 +216,10 @@ class HiggsDiffCompTTH(Module):
                         dr_closestTo_q1=drq1
                         flav_closestTo_q1=jflav
                         jm1=j
+                    elif drq1 < dr_nClosestTo_q1:
+                        dr_nClosestTo_q1=drq1
+                        flav_nClosestTo_q1=jflav
+                        jnm1=j
                     if drq2 < dr_closestTo_q2:
                         dr_nClosestTo_q2=dr_closestTo_q2
                         flav_nClosestTo_q2=flav_closestTo_q2
@@ -185,6 +227,10 @@ class HiggsDiffCompTTH(Module):
                         dr_closestTo_q2=drq2
                         flav_closestTo_q2=jflav
                         jm2=j
+                    elif drq2 < dr_nClosestTo_q2:
+                        dr_nClosestTo_q2=drq2
+                        flav_nClosestTo_q2=jflav
+                        jnm2=j
 
                 # Disentangle cases where the same jet matches both jets
                 # choice: pick the closest next-to-closest as the second jet
@@ -210,9 +256,11 @@ class HiggsDiffCompTTH(Module):
             self.out.fillBranch('%sclosestJet_pt_ToQ1FromWFromH%s'%(self.label,jesLabel)         , jm1.Pt()                   if jm1 else -99.)
             self.out.fillBranch('%sclosestJet_ptres_ToQ1FromWFromH%s'%(self.label,jesLabel)      , (jm1.Pt()-q1.Pt())/q1.Pt() if jm1 else -99.)
             self.out.fillBranch('%sclosestJet_delR_ToQ1FromWFromH%s'%(self.label,jesLabel)       , dr_closestTo_q1            if jm1 else -99.)
+            self.out.fillBranch('%sclosestJet_flavour_ToQ1FromWFromH%s'%(self.label,jesLabel)    , flav_closestTo_q1          if jm1 else -99.)
             self.out.fillBranch('%sclosestJet_pt_ToQ2FromWFromH%s'%(self.label,jesLabel)         , jm2.Pt()                   if jm2 else -99.)
             self.out.fillBranch('%sclosestJet_ptres_ToQ2FromWFromH%s'%(self.label,jesLabel)      , (jm2.Pt()-q2.Pt())/q2.Pt() if jm2 else -99.)
             self.out.fillBranch('%sclosestJet_delR_ToQ2FromWFromH%s'%(self.label,jesLabel)       , dr_closestTo_q2            if jm2 else -99.)
+            self.out.fillBranch('%sclosestJet_flavour_ToQ2FromWFromH%s'%(self.label,jesLabel)    , flav_closestTo_q2          if jm2 else -99.)
             
             # Now apply thresholds: if they don't satisfy matching thresholds, wipe them out
             # Since I am at it, count how many partons have a jet matched to them
@@ -234,6 +282,10 @@ class HiggsDiffCompTTH(Module):
             # First I want to write down a few quantities
             visHiggs_matched, visHiggsPlusNu_matched = self.makeVisibleHiggs(leptonFromHiggs, jm1, jm2, NuFromWFromH[0] if len(NuFromWFromH)==1 else None)
 
+            both_selected_jets_matched = 1 if (jm1 and jm2 and len(jetsFromHiggs)==2 and \
+            ((abs(jm1.Pt()-jetsFromHiggs[0].Pt())<1e-10 and abs(jm2.Pt()-jetsFromHiggs[1].Pt())<1e-10) or \
+            (abs(jm2.Pt()-jetsFromHiggs[0].Pt())<1e-10 and abs(jm1.Pt()-jetsFromHiggs[1].Pt())<1e-10))) else 0
+            self.out.fillBranch('%sboth_selected_jets_matched%s'%(self.label,jesLabel) , both_selected_jets_matched)
             self.out.fillBranch('%sinv_mass_jm1jm2%s'%(self.label,jesLabel)                      , (jm1+jm2).M()               if (jm1 and jm2)             else -99.)
             self.out.fillBranch('%sinv_mass_H_jets_match%s'%(self.label,jesLabel)                , visHiggs_matched.M()        if visHiggs_matched          else -99.)
             self.out.fillBranch('%sinv_mass_H_jets_match_plusNu%s'%(self.label,jesLabel)         , visHiggsPlusNu_matched.M()  if visHiggsPlusNu_matched    else -99.)
@@ -256,7 +308,9 @@ class HiggsDiffCompTTH(Module):
             dr_l_closestWrong=9999.
             j_closestWrong=None
             if leptonFromHiggs:
-                for x in thejets: # I need these rather than the jetsNoB because I want to allow matching to match the QfromH to b-jets. I need this and not jets[] because I want to access the flavour.
+                # I need these rather than the jetsNoB because I want to allow matching to match the QfromH to b-jets.
+                # I need this and not jets[] because I want to access the flavour.
+                for x in thejets:
                     j=x.p4()
                     j.SetPtEtaPhiM(getattr(x,'pt%s'%jesLabel), j.Eta(), j.Phi(), j.M()) # Correct the pt. Not really needed, but added just in case pt is accessed in later edits
                     if j==jm1 or j==jm2:
@@ -267,6 +321,9 @@ class HiggsDiffCompTTH(Module):
                         j_closestWrong=j
             
             self.out.fillBranch('%sdelR_lep_closest_wrongjet%s'%(self.label,jesLabel), leptonFromHiggs.DeltaR(j_closestWrong) if j_closestWrong else -99.)
+            # Other quantities
+            self.out.fillBranch('%smHrightlep%s'%(self.label,jesLabel)  ,  mHrightlep)
+            self.out.fillBranch('%smHwronglep%s'%(self.label,jesLabel)  ,  mHwronglep)
 
         return True
 
@@ -278,6 +335,7 @@ higgsDiffCompTTH = lambda : HiggsDiffCompTTH(label="Hreco_",
                                              use_Wmass_constraint = True,
                                              attemptDisentangling = True,
                                              btagDeepCSVveto = 'M', # or 'M'
+                                             doSystJEC=True,
                                              useTopTagger=False)
 
 higgsDiffCompTTH_noWmassConstraint = lambda : HiggsDiffCompTTH(label="Hreco_",
@@ -287,4 +345,5 @@ higgsDiffCompTTH_noWmassConstraint = lambda : HiggsDiffCompTTH(label="Hreco_",
                                              use_Wmass_constraint = False,
                                              attemptDisentangling = True,
                                              btagDeepCSVveto = 'M', # or 'M'
+                                             doSystJEC=True,
                                              useTopTagger=False)

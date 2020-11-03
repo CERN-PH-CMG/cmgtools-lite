@@ -43,11 +43,17 @@ class HiggsDiffRecoTTH(Module):
             self.out.branch('%sDRj1l%s'%(self.label,jesLabel)            , 'F')
             self.out.branch('%sDRj2l%s'%(self.label,jesLabel)            , 'F')
             self.out.branch('%sBDThttTT_eventReco_mvaValue%s'%(self.label,jesLabel), 'F')
+            self.out.branch('%sLep1Pt%s'%(self.label,jesLabel), 'F')
+            self.out.branch('%sLep2Pt%s'%(self.label,jesLabel), 'F')
+            self.out.branch('%sLep1MinDR%s'%(self.label,jesLabel), 'F')
+            self.out.branch('%sLep2MinDR%s'%(self.label,jesLabel), 'F')
 
             # Counters
             self.out.branch('%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel) , 'I')
             self.out.branch('%snLeptonsFromHiggs%s'%(self.label,jesLabel)   , 'I')    
             self.out.branch('%snJetsFromHiggs%s'%(self.label,jesLabel)   , 'I')    
+            self.out.branch('%snFO%s'%(self.label,jesLabel)   , 'I')
+            self.out.branch('%snJetsAfterCuts%s'%(self.label,jesLabel)   , 'I')
             # Useful quadrimomenta
             # We need to save three entire collections, because the triplet selection might select different objects when JEC changes
             for suffix in ["_pt", "_eta", "_phi", "_mass"]:
@@ -66,11 +72,21 @@ class HiggsDiffRecoTTH(Module):
             self.out.branch('%sfatJetsNearLeptonFromHiggs_tau3%s'%(self.label,jesLabel)      , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
             self.out.branch('%sfatJetsNearLeptonFromHiggs_tau4%s'%(self.label,jesLabel)      , 'F', 2, '%snFatJetsNearLeptonFromHiggs%s'%(self.label,jesLabel))
 
+            # htt quantities
+            self.out.branch('%shtt_PtTop%s'%(self.label,jesLabel)                            , 'F')
+            self.out.branch('%shtt_MTop%s'%(self.label,jesLabel)                             , 'F')
+            self.out.branch('%shtt_PtWFromTop%s'%(self.label,jesLabel)                       , 'F')
+            self.out.branch('%shtt_MWFromTop%s'%(self.label,jesLabel)                        , 'F')
+            self.out.branch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)             , 'F')
+            self.out.branch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)             , 'F')
 
     def analyze(self, event):
         # Some useful input parameters
         year=getattr(event,"year")
-        btagvetoval= HiggsRecoTTHbtagwps["DeepFlav_%d_%s"%(year,self.btagDeepCSVveto)][1]
+        if self.btagDeepCSVveto in ['VL','L','M','T','VT']:
+            btagvetoval = HiggsRecoTTHbtagwps["DeepFlav_%d_%s"%(year,self.btagDeepCSVveto)][1]
+        else:
+            btagvetoval = self.btagDeepCSVveto
 
         # Input collections and maps
         closestFatJetToLeptonVars = []
@@ -85,7 +101,16 @@ class HiggsDiffRecoTTH(Module):
         # Store decay mode info from module
         self.out.fillBranch('%sGenHiggsDecayMode'%self.label, event.GenHiggsDecayMode)
 
-        
+        # Get right & wrong lepton index
+        QFromWFromH  = [ x.p4() for x in Collection(event,'%sQFromWFromH'%self.label      , '%snQFromWFromH'%self.label     ) ]
+        LFromWFromH  = [ x.p4() for x in Collection(event,'%sLFromWFromH'%self.label      , '%snLFromWFromH'%self.label     ) ]
+        rightlep = -99
+        wronglep = -99
+        if (len(QFromWFromH)==2 and len(LFromWFromH)==1):
+            ilist=[i[0] for i in sorted(enumerate(leps),key=lambda x:x[1].p4().DeltaR(LFromWFromH[0]))]
+            rightlep = ilist[0]
+            wronglep = ilist[-1] # last element in list, usually ilist[1] since len(leps)==2 usually
+
         for jesLabel in self.systsJEC.values():
             score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%jesLabel)
             ljj_candidates=[];
@@ -97,11 +122,18 @@ class HiggsDiffRecoTTH(Module):
             # Delicate: here the logic is built such that if one does not use the top tagger then 
             # some variables are left empty to suppress code into "if variable:" blocks
             # Bottom line is that when self.useTopTagger is False we iterate on all the non-b-jets
+            htt_PtTop = -99
+            htt_MTop  = -99
+            htt_PtWFromTop = -99
+            htt_MWFromTop  = -99
+            htt_HadTop_rightlep_delr = -99
+            htt_HadTop_wronglep_delr = -99
+            score = getattr(event,"BDThttTT_eventReco_mvaValue%s"%jesLabel)
+            j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%jesLabel)
+            j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%jesLabel)
+            j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%jesLabel)
+            jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<btagvetoval] #it is a jet coming from top and not a b-jet
             if self.useTopTagger:
-                j1top = getattr(event,"BDThttTT_eventReco_iJetSel1%s"%jesLabel)
-                j2top = getattr(event,"BDThttTT_eventReco_iJetSel2%s"%jesLabel)
-                j3top = getattr(event,"BDThttTT_eventReco_iJetSel3%s"%jesLabel)
-                jetsTopNoB   = [b for a,b in enumerate(jets) if a in [j1top,j2top,j3top] and b.btagDeepB<btagvetoval] #it is a jet coming from top and not a b-jet
                 if score>self.cut_BDT_rTT_score:
                     jetsNoTopNoB = [j for i,j in enumerate(jets) if i not in [j1top,j2top,j3top] and j.btagDeepB<btagvetoval]
                 else:
@@ -109,6 +141,28 @@ class HiggsDiffRecoTTH(Module):
             else:
                 jetsNoTopNoB = [j for j in jets if j.btagDeepB<btagvetoval]
 
+            if score>self.cut_BDT_rTT_score and j1top >= 0 and j2top >= 0 and j3top >= 0:
+                j1 = jets[int(j1top)]
+                j2 = jets[int(j2top)]
+                j3 = jets[int(j3top)]
+                bscores = [j1.btagDeepB, j2.btagDeepB, j3.btagDeepB]
+                bindex = bscores.index(max(bscores))
+                htt_PtTop = (j1.p4()+j2.p4()+j3.p4()).Pt()
+                htt_MTop = (j1.p4()+j2.p4()+j3.p4()).M()
+                htt_PtWFromTop = (j1.p4()*(bindex!=0)+j2.p4()*(bindex!=1)+j3.p4()*(bindex!=2)).Pt()
+                htt_MWFromTop = (j1.p4()*(bindex!=0)+j2.p4()*(bindex!=1)+j3.p4()*(bindex!=2)).M()
+                if len(QFromWFromH)==2 and len(LFromWFromH)==1:
+                    htt_HadTop_rightlep_delr = (j1.p4()+j2.p4()+j3.p4()).DeltaR(leps[rightlep].p4())
+                    htt_HadTop_wronglep_delr = (j1.p4()+j2.p4()+j3.p4()).DeltaR(leps[wronglep].p4())
+
+            # Additional logic to experiment with different algorithms
+            goodlep = -99
+            badlep  = -99
+            Lep1MinDR = 99
+            Lep2MinDR = 99
+            for j in jetsNoTopNoB:
+                if j.p4().DeltaR(leps[0].p4()) < Lep1MinDR : Lep1MinDR = j.p4().DeltaR(leps[0].p4())
+                if j.p4().DeltaR(leps[1].p4()) < Lep2MinDR : Lep2MinDR = j.p4().DeltaR(leps[1].p4())
 
             # Loop on the leptons and jets to check all lepton-jet-jet combinations and rank them
             for _lep,lep in [(ix,x.p4()) for ix,x in enumerate(leps)]:
@@ -141,8 +195,7 @@ class HiggsDiffRecoTTH(Module):
                     # Optionally, later constrain the mass to the W PDG mass (although we use this only to build the candidate, and we store it without constraint)
                     W = j1+j2
                     mW = W.M()
-                    if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
-
+                    #if mW<self.cuts_mW_had[0] or mW>self.cuts_mW_had[1]: continue
                     Wconstr = W
                     if self.use_Wmass_constraint:
                         Wconstr = ROOT.TLorentzVector()
@@ -152,17 +205,18 @@ class HiggsDiffRecoTTH(Module):
                     Hvisconstr = lep+Wconstr
                     mHvisconstr = Hvisconstr.M()
                     pTHvisconstr = Hvisconstr.Pt()
-                    if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
-
+                    #if mHvisconstr<self.cuts_mH_vis[0] or mHvisconstr>self.cuts_mH_vis[1]: continue
+                    # Additional logic to experiment with different algorithms
+                    lepchoice = 0 if _lep==goodlep else 1
                     # Store all non-rejected candidates
                     mindR = min(lep.DeltaR(j1),lep.DeltaR(j2))
                     delR_j1j2 = j1.DeltaR(j2)
-                    ljj_candidates.append((mindR,abs(mHvisconstr-125.0),abs(mW-80.4),delR_j1j2,mHvisconstr,mW, _lep,_j1,_j2,pTHvisconstr))
+                    ljj_candidates.append((lepchoice,mindR,abs(mHvisconstr-125.0),abs(mW-80.4),delR_j1j2,mHvisconstr,mW, _lep,_j1,_j2,pTHvisconstr))
                     
             # Identify best candidate and fetch quantities to compute and store
             best_ljj_candidate_idx = min(ljj_candidates) if len(ljj_candidates) else None
             best_ljj_candidate = ljj_candidates[ljj_candidates.index(best_ljj_candidate_idx)] if len(ljj_candidates) else None
-            minDRlj, _, _, DRj1j2, mHvis, mW, lepidx, j1idx, j2idx, pTHvis = best_ljj_candidate if best_ljj_candidate else [-99,-99,-99,-99,-99,-99,-99,-99,-99,-99] 
+            _, minDRlj, _, _, DRj1j2, mHvis, mW, lepidx, j1idx, j2idx, pTHvis = best_ljj_candidate if best_ljj_candidate else [-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99]
             
             l      = None
             j1     = None
@@ -193,10 +247,16 @@ class HiggsDiffRecoTTH(Module):
             self.out.fillBranch('%sDRj1l%s'%(self.label,jesLabel)                      , DRj1l  )
             self.out.fillBranch('%sDRj2l%s'%(self.label,jesLabel)                      , DRj2l  )
             self.out.fillBranch('%sBDThttTT_eventReco_mvaValue%s'%(self.label,jesLabel), score  )
+            self.out.fillBranch('%sLep1Pt%s'%(self.label,jesLabel)                     , leps[0].p4().Pt())
+            self.out.fillBranch('%sLep2Pt%s'%(self.label,jesLabel)                     , leps[1].p4().Pt())
+            self.out.fillBranch('%sLep1MinDR%s'%(self.label,jesLabel)                  , Lep1MinDR)
+            self.out.fillBranch('%sLep2MinDR%s'%(self.label,jesLabel)                  , Lep2MinDR)
 
             # Counters
             self.out.fillBranch('%snLeptonsFromHiggs%s'%(self.label,jesLabel), len(ls))
             self.out.fillBranch('%snJetsFromHiggs%s'%(self.label,jesLabel)   , len(js))    
+            self.out.fillBranch('%snFO%s'%(self.label,jesLabel)              , nFO)
+            self.out.fillBranch('%snJetsAfterCuts%s'%(self.label,jesLabel)   , len(jetsNoTopNoB))
 
             # Useful quadrimomenta
             # The reconstructed visible Higgs (somehow one lepton will be duplicate. Consider storing the index)
@@ -225,6 +285,13 @@ class HiggsDiffRecoTTH(Module):
             #self.out.branch('%sfatJetsNearLeptonFromHiggs_tau3%s'%(self.label,jesLabel)      , 'F', 2, '%snLeptons%s'%(self.label,jesLabel))
             #self.out.branch('%sfatJetsNearLeptonFromHiggs_tau4%s'%(self.label,jesLabel)      , 'F', 2, '%snLeptons%s'%(self.label,jesLabel))
 
+            # htt quantities
+            self.out.fillBranch('%shtt_PtTop%s'%(self.label,jesLabel)  , htt_PtTop)
+            self.out.fillBranch('%shtt_MTop%s'%(self.label,jesLabel)  , htt_MTop)
+            self.out.fillBranch('%shtt_PtWFromTop%s'%(self.label,jesLabel)  , htt_PtWFromTop)
+            self.out.fillBranch('%shtt_MWFromTop%s'%(self.label,jesLabel)  , htt_MWFromTop)
+            self.out.fillBranch('%shtt_HadTop_rightlep_delr%s'%(self.label,jesLabel)  , htt_HadTop_rightlep_delr)
+            self.out.fillBranch('%shtt_HadTop_wronglep_delr%s'%(self.label,jesLabel)  , htt_HadTop_wronglep_delr)
 
         return True
 
@@ -234,13 +301,15 @@ higgsDiffRecoTTH = lambda : HiggsDiffRecoTTH(label='Hreco_',
                                              cuts_mH_vis = (80.,140.),
                                              use_Wmass_constraint = True,
                                              btagDeepCSVveto = 'M', # or 'M'
+                                             doSystJEC=True,
                                              useTopTagger=False)
 higgsDiffRecoTTH_noWmassConstraint = lambda : HiggsDiffRecoTTH(label='Hreco_',
                                                                cut_BDT_rTT_score = 0.0,
                                                                cuts_mW_had = (60.,100.),
                                                                cuts_mH_vis = (80.,140.),
                                                                use_Wmass_constraint = False,
-                                                               btagDeepCSVveto = 'M', # or 'M'
+                                                               btagDeepCSVveto = 'M', # or 'M' or 'L' or 99
+                                                               doSystJEC=True,
                                                                useTopTagger=False)
 
 
@@ -248,5 +317,5 @@ higgsDiffRecoTTHLegacyTopTagger = lambda : HiggsDiffRecoTTH(label="Hreco_notopta
                                                             cut_BDT_rTT_score = 0.0,
                                                             cuts_mW_had = (60.,100.),
                                                             cuts_mH_vis = (80.,140.),
-                                                            btagDeepCSVveto = 'M', # or 'M'
+                                                            btagDeepCSVveto = 'M', # or 'M' or 'L' or 99
                                                             useTopTagger=True)
