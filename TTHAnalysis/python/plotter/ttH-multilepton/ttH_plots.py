@@ -30,9 +30,7 @@ if 'gae' in os.environ['HOSTNAME']:
     P0     = "/pool/ciencias/HeppyTrees/EdgeZ/TTH/"
 
 if 'cism.ucl.ac.be' in os.environ['HOSTNAME']:
-    Tag =sys.argv[3] #2lss_diff_NoTop-tagged or 2lss_diff_Top-tagged
     P0   = "/nfs/user/pvischia/tth/v6" 
-#TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH --FMCs {P}/0_jmeUnc_v1 --Fs {P}/1_recl --FMCs {P}/2_scalefactors --Fs {P}/3_tauCount --Fs {P}/5_BDThtt_reco --Fs /nfs/user/elfaham/104X/v6/%s/%s"%(YEAR,Tag) 
 
 if ".psi.ch" in os.environ['HOSTNAME']:
     P0 = "/pnfs/psi.ch/cms/trivcat/store/user/sesanche"
