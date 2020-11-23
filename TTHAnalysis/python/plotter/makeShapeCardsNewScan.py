@@ -73,8 +73,10 @@ if options.savefile:
 
 if options.asimov:
     match = pattern.search( options.asimov ) 
+    print('asimov_match',options.asimov)
     if match:
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
+        print(asimovprocesses)
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
     elif options.asimov in ("b","bkg","background", "b-only"):
@@ -82,7 +84,8 @@ if options.asimov:
     else: raise RuntimeError("the --asimov option requires to specify signal/sig/s/s+b or background/bkg/b/b-only")
     tomerge = None
     for p in asimovprocesses:
-        if p in report: 
+        if p in report:
+            print('p addded',p) 
             if tomerge is None: 
                 tomerge = report[p].raw().Clone("x_data_obs"); tomerge.SetDirectory(None)
             else: tomerge.Add(report[p].raw())
@@ -232,7 +235,8 @@ for scanpoint in scanpoints:
            pointname2 = pointname
         if '-' in pointname: 
            pointname = pointname.replace('-','m')
-        pointname2=pointname2.replace('m','-') #for sanity
+        print(pointname2, pointname)
+        
         datacard = open(outdir+binname+'_'+pointname+".txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
         datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))

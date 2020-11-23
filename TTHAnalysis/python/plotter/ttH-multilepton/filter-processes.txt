@@ -28,7 +28,6 @@ ttH_2lss_0tau_mm_ttHnode_2018:ttH.*_hmm
 ttH_cr_3l_2018_mmm_cr:ZH_hzz
 ttH_2lss_0tau_ee_Restnode_2018:WH_hww
 ttH_2lss_0tau_ee_Restnode_2018:ZZ
-ttH_2lss_0tau_mm_ttWnode_2018:Rares
 ttH_2lss_0tau_mm_ttWnode_2018:ZZ
 ttH_cr_3l_2018_eem_cr:WH_hzz
 ttH_cr_3l_2018_eem_cr:ZH_hww
