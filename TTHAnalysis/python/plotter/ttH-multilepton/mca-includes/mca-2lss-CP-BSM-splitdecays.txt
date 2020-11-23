@@ -93,7 +93,11 @@ ttH_cp_0p9_hzz+ : TTH_ctcvcp  : 0.288494763251*LHEReweightingWeight[68]   : LepG
 ttH_cp_0p9_htt+ : TTH_ctcvcp  : 0.288494763251*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==15); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_"
 ttH_cp_0p9_hmm+ : TTH_ctcvcp  : 0.288494763251*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==13); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_"
 ttH_cp_0p9_hzg+ : TTH_ctcvcp  : 0.288494763251*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==22); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_"
-
+ttH_cp_m1p0_hww+ : TTH_ctcvcp  : xsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==24); 
+ttH_cp_m1p0_hzz+ : TTH_ctcvcp  : xsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==23); 
+ttH_cp_m1p0_htt+ : TTH_ctcvcp  : xsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==15); 
+ttH_cp_m1p0_hmm+ : TTH_ctcvcp  : xsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==13); 
+ttH_cp_m1p0_hzg+ : TTH_ctcvcp  : xsec  : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==22); 
 
 tHq_cp_m0p9_hww+ : THQ_ctcvcp_new  : 0.665416322579*LHEReweightingWeight[50]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==24); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[50]/LHEScaleSumw_[4]*genEventSumw_", years="2016\,2017"
 tHq_cp_m0p9_hww+ : THQ_ctcvcp_new  : 0.665416322579*LHEReweightingWeight[50]*3   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0)* (GenHiggsDecayMode==24); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[50]/LHEScaleSumw_[4]*genEventSumw_", years="2018"
@@ -209,6 +213,14 @@ tHq_cp_0p9_hzz+ : THQ_ctcvcp_new  : 0.0565660368152*LHEReweightingWeight[68]   :
 tHq_cp_0p9_hzz+ : THQ_ctcvcp_new  : 0.0565660368152*LHEReweightingWeight[68]*3   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0)* (GenHiggsDecayMode==23); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_", years="2018"
 tHq_cp_0p9_htt+ : THQ_ctcvcp_new  : 0.0565660368152*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==15); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_", years="2016\,2017"
 tHq_cp_0p9_htt+ : THQ_ctcvcp_new  : 0.0565660368152*LHEReweightingWeight[68]*3   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (event%3 == 0)* (GenHiggsDecayMode==15); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_", years="2018"
+tHq_cp_m1p0_hww+ : THQ_ctcvcp_new  : 0.07096  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kRed,  years="2016\,2017"
+tHq_cp_m1p0_hzz+ : THQ_ctcvcp_new  : 0.07096  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kRed,  years="2016\,2017"
+tHq_cp_m1p0_htt+ : THQ_ctcvcp_new  : 0.07096  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kRed,  years="2016\,2017"
+tHq_cp_m1p0_hww+ : THQ_ctcvcp_new  : 0.07096*3  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)  && (event%3 == 0)* (GenHiggsDecayMode==24); FillColor=ROOT.kRed,  years="2018"
+tHq_cp_m1p0_hzz+ : THQ_ctcvcp_new  : 0.07096*3  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)  && (event%3 == 0)* (GenHiggsDecayMode==23); FillColor=ROOT.kRed,  years="2018"
+tHq_cp_m1p0_htt+ : THQ_ctcvcp_new  : 0.07096*3  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)  && (event%3 == 0)* (GenHiggsDecayMode==15); FillColor=ROOT.kRed,  years="2018"
+
+
 
 tHW_cp_m0p9_hww+ : THW_ctcvcp_new  : 0.133585440047*LHEReweightingWeight[50]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==24); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[50]/LHEScaleSumw_[4]*genEventSumw_"
 tHW_cp_m0p9_hzz+ : THW_ctcvcp_new  : 0.133585440047*LHEReweightingWeight[50]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==23); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[50]/LHEScaleSumw_[4]*genEventSumw_"
@@ -267,4 +279,6 @@ tHW_cp_0p8_htt+ : THW_ctcvcp_new  : 0.0158294138641*LHEReweightingWeight[67]   :
 tHW_cp_0p9_hww+ : THW_ctcvcp_new  : 0.014254338807*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==24); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_"
 tHW_cp_0p9_hzz+ : THW_ctcvcp_new  : 0.014254338807*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==23); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_"
 tHW_cp_0p9_htt+ : THW_ctcvcp_new  : 0.014254338807*LHEReweightingWeight[68]   : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==15); FillColor=ROOT.kOrange+10, genSumWeightName="LHEReweightingSumw_[68]/LHEScaleSumw_[4]*genEventSumw_"
-
+tHW_cp_m1p0_hww+ : THW_ctcvcp_new  : 0.01561  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==24); FillColor=ROOT.kBlue
+tHW_cp_m1p0_hzz+ : THW_ctcvcp_new  : 0.01561  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==23); FillColor=ROOT.kBlue
+tHW_cp_m1p0_htt+ : THW_ctcvcp_new  : 0.01561  : (LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge) * (GenHiggsDecayMode==15); FillColor=ROOT.kBlue
