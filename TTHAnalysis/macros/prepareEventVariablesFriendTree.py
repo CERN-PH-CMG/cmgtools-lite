@@ -98,7 +98,7 @@ parser.add_option("--maxruntime", "--time",  dest="maxruntime", type="int", defa
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 parser.add_option("--sub", "--subfile", dest="subfile", type="string", default="condor.sub", help="Subfile for condor (default: condor.sub)");
-parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo, uclouvain)");
+parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo, uclouvain[|def|fast])");
 parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new version of treeReAnalyzer");
@@ -401,9 +401,14 @@ if options.queue:
         super  = "qsub -q {queue} -N {name}".format(queue = options.queue, name=options.name)
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
-    elif options.env == "uclouvain":
+    elif "uclouvain" in options.env:
         options.subfile="slurm_submitter_of_stuff_"
-        super = "sbatch --partition cp3 "
+        if "def" in options.env:
+            super = "sbatch --partition Def --qos=normal "
+        elif "fast" in options.env:
+            super = "sbatch --partition cp3-fast --qos=cp3 "
+        else:
+            super = "sbatch --partition cp3 --qos=cp3 "
     else: # Use lxbatch by default
         runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
@@ -478,11 +483,11 @@ if options.queue:
                 cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             elif options.env == "oviedo":
                 cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post} ".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-            if options.queue == "cp3" and options.env == "uclouvain":
+            if options.queue == "cp3" and ("uclouvain" in options.env):
                 full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
-                subfile = open(full_subfile, "w")
+                subfile = open(full_subfile, "w") 
                 subfile.write("""#! /bin/bash
-#SBATCH --ntasks=8
+#SBATCH 
 
 """)
 
@@ -504,11 +509,11 @@ wait
                 cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             elif options.env == "oviedo":
                 cmd = "{super} {base} -d {data} {post} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-            if options.queue == "cp3" and options.env == "uclouvain":
+            if options.queue == "cp3" and ("uclouvain" in options.env):
                 full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
-                subfile = open(full_subfile, "w")
+                subfile = open(full_subfile, "w")#--ntasks=2
                 subfile.write("""#! /bin/bash
-#SBATCH --ntasks=8
+#SBATCH 
 
 """)
                 dacmd = "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
