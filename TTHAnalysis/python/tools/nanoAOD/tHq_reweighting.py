@@ -4,7 +4,8 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import write
 from collections import defaultdict
 import math
 
-import CMGTools.TTHAnalysis.tools.nanoAOD.allmatrix2py as allmatrix2py
+import CMGTools.TTHAnalysis.tools.nanoAOD.tHq.allmatrix2py as allmatrix2py
+#import CMGTools.TTHAnalysis.tools.nanoAOD.ttH.allmatrix2py as allmatrix2py
 
 def invert_momenta(p):
     #fortran/C-python do not order table in the same order
@@ -75,7 +76,7 @@ class THQ_weights( Module ):
             return res
 
         target_pdgs=self.pdgOrder[idx]
-        pdgs_withIndices = [(x,pdgs.index(x)) for x in pdgs]
+        pdgs_withIndices = [(y,x) for x,y in enumerate(pdgs)]
         mapping=[]
 
         for p1 in target_pdgs:
@@ -89,7 +90,6 @@ class THQ_weights( Module ):
                 pdgs_withIndices.remove(toremove)
             else:
                 raise RuntimeError("It shouldn't be here")
-
 
         final_pdgs = []
         final_parts = []
@@ -117,6 +117,9 @@ class THQ_weights( Module ):
         weight=allmatrix2py.smatrixhel( final_pdgs, final_parts_i, event.LHE_AlphaS, scale2, final_hels)
         self.wrappedOutputTree.fillBranch('weight', weight)
         print 'weight ->', weight
+        if not weight:
+            print final_pdgs, final_hels
+
         return True
 
 ttH_reweigther = lambda : THQ_weights()
