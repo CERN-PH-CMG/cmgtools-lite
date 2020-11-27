@@ -44,13 +44,13 @@ The boost perform correspond to the boost required to set pboost at
 def numToString(num):
     return ("%4.2f"%num).replace('.','p').replace('-','m')
         
-class THQ_weights( Module ):
-    def __init__(self):
+class TH_weights( Module ):
+    def __init__(self, process):
 
         self.mods=[]
         self.tmpdirs=[]
 
-        path=os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/mc_rw/thq/'
+        path=os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/mc_rw/%s/'%process
         
 
         # reweighting points (first should be reference) 
@@ -183,4 +183,5 @@ class THQ_weights( Module ):
 
         return True
 
-ttH_reweigther = lambda : THQ_weights()
+tHq_reweigther = lambda : TH_weights('tHq')
+tHW_reweigther = lambda : TH_weights('tHW')
