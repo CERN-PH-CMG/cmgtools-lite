@@ -1,11 +1,10 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import writeOutput
-from collections import defaultdict
+import os, sys
 import math
-
-import CMGTools.TTHAnalysis.tools.nanoAOD.tHq.allmatrix2py as allmatrix2py
-#import CMGTools.TTHAnalysis.tools.nanoAOD.ttH.allmatrix2py as allmatrix2py
+import imp
+import tempfile, shutil
 
 def invert_momenta(p):
     #fortran/C-python do not order table in the same order
@@ -41,17 +40,66 @@ The boost perform correspond to the boost required to set pboost at
         out[3] = 0
     return out
 
+
+def numToString(num):
+    return ("%4.2f"%num).replace('.','p').replace('-','m')
         
 class THQ_weights( Module ):
     def __init__(self):
-        allmatrix2py.initialise('param_card.dat')
+
+        self.mods=[]
+        self.tmpdirs=[]
+
+        path=os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/mc_rw/thq/'
         
-        self.pdgOrderSorted = [SortPDGs(x.tolist()) for x in allmatrix2py.get_pdg_order()]
-        self.pdgOrder = [x.tolist() for x in allmatrix2py.get_pdg_order()]
-                
+
+        # reweighting points (first should be reference) 
+        self.param_cards=['param_card_itc.dat', 'param_card_sm.dat']
+
+        # generate scan
+        template=open("%s/param_card_sm_template.dat"%path).read()
+        for kt in [0.0, 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0]:
+            for cosa in [-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9,-1.0,0.0, 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]:
+
+                out=template.format(khtt=kt,cosa=cosa)
+                outn="param_card_kt_%s_cosa_%s.dat"%(numToString(kt), numToString(cosa))
+                outf=open('%s/'%path + outn,'w')
+                outf.write(out)
+                outf.close()
+                self.param_cards.append(outn)
+
+
+
+
+
+        for card in self.param_cards:
+            dirpath = tempfile.mkdtemp()
+            self.tmpdirs.append(dirpath)
+            shutil.copyfile( path + '/allmatrix2py.so', self.tmpdirs[-1] + '/allmatrix2py.so')
+            sys.path[-1] =self.tmpdirs[-1]
+            self.mods.append(imp.load_module('allmatrix2py',*imp.find_module('allmatrix2py')))
+            del sys.modules['allmatrix2py']
+            print 'initializing', card
+            self.mods[-1].initialise('%s/%s' % (path, card))
+        print self.mods
+        
+        self.pdgOrderSorted = [SortPDGs(x.tolist()) for x in self.mods[-1].get_pdg_order()]
+        self.pdgOrder = [x.tolist() for x in self.mods[-1].get_pdg_order()]
+        self.all_prefix = [''.join(j).strip().lower() for j in self.mods[-1].get_prefix()]
+        self.hel_dict = {}; prefix_set = set(self.all_prefix)
+        for prefix in prefix_set:
+            if hasattr(self.mods[-1], '%sprocess_nhel' % prefix):
+                nhel = getattr(self.mods[-1], '%sprocess_nhel' % prefix).nhel
+                self.hel_dict[prefix] = {}
+                for i, onehel in enumerate(zip(*nhel)):
+                    self.hel_dict[prefix][tuple(onehel)] = i + 1
+
+        
+
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.wrappedOutputTree = wrappedOutputTree
-        self.wrappedOutputTree.branch('weight','F')
+        for card in self.param_cards:
+            self.wrappedOutputTree.branch('weight_%s'%card.replace('param_card_',''),'F')
 
     def analyze(self, event):
 
@@ -59,6 +107,7 @@ class THQ_weights( Module ):
         pdgs = [x.pdgId for x in lheParts]
         hel  = [x.spin  for x in lheParts]
 
+        
 
         p = [ ]
         for part in lheParts:
@@ -78,6 +127,7 @@ class THQ_weights( Module ):
         target_pdgs=self.pdgOrder[idx]
         pdgs_withIndices = [(y,x) for x,y in enumerate(pdgs)]
         mapping=[]
+
 
         for p1 in target_pdgs:
             toremove=None
@@ -101,9 +151,18 @@ class THQ_weights( Module ):
 
         if target_pdgs != final_pdgs:
             raise RuntimeError("Wrong pdgid")
-            
-        com_final_parts = []
 
+        hel_dict = self.hel_dict[self.all_prefix[idx]]
+        t_final_hels = tuple(final_hels)
+        if t_final_hels in hel_dict:
+            nhel = hel_dict[t_final_hels]
+        else:
+            print "Available helicities are"
+            print hel_dict
+            print "tried", t_final_hels
+            raise RuntimeError("Helicity configuration not found")
+        
+        com_final_parts = []
 
 
         pboost = [final_parts[0][i] + final_parts[1][i] for i in xrange(4)]
@@ -114,11 +173,13 @@ class THQ_weights( Module ):
 
         final_parts_i = invert_momenta(com_final_parts)
         scale2=0
-        weight=allmatrix2py.smatrixhel( final_pdgs, final_parts_i, event.LHE_AlphaS, scale2, final_hels)
-        self.wrappedOutputTree.fillBranch('weight', weight)
-        print 'weight ->', weight
-        if not weight:
-            print final_pdgs, final_hels
+        weights=[]
+        for mod in self.mods:
+            weights.append( mod.smatrixhel( final_pdgs, final_parts_i, event.LHE_AlphaS, scale2, nhel) ) 
+
+        for i, card in enumerate(self.param_cards):
+            self.wrappedOutputTree.fillBranch('weight_%s'%card.replace('param_card_',''), weights[i]/weights[0])
+
 
         return True
 
