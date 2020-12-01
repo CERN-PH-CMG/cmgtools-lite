@@ -5,6 +5,7 @@ import os, sys
 import math
 import imp
 import tempfile, shutil
+import numpy
 
 def invert_momenta(p):
     #fortran/C-python do not order table in the same order
@@ -57,20 +58,35 @@ class TH_weights( Module ):
         self.param_cards=['param_card_itc.dat', 'param_card_sm.dat']
 
         # generate scan
-        template=open("%s/param_card_sm_template.dat"%path).read()
-        for kt in [0.0, 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0]:
-            for cosa in [-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9,-1.0,0.0, 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]:
+        cosa = np.array([-0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, -0.0001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+        sina= np.sin(np.arccos(cosa))
+        ktcosa = np.array([-2. ,-1.7, -1.5,-1.4,-1.2, -1.,-0.8 , -0.5, -0.25, -0.15, 0., 0.15, 0.25 ,  0.5, 0.8, 1. ,1.2,1.4  ,1.5,1.7,  2.])
 
+        cosacosa, ktcosaktcosa = np.meshgrid( cosa, ktcosa)
+        ktkt = np.divide( ktcosaktcosa, cosacosa)
+        ktsinakitsina = np.multiply( ktkt, np.sin(np.arccos(cosacosa)))
+        
+        ktcosa = ktcosaktcosa.flatten()
+        ktsina = ktsinakitsina.flatten()
+        ktkt   = ktkt.flatten()
+
+        # the grid will be (ktcosa, ktsina)
+        ktcosa = ktcosa[np.abs(ktkt) < 2]
+        ktsina = ktsina[np.abs(ktkt) < 2]
+
+        # but we need to go back to (kt, cosa) 
+        ktkt = ktkt[np.abs(ktkt) < 2]
+        cosa = ktcosa/ktkt
+
+        template=open("%s/param_card_sm_template.dat"%path).read()
+        for kt, cosa in zip(ktkt, cosa):
+            outn="param_card_kt_%s_cosa_%s.dat"%(numToString(kt), numToString(cosa))
+            if not os.path.exists('%s/'%path + outn): 
                 out=template.format(khtt=kt,cosa=cosa)
-                outn="param_card_kt_%s_cosa_%s.dat"%(numToString(kt), numToString(cosa))
                 outf=open('%s/'%path + outn,'w')
                 outf.write(out)
                 outf.close()
-                self.param_cards.append(outn)
-
-
-
-
+            self.param_cards.append(outn)
 
         for card in self.param_cards:
             dirpath = tempfile.mkdtemp()
@@ -183,5 +199,5 @@ class TH_weights( Module ):
 
         return True
 
-tHq_reweigther = lambda : TH_weights('tHq')
-tHW_reweigther = lambda : TH_weights('tHW')
+tHq_reweigther = lambda : TH_weights('thq')
+tHW_reweigther = lambda : TH_weights('thw')
