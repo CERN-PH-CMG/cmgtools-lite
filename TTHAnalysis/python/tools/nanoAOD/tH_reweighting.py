@@ -95,6 +95,7 @@ class TH_weights( Module ):
                 outf.write(out)
                 outf.close()
             self.param_cards.append(outn)
+        print kk 
 
         for card in self.param_cards:
             dirpath = tempfile.mkdtemp()
