@@ -3,6 +3,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import writeOutput
 import os, sys
 import math
+import numpy as np 
 import imp
 import tempfile, shutil
 import numpy
@@ -71,18 +72,25 @@ class TH_weights( Module ):
         ktkt   = ktkt.flatten()
 
         # the grid will be (ktcosa, ktsina)
-        ktcosa = ktcosa[np.abs(ktkt) < 2]
-        ktsina = ktsina[np.abs(ktkt) < 2]
+        mask = ktsina<2.1
+        ktcosa = ktcosa[mask]
+        ktsina = ktsina[mask]
+
 
         # but we need to go back to (kt, cosa) 
-        ktkt = ktkt[np.abs(ktkt) < 2]
+        ktkt = ktkt[mask]
         cosa = ktcosa/ktkt
+
+        # filter nans
+        mask = np.logical_not( np.isnan( cosa ))
+        ktkt = ktkt[mask]
+        cosa = cosa[mask]
 
         template=open("%s/param_card_sm_template.dat"%path).read()
         for kt, cosa in zip(ktkt, cosa):
             outn="param_card_kt_%s_cosa_%s.dat"%(numToString(kt), numToString(cosa))
             if not os.path.exists('%s/'%path + outn): 
-                out=template.format(khtt=kt,cosa=cosa)
+                out=template.format(khtt=kt,cosa=cosa,kSM=1/cosa)
                 outf=open('%s/'%path + outn,'w')
                 outf.write(out)
                 outf.close()
