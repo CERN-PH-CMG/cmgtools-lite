@@ -30,6 +30,9 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.common.collectionMerger im
 lepMerge = collectionMerger(input = ["Electron","Muon"], 
                             output = "LepGood", 
                             selector = dict(Muon = muonSelection, Electron = electronSelection))
+lepMerge_2 = lambda x : collectionMerger(input = ["Electron","Muon"], 
+                            output = "LepGood", 
+                            selector = dict(Muon = muonSelection, Electron = electronSelection))
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttHLeptonCombMasses import ttHLeptonCombMasses
 lepMasses = ttHLeptonCombMasses( [ ("Muon",muonSelection), ("Electron",electronSelection) ], maxLeps = 4)
@@ -472,7 +475,7 @@ ttH_2lss1tau_tree = lambda : ttH_genericTreeVarForSR(2,
                                                 ],
                                                      execute=['''taus = [ t for t in Collection(event,'TauSel_Recl')]''',
                                                               '''thetau=taus[int(event.Tau_tight2lss1tau_idx)] if event.Tau_tight2lss1tau_idx > -1 else None;'''],
-                                                     extraVars=[('Tau_pt','thetau.pt'), ('Tau_eta','thetau.eta'), ('Tau_phi','thetau.phi')])
+                                                     extraVars=[('Tau_pt','thetau.pt'), ('Tau_eta','thetau.eta'), ('Tau_phi','thetau.phi')], is2lss1tau=True)
 
 ttH_3l_tree = lambda : ttH_genericTreeVarForSR(3, 
                                              ['len(leps) < 3                                          ',
@@ -493,3 +496,5 @@ cpABCnet = lambda : CPmva2lss()
 #from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_2lss1tau_higgsreco import ttH_2lss1tau_higgsreco
 #ttH_2lss1tau_reco = lambda : ttH_2lss1tau_higgsreco()
 
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.electronMatcher import matcher
