@@ -95,10 +95,9 @@ class TH_weights( Module ):
                 outf.write(out)
                 outf.close()
             self.param_cards.append(outn)
-        print kk 
 
         for card in self.param_cards:
-            dirpath = tempfile.mkdtemp()
+            dirpath = tempfile.mkdtemp(dir='/scratch/')
             self.tmpdirs.append(dirpath)
             shutil.copyfile( path + '/allmatrix2py.so', self.tmpdirs[-1] + '/allmatrix2py.so')
             sys.path[-1] =self.tmpdirs[-1]
@@ -125,6 +124,10 @@ class TH_weights( Module ):
         self.wrappedOutputTree = wrappedOutputTree
         for card in self.param_cards:
             self.wrappedOutputTree.branch('weight_%s'%card.replace('param_card_',''),'F')
+
+    def endJob(self):
+        for dr in self.tmpdirs:
+            shutil.rmtree(dr)
 
     def analyze(self, event):
 
