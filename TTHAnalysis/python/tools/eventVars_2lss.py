@@ -5,9 +5,10 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 
 from math import sqrt, cos
-from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
-from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
-
+from copy import copy, deepcopy
+from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
+from CMGTools.TTHAnalysis.tools.physicsobjects import _btagWPs
+import ROOT as r 
 class EventVars2LSS(Module):
     def __init__(self, label="", recllabel='Recl', doSystJEC=True, variations=[], tauTight_2lss_1tau=None):
         self.namebranches = [ "mindr_lep1_jet",
@@ -21,6 +22,20 @@ class EventVars2LSS(Module):
                               'mbb_loose',
                               'mbb_medium',
                               'min_Deta_leadfwdJet_jet',
+                              'dEtaLL_BBframe_2lss',
+                              'dEtaBB_LLframe_2lss',
+                              'dPhiLL_BBframe_2lss',
+                              'dPhiBB_LLframe_2lss',
+                              'dEtaBB_2lss',
+                              'mTTH_2lss',
+                              'mTTH_3l',
+                              "dEtaL1L2_BBframe_3l",
+                              "dEtaL1L3_BBframe_3l",
+                              "dEtaBB_L1L2frame_3l",
+                              "dEtaBB_L1L3frame_3l",
+                              'mTTH_2lss1tau',
+                              'theta_higgs_ttbar_TTHsystem_2lss1tau',
+                              'thetaTopTop_ttbarframe_2lss1tau'
                               ]
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.systsJEC = {0:"",\
@@ -112,6 +127,9 @@ class EventVars2LSS(Module):
             if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): 
                 _var = 0; 
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
+            for j in jets: 
+                setattr(j, 'isFromHadTop', jets.index(j) in [int(event.BDThttTT_eventReco_iJetSel1), int(event.BDThttTT_eventReco_iJetSel2), int(event.BDThttTT_eventReco_iJetSel3)])
+
             jetptcut = 25
             jets = filter(lambda x : getattr(x,'pt%s'%self.systsJEC[_var]) > jetptcut, jets)
 
@@ -137,6 +155,135 @@ class EventVars2LSS(Module):
                 b1.SetPtEtaPhiM(getattr(bloose[0],'pt%s'%self.systsJEC[_var]),bloose[0].eta,bloose[0].phi,bloose[0].mass)
                 b2.SetPtEtaPhiM(getattr(bloose[1],'pt%s'%self.systsJEC[_var]),bloose[1].eta,bloose[1].phi,bloose[1].mass)
                 ret['mbb_loose'] = (b1+b2).M()
+
+            if len(jets)>=2 and nFO >1:  
+                jetsByBtag = copy(jets)
+                jetsByBtag.sort( key = lambda x : x.btagDeepFlavB, reverse=True)
+                bbBost=jetsByBtag[0].p4()+jetsByBtag[1].p4()
+                llBost=leps[0].p4()+leps[1].p4()
+                l1_BBframe = deepcopy(leps[0].p4())
+                l2_BBframe = deepcopy(leps[1].p4())
+                l1_BBframe.Boost( -bbBost.BoostVector())
+                l2_BBframe.Boost( -bbBost.BoostVector())
+
+                b1_LLframe = deepcopy(jetsByBtag[0].p4())
+                b2_LLframe = deepcopy(jetsByBtag[1].p4())
+                b1_LLframe.Boost( -llBost.BoostVector())
+                b2_LLframe.Boost( -llBost.BoostVector())
+
+                ret["dEtaLL_BBframe_2lss"] = abs(l1_BBframe.Eta() - l2_BBframe.Eta())
+                ret["dEtaBB_LLframe_2lss"] = abs(b1_LLframe.Eta() - b2_LLframe.Eta())
+                ret["dPhiLL_BBframe_2lss"] = l1_BBframe.DeltaPhi( l2_BBframe )
+                ret["dPhiBB_LLframe_2lss"] = b1_LLframe.DeltaPhi( b2_LLframe )
+                ret['dEtaBB_2lss']         = abs(jetsByBtag[0].eta-jetsByBtag[1].eta)
+            else:
+                ret["dEtaLL_BBframe_2lss"] = 0
+                ret["dEtaBB_LLframe_2lss"] = 0
+                ret["dPhiLL_BBframe_2lss"] = 0
+                ret["dPhiBB_LLframe_2lss"] = 0
+                ret['dEtaBB_2lss']         = 0
+                
+            if nFO >1:
+                ttHsystem=leps[0].p4()+leps[1].p4()
+                metName = 'METFixEE2017' if event.year == 2017 else 'MET'
+            
+                MET= getattr(event,metName+"_pt"+self.systsJEC[_var])
+                MET_phi = getattr(event,metName+"_phi"+self.systsJEC[_var])
+                met=r.TLorentzVector()
+                met.SetPtEtaPhiM( MET, 0,MET_phi,0)
+                ttHsystem = met + ttHsystem
+                for j in jets[:6]:
+                    ttHsystem = ttHsystem  + j.p4()
+
+                ret['mTTH_2lss'] = ttHsystem.M()
+            else: 
+                ret['mTTH_2lss'] = 0
+
+
+            if len(jets)>=2 and nFO >2:  
+                jetsByBtag = copy(jets)
+                jetsByBtag.sort( key = lambda x : x.btagDeepFlavB, reverse=True)
+                bbBost=jetsByBtag[0].p4()+jetsByBtag[1].p4()
+                l1_BBframe = deepcopy(leps[0].p4()); l1_BBframe.Boost( -bbBost.BoostVector() ) 
+                l2_BBframe = deepcopy(leps[1].p4()); l1_BBframe.Boost( -bbBost.BoostVector() ) 
+                l3_BBframe = deepcopy(leps[2].p4()); l1_BBframe.Boost( -bbBost.BoostVector() ) 
+
+                dEtaL1L2_BBframe_3l = abs(l1_BBframe.Eta()-l2_BBframe.Eta())
+                dEtaL1L3_BBframe_3l = abs(l1_BBframe.Eta()-l3_BBframe.Eta())
+
+                l1l2frame = (leps[0].p4()+leps[1].p4()).BoostVector()
+                l1l3frame = (leps[0].p4()+leps[2].p4()).BoostVector()
+
+                b1_L1L2frame = deepcopy(jetsByBtag[0].p4()) ; b1_L1L2frame.Boost(-l1l2frame)
+                b2_L1L2frame = deepcopy(jetsByBtag[1].p4()) ; b2_L1L2frame.Boost(-l1l2frame)
+                b1_L1L3frame = deepcopy(jetsByBtag[0].p4()) ; b1_L1L3frame.Boost(-l1l3frame)
+                b2_L1L3frame = deepcopy(jetsByBtag[1].p4()) ; b2_L1L3frame.Boost(-l1l3frame)
+            
+
+                dEtaBB_L1L2frame_3l = abs( b1_L1L2frame.Eta() - b2_L1L2frame.Eta())
+                dEtaBB_L1L3frame_3l = abs( b1_L1L3frame.Eta() - b2_L1L3frame.Eta())
+
+                ttH_system3l = leps[0].p4()+leps[1].p4()+leps[2].p4()
+                ttH_system3l = ttH_system3l + met
+                jetsFor3LMass= jets[:4]
+                for j in jetsFor3LMass:
+                    ttH_system3l = ttH_system3l + j.p4()
+                ret['mTTH_3l'] = ttH_system3l.M()
+                ret["dEtaL1L2_BBframe_3l"] = dEtaL1L2_BBframe_3l
+                ret["dEtaL1L3_BBframe_3l"] = dEtaL1L3_BBframe_3l
+                ret["dEtaBB_L1L2frame_3l"] = dEtaBB_L1L2frame_3l
+                ret["dEtaBB_L1L3frame_3l"] = dEtaBB_L1L3frame_3l
+
+            else:
+                ret['mTTH_3l'] = 0
+                ret["dEtaL1L2_BBframe_3l"] = 0
+                ret["dEtaL1L3_BBframe_3l"] = 0
+                ret["dEtaBB_L1L2frame_3l"] = 0
+                ret["dEtaBB_L1L3frame_3l"] = 0
+
+            if allret['Tau_tight2lss1tau_idx'] > -1 and nFO > 1: 
+                thetau=taus[allret['Tau_tight2lss1tau_idx']]
+                TTHsystem_2lss1tau=thetau.p4()+leps[0].p4()+leps[1].p4()
+                for j in jets[:4]:
+                    TTHsystem_2lss1tau = TTHsystem_2lss1tau + j.p4()
+                ret['mTTH_2lss1tau']=TTHsystem_2lss1tau.M()
+                
+                higgsLeptonIdx = 0 if deltaR(leps[0], thetau) < deltaR(leps[1], thetau) else 1
+                higgsLepton = leps[higgsLeptonIdx]
+                otherLepton = leps[1-higgsLeptonIdx]
+                ttbarjets=[]
+                maxCSV=-2; lepTbjet=None
+                for j in jets[:4]:
+                    if j.isFromHadTop:
+                        ttbarjets.append(j)
+                    else:
+                        if j.btagDeepFlavB  > maxCSV:
+                            lepTbjet=j; maxCSV=j.btagDeepFlavB
+                if lepTbjet:
+                    ttbarjets.append(lepTbjet)
+                ttbarSystem=otherLepton.p4()
+                hadTop=r.TLorentzVector()
+
+                for j in ttbarjets:
+                    ttbarSystem = ttbarSystem + j.p4()
+                    hadTop = hadTop + j.p4()            
+                visHiggsSystem = higgsLepton.p4() + thetau.p4()
+                ttbarSystem.Boost( -TTHsystem_2lss1tau.BoostVector())
+                visHiggsSystem.Boost( -TTHsystem_2lss1tau.BoostVector())
+                theta_higgs_ttbar_TTHsystem_2lss1tau=ttbarSystem.Angle( visHiggsSystem.BoostVector() ) 
+            
+                otherLeptonTTbarFrame=otherLepton.p4()
+                hadTop.Boost( -ttbarSystem.BoostVector())
+                otherLeptonTTbarFrame.Boost(-ttbarSystem.BoostVector())
+                thetaTopTop_ttbarframe_2lss1tau = hadTop.Angle(otherLeptonTTbarFrame.BoostVector())
+
+                ret['theta_higgs_ttbar_TTHsystem_2lss1tau']=theta_higgs_ttbar_TTHsystem_2lss1tau
+                ret['thetaTopTop_ttbarframe_2lss1tau']=thetaTopTop_ttbarframe_2lss1tau
+            
+
+
+                
+                
 
             ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
