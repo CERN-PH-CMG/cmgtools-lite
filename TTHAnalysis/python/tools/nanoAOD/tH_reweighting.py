@@ -56,45 +56,39 @@ class TH_weights( Module ):
         
 
         # reweighting points (first should be reference) 
-        self.param_cards=['param_card_itc.dat', 'param_card_sm.dat']
+        self.param_cards=[path + '/param_card_itc.dat', path+'/param_card_sm.dat']
 
         # generate scan
         cosa = np.array([-0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, -0.0001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-        sina= np.sin(np.arccos(cosa))
-        ktcosa = np.array([-2. ,-1.7, -1.5,-1.4,-1.2, -1.,-0.8 , -0.5, -0.25, -0.15, 0., 0.15, 0.25 ,  0.5, 0.8, 1. ,1.2,1.4  ,1.5,1.7,  2.])
+        q = np.linspace(-3,3,10).transpose()
 
-        cosacosa, ktcosaktcosa = np.meshgrid( cosa, ktcosa)
-        ktkt = np.divide( ktcosaktcosa, cosacosa)
-        ktsinakitsina = np.multiply( ktkt, np.sin(np.arccos(cosacosa)))
-        
-        ktcosa = ktcosaktcosa.flatten()
-        ktsina = ktsinakitsina.flatten()
-        ktkt   = ktkt.flatten()
-
-        # the grid will be (ktcosa, ktsina)
-        mask = ktsina<2.1
-        ktcosa = ktcosa[mask]
-        ktsina = ktsina[mask]
+        cosacosa,qq = np.meshgrid( cosa, q )
 
 
-        # but we need to go back to (kt, cosa) 
-        ktkt = ktkt[mask]
-        cosa = ktcosa/ktkt
+        # for plotting
+        #kt = cosa
+        #sina= np.sin(np.arccos(cosa))
+        # kt_tilde = 2./3*sina
+        #kt_tildekt_tilde,qq = np.meshgrid( kt_tilde, q)
+        #cosacosa,qq=np.meshgrid(cosa,q)
 
-        # filter nans
-        mask = np.logical_not( np.isnan( cosa ))
-        ktkt = ktkt[mask]
-        cosa = cosa[mask]
+        # ktkt=np.multiply(ktkt,qq)
+        # kt_tildekt_tilde = np.multiply(kt_tildekt_tilde,qq)
+
+        # ktkt=ktkt.flatten()
+        # kt_tildekt_tilde=kt_tildekt_tilde.flatten()
+        qq = qq.flatten()
+        cosacosa = cosacosa.flatten()
+
 
         template=open("%s/param_card_sm_template.dat"%path).read()
-        for kt, cosa in zip(ktkt, cosa):
-            outn="param_card_kt_%s_cosa_%s.dat"%(numToString(kt), numToString(cosa))
-            if not os.path.exists('%s/'%path + outn): 
-                out=template.format(khtt=kt,cosa=cosa,kSM=1/cosa)
-                outf=open('%s/'%path + outn,'w')
-                outf.write(out)
-                outf.close()
-            self.param_cards.append(outn)
+        for cosa, q in zip(cosacosa, qq):
+            outn="param_card_cosa_%s_q_%s.dat"%(numToString(cosa), numToString(q))
+            out=template.format(khtt=q,katt=2.*q/3,cosa=cosa,kSM=1/cosa)
+            outf=open('/scratch/%s'%outn,'w')
+            outf.write(out)
+            outf.close()
+            self.param_cards.append('/scratch/%s'%outn)
 
         for card in self.param_cards:
             dirpath = tempfile.mkdtemp(dir='/scratch/')
@@ -104,7 +98,7 @@ class TH_weights( Module ):
             self.mods.append(imp.load_module('allmatrix2py',*imp.find_module('allmatrix2py')))
             del sys.modules['allmatrix2py']
             print 'initializing', card
-            self.mods[-1].initialise('%s/%s' % (path, card))
+            self.mods[-1].initialise(card)
         print self.mods
         
         self.pdgOrderSorted = [SortPDGs(x.tolist()) for x in self.mods[-1].get_pdg_order()]
@@ -123,7 +117,7 @@ class TH_weights( Module ):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.wrappedOutputTree = wrappedOutputTree
         for card in self.param_cards:
-            self.wrappedOutputTree.branch('weight_%s'%card.replace('param_card_',''),'F')
+            self.wrappedOutputTree.branch('weight_%s'%(card.split('/')[-1].replace('param_card_','')),'F')
 
     def endJob(self):
         for dr in self.tmpdirs:
@@ -206,10 +200,11 @@ class TH_weights( Module ):
             weights.append( mod.smatrixhel( final_pdgs, final_parts_i, event.LHE_AlphaS, scale2, nhel) ) 
 
         for i, card in enumerate(self.param_cards):
-            self.wrappedOutputTree.fillBranch('weight_%s'%card.replace('param_card_',''), weights[i]/weights[0])
+            self.wrappedOutputTree.fillBranch('weight_%s'%(card.split('/')[-1].replace('param_card_','')), weights[i]/weights[0])
 
 
         return True
 
 tHq_reweigther = lambda : TH_weights('thq')
 tHW_reweigther = lambda : TH_weights('thw')
+ttH_reweigther = lambda : TH_weights('tth')
