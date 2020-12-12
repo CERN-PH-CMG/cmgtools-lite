@@ -444,7 +444,6 @@ from CMGTools.TTHAnalysis.tools.higgsDiffGenTTH import higgsDiffGenTTH
 from CMGTools.TTHAnalysis.tools.higgsDiffRecoTTH import higgsDiffRecoTTH, higgsDiffRecoTTH_noWmassConstraint
 from CMGTools.TTHAnalysis.tools.higgsDiffCompTTH import higgsDiffCompTTH, higgsDiffCompTTH_noWmassConstraint
 from CMGTools.TTHAnalysis.tools.higgsDiffRegressionTTH import higgsDiffRegressionTTH
-
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_CP import ttH_CP
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_genericTreeVarForSR import ttH_genericTreeVarForSR
 
