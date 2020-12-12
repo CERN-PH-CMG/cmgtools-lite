@@ -51,6 +51,10 @@ class TH_weights( Module ):
 
         self.mods=[]
         self.tmpdirs=[]
+        if 'psi.ch' in os.environ['HOSTNAME']:
+            self.tmpdir='/scratch/'
+        else:
+            self.tmpdir='/tmp/'
 
         path=os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/mc_rw/%s/'%process
         
@@ -85,13 +89,13 @@ class TH_weights( Module ):
         for cosa, q in zip(cosacosa, qq):
             outn="param_card_cosa_%s_q_%s.dat"%(numToString(cosa), numToString(q))
             out=template.format(khtt=q,katt=2.*q/3,cosa=cosa,kSM=1/cosa)
-            outf=open('/scratch/%s'%outn,'w')
+            outf=open('%s/%s'%(self.tmpdir,outn),'w')
             outf.write(out)
             outf.close()
-            self.param_cards.append('/scratch/%s'%outn)
+            self.param_cards.append('%s/%s'%(self.tmpdir,outn))
 
         for card in self.param_cards:
-            dirpath = tempfile.mkdtemp(dir='/scratch/')
+            dirpath = tempfile.mkdtemp(dir=self.tmpdir)
             self.tmpdirs.append(dirpath)
             shutil.copyfile( path + '/allmatrix2py.so', self.tmpdirs[-1] + '/allmatrix2py.so')
             sys.path[-1] =self.tmpdirs[-1]
