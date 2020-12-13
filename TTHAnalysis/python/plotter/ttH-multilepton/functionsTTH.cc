@@ -284,8 +284,13 @@ T    else if (tth < 0.57)  return 1;
 
 TF1*`fTauSFs[3][3];
 TFile*`fTauSFFiles[3];
+
+TF1*`fTauFRs[3][2];
+TFile*`fTauFRFiles[3];
+
 bool isTauSFInit=false;
-float tauSF( float taupt, int year, int isMatch, int var=0){  // var is -1,0,1
+float tauSF( float taupt, float taueta, int year, int isMatch, int var=0){  // var is -1,0,1
+  // to add the fr uncertainty
   if (!isTauSFInit){
     isTauSFInit=true;
     fTauSFFiles[0]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2016Legacy.root");
@@ -296,11 +301,31 @@ float tauSF( float taupt, int year, int isMatch, int var=0){  // var is -1,0,1
       fTauSFs[i][1]=fTauSFFiles[i]->Get("VLoose_cent");
       fTauSFs[i][2]=fTauSFFiles[i]->Get("VLoose_up");
     }
+    fTauFRFiles[0]=TFile::Open("../../data/tauSF/FR_deeptau_2016_v4.root");
+    fTauFRFiles[1]=TFile::Open("../../data/tauSF/FR_deeptau_2017_v4.root");
+    fTauFRFiles[2]=TFile::Open("../../data/tauSF/FR_deeptau_2018_v4.root");
+    for (int i =0; i < 3; ++i){
+      fTaufRs[i][0]=fTaufRFiles[i]->Get("jetToTauFakeRate/deepVSjVLoose/absEtaLt1_5/jetToTauFakeRate_data_div_mc_hadTaus_pt");
+      fTaufRs[i][1]=fTaufRFiles[i]->Get("jetToTauFakeRate/deepVSjVLoose/absEta1_5to9_9/jetToTauFakeRate_data_div_mc_hadTaus_pt");
+    }
   }
-  
-  
-  if (isMatch) return fTauSFs[year-2016][var-1]->Eval(taupt);
-  else return ....;
+
+
+  if (isMatch){
+    float varSF fTauSFs[year-2016][var-1]->Eval(taupt);
+    float nomSF fTauSFs[year-2016][1]->Eval(taupt);
+    return  (1 + var*TMath::Sqrt( (varSF/nomSF-1)*(varSF/nomSF-1) + 0.03*0.03))*nomSF;
+  }
+
+
+  else{
+    if (abs(eta) < 1.5){
+      fTauFRs[year-2016][0]->Eval(taupt)
+    }
+    else{
+      fTauFRs[year-2016][1]->Eval(taupt)
+    }
+  }
   
 
 }
