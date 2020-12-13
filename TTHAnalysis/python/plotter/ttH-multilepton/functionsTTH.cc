@@ -253,6 +253,59 @@ int ttH_catIndex_2lss_plots(int LepGood1_pdgId, int LepGood2_pdgId, float tth, f
 }
 
 
+float ttH_catIndex_2lss1tau( float tth, float thq, float bkg)
+{
+
+  if ((tth > thq)  && (tth > bkg)){
+    if (tth < 0.49)       return 0;
+T    else if (tth < 0.57)  return 1;
+    else if (tth < 0.64)  return 2;
+    else if (tth < 0.74)  return 3;
+    else if (tth < 0.85)  return 4;
+    else                  return 5;
+  }
+  else if ((thq > tth) && (thq > bkg)){
+    if   (thq < 0.49) return 6;
+    else (thq < 0.57) return 7;
+    else (thq < 0.70) return 8;
+    else              return 9;
+  }
+  else{
+    if (bkg < 0.5)         return 10;
+    else if ( bkg < 0.56 ) return 11;
+    else if ( bkg < 0.62 ) return 12;
+    else if ( bkg < 0.71 ) return 13;
+    else                   return 14;
+
+  }
+  
+}
+
+
+TF1*`fTauSFs[3][3];
+TFile*`fTauSFFiles[3];
+bool isTauSFInit=false;
+float tauSF( float taupt, int year, int isMatch, int var=0){  // var is -1,0,1
+  if (!isTauSFInit){
+    isTauSFInit=true;
+    fTauSFFiles[0]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2016Legacy.root");
+    fTauSFFiles[1]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2017ReReco.root");
+    fTauSFFiles[2]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2018ReReco.root");
+    for (int i =0; i < 3; ++i){
+      fTauSFs[i][0]=fTauSFFiles[i]->Get("VLoose_down");
+      fTauSFs[i][1]=fTauSFFiles[i]->Get("VLoose_cent");
+      fTauSFs[i][2]=fTauSFFiles[i]->Get("VLoose_up");
+    }
+  }
+  
+  
+  if (isMatch) return fTauSFs[year-2016][var-1]->Eval(taupt);
+  else return ....;
+  
+
+}
+
+
 int ttH_catIndex_2lss_nosign(int LepGood1_pdgId, int LepGood2_pdgId, int nBJetMedium25){
 
   if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11) return 1;

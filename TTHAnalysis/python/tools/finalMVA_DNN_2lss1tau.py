@@ -18,12 +18,11 @@ def mTauTauVis( ev, ind ):
     if len(leps) < 2: return -1
     
     if ev.Tau_tight2lss1tau_idx < 0: return -1
-    taus = [ t for t in Collection(event, 'TauSel'+self.inputlabel)]
+    taus = [ t for t in Collection(ev, 'TauSel_Recl')]
 
-    return (leps[ind].p4() + taus[ev.Tau_tight2lss1tau_idx].p4()).M()
+    return (leps[ind].p4() + taus[int(ev.Tau_tight2lss1tau_idx)].p4()).M()
 
-def m3L( ev, var ): 
-    # guessing the m3l definition
+def massL3( ev, var ): 
     if ev.Tau_tight2lss1tau_idx < 0: return -1
     all_leps = [l for l in Collection(ev,"LepGood")]
     nFO = getattr(ev,"nLepFO_Recl")
@@ -31,11 +30,11 @@ def m3L( ev, var ):
     leps = [all_leps[chosen[i]] for i in xrange(nFO)]
     if len(leps) < 2: return 0
 
-    taus = [ t for t in Collection(event, 'TauSel'+self.inputlabel)]
+    taus = [ t for t in Collection(ev, 'TauSel_Recl')]
     l1=r.TLorentzVector();l2=r.TLorentzVector()
     l1.SetPtEtaPhiM(leps[0].conePt, leps[0].eta, leps[0].phi, 0)
     l2.SetPtEtaPhiM(leps[1].conePt, leps[1].eta, leps[1].phi, 0)
-    part = l1 + l2 + taus[ev.Tau_tight2lss1tau_idx].p4()
+    part = l1 + l2 + taus[int(ev.Tau_tight2lss1tau_idx)].p4()
     
     met_pt  = (getattr(ev,'MET_pt%s'%var)  if ev.year != 2017 else getattr(ev,'METFixEE2017_pt%s'%var))
     met_phi = (getattr(ev,'MET_phi%s'%var) if ev.year != 2017 else getattr(ev,'METFixEE2017_phi%s'%var))
@@ -61,7 +60,7 @@ class finalMVA_DNN_2lss1tau(Module):
                 self.systsJEC[-(i+1)]="_%sDown"%var
                 
         for var in self.systsJEC: 
-            self._MVAs.append( TFTool('DNN_2lss1tau%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb',
+            self._MVAs.append( TFTool('DNN_2lss1tau%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2lss_1tau_DNN_legacy.pb',
                                       self.getVarsForVariation(self.systsJEC[var]), cats_2lss1tau, varorder))
 
             self.outVars.extend( ['DNN_2lss1tau%s_'%self.systsJEC[var] + x for x in cats_2lss1tau])
@@ -76,8 +75,8 @@ class finalMVA_DNN_2lss1tau(Module):
         vars_2lss1tau_unclEnDown["mT_lep1"          ] =  lambda ev : ev.MT_met_lep1_unclustEnDown
         vars_2lss1tau_unclEnDown["mT_lep2"          ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
 
-        worker_2lss1tau_unclUp   = TFTool("DNN_2lss1tau_unclUp", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb', vars_2lss1tau_unclEnUp, cats_2lss1tau, varorder)
-        worker_2lss1tau_unclDown = TFTool("DNN_2lss1tau_unclDown", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb', vars_2lss1tau_unclEnDown,cats_2lss1tau,  varorder)
+        worker_2lss1tau_unclUp   = TFTool("DNN_2lss1tau_unclUp", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2lss_1tau_DNN_legacy.pb', vars_2lss1tau_unclEnUp, cats_2lss1tau, varorder)
+        worker_2lss1tau_unclDown = TFTool("DNN_2lss1tau_unclDown", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2lss_1tau_DNN_legacy.pb', vars_2lss1tau_unclEnDown,cats_2lss1tau,  varorder)
 
         self._MVAs.extend( [ worker_2lss1tau_unclUp, worker_2lss1tau_unclDown])
         self.outVars.extend( ['DNN_2lss1tau_unclUp_' + x for x in cats_2lss1tau] +  ['DNN_2lss1tau_unclDown_' + x for x in cats_2lss1tau])
@@ -118,13 +117,13 @@ class finalMVA_DNN_2lss1tau(Module):
                 'nJetForward'            : lambda ev : getattr(ev,'nFwdJet%s_Recl'%var),
                 "mT_lep1"                : lambda ev : getattr(ev,'MT_met_lep1%s'%var),
                 "mT_lep2"                : lambda ev : getattr(ev,'MT_met_lep2%s'%var),
-                'tau1_pt'                : lambda ev : ev.TauSel_Recl_pt [ev.Tau_tight2lss1tau_idx] if ev.Tau_tight2lss1tau_idx > -1 else 0, 
-                'tau1_eta'               : lambda ev : ev.TauSel_Recl_eta[ev.Tau_tight2lss1tau_idx] if ev.Tau_tight2lss1tau_idx > -1 else 0, 
-                'tau1_phi'               : lambda ev : ev.TauSel_Recl_phi[ev.Tau_tight2lss1tau_idx] if ev.Tau_tight2lss1tau_idx > -1 else 0, 
+                'tau1_pt'                : lambda ev : ev.TauSel_Recl_pt [int(ev.Tau_tight2lss1tau_idx)] if ev.Tau_tight2lss1tau_idx > -1 else 0, 
+                'tau1_eta'               : lambda ev : ev.TauSel_Recl_eta[int(ev.Tau_tight2lss1tau_idx)] if ev.Tau_tight2lss1tau_idx > -1 else 0, 
+                'tau1_phi'               : lambda ev : ev.TauSel_Recl_phi[int(ev.Tau_tight2lss1tau_idx)] if ev.Tau_tight2lss1tau_idx > -1 else 0, 
                 'mindr_tau_jet'          : lambda ev : getattr(ev,'mindr_tau_jet%s'%var),
                 'mTauTauVis1'            : lambda ev : mTauTauVis(ev, 0),
                 'mTauTauVis2'            : lambda ev : mTauTauVis(ev, 1),
-                'massL3'                 : lambda ev : massL3(ev, ''),
+                'massL3'                 : lambda ev : massL3(ev, var),
 
             }
 
