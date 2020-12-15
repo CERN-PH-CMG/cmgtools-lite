@@ -130,18 +130,70 @@ int ttH_catIndex_2lss(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float t
 
 }
 
-std::map<TString,int> bins2lss = {{"ee_ttHnode",5},{"ee_Restnode",8},{"ee_ttWnode",6},{"ee_tHQnode",4},
-				  {"em_ttHnode",13},{"em_Restnode",8},{"em_ttWnode",19},{"em_tHQnode",11},
-				  {"mm_ttHnode",13},{"mm_Restnode",11},{"mm_ttWnode",15},{"mm_tHQnode",7}};
+
 std::vector<TString> bin2lsslabels = {
   "ee_ttHnode","ee_Restnode","ee_ttWnode","ee_tHQnode",
   "em_ttHnode","em_Restnode","em_ttWnode","em_tHQnode",
   "mm_ttHnode","mm_Restnode","mm_ttWnode","mm_tHQnode"
 };
+TFile* f2lssBins;
 
+std::map<TString,int> bins2lss = {{"ee_ttHnode",5},{"ee_Restnode",8},{"ee_ttWnode",6},{"ee_tHQnode",4},
+				  {"em_ttHnode",13},{"em_Restnode",8},{"em_ttWnode",19},{"em_tHQnode",11},
+				  {"mm_ttHnode",13},{"mm_Restnode",11},{"mm_ttWnode",15},{"mm_tHQnode",7}};
 std::map<TString, TH1F*> binHistos2lss;
 std::map<TString, int> bins2lsscumul;
-TFile* f2lssBins;
+
+
+std::map<TString, int> bins2lsscumul_cp;
+std::map<TString,int> bins2lss_withcp = {{"ee_ttHnode",5*2},{"ee_Restnode",8},{"ee_ttWnode",6},{"ee_tHQnode",4},
+					 {"em_ttHnode",13*4},{"em_Restnode",8},{"em_ttWnode",19},{"em_tHQnode",11},
+					 {"mm_ttHnode",13*4},{"mm_Restnode",11},{"mm_ttWnode",15},{"mm_tHQnode",7}};
+
+
+int ttH_catIndex_2lss_MVA_CP(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest, float cp)
+{
+  if (!f2lssBins){
+    int offset = 0;
+    f2lssBins = TFile::Open("../../data/kinMVA/DNNBin_v3_xmas.root");
+    for (auto & la : bin2lsslabels){
+      int bins = bins2lss[la];
+      binHistos2lss[la] = (TH1F*) f2lssBins->Get(Form("%s_2018_Map_nBin%d", la.Data(), bins));
+      bins2lsscumul_cp[la] = offset;
+      offset += bins2lss_withcp[la];
+    }
+  }
+  
+  int idx = ttH_catIndex_2lss(LepGood1_pdgId, LepGood2_pdgId, tth,ttw, thq,rest); 
+  TString binLabel = bin2lsslabels[idx-1];
+  float mvavar = 0;
+  int cpidx=0; int cpbins=1;
+  if (tth >= ttw && tth >= thq && tth >= rest){
+    mvavar = tth;
+    if (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) == 11){
+      cpbins=2;
+      if (cp < 0.165208) cpidx=0;
+      else 1;
+    }
+    else{
+      cpbins=4;
+      if      (cp < 0.128845)  cpidx = 0;
+      else if (cp < 0.165208)  cpidx = 1;
+      else if (cp < 0.2208)    cpidx = 2;
+      else                     cpidx = 3;
+    }
+  }
+  else if (rest >= tth && rest >= ttw && rest >= thq)
+    mvavar =rest;
+  else if (ttw >= tth && ttw >= rest && ttw >= thq)
+    mvavar = ttw;
+  else if (thq >= tth && thq >= rest && thq >= ttw)
+    mvavar = thq;
+  else 
+    cout << "It shouldnt be here" << endl;
+  return binHistos2lss[binLabel]->FindBin( mvavar ) + binHistos2lss[binLabel]->GetNbinsX()*cpidx + bins2lsscumul_cp[binLabel];
+
+}
 
 
 int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
@@ -156,7 +208,6 @@ int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, flo
       offset += bins;
     }
   }
-  
   int idx = ttH_catIndex_2lss(LepGood1_pdgId, LepGood2_pdgId, tth,ttw, thq,rest); 
   TString binLabel = bin2lsslabels[idx-1];
   float mvavar = 0;
@@ -170,6 +221,7 @@ int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, flo
     mvavar = thq;
   else 
     cout << "It shouldnt be here" << endl;
+
   return binHistos2lss[binLabel]->FindBin( mvavar ) + bins2lsscumul[binLabel];
 
 }
@@ -277,6 +329,39 @@ float ttH_catIndex_2lss1tau( float tth, float thq, float bkg)
     else if ( bkg < 0.62 ) return 12;
     else if ( bkg < 0.71 ) return 13;
     else                   return 14;
+
+  }
+  
+}
+
+float ttH_catIndex_2lss1tau_CP( float tth, float thq, float bkg, float cp)
+{
+  int cpIndx=0;
+  if      ( cp < 0.35906539) cpIndx=0;
+  else if ( cp <0.39637298 ) cpIndx=1;
+  else if ( cp < 0.46254745) cpIndx=2;
+  else                       cpIndx=3;
+
+  if ((tth > thq)  && (tth > bkg)){
+    if (tth < 0.49)       return 0 + cpIndx*6;
+    else if (tth < 0.57)  return 1 + cpIndx*6;
+    else if (tth < 0.64)  return 2 + cpIndx*6;
+    else if (tth < 0.74)  return 3 + cpIndx*6;
+    else if (tth < 0.85)  return 4 + cpIndx*6;
+    else                  return 5 + cpIndx*6;
+  }
+  else if ((thq > tth) && (thq > bkg)){
+    if      (thq < 0.49) return 24;
+    else if (thq < 0.57) return 25;
+    else if (thq < 0.70) return 26;
+    else                 return 27;
+  }
+  else{
+    if (bkg < 0.5)         return 28;
+    else if ( bkg < 0.56 ) return 29;
+    else if ( bkg < 0.62 ) return 30;
+    else if ( bkg < 0.71 ) return 31;
+    else                   return 32;
 
   }
   
@@ -460,6 +545,7 @@ std::vector<TString> bin3llabels = {"ttH_bl",  "ttH_bt",  "tH_bl",  "tH_bt",  "r
 
 std::map<TString, TH1F*> binHistos3l;
 std::map<TString, int> bins3lcumul;
+std::map<TString, int> bins3lcumul_cp;
 TFile* f3lBins;
 
 
@@ -480,6 +566,44 @@ int ttH_catIndex_3l_MVA(float ttH, float tH, float rest, int lep1_pdgId, int lep
   float mvas[] = { ttH, tH, rest };
   float mvavar = *std::max_element( mvas, mvas+3 );
   return binHistos3l[binLabel]->FindBin( mvavar ) + bins3lcumul[binLabel];
+
+  
+  cout << "[ttH_catIndex_3l_MVA]: It should not be here "<< ttH << " " << tH << " " << rest << endl;
+  return -1;
+
+}
+
+int ttH_catIndex_3l_MVA_CP(float ttH, float tH, float rest, int lep1_pdgId, int lep2_pdgId, int lep3_pdgId, int nBMedium, float cp )
+{
+
+  if (!f3lBins){
+    f3lBins=TFile::Open("../../data/kinMVA/binning_3l.root");
+    int count=0;
+    for (auto label : bin3llabels){
+      binHistos3l[label] = (TH1F*) f3lBins->Get(label);
+      bins3lcumul_cp[label] = count;
+      int ncpbins=1;
+      if (label.Contains("ttH")) ncpbins=4;
+      count += binHistos3l[label]->GetNbinsX()*ncpbins;
+    }
+  }
+  TString binLabel = bin3llabels[ttH_catIndex_3l(ttH,tH,rest,lep1_pdgId,lep2_pdgId,lep3_pdgId,nBMedium)-1];
+  float mvas[] = { ttH, tH, rest };
+  float mvavar = 0;
+  int cpIdx=0;
+  if (ttH > tH && ttH > rest){
+    mvavar=ttH;
+    if (cp < 0.44861784) cpIdx= 0;
+    else if (cp < 0.51305674) cpIdx= 1;
+    else if (cp < 0.59185324) cpIdx= 2;
+    else                      cpIdx= 3;
+  }
+  else if (tH > rest && tH > ttH)
+    mvavar=tH;
+  else
+    mvavar=rest;
+
+  return binHistos3l[binLabel]->FindBin( mvavar ) + binHistos3l[binLabel]->GetNbinsX()*cpIdx + bins3lcumul_cp[binLabel];
 
   
   cout << "[ttH_catIndex_3l_MVA]: It should not be here "<< ttH << " " << tH << " " << rest << endl;
