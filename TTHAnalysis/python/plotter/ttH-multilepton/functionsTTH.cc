@@ -1,5 +1,6 @@
 #include "TFile.h"
 #include "TH2.h"
+#include "TF1.h"
 #include "TH2Poly.h"
 #include "TGraphAsymmErrors.h"
 #include "TRandom3.h"
@@ -58,7 +59,7 @@ float newBinning(float x, float y){
   return r;
 }
 
-#include "GetBinning.C"
+//#include "GetBinning.C"
 
 
 float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
@@ -258,17 +259,17 @@ float ttH_catIndex_2lss1tau( float tth, float thq, float bkg)
 
   if ((tth > thq)  && (tth > bkg)){
     if (tth < 0.49)       return 0;
-T    else if (tth < 0.57)  return 1;
+    else if (tth < 0.57)  return 1;
     else if (tth < 0.64)  return 2;
     else if (tth < 0.74)  return 3;
     else if (tth < 0.85)  return 4;
     else                  return 5;
   }
   else if ((thq > tth) && (thq > bkg)){
-    if   (thq < 0.49) return 6;
-    else (thq < 0.57) return 7;
-    else (thq < 0.70) return 8;
-    else              return 9;
+    if      (thq < 0.49) return 6;
+    else if (thq < 0.57) return 7;
+    else if (thq < 0.70) return 8;
+    else                 return 9;
   }
   else{
     if (bkg < 0.5)         return 10;
@@ -282,49 +283,62 @@ T    else if (tth < 0.57)  return 1;
 }
 
 
-TF1*`fTauSFs[3][3];
-TFile*`fTauSFFiles[3];
+TF1* fTauSFs[3][3];
+TFile* fTauSFFiles[3];
 
-TF1*`fTauFRs[3][2];
-TFile*`fTauFRFiles[3];
+TF1* fTauFRs[3][2][5]; // year, eta range, (nom, par1Down, par1Up, par2Down, par2Up)
+TFile* fTauFRFiles[3];
 
 bool isTauSFInit=false;
-float tauSF( float taupt, float taueta, int year, int isMatch, int var=0){  // var is -1,0,1
+float tauSF( float taupt, float taueta, int year, int isMatch, int var=0, int varFRNorm=0, int varFRShape=0){  // var is -1,0,1
+
+  assert( (abs(var)+abs(varFRShape)+abs(varFRNorm) != 0 && abs(var)+abs(varFRShape)+abs(varFRNorm) != 1) );
+
   // to add the fr uncertainty
   if (!isTauSFInit){
     isTauSFInit=true;
-    fTauSFFiles[0]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2016Legacy.root");
-    fTauSFFiles[1]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2017ReReco.root");
-    fTauSFFiles[2]=TFile::Open("../../data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2018ReReco.root");
+    fTauSFFiles[0]=TFile::Open("$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2016Legacy.root");
+    fTauSFFiles[1]=TFile::Open("$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2017ReReco.root");
+    fTauSFFiles[2]=TFile::Open("$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/tauSF/TauID_SF_pt_DeepTau2017v2p1VSjet_2018ReReco.root");
     for (int i =0; i < 3; ++i){
-      fTauSFs[i][0]=fTauSFFiles[i]->Get("VLoose_down");
-      fTauSFs[i][1]=fTauSFFiles[i]->Get("VLoose_cent");
-      fTauSFs[i][2]=fTauSFFiles[i]->Get("VLoose_up");
+      fTauSFs[i][0]=(TF1*) fTauSFFiles[i]->Get("VLoose_down");
+      fTauSFs[i][1]=(TF1*) fTauSFFiles[i]->Get("VLoose_cent");
+      fTauSFs[i][2]=(TF1*) fTauSFFiles[i]->Get("VLoose_up");
     }
-    fTauFRFiles[0]=TFile::Open("../../data/tauSF/FR_deeptau_2016_v4.root");
-    fTauFRFiles[1]=TFile::Open("../../data/tauSF/FR_deeptau_2017_v4.root");
-    fTauFRFiles[2]=TFile::Open("../../data/tauSF/FR_deeptau_2018_v4.root");
+    fTauFRFiles[0]=TFile::Open("$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/tauSF/FR_deeptau_2016_v6.root");
+    fTauFRFiles[1]=TFile::Open("$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/tauSF/FR_deeptau_2017_v6.root");
+    fTauFRFiles[2]=TFile::Open("$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/tauSF/FR_deeptau_2018_v6.root");
     for (int i =0; i < 3; ++i){
-      fTaufRs[i][0]=fTaufRFiles[i]->Get("jetToTauFakeRate/deepVSjVLoose/absEtaLt1_5/jetToTauFakeRate_data_div_mc_hadTaus_pt");
-      fTaufRs[i][1]=fTaufRFiles[i]->Get("jetToTauFakeRate/deepVSjVLoose/absEta1_5to9_9/jetToTauFakeRate_data_div_mc_hadTaus_pt");
+      fTauFRs[i][0][0]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt");
+      fTauFRs[i][1][0]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt");
+      fTauFRs[i][0][1]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par1Down");
+      fTauFRs[i][1][1]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par1Down");
+      fTauFRs[i][0][2]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par1Up");
+      fTauFRs[i][1][2]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par1Up");
+      fTauFRs[i][0][3]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par2Down");
+      fTauFRs[i][1][3]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par2Down");
+      fTauFRs[i][0][4]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par2Up");
+      fTauFRs[i][1][4]=(TF1*) fTauFRFiles[i]->Get("jetToTauFakeRate_withoutTriggerMatching/deepVSjVLoose/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par2Up");
     }
   }
+  
 
 
   if (isMatch){
-    float varSF fTauSFs[year-2016][var-1]->Eval(taupt);
-    float nomSF fTauSFs[year-2016][1]->Eval(taupt);
-    return  (1 + var*TMath::Sqrt( (varSF/nomSF-1)*(varSF/nomSF-1) + 0.03*0.03))*nomSF;
+    float varSF=fTauSFs[year-2016][var+1]->Eval(taupt);
+    float nomSF=fTauSFs[year-2016][1]->Eval(taupt);
+    return  (1 + var*std::sqrt( (varSF/nomSF-1)*(varSF/nomSF-1) + 0.03*0.03))*nomSF;
   }
 
 
   else{
-    if (abs(eta) < 1.5){
-      fTauFRs[year-2016][0]->Eval(taupt)
-    }
-    else{
-      fTauFRs[year-2016][1]->Eval(taupt)
-    }
+    int etaindx = (abs(taueta)<1.5) ? 0 : 1;
+    int varIdx  = 0;
+    if (varFRNorm==1) varIdx=2;
+    if (varFRNorm==-1) varIdx=1;
+    if (varFRShape==1) varIdx=4;
+    if (varFRShape==-1) varIdx=3;
+    return fTauFRs[year-2016][etaindx][varIdx]->Eval(taupt);
   }
   
 
