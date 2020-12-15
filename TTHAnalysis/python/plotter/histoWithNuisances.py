@@ -6,7 +6,7 @@ import ROOT
 
 def _cloneNoDir(hist,name=''):
     ret = hist.Clone(name)
-    ret.SetDirectory(None)
+    ret.SetDirectory(ROOT.nullptr)
     return ret
 
 def _projectionXNoDir(hist2d,name,y1,y2):

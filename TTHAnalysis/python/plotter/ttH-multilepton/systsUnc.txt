@@ -56,13 +56,23 @@ CMS_eff_ttHl_etight : $PromptFromMC : .*2lss.* : templateAsymm ; AddWeights=['le
 CMS_eff_ttHl_etight : $PromptFromMC : .*3l.* : templateAsymm ; AddWeights=['leptonSF_3l_el_loosetotight_up/leptonSF_3l'\,'leptonSF_3l_el_loosetotight_dn/leptonSF_3l']
 CMS_eff_ttHl_etight : $PromptFromMC : .*4l.* : templateAsymm ; AddWeights=['leptonSF_4l_el_loosetotight_up/leptonSF_4l'\,'leptonSF_4l_el_loosetotight_dn/leptonSF_4l']
 
+# tau efficiencies and frs
+CMS_eff_t_2016        : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_effUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_effDown/TauSel_2lss1tau_SF'], year="2016"
+CMS_ttHl16_FRjt_shape : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_frShapeUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_frShapeDown/TauSel_2lss1tau_SF'], year="2016"
+CMS_ttHl16_FRjt_norm  : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_effUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_effDown/TauSel_2lss1tau_SF'], year="2016"
+CMS_eff_t_2017        : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_effUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_effDown/TauSel_2lss1tau_SF'], year="2017"
+CMS_ttHl17_FRjt_shape : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_frShapeUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_frShapeDown/TauSel_2lss1tau_SF'], year="2017"
+CMS_ttHl17_FRjt_norm  : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_effUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_effDown/TauSel_2lss1tau_SF'], year="2017"
+CMS_eff_t_2018        : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_effUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_effDown/TauSel_2lss1tau_SF'], year="2018"
+CMS_ttHl18_FRjt_shape : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_frShapeUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_frShapeDown/TauSel_2lss1tau_SF'], year="2018"
+CMS_ttHl18_FRjt_norm  : $PromptFromMC : .*2lss_1tau.* : templateAsymm ; AddWeights=['TauSel_2lss1tau_SF_effUp/TauSel_2lss1tau_SF'\,'TauSel_2lss1tau_SF_effDown/TauSel_2lss1tau_SF'], year="2018"
+
+
 
 ## L1 ECAL prefiring
 CMS_ttHl16_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2016"
 CMS_ttHl17_L1PreFiring : $PromptFromMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2017"
 
-### todo: replace with tau veto efficiency
-#CMS_ttHl_tauID		: $PromptFromMC : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
 CMS_ttHl16_trigger_ee      : $PromptFromMC : .*2lss.* : templateSymm; Normalize=False, AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\,1.02\,1.0\,1.0)', year="2016"

@@ -7,7 +7,7 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
 
 def getTauThings(ev,var):
     if ev.Tau_tight2lss1tau_idx > -1: 
-        return getattr(ev,'TauSel_Recl_pt'%var) [ev.Tau_tight2lss1tau_idx]
+        return getattr(ev,'TauSel_Recl_%s'%var) [int(ev.Tau_tight2lss1tau_idx)]
     else: 
         return 0
 
