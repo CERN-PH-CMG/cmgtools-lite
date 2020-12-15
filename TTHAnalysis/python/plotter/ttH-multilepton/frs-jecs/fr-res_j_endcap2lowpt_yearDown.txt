@@ -36,4 +36,7 @@ change: BDThttTT_eventReco_Hj_score\b: BDThttTT_eventReco_Hj_score_jerendcap2low
 change: DNN_3l_predictions_ttH\b: DNN_3l_jerendcap2lowptDown_predictions_ttH
 change: DNN_3l_predictions_rest\b: DNN_3l_jerendcap2lowptDown_predictions_rest
 change: DNN_3l_predictions_tH\b: DNN_3l_jerendcap2lowptDown_predictions_tH
+change: mvaCP_2lss1tau\b: mvaCP_2lss1tau_jerendcap2lowptDown
+change: mvaCP_3l\b: mvaCP_3l_jerendcap2lowptDown
+change: mvaCP_2lss\b: mvaCP_2lss_jerendcap2lowptDown
 weight:1
