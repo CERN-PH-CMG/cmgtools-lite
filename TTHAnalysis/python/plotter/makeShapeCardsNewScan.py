@@ -38,11 +38,8 @@ if not os.path.exists(outdir): os.mkdir(outdir)
 
 scanpoints = []
 pattern = re.compile( options.scanregex ) 
-pattern_default = "ct_(?P<cp>.*)_cv_1p0"
 for psig in mca.listSignals(True):
-    match = pattern.search( psig )
-    if "ct_1p0_cv_1p0" in psig:
-       match = re.compile(pattern_default).search( psig ) 
+    match = pattern.search( psig ) 
     if not match: 
 	continue
         #raise RuntimeError("Signal %s does not match the regexp"%psig)
@@ -75,9 +72,11 @@ if options.savefile:
     savefile.Close()
 
 if options.asimov:
-    match = re.compile(pattern_default).search( options.asimov ) 
+    match = pattern.search( options.asimov ) 
+    print('asimov_match',options.asimov)
     if match:
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
+        print(asimovprocesses)
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
     elif options.asimov in ("b","bkg","background", "b-only"):
@@ -85,7 +84,8 @@ if options.asimov:
     else: raise RuntimeError("the --asimov option requires to specify signal/sig/s/s+b or background/bkg/b/b-only")
     tomerge = None
     for p in asimovprocesses:
-        if p in report: 
+        if p in report:
+            print('p addded',p) 
             if tomerge is None: 
                 tomerge = report[p].raw().Clone("x_data_obs"); tomerge.SetDirectory(None)
             else: tomerge.Add(report[p].raw())
@@ -136,8 +136,6 @@ for scanpoint in scanpoints:
     pointname = '_'.join( [ '%s_%s'%(x,y) for x,y in zip(options.params.split(','),scanpoint)])
     for psig in mca.listSignals(): 
         match = pattern.search(psig)
-        if "ct_1p0_cv_1p0" in psig:
-           match = re.compile(pattern_default).search( psig ) 
         if match: 
         	matchpoint = [match.group(p) for p in options.params.split(',')]
         	if len(matchpoint) >1: matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
@@ -230,14 +228,15 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        if "kt" in pointname:
+        if "kv" in pointname:
            pointname2 = pointname.replace('kt','ct')
            pointname2 = pointname2.replace('kv','cv')
         else:
            pointname2 = pointname
         if '-' in pointname: 
            pointname = pointname.replace('-','m')
-        pointname2=pointname2.replace('m','-') #for sanity
+        print(pointname2, pointname)
+        
         datacard = open(outdir+binname+'_'+pointname+".txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
         datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))
@@ -251,7 +250,7 @@ for scanpoint in scanpoints:
         npatt = "%%-%ds " % max([len('process')]+map(len,nuisances))
         datacard.write('##----------------------------------\n')
         datacard.write((npatt % 'bin    ')+(" "*6)+(" ".join([kpatt % binname  for p in procs]))+"\n")
-        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','').replace('ct_1p0_cv_1p0_','')        for p in procs]))+"\n")
+        datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % p.replace(pointname2+'_','')        for p in procs]))+"\n")
         datacard.write((npatt % 'process')+(" "*6)+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
         datacard.write((npatt % 'rate   ')+(" "*6)+(" ".join([fpatt % allyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')

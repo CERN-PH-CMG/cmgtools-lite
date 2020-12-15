@@ -85,6 +85,7 @@ class TH_weights( Module ):
         cosacosa = cosacosa.flatten()
 
 
+
         template=open("%s/param_card_sm_template.dat"%path).read()
         for cosa, q in zip(cosacosa, qq):
             outn="param_card_cosa_%s_q_%s.dat"%(numToString(cosa), numToString(q))

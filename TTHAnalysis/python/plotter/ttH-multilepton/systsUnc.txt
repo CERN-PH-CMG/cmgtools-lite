@@ -2,9 +2,9 @@
 
 
 ### Alias definitions. Careful to avoid trailing '.*' to avoid matching _promptsub
-$alias : ttH : ttH|ttH_h[a-z]+|ttH_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+|ttH_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+|ttH_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+|ttH_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+
-$alias : tHq : tHq|tHq_h[a-z]+|tHq_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHq_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHq_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+|tHq_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+
-$alias : tHW : tHW|tHW_h[a-z]+|tHW_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHW_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+|tHW_ct_[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+|tHW_ct_-[0-9]p[0-9]+_cv_[0-9]p[0-9]+_h[a-z]+
+$alias : ttH : ttH|ttH_h[a-z]+|ttH_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|ttH_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|ttH_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|ttH_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+
+$alias : tHq : tHq|tHq_h[a-z]+|tHq_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHq_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHq_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHq_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+
+$alias : tHW : tHW|tHW_h[a-z]+|tHW_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHW_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHW_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHW_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+
 $alias : ttHX : $ttH|$tHq|$tHW
 $alias : ttV  : TT[WZ]|TTWW
 $alias : ZH   : ZH|ZH_h[a-z]+
@@ -362,8 +362,8 @@ CMS_ttHl_thu_shape_ZZ : ZZ : .* : envelope ; FakeRates=['ttH-multilepton/frs-sca
 CMS_ttHl_thu_shape_ttH : $ttH : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt']
 CMS_ttHl_thu_shape_ttZ : TTZ  : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt'] 
 CMS_ttHl_thu_shape_ttW : TTW  : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt'] 
-CMS_ttHl_thu_shape_tHW : $tHW : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt']
-CMS_ttHl_thu_shape_tHq : $tHq : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5.txt']
+CMS_ttHl_thu_shape_tHW : $tHW : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5_thq.txt']
+CMS_ttHl_thu_shape_tHq : $tHq : .* : envelope; FakeRates=['ttH-multilepton/frs-scales/fr-muR_2p0_muF_1p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_1p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_2p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_1p0_muF_0p5_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_2p0_muF_2p0_thq.txt'\,'ttH-multilepton/frs-scales/fr-muR_0p5_muF_0p5_thq.txt']
 
 
 
