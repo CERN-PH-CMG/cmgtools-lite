@@ -32,6 +32,8 @@ os.system("test -d cards/{OUTNAME} || mkdir -p cards/{OUTNAME}".format(OUTNAME=O
 OPTIONS="{OPTIONS} --od cards/{OUTNAME} ".format(OPTIONS=OPTIONS, OUTNAME=OUTNAME)
 #T2L="-P {ORIGIN}/NanoTrees_TTH_091019_v6pre_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1  --Fs  {{P}}/1_recl/ --FMCs {{P}}/2_scalefactors --Fs {{P}}/3_tauCount --Fs {{P}}/6_mva3l --Fs {{P}}/6_mva2lss_new/  --Fs {{P}}/6_mva4l --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
 T2L="-P {ORIGIN}/NanoTrees_TTH_090120_091019_v6_skim2lss/{YEAR} --FMCs {{P}}/0_jmeUnc_v1 --FDs {{P}}/1_recl --FMCs {{P}}/1_recl_allvars --FMCs {{P}}/2_btag_SFs --FMCs {{P}}/2_scalefactors_lep_fixed --Fs {{P}}/3_tauCount --Fs {{P}}/4_evtVars --Fs {{P}}/5_BDThtt_reco_new_blah --Fs {{P}}/6_mva2lss --Fs {{P}}/6_mva3l --Fs {{P}}/6_mva4l  --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
+if "scan_CP" in OTHER:
+   T2L="-P {ORIGIN}/NanoTrees_TTH_090120_091019_v6_skim2lss_forCP/{YEAR} --FMCs {{P}}/0_jmeUnc_v1  --Fs {{P}}/1_recl_allvars --FMCs {{P}}/2_btag_SFs --FMCs {{P}}/2_scalefactors_lep_fixed --Fs {{P}}/3_tauCount --Fs {{P}}/4_evtVars --Fs {{P}}/5_BDThtt_reco_new_blah --Fs {{P}}/6_mva2lss --Fs {{P}}/6_mva3l --Fs {{P}}/6_mva4l  --FMCs {{P}}/A_thqweights --xf TTTW --xf TTWH".format(ORIGIN=ORIGIN, YEAR=YEAR)
 T3L=T2L
 T4L=T2L
 
@@ -49,12 +51,12 @@ if "scan" in OTHER:
     SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
 
 if "scan_CP" in OTHER:         
-    ASIMOV="--asimov tHq_cp_1p0_hww,tHq_cp_1p0_htt,tHq_cp_1p0_hzz,ttH_cp_1p0_hww,ttH_cp_1p0_hzz,ttH_cp_1p0_htt,ttH_cp_1p0_hmm,ttH_cp_1p0_hzg,tHW_cp_1p0_hww,tHW_cp_1p0_hzz,tHW_cp_1p0_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz" 
+    ASIMOV="--asimov tHq_cosa_1p00_q_1p00_hww,tHq_cosa_1p00_q_1p00_htt,tHq_cosa_1p00_q_1p00_hzz,ttH_cosa_1p00_q_1p00_hww,ttH_cosa_1p00_q_1p00_hzz,ttH_cosa_1p00_q_1p00_htt,ttH_cosa_1p00_q_1p00_hmm,ttH_cosa_1p00_q_1p00_hzg,tHW_cosa_1p00_q_1p00_hww,tHW_cosa_1p00_q_1p00_hzz,tHW_cosa_1p00_q_1p00_htt,ZH_hww,ZH_htt,ZH_hzz,WH_hww,WH_htt,WH_hzz,qqH_hzz "
     SCRIPT = "makeShapeCardsNewScan.py"
     MCAOPTION="-CP"
     SYSTS="--unc ttH-multilepton/systsUnc.txt --amc"
-    SREGEXP = '--scanregex "cp_(?P<cp>.*)_" ' 
-    PARAM = '--params "cp"'
+    SREGEXP = '--scanregex "cosa_(?P<cosa>.*)_q_(?P<q>.*)"' 
+    PARAM = ' --params "cosa,q"'
 
 if "scan_CP" in OTHER: SCAN_EXTRA = SREGEXP+PARAM    
 else:    SCAN_EXTRA = ''
@@ -63,7 +65,7 @@ if 'unblind' in OTHER:
     ASIMOV=""
 
 print "We are using the asimov dataset"
-OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg   --threshold 0.01 {ASIMOV} --filter ttH-multilepton/filter-processes.txt ".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin #  
+OPTIONS="{OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/mcc-METFixEE2017.txt {PROMPTSUB} --neg   --threshold 0.01 {ASIMOV} ".format(OPTIONS=OPTIONS,PROMPTSUB=PROMPTSUB,ASIMOV=ASIMOV) # neg necessary for subsequent rebin #
 CATPOSTFIX=""
 
 FUNCTION_2L="ttH_catIndex_2lss_MVA(LepGood1_pdgId,LepGood2_pdgId,DNN_2lss_predictions_ttH,DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ,DNN_2lss_predictions_Rest)"

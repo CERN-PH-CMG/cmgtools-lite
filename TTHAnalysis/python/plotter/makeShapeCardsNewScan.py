@@ -228,7 +228,7 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        if "kt" in pointname:
+        if "kv" in pointname:
            pointname2 = pointname.replace('kt','ct')
            pointname2 = pointname2.replace('kv','cv')
         else:
