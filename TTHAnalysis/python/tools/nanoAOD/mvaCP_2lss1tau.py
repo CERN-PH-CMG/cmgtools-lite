@@ -29,7 +29,7 @@ class mvaCP_2lss1tau(Module):
 
 
         for var in self.systsJEC: 
-            self._MVAs.append(('mvaCP_3l%s'%self.systsJEC[var], MVATool("BDTG",P, self.getVarsForVariation(self.systsJEC[var]))))
+            self._MVAs.append(('mvaCP_2lss1tau%s'%self.systsJEC[var], MVATool("BDTG",P, self.getVarsForVariation(self.systsJEC[var]))))
         self._MVAs = dict(self._MVAs)
 
 
