@@ -66,8 +66,8 @@ class TH_weights( Module ):
         cosa = np.array([-0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, -0.0001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
         q = np.linspace(-3,3,10)
         q_new = np.linspace(-1.5,1.5,20)
-        q_new = q[np.abs(q) >0.25]
-        q_new = q[abs((np.abs(q)-1.02631579)) >1e-8]
+        q_new = q_new[np.abs(q) >0.25]
+        q_new = q_new[abs((np.abs(q)-1.02631579)) >1e-8]
 
         q = np.concatenate((q, q_new)).transpose()
 
