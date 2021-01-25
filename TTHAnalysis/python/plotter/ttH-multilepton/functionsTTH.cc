@@ -170,10 +170,10 @@ int ttH_catIndex_2lss_MVA_CP(int LepGood1_pdgId, int LepGood2_pdgId, float tth, 
   int cpidx=0; int cpbins=1;
   if (tth >= ttw && tth >= thq && tth >= rest){
     mvavar = tth;
-    if (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) == 11){
+    if (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) == 22){
       cpbins=2;
       if (cp < 0.165208) cpidx=0;
-      else 1;
+      else cpidx=1;
     }
     else{
       cpbins=4;
@@ -194,6 +194,58 @@ int ttH_catIndex_2lss_MVA_CP(int LepGood1_pdgId, int LepGood2_pdgId, float tth, 
   return binHistos2lss[binLabel]->FindBin( mvavar ) + binHistos2lss[binLabel]->GetNbinsX()*cpidx + bins2lsscumul_cp[binLabel];
 
 }
+
+int ttH_catIndex_2lss_MVA_CP_ttH(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest, float cp)
+{
+  int b;
+  b = -99;
+  int bin = ttH_catIndex_2lss_MVA_CP(LepGood1_pdgId, LepGood2_pdgId, tth,  ttw, thq, rest, cp);
+  if (bin <=10) b = bin;
+  else if (bin>=29 && bin<=80) b =bin-18;
+  else if (bin>=119 && bin<=170) b = bin-(18+38);
+  else 
+    b=-99;
+  return b;
+}
+
+int ttH_catIndex_2lss_MVA_CP_Rest(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest, float cp)
+{
+  int b;
+  b = -99;
+  int bin = ttH_catIndex_2lss_MVA_CP(LepGood1_pdgId, LepGood2_pdgId, tth,  ttw, thq, rest, cp);
+  if (bin >10 && bin <=18) b = bin-10;
+  else if (bin>80 && bin<=88) b =bin-62-10;
+  else if (bin>170 && bin<=181) b = bin-(62+82+10);
+  else 
+    b=-99;
+  return b;
+}
+//fixme
+int ttH_catIndex_2lss_MVA_CP_ttW(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest, float cp)
+{
+  int b;
+  b = -99;
+  int bin = ttH_catIndex_2lss_MVA_CP(LepGood1_pdgId, LepGood2_pdgId, tth,  ttw, thq, rest, cp);
+  if (bin >=19 && bin <25) b = bin-10-8;
+  else if (bin>88 && bin<=107) b =bin-64-10-8;
+  else if (bin>=181 && bin<=196) b = bin-(74+64+10+8);
+  else 
+    b=-99;
+  return b;
+}
+int ttH_catIndex_2lss_MVA_CP_tH(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest, float cp)
+{
+  int b;
+  b = -99;
+  int bin = ttH_catIndex_2lss_MVA_CP(LepGood1_pdgId, LepGood2_pdgId, tth,  ttw, thq, rest, cp);
+  if (bin >=25 && bin <29) b = bin-10-8-6;
+  else if (bin>107 && bin<=119) b =bin-79-10-8-6;
+  else if (bin>196 && bin<=203) b = bin-(78+79+10+8+6);
+  else 
+    b=-99;
+  return b;
+}
+
 
 
 int ttH_catIndex_2lss_MVA(int LepGood1_pdgId, int LepGood2_pdgId, float tth, float ttw, float thq, float rest)
@@ -337,9 +389,9 @@ float ttH_catIndex_2lss1tau( float tth, float thq, float bkg)
 float ttH_catIndex_2lss1tau_CP( float tth, float thq, float bkg, float cp)
 {
   int cpIndx=0;
-  if      ( cp < 0.35906539) cpIndx=0;
-  else if ( cp <0.39637298 ) cpIndx=1;
-  else if ( cp < 0.46254745) cpIndx=2;
+  if      ( cp < 0.139074) cpIndx=0;
+  else if ( cp < 0.181274) cpIndx=1;
+  else if ( cp < 0.243589) cpIndx=2;
   else                       cpIndx=3;
 
   if ((tth > thq)  && (tth > bkg)){
