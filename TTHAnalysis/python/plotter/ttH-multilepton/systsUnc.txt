@@ -2,9 +2,12 @@
 
 
 ### Alias definitions. Careful to avoid trailing '.*' to avoid matching _promptsub
-$alias : ttH : ttH|ttH_h[a-z]+|ttH_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|ttH_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|ttH_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|ttH_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+
-$alias : tHq : tHq|tHq_h[a-z]+|tHq_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHq_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHq_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHq_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+
-$alias : tHW : tHW|tHW_h[a-z]+|tHW_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHW_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHW_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHW_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+
+#$alias : ttH : ttH|ttH_h[a-z]+|ttH_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|ttH_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|ttH_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|ttH_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|ttH_cosa_[0-9]p[0-9]+_q_m[0-9]p[0-9]+_h[a-z]+|ttH_cosa_m[0-9]p[0-9]+_q_m[0-9]p[0-9]+_h[a-z]+
+#$alias : tHq : tHq|tHq_h[a-z]+|tHq_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHq_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHq_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHq_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHq_cosa_[0-9]p[0-9]+_q_m[0-9]p[0-9]+_h[a-z]+|tHq_cosa_m[0-9]p[0-9]+_q_m[0-9]p[0-9]+_h[a-z]+
+#$alias : tHW : tHW|tHW_h[a-z]+|tHW_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHW_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+|tHW_cosa_[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHW_cosa_m[0-9]p[0-9]+_q_[0-9]p[0-9]+_h[a-z]+|tHW_cosa_[0-9]p[0-9]+_q_m[0-9]p[0-9]+_h[a-z]+|tHW_cosa_m[0-9]p[0-9]+_q_m[0-9]p[0-9]+_h[a-z]+
+$alias : ttH : ttH|ttH_h[a-z]+|ttH_SM_h[a-z]+|ttH_CPodd_h[a-z]+
+$alias : tHq : tHq|tHq_h[a-z]+|tHq_SM_h[a-z]+|tHq_CPodd_h[a-z]+|tHq_kV_1_kt_0_h[a-z]+|tHq_kV_0_kt_1_h[a-z]+
+$alias : tHW : tHW|tHW_h[a-z]+|tHW_SM_h[a-z]+|tHW_CPodd_h[a-z]+|tHW_kV_1_kt_0_h[a-z]+|tHW_kV_0_kt_1_h[a-z]+
 $alias : ttHX : $ttH|$tHq|$tHW
 $alias : ttV  : TT[WZ]|TTWW
 $alias : ZH   : ZH|ZH_h[a-z]+
