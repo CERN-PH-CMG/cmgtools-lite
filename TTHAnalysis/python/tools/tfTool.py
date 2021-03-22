@@ -1,7 +1,7 @@
 import os, ROOT
 
 class TFTool:
-    def __init__(self, name, pb, vars, classes, varorder):
+    def __init__(self, name, pb, vars, classes, varorder, outputNodename=ROOT.std.string("/Softmax")):
         self.name = name
         self.pb   = pb
         self.vars = vars
@@ -14,7 +14,10 @@ class TFTool:
         classes_   = ROOT.vector('string')()
         for var in self.varorder: variables_.push_back( var ) 
         for cla in self.classes : classes_.push_back(cla)
-        self.worker = ROOT.TensorFlowInterface(pb, variables_, classes_)
+        dummy1   = ROOT.vector('double')()
+        dummy2   = ROOT.vector('double')()
+
+        self.worker = ROOT.TensorFlowInterface(pb, variables_, classes_, dummy1, dummy2, outputNodename)
         self.outbranches = [ '%s_%s'%(x,self.name) for x in self.classes]
         
 

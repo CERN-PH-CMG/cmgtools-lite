@@ -1,12 +1,13 @@
 #include "CMGTools/TTHAnalysis/interface/TensorFlowInterface.h"
-
+#include<string.h>
 #include <boost/algorithm/string.hpp> // boost::contains()
 
 TensorFlowInterface::TensorFlowInterface(const std::string & mvaFileName,
                                          const std::vector<std::string> & mvaInputVariables,
                                          const std::vector<std::string> classes,
                                          const std::vector<double> & mvaInputVariables_mean,
-                                         const std::vector<double> & mvaInputVariables_var)
+                                         const std::vector<double> & mvaInputVariables_var,
+					 std::string outputLayerName)
   : mvaFileName_(mvaFileName)
   , graphDef_(nullptr)
   , session_(nullptr)
@@ -21,17 +22,15 @@ TensorFlowInterface::TensorFlowInterface(const std::string & mvaFileName,
   // loading the model
   tensorflow::SessionOptions options;
   tensorflow::setThreading(options, 1, "no_threads");
-
   graphDef_ = tensorflow::loadGraphDef(mvaFileName_);
   session_ = tensorflow::createSession(graphDef_);
-  std::cout << "Loaded: " << mvaFileName_ << '\n';
 
   // getting elements to evaluate -- the number of the input/output layer deppends of how the model was exported
   int shape_variables = 0;
   for(int idx_node = 0; idx_node < graphDef_->node_size(); idx_node++)
   {
     input_layer_name  = graphDef_->node(idx_node).name();
-    const bool is_input = boost::contains(input_layer_name, "_input");
+    const bool is_input = boost::contains(input_layer_name, "_input") || (input_layer_name == "x");
     if(is_input)
     {
       n_input_layer = idx_node;
@@ -67,7 +66,7 @@ TensorFlowInterface::TensorFlowInterface(const std::string & mvaFileName,
   for (int idx_node = 0; idx_node < graphDef_->node_size(); idx_node++)
   {
     output_layer_name  = graphDef_->node(idx_node).name();
-    const bool is_output = boost::contains(output_layer_name, "/Softmax");
+    const bool is_output = (output_layer_name == outputLayerName);
     if(is_output)
     {
       n_output_layer = idx_node;
