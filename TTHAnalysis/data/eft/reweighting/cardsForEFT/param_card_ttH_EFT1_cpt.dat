@@ -14,7 +14,7 @@
 Block dim6 
     1 1.000000e+03 # Lambda 
     2 0 # ctp 
-    6 0 # cpt 
+    6 1 # cpt 
     8 0 # cptb 
    16 0 # ctG 
 

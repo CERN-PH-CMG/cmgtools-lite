@@ -14,7 +14,7 @@
 Block dim6 
     1 1.000000e+03 # Lambda 
     2 {ctp} # ctp 
-    6 {cptb} # cpt 
+    6 {cpt} # cpt 
     8 {cptb} # cptb 
    16 {ctG} # ctG 
 
