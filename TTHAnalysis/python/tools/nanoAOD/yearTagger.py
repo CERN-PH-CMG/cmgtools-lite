@@ -12,11 +12,11 @@ class yearTagger( Module ):
     def initComponent(self, component):
         if hasattr(component, 'year'):
             self._year = component.year
-        elif ("Autumn18" in component.dataset) or ("Run2018" in component.dataset):
+        elif ("Autumn18" in component.dataset) or ("2018" in component.dataset):
             self._year = 2018
-        elif ("Fall17" in component.dataset) or ("Run2017" in component.dataset):
+        elif ("Fall17" in component.dataset) or ("2017" in component.dataset):
             self._year = 2017
-        elif ("Summer16" in component.dataset) or ("Run2016" in component.dataset):
+        elif ("Summer16" in component.dataset) or ("2016" in component.dataset):
             self._year = 2016
         else:
             raise RuntimeError("Can't detect year scenario for %s, %s" % (component.name, component.dataset))
