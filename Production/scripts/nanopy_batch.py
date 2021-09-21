@@ -10,9 +10,55 @@ from PhysicsTools.HeppyCore.utils.batchmanager import BatchManager
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import split
 
-def batchScriptCERN( runningMode, jobDir, remoteDir=''):
+def batchScriptCERN( runningMode, jobDir, remoteDir='',tmpdir='/tmp/'):
+
    if runningMode == "LXPLUS-CONDOR-TRANSFER": 
        raise RuntimeError("running mode not supported")
+   elif runningMode == 'IFCA':
+      init = """
+pushd $CMSSW_BASE/src
+echo '==== copying job dir to worker ===='
+eval $(scram runtime -sh)
+popd
+echo
+mkdir cache
+export TMPDIR=$PWD/cache
+mkdir job
+cd job
+echo '==== copying job dir to worker ===='
+cp ../* . 
+"""
+      dirCopy = """
+mv Loop/* .
+if [ $? -ne 0 ]; then
+   echo 'ERROR: problem copying job directory back'
+else
+   echo 'job directory copy succeeded'
+fi"""
+
+   elif runningMode == 'OVD':
+       init = """
+pushd $CMSSW_BASE/src
+echo '==== copying job dir to worker ===='
+eval $(scram runtime -sh)
+popd
+echo
+mkdir cache
+export TMPDIR=%s/$USER/`shuf -zer -n20  {A..Z} {a..z} {0..9}`/
+mkdir -p $TMPDIR
+mkdir ${TMPDIR}/job
+echo '==== copying job dir to worker ===='
+cp -r * ${TMPDIR}/job/.
+cd ${TMPDIR}/job
+
+"""%tmpdir
+
+       dirCopy = """
+mv Loop/* ../.
+# cleanup
+rm -r $TMPDIR
+"""
+
    else: # shared filesystem
        init = """
 pushd $CMSSW_BASE/src
@@ -34,7 +80,7 @@ if [ $? -ne 0 ]; then
 else
    echo 'job directory copy succeeded'
 fi"""
-
+       
    if remoteDir=='':
       cpCmd=dirCopy
    elif  remoteDir.startswith("root://eoscms.cern.ch//eos/cms/store/") or remoteDir.startswith("root://eosuser.cern.ch//eos/user/"):
@@ -54,18 +100,63 @@ do
       echo "Stageout try $try"
       echo "eos mkdir {srm}"
       eos mkdir {srm}
-      echo "eos cp `pwd`/$f {srm}/${{ff}}_{idx}.root"
-      eos cp `pwd`/$f {srm}/${{ff}}_{idx}.root
+      echo "eos cp `pwd`/$f {srm}/${{ff}}.root"
+      eos cp `pwd`/$f {srm}/${{ff}}.root
       if [ $? -ne 0 ]; then
          echo "ERROR: remote copy failed for file $ff"
          continue
       fi
       echo "remote copy succeeded"
-      remsize=$(eos find --size {srm}/${{ff}}_{idx}.root | cut -d= -f3) 
+      remsize=$(eos find --size {srm}/${{ff}}.root | cut -d= -f3) 
       locsize=$(cat `pwd`/$f | wc -c)
       ok=$(($remsize==$locsize))
       if [ $ok -ne 1 ]; then
          echo "Problem with copy (file sizes don't match), will retry in 30s"
+         sleep 30
+         continue
+      fi
+      echo "everything ok"
+      rm $f
+      echo {addr}/{srm}/${{ff}}.root > $f.url
+      break
+   done
+done
+echo
+echo '==== sending local files back ===='
+echo
+{dirCopy}
+""".format(
+          srm = (""+remoteDir+jobDir[ jobDir.rfind("/") : (jobDir.find("_Chunk") if '_Chunk' in jobDir else len(jobDir)) ]).replace("root://eoscms.cern.ch/","").replace("root://eosuser.cern.ch/",""),
+          dirCopy = dirCopy,
+          addr="root://eoscms.cern.ch" if remoteDir.startswith("root://eoscms.cern.ch") else "root://t3dcachedb.psi.ch:1094/" if remoteDir.startswith('/pnfs/psi.ch/') else  "root://eosuser.cern.ch",
+          eosenv = "export EOS_MGM_URL=root://eosuser.cern.ch" if not remoteDir.startswith('root://eoscms.cern.ch/') else ''
+          )
+
+   elif remoteDir.startswith("/pnfs/psi.ch/"):  # T3 @ PSI
+       cpCmd="""echo '==== sending root files to remote dir ===='
+echo
+for f in Loop/*.root
+do
+   ff=`echo $f | cut -d/ -f2`
+   echo $f
+   echo $ff
+   export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
+   source $VO_CMS_SW_DIR/cmsset_default.sh
+   xrdfs {addr} mkdir {srm}
+   for try in `seq 1 3`; do
+      echo "Stageout try $try"
+      echo "xrdcp -f $f {addr}/{srm}/${{ff}}_{idx}.root"
+      xrdcp -f $f {addr}/{srm}/${{ff}}_{idx}.root
+      if [ $? -ne 0 ]; then
+         echo "ERROR: remote copy failed for file $ff"
+         continue
+      fi
+      echo "remote copy succeeded"
+      remsize=$(xrdfs {addr} query checksum {srm}/${{ff}}_{idx}.root | cut -d" "  -f2) 
+      locsize=$(adler32 `pwd`/$f)
+      ok=$(($remsize==$locsize))
+      if [ $ok -ne 1 ]; then
+         echo "Problem with copy (checksums dont match :( ), will retry in 30s"
          sleep 30
          continue
       fi
@@ -81,11 +172,11 @@ echo
 {dirCopy}
 """.format(
           idx = jobDir[jobDir.find("_Chunk")+6:].strip("/") if '_Chunk' in jobDir else 'all',
-          srm = (""+remoteDir+jobDir[ jobDir.rfind("/") : (jobDir.find("_Chunk") if '_Chunk' in jobDir else len(jobDir)) ]).replace("root://eoscms.cern.ch/","").replace("root://eosuser.cern.ch/",""),
+          srm = (""+remoteDir+jobDir[ jobDir.rfind("/") : (jobDir.find("_Chunk") if '_Chunk' in jobDir else len(jobDir)) ]),
           dirCopy = dirCopy,
-          addr="root://eoscms.cern.ch" if remoteDir.startswith("root://eoscms.cern.ch") else "root://eosuser.cern.ch",
-          eosenv = "export EOS_MGM_URL=root://eosuser.cern.ch" if not remoteDir.startswith('root://eoscms.cern.ch/') else ''
+          addr="root://t3dcachedb.psi.ch:1094/",
           )
+
    else:
        print("chosen location not supported yet: "+ remoteDir)
        print('path must start with /store/')
@@ -123,8 +214,8 @@ class MyBatchManager( BatchManager ):
        scriptFile = open(scriptFileName,'w')
        storeDir = self.remoteOutputDir_.replace('/castor/cern.ch/cms','')
        self.mode = self.RunningMode(options.batch)
-       if self.mode in ('LXPLUS-LSF', 'LXPLUS-CONDOR-SIMPLE', 'LXPLUS-CONDOR-TRANSFER'):
-           scriptFile.write( batchScriptCERN( self.mode, jobDir, storeDir ) )
+       if self.mode in ('LXPLUS-LSF', 'LXPLUS-CONDOR-SIMPLE', 'LXPLUS-CONDOR-TRANSFER','IFCA','OVD'):
+           scriptFile.write( batchScriptCERN( self.mode, jobDir, storeDir, self.tmpdir ) )
        else: raise RuntimeError("Unsupported mode %s" % self.mode)
        scriptFile.close()
        os.system('chmod +x %s' % scriptFileName)

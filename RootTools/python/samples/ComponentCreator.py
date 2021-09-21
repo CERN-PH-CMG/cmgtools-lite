@@ -56,7 +56,7 @@ class ComponentCreator(object):
 
          return component
 
-    def makeMyPrivateMCComponent(self,name,dataset,user,pattern,dbsInstance, xSec=1,useAAA=False):
+    def makeMyPrivateMCComponent(self,name,dataset,user,pattern,dbsInstance, xSec=1,useAAA=False,fracNegWeights=None):
 
         component = cfg.MCComponent(
             dataset=dataset,
@@ -68,6 +68,7 @@ class ComponentCreator(object):
             effCorrFactor = 1,
         )
         component.splitFactor = 100
+        component.fracNegWeights = fracNegWeights
 
         return component
 
