@@ -35,6 +35,12 @@ class ttHPrescalingLepSkimmer( Module ):
 
     def analyze(self, event):
         if self.prescaleFactor == 1:
+            if self.minLeptons > 0:
+                muons = filter(self.muonSel, Collection(event, 'Muon'))
+                electrons = filter(self.electronSel, Collection(event, 'Electron'))
+                leps = muons + electrons
+                if len(leps) < self.minLeptonsNoPrescale:
+                    return False
             self.wrappedOutputTree.fillBranch(self.label, self.prescaleFactor)
             return True
 
