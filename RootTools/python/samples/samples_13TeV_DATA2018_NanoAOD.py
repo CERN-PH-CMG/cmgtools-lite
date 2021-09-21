@@ -4,7 +4,7 @@ kreator = ComponentCreator()
 
 # ----------------------------- 2018 pp run  ----------------------------------------
 
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/ReReco/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
+json = '/work/sesanche/FRs/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/data/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
 
 # ----------------------------- Run2018A 17Sep2018 ----------------------------------------
 JetHT_Run2018A_14Dec2018 = kreator.makeDataComponent("JetHT_Run2018A_14Dec2018", "/JetHT/Run2018A-Nano14Dec2018-v1/NANOAOD", "CMS", ".*root", json)
@@ -88,13 +88,13 @@ dataSamples_Run2018C_1June2019 = [JetHT_Run2018C_1June2019, MET_Run2018C_1June20
 # ----------------------------- Run2018D PromptReco  ----------------------------------------
 JetHT_Run2018D_1June2019 = kreator.makeDataComponent("JetHT_Run2018D_1June2019", "/JetHT/Run2018D-Nano1June2019_ver2-v1/NANOAOD", "CMS", ".*root", json)
 MET_Run2018D_1June2019 = kreator.makeDataComponent("MET_Run2018D_1June2019", "/MET/Run2018D-Nano1June2019_ver2-v1/NANOAOD", "CMS", ".*root", json)
-EGamma_Run2018D_1June2019 = kreator.makeDataComponent("EGamma_Run2018D_1June2019", "/EGamma/Run2018D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
+#EGamma_Run2018D_1June2019 = kreator.makeDataComponent("EGamma_Run2018D_1June2019", "/EGamma/Run2018D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
 SingleMuon_Run2018D_1June2019 = kreator.makeDataComponent("SingleMuon_Run2018D_1June2019", "/SingleMuon/Run2018D-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
 DoubleMuon_Run2018D_1June2019 = kreator.makeDataComponent("DoubleMuon_Run2018D_1June2019", "/DoubleMuon/Run2018D-Nano1June2019_ver2-v1/NANOAOD", "CMS", ".*root", json)
 MuonEG_Run2018D_1June2019 = kreator.makeDataComponent("MuonEG_Run2018D_1June2019", "/MuonEG/Run2018D-Nano1June2019_ver2-v1/NANOAOD", "CMS", ".*root", json)
 Tau_Run2018D_1June2019 = kreator.makeDataComponent("Tau_Run2018D_1June2019", "/Tau/Run2018D-Nano1June2019_ver2-v1/NANOAOD", "CMS", ".*root", json)
 
-dataSamples_Run2018D_1June2019 = [JetHT_Run2018D_1June2019, MET_Run2018D_1June2019, EGamma_Run2018D_1June2019, SingleMuon_Run2018D_1June2019, DoubleMuon_Run2018D_1June2019, MuonEG_Run2018D_1June2019, Tau_Run2018D_1June2019]
+dataSamples_Run2018D_1June2019 = [JetHT_Run2018D_1June2019, MET_Run2018D_1June2019, SingleMuon_Run2018D_1June2019, DoubleMuon_Run2018D_1June2019, MuonEG_Run2018D_1June2019, Tau_Run2018D_1June2019] # EGamma_Run2018D_1June2019
 
 dataSamples_1June2019 = dataSamples_Run2018A_1June2019 + dataSamples_Run2018B_1June2019 + dataSamples_Run2018C_1June2019 + dataSamples_Run2018D_1June2019
 
@@ -144,7 +144,57 @@ dataSamples_Run2018D_25Oct2019 = [JetHT_Run2018D_25Oct2019, MET_Run2018D_25Oct20
 
 dataSamples_25Oct2019 = dataSamples_Run2018A_25Oct2019 + dataSamples_Run2018B_25Oct2019 + dataSamples_Run2018C_25Oct2019 + dataSamples_Run2018D_25Oct2019
 
-dataSamples = dataSamples_14Dec2018 + dataSamples_1June2019 + dataSamples_25Oct2019
+
+
+# ----------------------------- Run2018A UL2018 NanoAODv9 ----------------------------------------
+#JetHT_Run2018A_UL18 = kreator.makeDataComponent("JetHT_Run2018A_UL18", "/JetHT/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#MET_Run2018A_UL18 = kreator.makeDataComponent("MET_Run2018A_UL18", "/MET/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+EGamma_Run2018A_UL18 = kreator.makeDataComponent("EGamma_Run2018A_UL18", "/EGamma/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2018A_UL18 = kreator.makeDataComponent("SingleMuon_Run2018A_UL18", "/SingleMuon/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2018A_UL18 = kreator.makeDataComponent("DoubleMuon_Run2018A_UL18", "/DoubleMuon/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2018A_UL18 = kreator.makeDataComponent("MuonEG_Run2018A_UL18", "/MuonEG/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#Tau_Run2018A_UL18 = kreator.makeDataComponent("Tau_Run2018A_UL18", "/Tau/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2018A_UL18 = [EGamma_Run2018A_UL18, SingleMuon_Run2018A_UL18, DoubleMuon_Run2018A_UL18, MuonEG_Run2018A_UL18] # JetHT_Run2018A_UL18, MET_Run2018A_UL18 ,, Tau_Run2018A_UL18
+
+# ----------------------------- Run2018B UL2018 NanoAODv9 ----------------------------------------
+#JetHT_Run2018B_UL18 = kreator.makeDataComponent("JetHT_Run2018B_UL18", "/JetHT/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#MET_Run2018B_UL18 = kreator.makeDataComponent("MET_Run2018B_UL18", "/MET/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+EGamma_Run2018B_UL18 = kreator.makeDataComponent("EGamma_Run2018B_UL18", "/EGamma/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2018B_UL18 = kreator.makeDataComponent("SingleMuon_Run2018B_UL18", "/SingleMuon/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2018B_UL18 = kreator.makeDataComponent("DoubleMuon_Run2018B_UL18", "/DoubleMuon/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2018B_UL18 = kreator.makeDataComponent("MuonEG_Run2018B_UL18", "/MuonEG/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#Tau_Run2018B_UL18 = kreator.makeDataComponent("Tau_Run2018B_UL18", "/Tau/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2018B_UL18 = [EGamma_Run2018B_UL18, SingleMuon_Run2018B_UL18, DoubleMuon_Run2018B_UL18, MuonEG_Run2018B_UL18] # JetHT_Run2018B_UL18, MET_Run2018B_UL18, , Tau_Run2018B_UL81
+
+# ----------------------------- Run2018C UL2018 NanoAODv9 ----------------------------------------
+#JetHT_Run2018C_UL18 = kreator.makeDataComponent("JetHT_Run2018C_UL18", "/JetHT/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#MET_Run2018C_UL18 = kreator.makeDataComponent("MET_Run2018C_UL18", "/MET/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+EGamma_Run2018C_UL18 = kreator.makeDataComponent("EGamma_Run2018C_UL18", "/EGamma/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+SingleMuon_Run2018C_UL18 = kreator.makeDataComponent("SingleMuon_Run2018C_UL18", "/SingleMuon/Run2018C-UL2018_MiniAODv2_NanoAODv9-v2/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2018C_UL18 = kreator.makeDataComponent("DoubleMuon_Run2018C_UL18", "/DoubleMuon/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2018C_UL18 = kreator.makeDataComponent("MuonEG_Run2018C_UL18", "/MuonEG/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#Tau_Run2018C_UL18 = kreator.makeDataComponent("Tau_Run2018C_UL18", "/Tau/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2018C_UL18 = [EGamma_Run2018C_UL18, DoubleMuon_Run2018C_UL18, MuonEG_Run2018C_UL18, SingleMuon_Run2018C_UL18] # JetHT_Run2018C_UL18, MET_Run2018C_UL18, , , Tau_Run2018C_UL18
+
+# ----------------------------- Run2018D UL2018 NanoAODv9  ----------------------------------------
+#JetHT_Run2018D_UL18 = kreator.makeDataComponent("JetHT_Run2018D_UL18", "/JetHT/Run2018D-UL2018_MiniAODv2_NanoAODv9_ver2-v1/NANOAOD", "CMS", ".*root", json)
+MET_Run2018D_UL18 = kreator.makeDataComponent("MET_Run2018D_UL18", "/MET/Run2018D-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+EGamma_Run2018D_UL18 = kreator.makeDataComponent("EGamma_Run2018D_UL18", "/EGamma/Run2018D-UL2018_MiniAODv2_NanoAODv9-v3/NANOAOD", "CMS", ".*root", json) 
+SingleMuon_Run2018D_UL18 = kreator.makeDataComponent("SingleMuon_Run2018D_UL18", "/SingleMuon/Run2018D-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+DoubleMuon_Run2018D_UL18 = kreator.makeDataComponent("DoubleMuon_Run2018D_UL18", "/DoubleMuon/Run2018D-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+MuonEG_Run2018D_UL18 = kreator.makeDataComponent("MuonEG_Run2018D_UL18", "/MuonEG/Run2018D-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+#Tau_Run2018D_UL18 = kreator.makeDataComponent("Tau_Run2018D_UL18", "/Tau/Run2018D-UL2018_MiniAODv2_NanoAODv9_ver2-v1/NANOAOD", "CMS", ".*root", json)
+
+dataSamples_Run2018D_UL18 = [MET_Run2018D_UL18, SingleMuon_Run2018D_UL18, DoubleMuon_Run2018D_UL18, MuonEG_Run2018D_UL18, EGamma_Run2018D_UL18] # JetHT_Run2018D_UL18,  , , Tau_Run2018D_UL81
+
+dataSamples_UL18 = dataSamples_Run2018A_UL18 + dataSamples_Run2018B_UL18 + dataSamples_Run2018C_UL18 + dataSamples_Run2018D_UL18
+
+
+
+dataSamples = dataSamples_14Dec2018 + dataSamples_1June2019 + dataSamples_25Oct2019 + dataSamples_UL18
 
 samples = dataSamples
 
