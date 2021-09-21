@@ -98,7 +98,7 @@ parser.add_option("--maxruntime", "--time",  dest="maxruntime", type="int", defa
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 parser.add_option("--sub", "--subfile", dest="subfile", type="string", default="condor.sub", help="Subfile for condor (default: condor.sub)");
-parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo, uclouvain)");
+parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo, uclouvain[|def|fast])");
 parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new version of treeReAnalyzer");
@@ -395,15 +395,20 @@ if options.queue:
     super = ""
     theoutput = args[1]
     if options.env == "psi":
-        super  = "qsub -q {queue} -N friender".format(queue = options.queue)
-        runner = "psibatch_runner.sh"
+        super  = "sbatch -p {queue} -J {name}".format(queue = options.queue, name=options.name)
+        runner = "lxbatch_runner.sh"
     elif options.env == "oviedo":
         super  = "qsub -q {queue} -N {name}".format(queue = options.queue, name=options.name)
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
-    elif options.env == "uclouvain":
+    elif "uclouvain" in options.env:
         options.subfile="slurm_submitter_of_stuff_"
-        super = "sbatch --partition cp3 "
+        if "def" in options.env:
+            super = "sbatch --partition Def --qos=normal "
+        elif "fast" in options.env:
+            super = "sbatch --partition cp3-fast --qos=cp3 "
+        else:
+            super = "sbatch --partition cp3 --qos=cp3 "
     else: # Use lxbatch by default
         runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
@@ -478,11 +483,11 @@ if options.queue:
                 cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             elif options.env == "oviedo":
                 cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post} ".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-            if options.queue == "cp3" and options.env == "uclouvain":
+            if options.queue == "cp3" and ("uclouvain" in options.env):
                 full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
-                subfile = open(full_subfile, "w")
+                subfile = open(full_subfile, "w") 
                 subfile.write("""#! /bin/bash
-#SBATCH --ntasks=8
+#SBATCH 
 
 """)
 
@@ -504,11 +509,11 @@ wait
                 cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
             elif options.env == "oviedo":
                 cmd = "{super} {base} -d {data} {post} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-            if options.queue == "cp3" and options.env == "uclouvain":
+            if options.queue == "cp3" and ("uclouvain" in options.env):
                 full_subfile = "{subfile}{data}_{chunk}.sh".format(subfile=options.subfile, data=name, chunk=chunk)
-                subfile = open(full_subfile, "w")
+                subfile = open(full_subfile, "w")#--ntasks=2
                 subfile.write("""#! /bin/bash
-#SBATCH --ntasks=8
+#SBATCH 
 
 """)
                 dacmd = "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
@@ -605,6 +610,9 @@ def _runIt(myargs):
 def _runItNano(myargs):
     (name,fin,ofout,data,range,chunk,fineSplit) = myargs
     timer = ROOT.TStopwatch()
+    inpsibatch= 'SLURMD_NODENAME' in os.environ and 't3wn' in os.environ['SLURMD_NODENAME'] and ofout.startswith('/pnfs/psi.ch/')
+    if inpsibatch:
+        ofout = '/scratch/'+ofout
     command = ["nano_postproc.py", "--friend", os.path.dirname(ofout), "--postfix", os.path.basename(ofout)[len(name):-len(".root")] ]
     for i in options.imports:  command += [ "-I", i[0], i[1] ]
     command += [ "-z", options.compression ]
@@ -623,6 +631,32 @@ def _runItNano(myargs):
     subprocess.call(command)
     time = timer.RealTime()
     print "=== %s done (%d entries starting from %d, %.0f s, %.0f e/s, %s) ====" % ( name, range[1] - range[0], range[0], time, (range[1] - range[0]/time), ofout )
+    if inpsibatch:
+        print "=== Now transfering to pnfs ==="
+        os.system('''
+        for try in `seq 1 3`; do
+        echo "Stageout try $try"
+        xrdcp -f {fi} root://t3dcachedb.psi.ch:1094/{fo}
+        if [ $? -ne 0 ]; then
+        echo "ERROR: remote copy failed for file ${fo}"
+        continue
+        fi 
+        echo "remote copy succeeded"
+        remsize=$(cat {fo} | wc -c)
+        locsize=$(cat {fi} | wc -c)
+        ok=$(($remsize==$locsize))
+        if [ $ok -ne 1 ]; then
+        echo "Problem with copy (file sizes don't match), will retry in 30s"
+        sleep 30
+        continue
+          fi
+        echo "everything ok"
+        echo "Removing {fi}"
+        rm {fi}
+        break
+        done
+    '''.format(fi=ofout, fo=ofout[9:]))
+
     return (name,(range[1] - range[0],time))
     
 _run = _runItNano if isNano else _runIt
