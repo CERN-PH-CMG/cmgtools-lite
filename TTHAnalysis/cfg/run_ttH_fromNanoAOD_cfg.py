@@ -3,6 +3,9 @@ from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 def byCompName(components, regexps):
@@ -25,59 +28,61 @@ if preprocessor:
         from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import dataSamples_17Jul2018 as allData
 else:
     if year == 2018:
-        from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import dataSamples_25Oct2019 as allData
+        from CMGTools.RootTools.samples.samples_13TeV_RunIISummer20UL18NanoAODv9 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import dataSamples_UL18 as allData
     elif year == 2017:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import dataSamples_25Oct2019 as allData
     elif year == 2016:
         from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import dataSamples_25Oct2019 as allData
-mcSamples_=[]
-autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
+
+autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it",site="T2_CH_CSCS") # must be done before mergeExtensions
 mcSamples_, _ = mergeExtensions(mcSamples_)
 
 # Triggers
-# if year == 2018:
-#     from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
-# elif year == 2017:
-#     from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
-#     triggers["FR_1mu_iso"] = [] # they probably existed but we didn't use them in 2017
-# elif year == 2016:
-#     from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
-#     triggers["FR_1mu_noiso_smpd"] = [] 
+if year == 2018:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
+elif year == 2017:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
+    triggers["FR_1mu_iso"] = [] # they probably existed but we didn't use them in 2017
+elif year == 2016:
+    from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
+    triggers["FR_1mu_noiso_smpd"] = [] 
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_modules import triggerGroups_dict
 
 DatasetsAndTriggers = []
 if analysis == "main":
-    mcSamples = byCompName(mcSamples_, ["%s(|_PS)$"%dset for dset in [
-        # single boson
-        "WJetsToLNu_LO", "DYJetsToLL_M10to50_LO", "DYJetsToLL_M50",
-        # ttbar + single top + tW
-        "TTJets_SingleLeptonFromT", "TTJets_SingleLeptonFromTbar", "TTJets_DiLepton",
-        "T_sch_lep", "T_tch", "TBar_tch", "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
-        # conversions
-        "TTGJets", "TGJets_lep", "WGToLNuG", "ZGTo2LG",
-        # ttV
-        "TTWToLNu_fxfx", "TTZToLLNuNu_amc", "TTZToLLNuNu_m1to10",
-        # ttH + tHq/tHW
-        "TTHnobb_fxfx", "THQ_ctcvcp", "THW_ctcvcp", "TTH_ctcvcp",
-        # top + V rare processes
-        "TZQToLL", "tWll", "TTTT", "TTWW",
-        # diboson + DPS + WWss
-        "WWTo2L2Nu", "WZTo3LNu_pow", "WZTo3LNu_fxfx", "ZZTo4L", "WW_DPS", "WWTo2L2Nu_DPS", "WpWpJJ",
-        # triboson
-        "WWW", "WWW_ll", "WWZ", "WZG", "WZZ", "ZZZ",
-        # other Higgs processes
-        "GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
-    ]])
+    mcSamples = mcSamples_  # byCompName(mcSamples_, ["TTHnobb_fxfx_UL"]) #%s(|_PS)$"%dset for dset in [
+#        "TTSemi_pow"
+#         # single boson
+#         #"WJetsToLNu_LO", "DYJetsToLL_M10to50_LO", "DYJetsToLL_M50",
+#         # ttbar + single top + tW
+#         #"TTJets_SingleLeptonFromT", "TTJets_SingleLeptonFromTbar", "TTJets_DiLepton",
+#         #"T_sch_lep", "T_tch", "TBar_tch", "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
+#         # conversions
+#         #"TTGJets", "TGJets_lep", "WGToLNuG", "ZGTo2LG",
+#         # ttV
+#         #"TTWToLNu_fxfx", "TTZToLLNuNu_amc", "TTZToLLNuNu_m1to10",
+#         # ttH + tHq/tHW
+#         #"TTHnobb_fxfx", "THQ_ctcvcp", "THW_ctcvcp", "TTH_ctcvcp",
+#         # top + V rare processes
+#         #"TZQToLL", "tWll", "TTTT", "TTWW",
+#         # diboson + DPS + WWss
+#         #"WWTo2L2Nu", "WZTo3LNu_pow", "WZTo3LNu_fxfx", "ZZTo4L", "WW_DPS", "WWTo2L2Nu_DPS", "WpWpJJ",
+#         # triboson
+#         #"WWW", "WWW_ll", "WWZ", "WZG", "WZZ", "ZZZ",
+#         # other Higgs processes
+#         #"GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
+#     ]])
     DatasetsAndTriggers.append( ("DoubleMuon", triggerGroups_dict["Trigger_2m"][year] + triggerGroups_dict["Trigger_3m"][year]) )
     DatasetsAndTriggers.append( ("EGamma",     triggerGroups_dict["Trigger_2e"][year] + triggerGroups_dict["Trigger_3e"][year] + triggerGroups_dict["Trigger_1e"][year]) if year == 2018 else
                                 ("DoubleEG",   triggerGroups_dict["Trigger_2e"][year] + triggerGroups_dict["Trigger_3e"][year]) )
     DatasetsAndTriggers.append( ("MuonEG",     triggerGroups_dict["Trigger_em"][year] + triggerGroups_dict["Trigger_mee"][year] + triggerGroups_dict["Trigger_mme"][year]) )
     DatasetsAndTriggers.append( ("SingleMuon", triggerGroups_dict["Trigger_1m"][year]) )
     DatasetsAndTriggers.append( ("SingleElectron", triggerGroups_dict["Trigger_1e"][year]) if year != 2018 else (None,None) )
+
 elif analysis == "frqcd":
     mcSamples = byCompName(mcSamples_, [
         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
@@ -115,6 +120,7 @@ if getHeppyOption('selectComponents'):
         selectedComponents = dataSamples
     else:
         selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
+print selectedComponents
 autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it")
 if year==2018:
     configureSplittingFromTime(byCompName(mcSamples,['^(?!(TTJets_Single|T_|TBar_)).*']),150 if preprocessor else 10,12)
@@ -125,6 +131,7 @@ else: # rerunning deepFlavor can take up to twice the time, some samples take up
     configureSplittingFromTime(byCompName(mcSamples,['^(TTJets_Single|T_|TBar_).*']),150 if preprocessor else 10,12)
     configureSplittingFromTime(dataSamples,100 if preprocessor else 5,12)
     configureSplittingFromTime(byCompName(dataSamples,['Single']),50 if preprocessor else 5,12)
+    configureSplittingFromTime(mcSamples,300,12)
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
 # create and set preprocessor if requested
@@ -227,13 +234,14 @@ modules = ttH_sequence_step1
 cut = ttH_skim_cut
 compression = "ZLIB:3" #"LZ4:4" #"LZMA:9"
 branchsel_in = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/tools/nanoAOD/branchsel_in.txt"
-branchsel_out = None
+branchsel_out = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/tools/nanoAOD/branchsel_out.txt"
 
 if analysis == "frqcd":
     modules = ttH_sequence_step1_FR
+    print modules
     cut = ttH_skim_cut_FR
     compression = "LZMA:9"
-    branchsel_out = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/plotter/ttH-multilepton/qcd1l-skim-ec.txt"
+    branchsel_out = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/plotter/ttH-multilepton/lepton-fr/qcd1l-skim-ec.txt"
 
 POSTPROCESSOR = PostProcessor(None, [], modules = modules,
         cut = cut, prefetch = True, longTermCache = False,
