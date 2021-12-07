@@ -14,5 +14,6 @@ keep run
 keep event
 keep xsec
 keep year
+keep suberaId
 keep puW*
 keep prescaleFromSkim
