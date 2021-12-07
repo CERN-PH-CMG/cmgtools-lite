@@ -4,7 +4,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from CMGTools.TTHAnalysis.tools.collectionSkimmer import CollectionSkimmer
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
 import ROOT, os
-from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
+from CMGTools.TTHAnalysis.tools.nanoAOD.constants import _btagWPs
 
 class fastCombinedObjectRecleaner(Module):
     def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,jetPtsFwd,btagL_thr,btagM_thr,jetCollection='Jet',jetBTag='btagDeepFlavB',tauCollection='Tau',isMC=None, 
@@ -37,7 +37,7 @@ class fastCombinedObjectRecleaner(Module):
         self.vars_leptons = ["pdgId",'jetIdx','pt']
         self.vars_taus = ["pt"]
         self.vars_taus_int = ['jetIdx']
-        self.vars_taus_uchar = ['idMVAoldDMdR032017v2','idDeepTau2017v2p1VSjet']
+        self.vars_taus_uchar = ['idDeepTau2017v2p1VSjet']
         self.vars_jets = [("pt","pt_nom") if self.isMC and len(self.variations) else 'pt',"btagDeepB","qgl",'btagDeepFlavB'] + [ 'pt_%s%s'%(x,y) for x in self.variations for y in ["Up","Down"]] #"btagCSVV2",,"btagDeepC"]#"btagCSV","btagDeepCSV",,"btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1"] # FIXME recover
         self.vars_jets_int = (["hadronFlavour"] if self.isMC else [])
         self.vars_jets_nooutput = []
@@ -58,12 +58,12 @@ class fastCombinedObjectRecleaner(Module):
         self.branches = [var+self.label for var in self.outmasses]
         self.branches.extend([(var+self.label,_type) for var,_type in self.outjetvars])
         self.branches += [("LepGood_conePt","F",100,"nLepGood")]
-
         self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=10, saveSelectedIndices=True,padSelectedIndicesWith=0)
         self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=10, saveTagForAll=True)
         self._helper_taus = CollectionSkimmer("TauSel"+self.label, self.tauc, floats=self.vars+self.vars_taus, ints=self.vars_taus_int, uchars=self.vars_taus_uchar, maxSize=10)
         self._helper_jets = CollectionSkimmer("%sSel"%self.jc+self.label, self.jc, floats=self.vars+self.vars_jets, ints=self.vars_jets_int, maxSize=20)
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
+
 
         if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ recleaner worker module"
@@ -119,8 +119,9 @@ class fastCombinedObjectRecleaner(Module):
 
     def analyze(self, event):
         # Init
-        wpL = _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1]
-        wpM = _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1]
+        suberastring='APV' if (hasattr(event, 'suberaId') and event.suberaId) == 1 else ''
+        wpL = _btagWPs["DeepFlav_UL%d%s_%s"%(event.year, suberastring,"L")][1]
+        wpM = _btagWPs["DeepFlav_UL%d%s_%s"%(event.year, suberastring,"M")][1]
         if self._ttreereaderversion != event._tree._ttreereaderversion:
             for x in self._helpers: x.initInputTree(event._tree)
             self.initReaders(event._tree)

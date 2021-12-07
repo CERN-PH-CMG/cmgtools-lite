@@ -9,11 +9,11 @@ class autoPuWeightModule( componentDependentModuleWrapper ):
     def initComponent(self, component):
         if component.isData:
             self._worker = None
-        elif "Fall17" in component.dataset or '2017' in component.dataset:
+        elif "Fall17" in component.dataset or 'UL17' in component.dataset:
             self._worker = self._w2017()
-        elif "Autumn18" in component.dataset  or '2018' in component.dataset:
+        elif "Autumn18" in component.dataset  or 'UL18' in component.dataset:
             self._worker = self._w2018()
-        elif "Summer16" in component.dataset  or '2016' in component.dataset:
+        elif "Summer16" in component.dataset  or 'UL16' in component.dataset:
             self._worker = self._w2016()
         else:
             raise RuntimeError("Can't detect PU scenario for %s, %s" % (component.name, component.dataset))
