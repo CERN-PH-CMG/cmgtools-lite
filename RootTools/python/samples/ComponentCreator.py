@@ -18,6 +18,7 @@ class ComponentCreator(object):
          component.splitFactor = 100
          component.fracNegWeights = fracNegWeights
          component.dataset_entries = self.getPrimaryDatasetEntries(dataset,user,pattern,useAAA=useAAA)
+
          return component
 
     def makePrivateMCComponent(self,name,dataset,files,xSec=1, prefix="auto"):
@@ -56,7 +57,7 @@ class ComponentCreator(object):
 
          return component
 
-    def makeMyPrivateMCComponent(self,name,dataset,user,pattern,dbsInstance, xSec=1,useAAA=False,fracNegWeights=None):
+    def makeMyPrivateMCComponent(self,name,dataset,user,pattern,dbsInstance, xSec=1,useAAA=True,fracNegWeights=None):
 
         component = cfg.MCComponent(
             dataset=dataset,
