@@ -980,7 +980,7 @@ class PlotMaker:
                                   header=self._options.legendHeader if self._options.legendHeader else pspec.getOption("LegendHeader", ""),
                                   doWide=doWide, totalError=totalError, columns = pspec.getOption('LegendColumns',options.legendColumns))
                 if self._options.doOfficialCMS:
-                    CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" % self._options.lumi
+                    CMS_lumi.lumi_13TeV = "%s fb^{-1}" % self._options.lumi
                     CMS_lumi.extraText  = self._options.cmsprel
                     CMS_lumi.lumi_sqrtS = self._options.cmssqrtS
                     CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, -0.005 if doWide and doRatio else 0.01 if doWide else 0.05)
