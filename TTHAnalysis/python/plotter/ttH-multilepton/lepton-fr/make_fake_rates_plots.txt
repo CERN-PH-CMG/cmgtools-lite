@@ -33,7 +33,7 @@ lep_sip3d: LepGood_sip3d: 20,0,8 ; XTitle="Lepton SIP_{3D}", Legend='TR', Legend
 #@lep_mvaIdSpring16HZZ_log: LepGood_mvaIdSpring16HZZ: 20,-1,1; Logy, XTitle="Electron mvaIdSpring16HZZ", Legend='TL', LegendCutoff=1e-2
 lep_idVar: if3(abs(LepGood_pdgId)==13,LepGood_segmentComp,-0.05*log((1-LepGood_mvaFall17V2noIso)/(1+LepGood_mvaFall17V2noIso))): 20,0,1; Logy, XTitle="Segm comp/EleId unrol", Legend='TL', LegendCutoff=1e-2, MoreY=8
 #lep_idVarZ: if3(abs(LepGood_pdgId)==13,LepGood_segmentComp,LepGood_mvaFall17V2noIso): 20,0.9,1; Logy, XTitle="Segm comp/EleId", Legend='TL', LegendCutoff=1e-2
-lep_idVarOld: if3(abs(LepGood_pdgId)==13,LepGood_segmentComp,LepGood_mvaFall17V1noIso): 20,0,1; Logy, XTitle="Segm comp/EleId", Legend='TL', LegendCutoff=1e-2
+#lep_idVarOld: if3(abs(LepGood_pdgId)==13,LepGood_segmentComp,LepGood_mvaFall17V1noIso): 20,0,1; Logy, XTitle="Segm comp/EleId", Legend='TL', LegendCutoff=1e-2
 #lep_idVarUnroll: -0.5*log((1-LepGood_mvaFall17V2noIso)/(1+LepGood_mvaFall17V2noIso)) : 20,0,10; Logy, XTitle="Unrolled EleId", Legend='TL', LegendCutoff=1e-2
 
 #@lep_mvaIdSpring15_log: LepGood_mvaIdSpring15: 20,-1,1; Logy, XTitle="Electron mvaIdSpring15", Legend='TL', LegendCutoff=1e-2
