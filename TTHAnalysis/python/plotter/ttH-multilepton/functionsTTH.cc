@@ -830,11 +830,13 @@ int hashBasedRunPeriod2017(int isData, int run, int lumi, int event, int year){
   return std::distance(cumul.begin(),period)-1 + ( (year == 2017) ? 7 : 0 ) + ( (year == 2018) ? 12 : 0 );
 }
 
-float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, float scale_loose=1.0) {
-    float wploose[3]  = { 0.0614, 0.0521, 0.0494 };
-    float wpmedium[3] = { 0.3093, 0.3033, 0.2770 };
-    float x = std::min(std::max(0.f, jetpt - ptmin)/(ptmax-ptmin), 1.f); 
-    return x*wploose[year-2016]*scale_loose + (1-x)*wpmedium[year-2016];
+float smoothBFlav(float jetpt, float ptmin, float ptmax, int year, int subera, float scale_loose=1.0) {
+  float wploose[3][2]  = {{0.0508, 0.0480}, {0.0532,-99}, {0.0490,-99}};
+  float wpmedium[3][2] = {{0.2598,0.2489} , {0.3040,-99}, {0.2783,-99}};
+  float the_wploose =wploose[year-2016][subera];
+  float the_wpmedium=wpmedium[year-2016][subera];
+  float x = std::min(std::max(0.f, jetpt - ptmin)/(ptmax-ptmin), 1.f); 
+  return x*the_wploose*scale_loose + (1-x)*the_wpmedium;
 }
 
 float ttH_4l_clasifier(float nJet25,float nBJetMedium25,float mZ2){
