@@ -8,7 +8,6 @@ import math
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as Collection 
-from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import writeOutput
 from CMGTools.TTHAnalysis.tools.mvaTool import *
 
 
