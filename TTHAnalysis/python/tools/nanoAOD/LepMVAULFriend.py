@@ -35,9 +35,8 @@ class LeptonMVA:
 
         self.el = MVATool("BDTG", elpath,elVars)
 
-    def __call__(self,lep, debug):
-        if debug: print 'calling'
-        if   abs(lep.pdgId) == 11: return self.el(lep, debug)
+    def __call__(self,lep):
+        if   abs(lep.pdgId) == 11: return self.el(lep)
         elif abs(lep.pdgId) == 13: return lep.mvaTTH # for muons we keep the old training since we would lose performance by retraining on top of nano
         else: return -99
 
@@ -52,14 +51,12 @@ class LepMVAFriend(Module):
             self.wrappedOutputTree.branch( '%s_mvaTTHUL'%coll, "F", lenVar="n%s"%coll)
 
     def analyze(self,event):
-        debug = bool(event.event == 207226029)
         for coll in self.collections:
             lep = Collection(event,coll)
-            self.wrappedOutputTree.fillBranch( '%s_mvaTTHUL'%coll,  [ self.mva(l, debug) for l in lep ])
-
+            self.wrappedOutputTree.fillBranch( '%s_mvaTTHUL'%coll,  [ self.mva(l) for l in lep ])
         return True
 
-lepMVA_16=lambda : LepMVAFriend('16', False)
-lepMVA_16_preVFP=lambda : LepMVAFriend('16_preVFP', False)
-lepMVA_17=lambda : LepMVAFriend('17', False)
-lepMVA_18=lambda : LepMVAFriend('18', False)
+lepMVA_2016=lambda : LepMVAFriend('16', False)
+lepMVA_2016_preVFP=lambda : LepMVAFriend('16_preVFP', False)
+lepMVA_2017=lambda : LepMVAFriend('17', False)
+lepMVA_2018=lambda : LepMVAFriend('18', False)
