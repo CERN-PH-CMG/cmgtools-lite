@@ -40,7 +40,10 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.yearTagger import yearTag
 from CMGTools.TTHAnalysis.tools.nanoAOD.xsecTagger import xsecTag
 from CMGTools.TTHAnalysis.tools.nanoAOD.lepJetBTagAdder import lepJetBTagDeepFlav, lepJetBTagDeepFlavC
 
-ttH_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, xsecTag, lepJetBTagDeepFlav, lepMasses]
+from CMGTools.TTHAnalysis.tools.nanoAOD.LepMVAULFriend import lepMVA
+
+
+ttH_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, lepJetBTagDeepFlav, lepMVA(), xsecTag, lepMasses]
 
 #==== 
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
@@ -291,6 +294,11 @@ triggerGroups_dict=dict(
         2017 :  ['HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ'],
         2018 :  ['HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ'],
     },
+    Trigger_MET={ 
+        2016 : ["HLT_PFMET120_PFMHT120_IDTight"],
+        2017 : ["HLT_PFMET120_PFMHT120_IDTight"],
+        2018 : ["HLT_PFMET120_PFMHT120_IDTight"],
+    }
 )
 
 

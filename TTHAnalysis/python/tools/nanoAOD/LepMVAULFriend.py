@@ -41,7 +41,12 @@ class LeptonMVA:
 
 class LepMVAFriend(Module):
     def __init__(self, era, separateCollections):
-        self.mva = LeptonMVA(os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/leptonMVA/tth/UL20_%s.xml'%era)
+        if era is None:
+            self.mva={}
+            for era in '16_preVFP,16,17,18'.split(','):
+                self.mva[era] = LeptonMVA(os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/leptonMVA/tth/UL20_%s.xml'%era)
+        else:
+            self.mva = LeptonMVA(os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/leptonMVA/tth/UL20_%s.xml'%era)
         self.collections = ['Electron', 'Muon'] if separateCollections else [ 'LepGood']
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -50,12 +55,31 @@ class LepMVAFriend(Module):
             self.wrappedOutputTree.branch( '%s_mvaTTHUL'%coll, "F", lenVar="n%s"%coll)
 
     def analyze(self,event):
+
+        if type(self.mva) == dict:
+            if event.year==2016 and event.suberaId==0: # preVFP
+                themva=self.mva['16_preVFP']
+            elif event.year==2016 and event.suberaId==1: # postVFP
+                themva=self.mva['16']
+            elif event.year==2017:
+                themva=self.mva['17']
+            elif event.year==2018:
+                themva=self.mva['18']
+            else: 
+                print event.year, event.suberaId
+                raise RuntimeError("Unknown year")
+        else:
+            themva=self.mva
+
+
         for coll in self.collections:
             lep = Collection(event,coll)
-            self.wrappedOutputTree.fillBranch( '%s_mvaTTHUL'%coll,  [ self.mva(l) for l in lep ])
+            self.wrappedOutputTree.fillBranch( '%s_mvaTTHUL'%coll,  [ themva(l) for l in lep ])
         return True
 
 lepMVA_2016=lambda : LepMVAFriend('16', False)
 lepMVA_2016_preVFP=lambda : LepMVAFriend('16_preVFP', False)
 lepMVA_2017=lambda : LepMVAFriend('17', False)
 lepMVA_2018=lambda : LepMVAFriend('18', False)
+
+lepMVA=lambda : LepMVAFriend(None, False)

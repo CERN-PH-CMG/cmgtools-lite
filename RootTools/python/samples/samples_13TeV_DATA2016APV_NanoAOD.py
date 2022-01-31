@@ -26,12 +26,12 @@ MET_Run2016Bv2_HIPM_UL16            = kreator.makeDataComponent("MET_Run2016Bv2_
 SingleElectron_Run2016Bv2_HIPM_UL16 = kreator.makeDataComponent("SingleElectron_Run2016Bv2_HIPM_UL16", "/SingleElectron/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
 SingleMuon_Run2016Bv2_HIPM_UL16     = kreator.makeDataComponent("SingleMuon_Run2016Bv2_HIPM_UL16"    , "/SingleMuon/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2016Bv2_HIPM_UL16   = kreator.makeDataComponent("SinglePhoton_Run2016Bv2_HIPM_UL16"  , "/SinglePhoton/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"  , "CMS", ".*root", json)
-#DoubleEG_Run2016Bv2_HIPM_UL16       = kreator.makeDataComponent("DoubleEG_Run2016Bv2_HIPM_UL16"      , "/DoubleEG/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"      , "CMS", ".*root", json)
+DoubleEG_Run2016Bv2_HIPM_UL16       = kreator.makeDataComponent("DoubleEG_Run2016Bv2_HIPM_UL16"      , "/DoubleEG/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v2/NANOAOD"      , "CMS", ".*root", json)
 MuonEG_Run2016Bv2_HIPM_UL16         = kreator.makeDataComponent("MuonEG_Run2016Bv2_HIPM_UL16"        , "/MuonEG/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"        , "CMS", ".*root", json)
 DoubleMuon_Run2016Bv2_HIPM_UL16     = kreator.makeDataComponent("DoubleMuon_Run2016Bv2_HIPM_UL16"    , "/DoubleMuon/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"    , "CMS", ".*root", json)
 Tau_Run2016Bv2_HIPM_UL16            = kreator.makeDataComponent("Tau_Run2016Bv2_HIPM_UL16"           , "/Tau/Run2016B-ver2_HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"    , "CMS", ".*root", json)
 
-dataSamples_Run2016Bv2_HIPM_UL16 = [JetHT_Run2016Bv2_HIPM_UL16,HTMHT_Run2016Bv2_HIPM_UL16,MET_Run2016Bv2_HIPM_UL16,SingleElectron_Run2016Bv2_HIPM_UL16,SingleMuon_Run2016Bv2_HIPM_UL16,SinglePhoton_Run2016Bv2_HIPM_UL16,MuonEG_Run2016Bv2_HIPM_UL16,DoubleMuon_Run2016Bv2_HIPM_UL16,Tau_Run2016Bv2_HIPM_UL16] # ,DoubleEG_Run2016Bv2_HIPM_UL16
+dataSamples_Run2016Bv2_HIPM_UL16 = [JetHT_Run2016Bv2_HIPM_UL16,HTMHT_Run2016Bv2_HIPM_UL16,MET_Run2016Bv2_HIPM_UL16,SingleElectron_Run2016Bv2_HIPM_UL16,SingleMuon_Run2016Bv2_HIPM_UL16,SinglePhoton_Run2016Bv2_HIPM_UL16,MuonEG_Run2016Bv2_HIPM_UL16,DoubleMuon_Run2016Bv2_HIPM_UL16,Tau_Run2016Bv2_HIPM_UL16,DoubleEG_Run2016Bv2_HIPM_UL16] # 
 
 ### ----------------------------- UL16 Run2016C HIPM  ----------------------------------------
 
@@ -68,7 +68,7 @@ dataSamples_Run2016D_HIPM_UL16 = [JetHT_Run2016D_HIPM_UL16,HTMHT_Run2016D_HIPM_U
 JetHT_Run2016E_HIPM_UL16          = kreator.makeDataComponent("JetHT_Run2016E_HIPM_UL16"         , "/JetHT/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"         , "CMS", ".*root", json)
 HTMHT_Run2016E_HIPM_UL16          = kreator.makeDataComponent("HTMHT_Run2016E_HIPM_UL16"         , "/HTMHT/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"         , "CMS", ".*root", json)
 MET_Run2016E_HIPM_UL16            = kreator.makeDataComponent("MET_Run2016E_HIPM_UL16"           , "/MET/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"           , "CMS", ".*root", json)
-#SingleElectron_Run2016E_HIPM_UL16 = kreator.makeDataComponent("SingleElectron_Run2016E_HIPM_UL16", "/SingleElectron/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
+SingleElectron_Run2016E_HIPM_UL16 = kreator.makeDataComponent("SingleElectron_Run2016E_HIPM_UL16", "/SingleElectron/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD", "CMS", ".*root", json)
 SingleMuon_Run2016E_HIPM_UL16     = kreator.makeDataComponent("SingleMuon_Run2016E_HIPM_UL16"    , "/SingleMuon/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2016E_HIPM_UL16   = kreator.makeDataComponent("SinglePhoton_Run2016E_HIPM_UL16"  , "/SinglePhoton/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"  , "CMS", ".*root", json)
 DoubleEG_Run2016E_HIPM_UL16       = kreator.makeDataComponent("DoubleEG_Run2016E_HIPM_UL16"      , "/DoubleEG/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"      , "CMS", ".*root", json)
@@ -76,7 +76,7 @@ MuonEG_Run2016E_HIPM_UL16         = kreator.makeDataComponent("MuonEG_Run2016E_H
 DoubleMuon_Run2016E_HIPM_UL16     = kreator.makeDataComponent("DoubleMuon_Run2016E_HIPM_UL16"    , "/DoubleMuon/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"    , "CMS", ".*root", json)
 Tau_Run2016E_HIPM_UL16            = kreator.makeDataComponent("Tau_Run2016E_HIPM_UL16"           , "/Tau/Run2016E-HIPM_UL2016_MiniAODv2_NanoAODv9-v1/NANOAOD"    , "CMS", ".*root", json)
 
-dataSamples_Run2016E_HIPM_UL16 = [JetHT_Run2016E_HIPM_UL16,HTMHT_Run2016E_HIPM_UL16,MET_Run2016E_HIPM_UL16,SingleMuon_Run2016E_HIPM_UL16,SinglePhoton_Run2016E_HIPM_UL16,DoubleEG_Run2016E_HIPM_UL16,MuonEG_Run2016E_HIPM_UL16,DoubleMuon_Run2016E_HIPM_UL16,Tau_Run2016E_HIPM_UL16] # ,SingleElectron_Run2016E_HIPM_UL16
+dataSamples_Run2016E_HIPM_UL16 = [JetHT_Run2016E_HIPM_UL16,HTMHT_Run2016E_HIPM_UL16,MET_Run2016E_HIPM_UL16,SingleMuon_Run2016E_HIPM_UL16,SinglePhoton_Run2016E_HIPM_UL16,DoubleEG_Run2016E_HIPM_UL16,MuonEG_Run2016E_HIPM_UL16,DoubleMuon_Run2016E_HIPM_UL16,Tau_Run2016E_HIPM_UL16,SingleElectron_Run2016E_HIPM_UL16] # 
 
 
 ### ----------------------------- UL16 Run2016F HIPM  ----------------------------------------
