@@ -137,6 +137,9 @@ W1JetsToLNu_LO = kreator.makeMCComponent("W1JetsToLNu_LO","/W1JetsToLNu_TuneCP5_
 W3JetsToLNu_LO = kreator.makeMCComponent("W3JetsToLNu_LO","/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root", 993.4*1.17)
 W4JetsToLNu_LO = kreator.makeMCComponent("W4JetsToLNu_LO","/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v2/NANOAODSIM", "CMS", ".*root", 542.4*1.17)
 
+# XSec from genXSecAna
+WJetsToLNu_012JetsNLO_34JetsLO = kreator.makeMCComponent("WJetsToLNu_012JetsNLO_34JetsLO","/WJetsToLNu_012JetsNLO_34JetsLO_EWNLOcorr_13TeV-sherpa/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM",  "CMS", ".*root", 6.228e+04)
+
 # ### W+jets HT-binned
 WJetsToLNu_HT100to200 = kreator.makeMCComponent("WJetsToLNu_HT100to200", "/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root",1395*1.17) 
 WJetsToLNu_HT200to400 = kreator.makeMCComponent("WJetsToLNu_HT200to400", "/WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root",408.7*1.17) 
@@ -161,7 +164,8 @@ Ws = [
     W1JetsToLNu_LO,
     #W2JetsToLNu_LO,
     W3JetsToLNu_LO,
-    W4JetsToLNu_LO
+    W4JetsToLNu_LO,
+    WJetsToLNu_012JetsNLO_34JetsLO,
 ]+WJetsToLNuHT
 
 
@@ -175,9 +179,9 @@ DYJetsToLL_M50 = kreator.makeMCComponent("DYJetsToLL_M50", "/DYJetsToLL_M-50_Tun
 #DYJetsToLL_M10to50_LO =  kreator.makeMCComponent("DYJetsToLL_M10to50_LO", "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root", 15810)
 
 DYJets = [
-    DYJetsToLL_M50,
+    DYJetsToLL_M50, 
     #DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,
-    #DYJetsToLL_M10to50_LO, # this one needs to be recovered
+    #DYJetsToLL_M10to50_LO, # this one needs to be recovered https://cms-pdmv.cern.ch/mcm/requests?prepid=SUS-RunIISummer20UL16wmLHEGEN-00066
 ]
 
 
@@ -299,7 +303,7 @@ TTWToLNu_fxfx = kreator.makeMCComponent("TTWToLNu_fxfx", "/TTWJetsToLNu_TuneCP5_
 TTZToLLNuNu_amc = kreator.makeMCComponent("TTZToLLNuNu_amc", "/TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root", 0.2529, fracNegWeights=0.264)
 #TTZ_LO = kreator.makeMCComponent("TTZ_LO", "/ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v2/NANOAODSIM", "CMS", ".*root",  0.5297/0.692)
 
-TTZToLLNuNu_m1to10  = kreator.makeMCComponent("TTZToLLNuNu_m1to10","/TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/NANOAODSIM", "CMS", ".*root", 0.05324, fracNegWeights=0.236)
+# TTZToLLNuNu_m1to10  = kreator.makeMCComponent("TTZToLLNuNu_m1to10","/TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/NANOAODSIM", "CMS", ".*root", 0.05324, fracNegWeights=0.236) https://cms-pdmv.cern.ch/mcm/requests?prepid=TOP-RunIISummer20UL16wmLHEGEN-00226
 
 TTHnobb_pow = kreator.makeMCComponent("TTHnobb_pow", "/ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v2/NANOAODSIM", "CMS", ".*root", 0.5071*(1-0.582))
 TTHnobb_fxfx = kreator.makeMCComponent("TTHnobb_fxfx", "/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root", 0.5071*(1-0.582), fracNegWeights=0.344)
@@ -307,9 +311,10 @@ TTHnobb_fxfx = kreator.makeMCComponent("TTHnobb_fxfx", "/ttHJetToNonbb_M125_Tune
 TZQToLL  = kreator.makeMCComponent("TZQToLL","/tZq_ll_4f_ckm_NLO_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X_mcRun2_asymptotic_v17-v1/NANOAODSIM", "CMS", ".*root", 0.07358, fracNegWeights=0.367)
 # tWll  = kreator.makeMCComponent("tWll","/ST_tWll_5f_LO_TuneCP5_PSweights_13TeV-madgraph-pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1/NANOAODSIM", "CMS", ".*root", 0.01123) 
 
-TTXs = [ TTGJets, #TGJets_lep,
-         TTWToLNu_fxfx, # TTW_LO,  needs to be recovered
-         TTZToLLNuNu_amc, # TTZ_LO, needs to be recovered# TTZToLLNuNu_m1to10, 
+TTXs = [ TTGJets, #TGJets_lep, 
+         TTWToLNu_fxfx, # TTW_LO,  needs to be recovered  https://cms-pdmv.cern.ch/mcm/requests?prepid=HIG-RunIISummer20UL16wmLHEGEN-00041
+         TTZToLLNuNu_amc, # TTZ_LO, needs to be recovered https://cms-pdmv.cern.ch/mcm/requests?prepid=HIG-RunIISummer20UL16wmLHEGEN-00040
+         # TTZToLLNuNu_m1to10,  https://cms-pdmv.cern.ch/mcm/requests?prepid=TOP-RunIISummer20UL16wmLHEGEN-00226
          TZQToLL, # tWll, #THQ, THW,
          TTHnobb_pow, 
          TTHnobb_fxfx,
@@ -359,7 +364,7 @@ DiBosons = [
      WZTo3LNu_fxfx,
 #     WZTo1L1Nu2Q,
 #     ZZ,
-#     ZZTo4L, has to be recovered
+#     ZZTo4L, has to be recovered https://cms-pdmv.cern.ch/pmp/historical?r=HIG-RunIISummer20UL16wmLHEGEN-01577
      ZZTo2L2Nu,
 ]
 
