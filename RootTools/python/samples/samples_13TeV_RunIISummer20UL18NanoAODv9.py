@@ -180,7 +180,7 @@ DYJetsToLL_M10to50_LO =  kreator.makeMCComponent("DYJetsToLL_M10to50_LO", "/DYJe
 
 DYJets = [
     DYJetsToLL_M50,
-    DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,
+    #DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,
     DYJetsToLL_M10to50_LO,
 ]
 
@@ -312,12 +312,17 @@ TZQToLL  = kreator.makeMCComponent("TZQToLL","/tZq_ll_4f_ckm_NLO_TuneCP5_13TeV-a
 
 TTHnobb_fxfx = kreator.makeMCComponent("TTHnobb_fxfx", "/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM", "CMS", ".*root", 0.5071*(1-0.582), fracNegWeights=0.344)
 
+THQ_ctcvcp = kreator.makeMCComponent("THQ_ctcvcp", "/THQ_ctcvcp_4f_Hincl_TuneCP5_13TeV_madgraph_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v2/NANOAODSIM", "CMS", ".*root",  0.7927)
+#THW_ctcvcp = kreator.makeMCComponent("THW_ctcvcp", "/THW_ctcvcp_5f_Hincl_13TeV_madgraph_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root",  0.1472)
+#TTH_ctcvcp = kreator.makeMCComponent("TTH_ctcvcp", "/TTH_4f_ctcvcp_TuneCP5_13TeV_madgraph_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 0.5071)
+
+
 TTXs = [ TTGJets, #TGJets_lep,
          TTWToLNu_fxfx, TTW_LO, 
          TTZToLLNuNu_amc, TTZ_LO,# TTZToLLNuNu_m1to10, 
          TZQToLL, # tWll, #THQ, THW,
          TTHnobb_pow, 
-         TTHnobb_fxfx,
+         #TTHnobb_fxfx, stuck in production
 ]
 
 # # ====== TT + DIBOSON, 4-top =====
@@ -351,21 +356,27 @@ WZTo3LNu_fxfx = kreator.makeMCComponent("WZTo3LNu_fxfx", "/WZTo3LNu_TuneCP5_13Te
 ZZTo4L = kreator.makeMCComponent("ZZTo4L", "/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v2/NANOAODSIM", "CMS", ".*root", 1.256)
 ZZTo2L2Nu = kreator.makeMCComponent("ZZTo2L2Nu", "/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM", "CMS", ".*root", 0.564)
 
+WGToLNuG = kreator.makeMCComponent("WGToLNuG", "/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM", "CMS", ".*root", 466.1)
+ZGTo2LG =  kreator.makeMCComponent("ZGTo2LG", "/ZGToLLG_01J_5f_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM", "CMS", ".*root", 55.78)
+#WWTo2L2Nu_DPS = kreator.makeMCComponent("WWTo2L2Nu_DPS", "/WWTo2L2Nu_DoubleScattering_13TeV-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM", "CMS", ".*root", 1.921)
+
+
 
 DiBosons = [
-     WW,
-     WZ,
-#     ZZ,
-     WWTo2L2Nu,
+    WW,
+    WZ, 
+    WGToLNuG ,
+    ZGTo2LG,
+    WWTo2L2Nu,
 #     WWToLNuQQ,
 #     WW_DPS,
 #     WpWpJJ,
 #     WZ,
-     WZTo3LNu_fxfx,
+    WZTo3LNu_fxfx,
 #     WZTo1L1Nu2Q,
 #     ZZ,
-     ZZTo4L,
-     ZZTo2L2Nu,
+    ZZTo4L,
+    ZZTo2L2Nu,
 ]
 
 # # ===  TRI-BOSONS
@@ -399,10 +410,13 @@ GGHZZ4L = kreator.makeMCComponent("GGHZZ4L", "/GluGluHToZZTo4L_M125_TuneCP5_13Te
 VHToNonbb = kreator.makeMCComponent("VHToNonbb", "/VHToNonbb_M125_TuneCP5_13TeV-amcatnloFXFX_madspin_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v2/NANOAODSIM", "CMS", ".*root", 0.9561, fracNegWeights=0.26) 
 # #VHToNonbb_ll = kreator.makeMCComponent("VHToNonbb_ll", "/VHToNonbb_M125_DiLeptonFilter_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/-FIXME-MISSING-/NANOAODSIM", "CMS", ".*root", 0.9561*0.08878/2.509, fracNegWeights=0.26) 
 
+ZHToTauTau = kreator.makeMCComponent("ZHToTauTau", "/ZHToTauTau_M125_CP5_13TeV-powheg-pythia8_ext1/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v2/NANOAODSIM", "CMS", ".*root", 0.05544)
+
 Higgs = [
-    # GGHZZ4L,
+     GGHZZ4L,
     VHToNonbb,
     #VHToNonbb_ll,
+    ZHToTauTau,
 ]
 
 # # ----------------------------- summary ----------------------------------------
