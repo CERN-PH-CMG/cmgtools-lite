@@ -86,7 +86,7 @@ def clean_and_FO_selection_TTH(lep,year, subera):
     return lep.conept>10 and lep.jetBTagDeepFlav<bTagCut and (abs(lep.pdgId)!=11 or (ttH_idEmu_cuts_E3(lep) and lep.convVeto and lep.lostHits == 0)) \
         and (lep.mvaTTHUL>(0.85 if abs(lep.pdgId)==13 else 0.90) or \
              (abs(lep.pdgId)==13 and lep.jetBTagDeepFlav< smoothBFlav(0.9*lep.pt*(1+lep.jetRelIso), 20, 45, year, subera) and lep.jetRelIso < 0.50) or \
-             (abs(lep.pdgId)==11 and lep.mvaFall17V2noIso_WP80 and lep.jetRelIso < 0.70))
+             (abs(lep.pdgId)==11 and lep.mvaFall17V2noIso_WP90 and lep.jetBTagDeepFlav< smoothBFlav(0.9*lep.pt*(1+lep.jetRelIso), 20, 45, year, subera)and lep.jetRelIso < 1.0 ))
 
 tightLeptonSel = lambda lep,year,era : clean_and_FO_selection_TTH(lep,year,era) and (abs(lep.pdgId)!=13 or lep.mediumId>0) and lep.mvaTTHUL > (0.85 if abs(lep.pdgId)==13 else 0.90)
 
@@ -171,12 +171,9 @@ jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
 jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
 
 def _fires(ev, path):
-    if "/hasfiredtriggers_cc.so" not in ROOT.gSystem.GetLibraries():
-        ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/Production/src/hasfiredtriggers.cc+O" % os.environ['CMSSW_BASE'])
     if not hasattr(ev,path): return False 
-    if ev.run == 1:  # is MC
-        return getattr( ev,path ) 
-    return getattr(ROOT, 'fires_%s_%d'%(path,ev.year))( ev.run, getattr(ev,path))
+    return getattr( ev,path ) 
+    
 
 triggerGroups=dict(
     Trigger_1e={

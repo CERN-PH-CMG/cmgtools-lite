@@ -94,7 +94,10 @@ QCD_Mus = QCD_Mu5s #  [ QCD_Mu15 ] +
 
 # # QCD EMEnr  (cross sections form genXSecAna)
 # QCD_Pt15to20_EMEnriched   = kreator.makeMCComponent("QCD_Pt15to20_EMEnriched"  ,"/QCD_Pt-15to20_EMEnriched_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1/NANOAODSIM"  , "CMS", ".*root",  1.33e+06)
-#QCD_Pt20to30_EMEnriched   = kreator.makeMCComponent("QCD_Pt20to30_EMEnriched"  ,""  , "CMS", ".*root",  4.928e+06)
+QCD_Pt20to30_EMEnriched   = kreator.makeMyPrivateMCComponent("QCD_Pt20to30_EMEnriched"  ,"/QCD_Pt-20to30_EMEnriched_TuneCP5_13TeV-pythia8/sesanche-Summer20UL16APV-fc8f6101bc2f29883f209ccbd3b7b281/USER"  , "PRIVATE", ".*root",  "phys03", 4.928e+06)
+from CMGTools.Production.nanoAODPreprocessor import nanoAODPreprocessor
+QCD_Pt20to30_EMEnriched.preprocessor = nanoAODPreprocessor(cfg='/work/sesanche/FRs/CMSSW_10_6_27/src/NANO_Summer20UL16APV_Nanov2_MC_NANO.py',cmsswArea='/work/sesanche/FRs/CMSSW_10_6_27/src',keepOutput=True)
+
 QCD_Pt30to50_EMEnriched   = kreator.makeMCComponent("QCD_Pt30to50_EMEnriched"  ,"/QCD_Pt-30to50_EMEnriched_TuneCP5_13TeV-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v2/NANOAODSIM"  , "CMS", ".*root",  6.41e+06)
 QCD_Pt50to80_EMEnriched   = kreator.makeMCComponent("QCD_Pt50to80_EMEnriched", "/QCD_Pt-50to80_EMEnriched_TuneCP5_13TeV-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v2/NANOAODSIM", "CMS", ".*root",  1.986e+06)
 QCD_Pt80to120_EMEnriched  = kreator.makeMCComponent("QCD_Pt80to120_EMEnriched" ,"/QCD_Pt-80to120_EMEnriched_TuneCP5_13TeV-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v2/NANOAODSIM" , "CMS", ".*root",  370900)
@@ -104,7 +107,7 @@ QCD_Pt300toInf_EMEnriched = kreator.makeMCComponent("QCD_Pt300toInf_EMEnriched",
 
 QCD_EMs = [
 #     QCD_Pt15to20_EMEnriched,
-#     QCD_Pt20to30_EMEnriched,
+    QCD_Pt20to30_EMEnriched,
     QCD_Pt30to50_EMEnriched,
     QCD_Pt50to80_EMEnriched,
     QCD_Pt80to120_EMEnriched,
@@ -176,14 +179,14 @@ Ws = [
 # # ====== Z + Jets ======
 # ## New FEWZ cross section 1921.8 from https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV
 DYJetsToLL_M50 = kreator.makeMCComponent("DYJetsToLL_M50", "/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 1921.8*3, fracNegWeights=0.16)
-DYJetsToLL_M50_LO =  kreator.makeMCComponent("DYJetsToLL_M50_LO", "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-20UL16APVJMENano_106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 1921.8*3)
+DYJetsToLL_M50_LO =  kreator.makeMCComponent("DYJetsToLL_M50_LO", "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 1921.8*3)
 
-DYJetsToLL_M10to50_LO =  kreator.makeMCComponent("DYJetsToLL_M10to50_LO", "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 15810) #https://cms-pdmv.cern.ch/mcm/requests?prepid=SUS-RunIISummer20UL16MiniAODAPVv2-00003
+DYJetsToLL_M10to50_LO =  kreator.makeMCComponent("DYJetsToLL_M10to50_LO", "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 15810) 
 
 DYJets = [
     DYJetsToLL_M50,
-    #DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,
-    #DYJetsToLL_M10to50_LO, # this one needs to be recovered
+    DYJetsToLL_M50_LO,
+    DYJetsToLL_M10to50_LO,
 ]
 
 
