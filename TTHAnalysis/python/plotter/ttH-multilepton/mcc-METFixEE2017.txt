@@ -1,2 +1,1 @@
-MET_(\w+) : METFixEE2017_\1 ; AlsoData, year=2017
-L1PreFiringWeight_Nom : 1 ; year=2018
+L1PreFiringWeight_Nom : 1 ; year="2018"
