@@ -60,3 +60,10 @@ incl_QCD_El17    : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", 
 incl_QCDNC_El17  : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_redNC", PostFix="_El17",   AddWeight="LepGood_pt > 17 && HLT_Ele17_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kGreen+1, Label+=" El17"
 incl_QCD_noEl17  : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_red",   PostFix="_noEl17", AddWeight="LepGood_pt > 17 && !HLT_Ele17_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kRed+2, Label+=" !El17"
 incl_QCDNC_noEl17: + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_redNC", PostFix="_noEl17", AddWeight="LepGood_pt > 17 && !HLT_Ele17_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kRed+0, Label+=" !El17"
+
+incl_QCD_pt23    : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_red",   PostFix="_pt23",   AddWeight="LepGood_pt > 23", FillColor:=ROOT.kViolet+2, Label+=" p_{T} 23"
+incl_QCDNC_pt23  : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_redNC", PostFix="_pt23",   AddWeight="LepGood_pt > 23", FillColor:=ROOT.kViolet+0, Label+=" p_{T} 23"
+incl_QCD_El23    : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_red",   PostFix="_El23",   AddWeight="LepGood_pt > 23 && HLT_Ele23_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kGreen+3, Label+=" El23"
+incl_QCDNC_El23  : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_redNC", PostFix="_El23",   AddWeight="LepGood_pt > 23 && HLT_Ele23_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kGreen+1, Label+=" El23"
+incl_QCD_noEl23  : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_red",   PostFix="_noEl23", AddWeight="LepGood_pt > 23 && !HLT_Ele23_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kRed+2, Label+=" !El23"
+incl_QCDNC_noEl23: + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt", Processes="QCDEl_redNC", PostFix="_noEl23", AddWeight="LepGood_pt > 23 && !HLT_Ele23_CaloIdM_TrackIdM_PFJet30", FillColor:=ROOT.kRed+0, Label+=" !El23"

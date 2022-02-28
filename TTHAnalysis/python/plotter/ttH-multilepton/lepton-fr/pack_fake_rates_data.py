@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
     parser.add_option("--fix-last-bin", dest="fixLastBin", action="store_true", default=False, help="Fudge last bin")
     parser.add_option("--norm", dest="norm", action="store_true", default=False, help="Normalize variations")
-    parser.add_option("--mva-version",  dest="mvaVersion",  default="v1.0",  type="string", help="MVA version (common)")
+    parser.add_option("--mva-version",  dest="mvaVersion",  default="v1.1",  type="string", help="MVA version (common)")
     parser.add_option("--mva-version-mc",   dest="mvaVersionMC",  default=None,  type="string", help="MC MVA version (fr-mc), defaults to common")
     parser.add_option("--mva-version-data", dest="mvaVersionData",  default=None,  type="string", help="Data MVA version (fr-meas), defaults to common")
     parser.add_option("--mva-version-comb", dest="mvaVersionComb",  default=None,  type="string", help="Comb MVA version (fr-comb), defaults to common")
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     XsQ    = [ "QCD", "data_comb" ]
     Xnices = [ "MC QCD", "Data, comb." ]
 
-    mva_el = "080"
+    mva_el = "090"
     mva_mu = "085"
 
     for year in years:
@@ -211,11 +211,11 @@ if __name__ == "__main__":
 
         #### TT MC-truth
         MCPlots = "%s/%s/fr-mc/%s" % ( options.outdir, options.mvaVersionMC, year)
-        ID="iRun2v1.0";
-        XVarBins_mu = "ptJI90_mvaPt"+mva_mu+"_coarsecomb_%s"
-        XVarBins_el = "ptJI90_mvaPt"+mva_el+"_coarseelcomb_%s"
-        NumXVarBins_mu = "mvaPt_"+mva_mu+"i_"+XVarBins_mu
-        NumXVarBins_el = "mvaPt_"+mva_el+"i_"+XVarBins_el
+        ID="iRun2v3.0";
+        XVarBins_mu = "ptJI90_mvaULPt"+mva_mu+"_coarsecomb_%s"
+        XVarBins_el = "ptJI90_mvaULPt"+mva_el+"_coarseelcomb_%s"
+        NumXVarBins_mu = "mvaULPt_"+mva_mu+"i_"+XVarBins_mu
+        NumXVarBins_el = "mvaULPt_"+mva_el+"i_"+XVarBins_el
         TT_mu, TT_el = "TT_SS_red", "TT_SS_redNC_pink"
         readMany2D([TT_mu], h2d_mu_tt, "/".join([MCPlots,  "mu_sum_wp"+mva_mu+ID+"_recJet30_eta_%s.root"]),      NumXVarBins_mu, etaslices_mu, (10,999) )
         readMany2D([TT_el], h2d_el_tt, "/".join([MCPlots, "el_sum8_wp"+mva_el+ID+"_recJet30_eta_%s.root"]),      NumXVarBins_el, etaslices_el, (15,999) )
