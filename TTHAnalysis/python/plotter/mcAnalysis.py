@@ -81,7 +81,7 @@ class MCAnalysis:
                     if key not in self._isSignal: self._isSignal[key] = issig
                 for key, rank in self._subMcas[-1]._rank.iteritems():
                     self._rank[key] = rank + rankoffset
-                for key, opt in self._subMcas[-1]._optionsOnlyProcesses:
+                for key, opt in self._subMcas[-1]._optionsOnlyProcesses.iteritems():
                     self._optionsOnlyProcesses[key] = opt
                 for proc in self._subMcas[-1]._groupsToNormalize:
                     self._groupsToNormalize.append(proc)

@@ -7,39 +7,38 @@ ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
 ttH)
     YEAR=$1; shift; 
-    case $YEAR in 2016) L=35.9;; 2017) L=41.5;; 2018) L=59.7;; esac
-    T="/eos/cms/store/cmst3/group/tthlep/gpetrucc/TREES_ttH_FR_nano_v5/${YEAR}"; T0=$T 
+    YEAR2=$YEAR
+    case $YEAR in 2016) L=35.9;; 2017) L=41.5;; 2018) L=59.7;; 2016APV,2016) L=19.5,16.8 ;; esac
+    case $YEAR2 in 2016APV,2016) T=/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoTrees_ULFR_161221/ ;; *) T=/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoTrees_ULFR_161221/$YEAR2 ;; esac
+    YEAR=${YEAR/,/_}
     # add local caches if available
     test -d /tmp/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/tmp/$USER/TREES_ttH_FR_nano_v5/$YEAR" ;
     test -d /data/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/data/$USER/TREES_ttH_FR_nano_v5/$YEAR" ;
     # use skim if available
-    test -d $T/skim_z3 && T=$T/skim_z3
+    #test -d $T/skim_z3 && T=$T/skim_z3
     echo "echo 'Will read trees from $T'"
     # keep EOS as backup in case local cache is not complete
-    echo $T | grep -q /eos || T="$T -P $T0"
+    #echo $T | grep -q /eos || T="$T -P $T0"
     CUTFILE="ttH-multilepton/lepton-fr/qcd1l.txt"; ;;
 susy*) echo "NOT UP TO DATE"; exit 1;;
 *) echo "You did not specify the analysis"; exit 1;;
 esac;
-BCORE=" --s2v --tree NanoAOD ttH-multilepton/lepton-fr/mca-qcd1l-${YEAR}.txt ${CUTFILE} -P $T -l $L --AP "
+BCORE=" --s2v --tree NanoAOD ttH-multilepton/lepton-fr/mca-qcd1l-${YEAR}.txt ${CUTFILE} -P $T -l $L --AP  --year ${YEAR2} "
 BCORE="${BCORE} -L ttH-multilepton/functionsTTH.cc   "; 
-BCORE="${BCORE} --Fs {P}/1_frFriends_v1"
-BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
-if [[ "$YEAR" == "2017" ]]; then
-    BCORE="${BCORE} --mcc ttH-multilepton/mcc-METFixEE2017.txt "; 
-fi;
+BCORE="${BCORE} --Fs {P}/1_OFS --Fs {P}/0_lepmva "
+BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt --xf T_tch,TBar_tch,T_tWch_noFullyHad,TBar_tWch_noFullyHad  "; 
 
 
 
-BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
+BG=" -j 16 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 lepdir=${lepton};
 case $lepton in
 mu) BCORE="${BCORE} -E ^${lepton} --xf 'SingleEl.*,DoubleEG.*,EGamma.*'  "; MVAWP=85; NUM="mvaPt_0${MVAWP}i"; QCD=QCDMu; 
-    conept="LepGood_pt*if3(LepGood_mvaTTH>0.${MVAWP}&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso))"; ;;
-el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,SingleMu.*' "; MVAWP=80; NUM="mvaPt_0${MVAWP}i"; QCD=QCDEl; 
-    conept="LepGood_pt*if3(LepGood_mvaTTH>0.${MVAWP}, 1.0, 0.9*(1+LepGood_jetRelIso))"; ;;
+    conept="LepGood_pt*if3(LepGood_mvaTTHUL>0.${MVAWP}&&LepGood_mediumId>0, 1.0, 0.9*(1+LepGood_jetRelIso))"; ;;
+el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,SingleMu.*' "; MVAWP=90; NUM="mvaPt_0${MVAWP}i"; QCD=QCDEl; 
+    conept="LepGood_pt*if3(LepGood_mvaTTHUL>0.${MVAWP}, 1.0, 0.9*(1+LepGood_jetRelIso))"; ;;
 esac;
 
 trigger=$2; if [[ "$2" == "" ]]; then exit 1; fi
@@ -70,7 +69,8 @@ Mu27)
 #    PUW=" -L ttH-multilepton/lepton-fr/frPuReweight.cc -W 'puw${trigger}_${YEAR}(PV_npvsGood)' "
 #    ;;
 MuX_OR)
-    if [[ "$YEAR" == "2016" ]] ; then
+    regex=".*2016.*"
+    if [[ "$YEAR" =~ $regex ]] ; then
         BCORE="${BCORE} -E ^2016_trigMu  -A 'entry point' conept '10 < $conept && $conept < 100' "; 
     else
         BCORE="${BCORE} -E ^trigMu  -A 'entry point' conept '10 < $conept && $conept < 100' "; 
@@ -104,7 +104,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/104X/${ANALYSIS}/lepMVA/v1.1/fr-meas/qcd1l/$lepdir/$YEAR/HLT_$trigger/$what/$more"
+PBASE="plots/104X/${ANALYSIS}/lepMVA/v3.0/fr-meas/qcd1l/$lepdir/$YEAR/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,Top,data"
