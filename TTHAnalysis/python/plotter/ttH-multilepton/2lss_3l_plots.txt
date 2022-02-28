@@ -355,5 +355,11 @@ cr_3l: ttH_3l_clasifier(nJet25, nBJetMedium25): [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5
 cr_4l: ttH_4l_clasifier(nJet25, nBJetMedium25,mZ2): [0.5,1.5,2.5,3.5,4.5]; XTitle="4l Control Region", Logy, YMin=0.1 ,  XNDdiv=505, IncludeOverflows=False, xBinLabels="1\,2\,3\,4"
 mu_fake_origin : (abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0 )*LepGood1_genPartFlav + (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0 )*LepGood2_genPartFlav : [ -0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="Fake muon genPartFlav" 
 
-ele_fake_conePt : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), LepGood1_conePt, LepGood2_conePt) : 40,0,120; XTitle="Leading electron fake cone p_{T} (GeV)"
+
+ele_fake_conePt : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), LepGood1_conePt, LepGood2_conePt) : 40,0,120; XTitle="Nonprompt electron p_{T} [GeV]"
 ele_fake_eta    : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), abs(LepGood1_eta), abs(LepGood2_eta)) : 40,0,2.4; XTitle="Leading electron fake |#eta|"
+ele_fake_fr     : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), fetchFR_ii(LepGood1_conePt,LepGood1_eta,LepGood1_pdgId,froffset+year-2016,froffset+year-2016), fetchFR_ii(LepGood2_conePt,LepGood2_eta,LepGood2_pdgId,froffset+year-2016,froffset+year-2016)) : 100,0,0.3; XTitle="Leading fake electron fake-rate"
+
+muo_fake_conePt : if3( abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0, LepGood1_conePt, LepGood2_conePt) : 40,0,120; XTitle="Nonprompt muon p_{T} [GeV]"
+muo_fake_eta    : if3( abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0, abs(LepGood1_eta), abs(LepGood2_eta)) : 40,0,2.4; XTitle="Leading muon fake |#eta|"
+muo_fake_fr     : if3( abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0, fetchFR_ii(LepGood1_conePt,LepGood1_eta,LepGood1_pdgId,froffset+year-2016,froffset+year-2016), fetchFR_ii(LepGood2_conePt,LepGood2_eta,LepGood2_pdgId,froffset+year-2016,froffset+year-2016)) : 100,0,0.3; XTitle="Leading fake muon fake-rate"
