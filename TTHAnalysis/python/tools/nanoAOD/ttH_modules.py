@@ -43,7 +43,7 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.lepJetBTagAdder import lepJetBTagDeepFla
 from CMGTools.TTHAnalysis.tools.nanoAOD.LepMVAULFriend import lepMVA
 
 
-ttH_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, lepJetBTagDeepFlav, lepMVA(), xsecTag, lepMasses]
+ttH_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, lepJetBTagDeepFlav, lepMVA, xsecTag, lepMasses]
 
 #==== 
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
@@ -432,3 +432,5 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.ttH_gen_reco import ttH_gen_reco
 #
 #from CMGTools.TTHAnalysis.tools.topRecoSemiLept import TopRecoSemiLept
 #topRecoModule = lambda : TopRecoSemiLept(constraints=['kWHadMass','kWLepMass','kTopLepMass','kTopHadMass'])
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.LepMVAULFriend import lepMVA_2016, lepMVA_2016APV, lepMVA_2017, lepMVA_2018

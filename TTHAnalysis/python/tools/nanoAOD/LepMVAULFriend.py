@@ -23,8 +23,8 @@ elVars = [
      MVAVar("Electron_jetPtRatio := min(1 / (1 + Electron_jetRelIso), 1.5)", func=lambda x: min(1 / (1 + x.jetRelIso), 1.5)),
      MVAVar("Electron_jetBTagDeepFlavB := Electron_jetIdx > -1 ? Jet_btagDeepFlavB[Electron_jetIdx] : 0", func=lambda x: x.jetBTagDeepFlav),
      MVAVar("Electron_sip3d", func=lambda x: x.sip3d),
-     MVAVar("Electron_dxy := log(abs(Electron_dxy))",func=lambda x: math.log(abs(x.dxy))),
-     MVAVar("Electron_dz  := log(abs(Electron_dz))", func=lambda x: math.log(abs(x.dz))),
+     MVAVar("Electron_dxy := log(abs(Electron_dxy))",func=lambda x: math.log(max(1e-10,abs(x.dxy)))),
+     MVAVar("Electron_dz  := log(abs(Electron_dz))", func=lambda x: math.log(max(1e-10,abs(x.dz)))),
      MVAVar("Electron_mvaFall17V2noIso", func=lambda x: x.mvaFall17V2noIso)
 ]
 
@@ -77,9 +77,8 @@ class LepMVAFriend(Module):
             self.wrappedOutputTree.fillBranch( '%s_mvaTTHUL'%coll,  [ themva(l) for l in lep ])
         return True
 
-lepMVA_2016=lambda : LepMVAFriend('16', False)
-lepMVA_2016_preVFP=lambda : LepMVAFriend('16_preVFP', False)
-lepMVA_2017=lambda : LepMVAFriend('17', False)
-lepMVA_2018=lambda : LepMVAFriend('18', False)
-
 lepMVA=lambda : LepMVAFriend(None, False)
+lepMVA_2016=lambda : LepMVAFriend('16', True)
+lepMVA_2016APV=lambda : LepMVAFriend('16_preVFP', True)
+lepMVA_2017=lambda : LepMVAFriend('17', True)
+lepMVA_2018=lambda : LepMVAFriend('18', True)
