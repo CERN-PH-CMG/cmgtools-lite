@@ -1,0 +1,7 @@
+# vim: syntax=sh
+data : DoubleEG_Run2016F_UL16+DoubleEG_Run2016G_UL16+DoubleEG_Run2016H_UL16; FillColor=ROOT.kBlack, Label="Data", years="2016"
+data : DoubleMuon_Run2016F_UL16+DoubleMuon_Run2016G_UL16+DoubleMuon_Run2016H_UL16; FillColor=ROOT.kBlack, Label="Data", years="2016"
+data : DoubleEG_Run2016Bv1_HIPM_UL16+DoubleEG_Run2016Bv2_HIPM_UL16+DoubleEG_Run2016C_HIPM_UL16+DoubleEG_Run2016D_HIPM_UL16+DoubleEG_Run2016E_HIPM_UL16+DoubleEG_Run2016F_HIPM_UL16; FillColor=ROOT.kBlack, Label="Data", years="2016APV"
+data : DoubleMuon_Run2016Bv1_HIPM_UL16+DoubleMuon_Run2016Bv2_HIPM_UL16+DoubleMuon_Run2016C_HIPM_UL16+DoubleMuon_Run2016D_HIPM_UL16+DoubleMuon_Run2016E_HIPM_UL16+DoubleMuon_Run2016F_HIPM_UL16; FillColor=ROOT.kBlack, Label="Data", years="2016APV"
+
+incl_mc : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt"

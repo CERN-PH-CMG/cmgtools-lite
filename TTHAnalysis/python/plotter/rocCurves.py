@@ -31,8 +31,8 @@ def hist2ROC1d(hsig,hbg):
     if len(si) == 2: # just one WP + dummy (100%,100%)
         si = [si[0]]; bi = [ bi[0] ]
     bins = len(si)
-    ret = ROOT.TGraph(bins)
-    for i in xrange(bins):
+    ret = ROOT.TGraph(bins-1)
+    for i in xrange(bins-1):
         ret.SetPoint(i, bi[i]/sumb, si[i]/sums)
     ret.dim=1
     return ret
@@ -106,13 +106,14 @@ def doLegend(rocs,textSize=0.035,placement='BR'):
         if placement == 'BR':
             (x1,y1,x2,y2) = (.68, .25 + textSize*max(len(rocs)-3,0), .962, .13)
         elif placement == 'TL':
-            (x1,y1,x2,y2) = (.21, .83 - textSize*max(len(rocs)-3,0), .492, .95)
+            (x1,y1,x2,y2) = (.21, .78 - textSize*max(len(rocs)-3,0), .492, .90)
         else: raise RuntimeError, "Unsupported placement %r" % placement
         leg = ROOT.TLegend(x1,y1,x2,y2)
         leg.SetFillColor(0)
         leg.SetShadowColor(0)
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
+        leg.SetLineColor(0)
         for key,val in rocs:
             leg.AddEntry(val, key, val.style)
         leg.Draw()
