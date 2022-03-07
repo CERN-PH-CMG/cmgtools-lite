@@ -344,6 +344,7 @@ class TreeToYield:
         if 'Friends' in self._settings: friendOpts += self._settings['Friends']
         friendSimpleOpts = self._options.friendTreesSimple[:]
         friendSimpleOpts += (self._options.friendTreesDataSimple if self._isdata else self._options.friendTreesMCSimple)
+        friendSimpleOpts.extend( [ friend for friend,year in self._options.friendTreesSimpleYear if year == self._options.year ])
         if 'FriendsSimple' in self._settings: friendSimpleOpts += [self._settings['FriendsSimple']]
         if self._isNano:
             friendOpts += [ ('Friends', d+"/{cname}_Friend.root") for d in friendSimpleOpts]
@@ -745,6 +746,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("-G", "--no-fractions",  dest="fractions",action="store_false", default=True, help="Don't print the fractions");
     parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename") 
     parser.add_option("--Fs", "--add-friend-simple",    dest="friendTreesSimple",  action="append", default=[], nargs=1, help="Add friends in a directory. The rootfile must be called evVarFriend_{cname}.root and tree must be called 't' in a subdir 'sf' inside the rootfile.") 
+    parser.add_option("--FYs", dest="friendTreesSimpleYear",  action="append", default=[], nargs=2,  help="Add friends in a directory for a given 'year'. First argument is the tree directory and the second argument is the year.")
     parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to MC only. Can use {name}, {cname} patterns in the treename") 
     parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename") 
     parser.add_option("--FMCs", "--add-friend-mc-simple",    dest="friendTreesMCSimple",  action="append", default=[], nargs=1, help="Add friends in a directory to MC only. The rootfile must be called evVarFriend_{cname}.root and tree must be called 't' in a subdir 'sf' inside the rootfile.") 
