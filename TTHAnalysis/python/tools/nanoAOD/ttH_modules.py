@@ -110,7 +110,7 @@ recleaner_step2_mc_allvariations = lambda : fastCombinedObjectRecleaner(label="R
                                                                         cleanTausWithLooseLeptons=True,
                                                                         cleanJetsWithFOTaus=True,
                                                                         doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
-                                                                        jetPts=[25,40],
+                                                                        jetPts=[25,30],
                                                                         jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
                                                                         btagL_thr=99, # they are set at runtime 
                                                                         btagM_thr=99,
@@ -158,17 +158,17 @@ mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 
 countTaus = lambda : ObjTagger('Tight','TauSel_Recl', [lambda t : t.idDeepTau2017v2p1VSjet&4])
 
-from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import jetMetCorrelate2016,jetMetCorrelate2017,jetMetCorrelate2018
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import createJMECorrector
 
 
-jetmetUncertainties2016All = createJMECorrector(dataYear=2016, jesUncert="All")
-jetmetUncertainties2017All = createJMECorrector(dataYear=2017, jesUncert="All", metBranchName="METFixEE2017")
-jetmetUncertainties2018All = createJMECorrector(dataYear=2016, jesUncert="All")
+jetmetUncertainties2016APVAll = createJMECorrector(dataYear='UL2016_preVFP', jesUncert="Merged")
+jetmetUncertainties2016All = createJMECorrector(dataYear='UL2016', jesUncert="Merged")
+jetmetUncertainties2017All = createJMECorrector(dataYear='UL2017', jesUncert="Merged")
+jetmetUncertainties2018All = createJMECorrector(dataYear='UL2018', jesUncert="Merged")
 
-jme2016_allvariations = [jetmetUncertainties2016All,jetMetCorrelate2016] 
-jme2017_allvariations = [jetmetUncertainties2017All,jetMetCorrelate2017]
-jme2018_allvariations = [jetmetUncertainties2018All,jetMetCorrelate2018]
+jme2016_allvariations = [jetmetUncertainties2016All] 
+jme2017_allvariations = [jetmetUncertainties2017All]
+jme2018_allvariations = [jetmetUncertainties2018All]
 
 def _fires(ev, path):
     if not hasattr(ev,path): return False 
