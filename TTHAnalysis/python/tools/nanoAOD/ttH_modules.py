@@ -519,4 +519,4 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.mvaCP_2lss1tau import mvaCP_2lss1tau
 MVAcp_2lss1tau = lambda : mvaCP_2lss1tau(variations = []) # for data
 MVAcp_2lss1tau_allvars = lambda : mvaCP_2lss1tau(variations = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'])
 
->>>>>>> sscruz2/104X_dev_nano_diff
+
