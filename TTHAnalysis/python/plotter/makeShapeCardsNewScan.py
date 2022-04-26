@@ -44,8 +44,12 @@ for psig in mca.listSignals(True):
 	continue
         #raise RuntimeError("Signal %s does not match the regexp"%psig)
     point = [ match.group( p ) for p in options.params.split(',') ] 
-    point[1] = re.sub("_h[a-z]+", '',point[1])
-    if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
+    if len(point)>1:
+       point[1] = re.sub("_h[a-z]+", '',point[1])
+       if point not in scanpoints and 'promptsub' not in point[1]: scanpoints.append(  point ) 
+    elif len(point)==1:
+       if point not in scanpoints and 'promptsub' not in psig: scanpoints.append(  point )
+
 report={}
 if options.infile:
     infile = ROOT.TFile(outdir+binname+".bare.root","read")
@@ -69,8 +73,10 @@ if options.savefile:
 
 if options.asimov:
     match = pattern.search( options.asimov ) 
-    if match: 
+    print('asimov_match',options.asimov)
+    if match:
         asimovprocesses = [x for x in mca.listSignals() if x in options.asimov.split(',')] + mca.listBackgrounds()
+        print(asimovprocesses)
     elif options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
     elif options.asimov in ("b","bkg","background", "b-only"):
@@ -78,7 +84,8 @@ if options.asimov:
     else: raise RuntimeError("the --asimov option requires to specify signal/sig/s/s+b or background/bkg/b/b-only")
     tomerge = None
     for p in asimovprocesses:
-        if p in report: 
+        if p in report:
+            print('p addded',p) 
             if tomerge is None: 
                 tomerge = report[p].raw().Clone("x_data_obs"); tomerge.SetDirectory(None)
             else: tomerge.Add(report[p].raw())
@@ -131,8 +138,7 @@ for scanpoint in scanpoints:
         match = pattern.search(psig)
         if match: 
         	matchpoint = [match.group(p) for p in options.params.split(',')]
-        	matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
-        
+        	if len(matchpoint) >1: matchpoint[1] = re.sub("_h[a-z]+", '',matchpoint[1])
         	#if scanpoint != [match.group(p) for p in options.params.split(',')]: continue
         	if scanpoint != matchpoint: continue
         if 'promptsub' not in psig: listSignals.append(psig)
@@ -222,11 +228,15 @@ for scanpoint in scanpoints:
                         systs[name] = ("lnN", effyield, {})
         # make a new list with only the ones that have an effect
         nuisances = sorted(systs.keys())
-        pointname2 = pointname.replace('kt','ct')
-        pointname2 = pointname2.replace('kv','cv')
+        if "kv" in pointname:
+           pointname2 = pointname.replace('kt','ct')
+           pointname2 = pointname2.replace('kv','cv')
+        else:
+           pointname2 = pointname
         if '-' in pointname: 
            pointname = pointname.replace('-','m')
-        pointname2=pointname2.replace('m','-') #for sanity
+        print(pointname2, pointname)
+        
         datacard = open(outdir+binname+'_'+pointname+".txt", "w"); 
         datacard.write("## Datacard for cut file %s and scan point %s\n"%(args[1],pointname))
         datacard.write("shapes *        * %s.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (binname +'_'+pointname))

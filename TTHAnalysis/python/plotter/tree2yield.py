@@ -638,7 +638,7 @@ class TreeToYield:
         #    print "Histogram for %s/%s has %d entries, so won't use KeysPdf (%s, %s) " % (self._cname, self._name, histo.GetEntries(), canKeys, self.getOption("KeysPdf",False))
         self.negativeCheck(histo)
         histo = histo.Clone(name)
-        histo.SetDirectory(None)
+        histo.SetDirectory(ROOT.nullptr)
         if closeTreeAfter: self._close()
         return histo
     def negativeCheck(self,histo):

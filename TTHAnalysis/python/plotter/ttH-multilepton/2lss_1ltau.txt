@@ -1,0 +1,20 @@
+alwaystrue: 1
+trigger: Trigger_2lss
+filters: Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && (Flag_ecalBadCalibFilter || (year == 2016))  $DATA{&& Flag_eeBadScFilter}
+cleanup: minMllAFAS > 12
+dilep: nLepFO>=2
+pt2515: LepGood1_conePt>25 && (LepGood2_conePt>15 || abs(LepGood2_pdgId) == 13) && (LepGood2_conePt>10 || abs(LepGood2_pdgId) == 11)
+TT: LepGood1_isLepTight && LepGood2_isLepTight
+exclusive: nLepTight<=2
+same-sign: LepGood1_charge*LepGood2_charge > 0
+Z_veto: abs(mZ1-91.2)>10
+eleID: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
+muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepGood2_pdgId)!=13 || LepGood2_tightCharge>=1)
+metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || MET_pt*0.6 + mhtJet25*0.4 > 30
+Zee_veto: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-91.2) > 10
+
+tautight: nTau_2lss1tau_Tight > 0
+tauveto : nTau_2lss1tau_Veto < 2
+tau_sign : LepGood1_pdgId*TauSel_Recl_charge[Tau_tight2lss1tau_idx]>0
+
+jet_bjet: (nJet25>=3 && (nBJetLoose25 >= 2 || nBJetMedium25 >= 1)) || (nBJetMedium25 >= 1 && (nJet25+nFwdJet-nBJetLoose25) > 0)

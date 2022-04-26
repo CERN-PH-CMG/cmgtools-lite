@@ -25,7 +25,8 @@ public:
                       const std::vector<std::string> & mvaInputVariables,
                       const std::vector<std::string> classes,
                       const std::vector<double> & mvaInputVariables_mean = {},
-                      const std::vector<double> & mvaInputVariables_var = {});
+                      const std::vector<double> & mvaInputVariables_var = {},
+		      std::string outputLayerName="/Softmax");
   ~TensorFlowInterface();
 
   /**

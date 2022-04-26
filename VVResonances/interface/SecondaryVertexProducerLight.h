@@ -9,7 +9,7 @@
 #include <vector>
 #include <map>
 #include <set>
-
+#include <boost/shared_ptr.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 #include "FWCore/Framework/interface/stream/EDProducer.h"

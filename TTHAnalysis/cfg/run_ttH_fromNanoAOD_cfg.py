@@ -186,6 +186,10 @@ if test == "94X-MC":
     lepSkim.minMET = 0
     lepSkim.prescaleFactor = 0
     selectedComponents = [TTLep_pow]
+if test == "synch-2016":
+    TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_TuneCP5up_PSweights_13TeV-powheg-pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
+    TTLep_pow.files = ["/pnfs/psi.ch/cms/trivcat/store/user/sesanche/ttH_synch/input/NANO_RunIISummer16MiniAODv3_NANO.root"]
+    selectedComponents = [TTLep_pow]
 elif test == "94X-MC-miniAOD":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
     TTLep_pow.files = [ 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
