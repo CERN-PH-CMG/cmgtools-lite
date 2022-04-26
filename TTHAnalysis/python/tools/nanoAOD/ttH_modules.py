@@ -1,5 +1,6 @@
 import os
 import ROOT 
+import copy 
 conf = dict(
         muPt = 5, 
         elePt = 7, 
@@ -21,7 +22,7 @@ electronSelection = lambda l : abs(l.eta) < 2.5 and l.pt > conf["elePt"] and l.m
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttHPrescalingLepSkimmer import ttHPrescalingLepSkimmer
 # NB: do not wrap lepSkim a lambda, as we modify the configuration in the cfg itself 
-lepSkim = ttHPrescalingLepSkimmer(1, 
+lepSkim = ttHPrescalingLepSkimmer(5, 
                 muonSel = muonSelection, electronSel = electronSelection,
                 minLeptonsNoPrescale = 2, # things with less than 2 leptons are rejected irrespectively of the prescale
                 minLeptons = 2, requireSameSignPair = True,
@@ -92,8 +93,7 @@ tightLeptonSel = lambda lep,year,era : clean_and_FO_selection_TTH(lep,year,era) 
 
 foTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2  and (int(tau.idDeepTau2017v2p1VSjet)>>1 & 1) # VVLoose WP
 tightTauSel = lambda tau: (int(tau.idDeepTau2017v2p1VSjet)>>2 & 1) # VLoose WP
-
-from CMGTools.TTHAnalysis.tools.nanoAOD.jetmetGrouper import groups as jecGroups
+jevariations=['jes%s'%x for x in ["FlavorQCD", "RelativeBal", "HF", "BBEC1", "EC2", "Absolute", "BBEC1_{year}", "EC2_{year}", "Absolute_{year}", "HF_{year}", "RelativeSample_{year}" ]] + ['jer']
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import CombinedObjectTaggerForCleaning
 from CMGTools.TTHAnalysis.tools.nanoAOD.fastCombinedObjectRecleaner import fastCombinedObjectRecleaner
 recleaner_step1 = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
@@ -106,17 +106,24 @@ recleaner_step1 = lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                                            selectJet = lambda jet: jet.jetId > 0, # pt and eta cuts are (hard)coded in the step2 
                                                            coneptdef = lambda lep: conept_TTH(lep),
 )
-recleaner_step2_mc_allvariations = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
-                                                                        cleanTausWithLooseLeptons=True,
-                                                                        cleanJetsWithFOTaus=True,
-                                                                        doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
-                                                                        jetPts=[25,30],
-                                                                        jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
-                                                                        btagL_thr=99, # they are set at runtime 
-                                                                        btagM_thr=99,
-                                                                        isMC = True,
-                                                                        variations= [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM']
+recleaner_step2_mc_allvariations2016 = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
+                                                                            cleanTausWithLooseLeptons=True,
+                                                                            cleanJetsWithFOTaus=True,
+                                                                            doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
+                                                                            jetPts=[25,30],
+                                                                            jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
+                                                                            btagL_thr=99, # they are set at runtime 
+                                                                            btagM_thr=99,
+                                                                            isMC = True,
+                                                                            variations= jevariations,
+                                                                            year='2016',
+
 )
+recleaner_step2_mc_allvariations2016APV=copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2016APV.year='2016APV'
+recleaner_step2_mc_allvariations2017  =copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2017    .year='2017'
+recleaner_step2_mc_allvariations2018  =copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2018    .year='2018'
+
+
 recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                                           cleanTausWithLooseLeptons=True,
                                                           cleanJetsWithFOTaus=True,
@@ -166,9 +173,6 @@ jetmetUncertainties2016All = createJMECorrector(dataYear='UL2016', jesUncert="Me
 jetmetUncertainties2017All = createJMECorrector(dataYear='UL2017', jesUncert="Merged")
 jetmetUncertainties2018All = createJMECorrector(dataYear='UL2018', jesUncert="Merged")
 
-jme2016_allvariations = [jetmetUncertainties2016All] 
-jme2017_allvariations = [jetmetUncertainties2017All]
-jme2018_allvariations = [jetmetUncertainties2018All]
 
 def _fires(ev, path):
     if not hasattr(ev,path): return False 
@@ -349,18 +353,18 @@ BDThttTT_allvariations = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/C
                                                     lambda leps,jets,event : len(leps)>=2,
                                                     lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
                                                 ],
-                                                variations = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'] ,
+                                                variations = jevariations,
 )
 
 
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
 finalMVA = lambda : finalMVA_DNN() # use this for data
-finalMVA_allVars = lambda : finalMVA_DNN( variations = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'])
+finalMVA_allVars = lambda : finalMVA_DNN( variations = jevariations)
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
 finalMVA3L = lambda : finalMVA_DNN_3l() # use this for data
-finalMVA3L_allVars = lambda : finalMVA_DNN_3l(variations = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'])
+finalMVA3L_allVars = lambda : finalMVA_DNN_3l(variations = jevariations )
 
 from CMGTools.TTHAnalysis.tools.nanoAOD.finalMVA_4l import FinalMVA_4L
 finalMVA_4l = lambda : FinalMVA_4L()
