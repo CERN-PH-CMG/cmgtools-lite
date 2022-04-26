@@ -36,8 +36,7 @@ def _getHistoInRangeNoDir(hist, name, bin1, bin2): # bin1 is included, bin2 is n
 def cropNegativeBins(histo,threshold=0.):
             if "TH1" in histo.ClassName():
                 for b in xrange(0,histo.GetNbinsX()+2):
-                    if histo.GetBinContent(b) < 
-                    threshold: histo.SetBinContent(b, threshold)
+                    if histo.GetBinContent(b) < threshold: histo.SetBinContent(b, threshold)
                     if threshold>0 and histo.GetBinError(b)<0.01*threshold:
                         histo.GetSetBinError(b,0.01*threshold)
             elif "TH2" in histo.ClassName():
