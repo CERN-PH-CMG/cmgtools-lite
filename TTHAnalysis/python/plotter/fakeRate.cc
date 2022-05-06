@@ -58,6 +58,7 @@ TH2 * MUSF3 = 0;
 
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
+  std::cout << "Loading " << histoName << " from file " << file << " to " << name << std::endl;
     TH2 **histo = 0, **hptr2 = 0;
     TH2 * FR_temp = 0; TH2* QF_el_temp =0 ;
     if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
@@ -142,6 +143,15 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     f->Close();
     here->cd();
     return histo != 0;
+}
+
+float fakeRateBin(float l1pt, float l1eta, int l1pdgId, int  iFRel, int iFRmu)
+{
+    TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_el[iFRel] : FRi_mu[iFRmu]);
+    if (hist1 == 0) { std::cerr << "ERROR, missing FR for pdgId " << l1pdgId << ", iFR " << (abs(l1pdgId) == 11 ? iFRel : iFRmu) << std::endl; std::abort(); }
+    int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
+    int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
+    return (etabin1-1)*(hist1->GetXaxis()->GetNbins()+1)+ptbin1;
 }
 
 float fetchFR_ii(float l1pt, float l1eta, int l1pdgId, int iFRmu, int iFRel) 
@@ -231,10 +241,15 @@ float chargeFlipWeight_2lss(float l1pt, float l1eta, int l1pdgId,
 }
 
 float chargeFlipWeight_2lss_i(float l1pt, float l1eta, int l1pdgId, 
-			      float l2pt, float l2eta, int l2pdgId, int year) 
+			      float l2pt, float l2eta, int l2pdgId, int year, int suberaId) 
 {
     if (l1pdgId * l2pdgId > 0) return 0.;
     int indx = year-2015;
+    if (year == 2016 && suberaId == 0) indx=1;
+    if (year == 2016 && suberaId == 1) indx=2;
+    if (year == 2017) indx=3;
+    if (year == 2018) indx=4;
+
     double w = 0;
     if (abs(l1pdgId) == 11) {
         int ptbin  = std::max(1, std::min(QFi_el[indx]->GetNbinsX(), QFi_el[indx]->GetXaxis()->FindBin(l1pt)));
