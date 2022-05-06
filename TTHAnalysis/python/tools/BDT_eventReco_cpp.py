@@ -10,15 +10,16 @@ import math
 import os
 
 class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = [], variations=[]):
-
+    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = [], variations=[], year=''):
+        print 'the year is', year
         self.inputlabel = '_'+recllabel
         self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown", 2:"_jesTotalUnCorrUp", -2:"_jesTotalUnCorrDown", 3 : '_jerUp', -3:'_jerDown'}
+        self.year=year
         if len(variations):
             self.systsJEC = {0:""}
             for i,var in enumerate(variations):
-                self.systsJEC[i+1]   ="_%sUp"%var
-                self.systsJEC[-(i+1)]="_%sDown"%var
+                self.systsJEC[i+1]   ="_%sUp"%var.replace("{year}",year)
+                self.systsJEC[-(i+1)]="_%sDown"%var.replace("{year}",year)
         self.selection = selection
 
         if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries():
@@ -99,7 +100,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
             "H_Wmass",
             "H_mass",
             ]
-        self.outbranches = [ "BDT%s_eventReco_%s"%(self.prefix,k)+self.systsJEC[var] for k in self.branches for var in self.systsJEC ]
+        self.outbranches = [ "BDT%s_eventReco_%s"%(self.prefix,k)+self.systsJEC[var].replace("{year}",year) for k in self.branches for var in self.systsJEC ]
 
     # old interface
     def listBranches(self):

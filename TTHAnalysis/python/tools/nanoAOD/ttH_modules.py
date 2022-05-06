@@ -122,7 +122,7 @@ recleaner_step2_mc_allvariations2016 = lambda : fastCombinedObjectRecleaner(labe
                                                                             year='2016',
 
 )
-recleaner_step2_mc_allvariations2016APV=copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2016APV.year='2016APV'
+recleaner_step2_mc_allvariations2016APV=copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2016APV.year='2016'
 recleaner_step2_mc_allvariations2017  =copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2017    .year='2017'
 recleaner_step2_mc_allvariations2018  =copy.deepcopy(recleaner_step2_mc_allvariations2016);  recleaner_step2_mc_allvariations2018    .year='2018'
 
@@ -167,7 +167,7 @@ countTaus = [countTaus_veto,countTaus_FO,countTaus_2lss1tau_Veto,countTaus_2lss1
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars               = lambda : EventVars2LSS('','Recl', tauTight_2lss_1tau=tauTight_2lss_1tau)
-eventVars_allvariations = lambda : EventVars2LSS('','Recl',variations = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'], tauTight_2lss_1tau=tauTight_2lss_1tau)
+eventVars_allvariations = lambda : EventVars2LSS('','Recl',variations = jevariations, tauTight_2lss_1tau=tauTight_2lss_1tau)
 
 from CMGTools.TTHAnalysis.tools.hjDummCalc import HjDummyCalc
 hjDummy = lambda : HjDummyCalc(variations  = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'])
@@ -353,23 +353,29 @@ BDThttTT_Hj = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTH
                                      ]
 )
 
-BDThttTT_allvariations = lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
-                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjtagger_legacy_xgboost_v1.weights.xml',
-                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
-                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
-                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HTT_HadTopTagger_2017_nomasscut_nvar17_resolved.xml',
-                                                os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
-                                                algostring = 'k_httTT_Hj',
-                                                csv_looseWP = 0.5426, 
-                                                csv_mediumWP = 0.8484,
-                                                selection = [
-                                                    lambda leps,jets,event : len(leps)>=2,
-                                                    lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
-                                                ],
-                                                variations = jevariations,
+BDThttTT_allvariations={}
+BDThttTT_allvariations = lambda year : lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjtagger_legacy_xgboost_v1.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xgb_csv_order_deepCTag.xml.gz',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/HTT_HadTopTagger_2017_nomasscut_nvar17_resolved.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TF_jets_kinfit_httTT.root',
+                                                      algostring = 'k_httTT_Hj',
+                                                      csv_looseWP = 0.5426, 
+                                                      csv_mediumWP = 0.8484,
+                                                      selection = [
+                                                          lambda leps,jets,event : len(leps)>=2,
+                                                          lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
+                                                      ],
+                                                      variations = jevariations,
+                                                      year=year,
 )
 
+BDThttTT_allvariations2016APV=BDThttTT_allvariations('2016')
+BDThttTT_allvariations2016=BDThttTT_allvariations('2016')
+BDThttTT_allvariations2017=BDThttTT_allvariations('2017')
+BDThttTT_allvariations2018=BDThttTT_allvariations('2018')
 
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
