@@ -16,7 +16,7 @@ def autoAAA(selectedComponents,quiet=False,redirectorAAA="cms-xrd-global.cern.ch
             tier2Checker = tier2CheckerNano
         else:
             continue
-        if not tier2Checker.available(comp.dataset):
+        if True: # not tier2Checker.available(comp.dataset):
             if not quiet: print "Dataset %s is not available, will use AAA" % comp.dataset
             changeComponentAccessMode.convertComponent(comp, "root://%s/%%s"%redirectorAAA)
             if 'X509_USER_PROXY' not in os.environ or ( ("/afs/" not in os.environ['X509_USER_PROXY'] and "/t3home/" not in os.environ['X509_USER_PROXY'])):
