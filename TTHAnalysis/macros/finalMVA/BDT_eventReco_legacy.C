@@ -159,7 +159,7 @@ class BDT_EventReco_EventP4Cache {
 
 class BDT_EventReco {
  public: 
-  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
+  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo);
   ~BDT_EventReco(){
     clear();
   };
@@ -172,7 +172,6 @@ class BDT_EventReco {
   };
   void clear();
   std::vector<float> EvalMVA();
-  std::vector<float> CalcHadTopTagger(char* _permlep, char* _x);
   std::vector<float> CalcHjTagger(char* _permlep, char* _x, std::vector<int> &permjet);
   std::vector<float> CalcrTT(char* _x);
   float EvalScore(eTopP top);
@@ -301,11 +300,9 @@ class BDT_EventReco {
   bool hjLegacyTraining = false;
 };
 
-BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
+BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, bool hj2017, bool hjlegacy, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo){
 
   algo = _algo;
-  csv_loose_working_point = csv_looseWP;
-  csv_medium_working_point = csv_mediumWP;
   hj2017training = hj2017;
   hjLegacyTraining = hjlegacy;
 
@@ -439,6 +436,9 @@ BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string we
   expected_size = (algo==k_BDTv8_Hj)*nOutputVariablesHadTop+(algo==k_rTT_Hj)*nOutputVariablesrTT+(algo==k_httTT_Hj)*nOutputVariableshttTT+nOutputVariablesHig;
 
 };
+
+
+
 
 void BDT_EventReco::clear(){
 
@@ -864,96 +864,6 @@ float BDT_EventReco::EvalScore_httTT(eTopP top){
 // };
 
 
-std::vector<float> BDT_EventReco::CalcHadTopTagger(char* _permlep, char* _x){
-
-      char _this_hadTop[6]={_permlep[0],_permlep[1],_x[0],_x[1],std::max(_x[2],_x[3]),std::min(_x[2],_x[3])};
-      std::string this_hadTop(_this_hadTop,_this_hadTop+6);
-      float this_hadTop_value = -99;
-
-      if (done_perms.find(this_hadTop) != done_perms.end()){
-	this_hadTop_value = done_perms[this_hadTop];
-	auto output = std::vector<float>(1,this_hadTop_value);
-	output.resize(nOutputVariablesHadTop,-99);
-	return output;
-      }
-      else {
-
-	auto lep_fromTop = leps[((int)(_permlep[0]))-max_n_jets-10];
-	auto lep_fromHig = leps[((int)(_permlep[1]))-max_n_jets-10];
-	auto bjet_fromHadTop = ((int)(_x[0])>=0) ? jets[(int)(_x[0])] : nulljet;
-	auto bjet_fromLepTop = ((int)(_x[1])>=0) ? jets[(int)(_x[1])] : nulljet;
-	//      eJet *wjet1_fromHadTop = ((int)(_x[2])>=0) ? jets[(int)(_x[2])] : nulljet;
-	//      eJet *wjet2_fromHadTop = ((int)(_x[3])>=0) ? jets[(int)(_x[3])] : nulljet;
-      
-	if (bjet_fromHadTop==nulljet && bjet_fromLepTop==nulljet) return std::vector<float>(1,this_hadTop_value);
-	if (nBMedium>1 && std::min(bjet_fromHadTop->csv(),bjet_fromLepTop->csv())<csv_medium_working_point) return std::vector<float>(1,this_hadTop_value);
-	if (bjet_fromHadTop->csv()>0 && bjet_fromHadTop->csv()<csv_loose_working_point) return std::vector<float>(1,this_hadTop_value);
-	if (bjet_fromLepTop->csv()>0 && bjet_fromLepTop->csv()<csv_loose_working_point) return std::vector<float>(1,this_hadTop_value);
-	if (std::max(bjet_fromHadTop->csv(),bjet_fromLepTop->csv())<csv_medium_working_point && std::min(bjet_fromHadTop->csv(),bjet_fromLepTop->csv())<csv_loose_working_point) return std::vector<float>(1,this_hadTop_value);
-
-	auto hadTop_W = cache->getSum(_x[2],_x[3]);
-	auto hadTop = cache->getSum(_x[0],_x[2],_x[3]);
-
-	float comb_pt = hadTop->pt();
-	float comb_M = hadTop->mass();
-	float comb_eta = hadTop->eta();
-	float comb_phi = hadTop->phi();
-
-	if (hadTop_W->mass() > 120) return std::vector<float>(1,this_hadTop_value);
-	if (comb_M > 220) return std::vector<float>(1,this_hadTop_value);
-
-	auto lepTop = (*lep_fromTop) + *(bjet_fromLepTop->p4());
-	float leptop_pt = lepTop.Pt();
-	float leptop_eta = lepTop.Eta();
-	float leptop_phi = lepTop.Phi();
-
-	if (lepTop.M() > 180) return std::vector<float>(1,this_hadTop_value);
-
-	bJet_fromLepTop_CSV_var = bjet_fromLepTop->csv();
-	bJet_fromHadTop_CSV_var = bjet_fromHadTop->csv();
-	HadTop_pT_var = comb_pt;
-	W_fromHadTop_mass_var = hadTop_W->mass();
-	HadTop_mass_var = comb_M;
-	auto X_info = lepTop + (*hadTop);
-	auto X_invariant_mass = X_info.M(); 
-	auto X_pt = X_info.Pt();
-	auto X_eta = X_info.Eta();
-	auto X_phi = X_info.Phi();
-
-	lep_ptRatio_fromTop_fromHig_var = lep_fromTop->Pt()/lep_fromHig->Pt();
-	dR_lep_fromTop_bJet_fromLepTop_var = (bjet_fromLepTop != nulljet) ? dR(lep_fromTop.get(),bjet_fromLepTop->p4()) : -1;
-	dR_lep_fromTop_bJet_fromHadTop_var = (bjet_fromHadTop != nulljet) ? dR(lep_fromTop.get(),bjet_fromHadTop->p4()) : -1;
-	dR_lep_fromHig_bJet_fromLepTop_var = (bjet_fromLepTop != nulljet) ? dR(lep_fromHig.get(),bjet_fromLepTop->p4()) : -1;
-
-	this_hadTop_value = TMVAReader_[(nBMedium>1)]->EvaluateMVA( "BDTG method" );
-      	done_perms[this_hadTop] = this_hadTop_value;
-
-	std::vector<float> output;
-	output.push_back(this_hadTop_value);
-	output.push_back(bJet_fromLepTop_CSV_var);
-	output.push_back(bJet_fromHadTop_CSV_var);
-	output.push_back(HadTop_pT_var);
-	output.push_back(W_fromHadTop_mass_var);
-	output.push_back(HadTop_mass_var);
-	output.push_back(lep_ptRatio_fromTop_fromHig_var);
-	output.push_back(dR_lep_fromTop_bJet_fromLepTop_var);
-	output.push_back(dR_lep_fromTop_bJet_fromHadTop_var);
-	output.push_back(dR_lep_fromHig_bJet_fromLepTop_var);
-	output.push_back(lepTop.M());
-	output.push_back(X_invariant_mass);
-	output.push_back(comb_eta);
-	output.push_back(comb_phi);
-	output.push_back(leptop_pt);
-	output.push_back(leptop_eta);
-	output.push_back(leptop_phi);
-	output.push_back(X_pt);
-	output.push_back(X_eta);
-	output.push_back(X_phi);
-	return output;
-
-      }
-
-}
 
 
 std::vector<float> BDT_EventReco::CalcHjTagger(char* _permlep, char* _x, std::vector<int> &permjet){

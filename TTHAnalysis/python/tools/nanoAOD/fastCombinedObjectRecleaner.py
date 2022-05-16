@@ -8,7 +8,7 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.constants import _btagWPs
 
 class fastCombinedObjectRecleaner(Module):
     def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,jetPtsFwd,btagL_thr,btagM_thr,jetCollection='Jet',jetBTag='btagDeepFlavB',tauCollection='Tau',isMC=None, 
-                 variations=[], year=''):
+                 variations=[]):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inlabel = inlabel
         self.tauc = tauCollection
@@ -27,7 +27,7 @@ class fastCombinedObjectRecleaner(Module):
         if isMC is not None: 
             self.isMC = isMC
         self.variations = variations
-        self.year=year
+
 
     def initComponent(self, component):
         self.isMC = component.isMC
@@ -39,7 +39,7 @@ class fastCombinedObjectRecleaner(Module):
 
         self.vars_taus_int = ['jetIdx','decayMode','charge'] + (['genPartIdx'] if self.isMC else [])
         self.vars_taus_uchar = ['idDeepTau2017v2p1VSjet', 'idDeepTau2017v2p1VSjet','idDeepTau2017v2p1VSe','idDeepTau2017v2p1VSmu']
-        self.vars_jets = [("pt","pt_nom") if self.isMC and len(self.variations) else 'pt',"btagDeepB","qgl",'btagDeepFlavB'] + [ 'pt_%s%s'%(x.replace('{year}',self.year),y) for x in self.variations for y in ["Up","Down"]] 
+        self.vars_jets = [("pt","pt_nom") if self.isMC and len(self.variations) else 'pt',"btagDeepB","qgl",'btagDeepFlavB'] + [ 'pt_%s%s'%(x,y) for x in self.variations for y in ["Up","Down"]] 
         self.vars_jets_int = (["hadronFlavour"] if self.isMC else [])
         self.vars_jets_nooutput = []
         self.systsJEC = {0:""}
@@ -108,8 +108,8 @@ class fastCombinedObjectRecleaner(Module):
         jecs= ROOT.vector("TTreeReaderArray<float>*")()
         if self.isMC and len(self.variations):
             for var in self.variations:
-                jecs.push_back( getattr(self, '%s_pt_%sUp'%(self.jc, var.replace('{year}',self.year))))
-                jecs.push_back( getattr(self, '%s_pt_%sDown'%(self.jc, var.replace('{year}',self.year))))
+                jecs.push_back( getattr(self, '%s_pt_%sUp'%(self.jc, var)))
+                jecs.push_back( getattr(self, '%s_pt_%sDown'%(self.jc, var)))
 
         self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc), # Jet pt has already been replaced by Jet_pt_nom in mc above
                              getattr(self,'%s_%s'%(self.jc,self.jetBTag)),

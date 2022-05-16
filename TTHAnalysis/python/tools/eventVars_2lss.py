@@ -185,7 +185,8 @@ class EventVars2LSS(Module):
                 
             if nFO >1:
                 ttHsystem=leps[0].p4()+leps[1].p4()
-                metName = 'METFixEE2017' if event.year == 2017 else 'MET'
+                metName = 'MET_T1'
+                if not hasattr(event, metName+"_pt"): metName="MET"
             
                 MET= getattr(event,metName+"_pt"+self.systsJEC[_var])
                 MET_phi = getattr(event,metName+"_phi"+self.systsJEC[_var])
@@ -303,7 +304,8 @@ class EventVars2LSS(Module):
                         sumdr += deltaR(j,j2)
                 ret["avg_dr_jet"] = sumdr/ndr if ndr else 0;
 
-            metName = 'METFixEE2017' if event.year == 2017 else 'MET'
+            metName = 'MET_T1'
+            if not hasattr(event, metName+"_pt"): metName="MET"
 
             met = getattr(event,metName+"_pt"+self.systsJEC[_var])
             metphi = getattr(event,metName+"_phi"+self.systsJEC[_var])

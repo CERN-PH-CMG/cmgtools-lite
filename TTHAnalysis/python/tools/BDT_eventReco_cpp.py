@@ -10,16 +10,14 @@ import math
 import os
 
 class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, csv_looseWP, csv_mediumWP, recllabel='Recl', selection = [], variations=[], year=''):
-        print 'the year is', year
+    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, weightfile_rTT, weightfile_httTT, kinfitfile_httTT, algostring, recllabel='Recl', selection = [], variations=[]):
         self.inputlabel = '_'+recllabel
-        self.systsJEC = {0:"", 1:"_jesTotalCorrUp", -1:"_jesTotalCorrDown", 2:"_jesTotalUnCorrUp", -2:"_jesTotalUnCorrDown", 3 : '_jerUp', -3:'_jerDown'}
-        self.year=year
+        self.systsJEC = {0:""}
         if len(variations):
             self.systsJEC = {0:""}
             for i,var in enumerate(variations):
-                self.systsJEC[i+1]   ="_%sUp"%var.replace("{year}",year)
-                self.systsJEC[-(i+1)]="_%sDown"%var.replace("{year}",year)
+                self.systsJEC[i+1]   ="_%sUp"%var
+                self.systsJEC[-(i+1)]="_%sDown"%var
         self.selection = selection
 
         if "/libCommonToolsMVAUtils.so" not in ROOT.gSystem.GetLibraries():
@@ -35,7 +33,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
         hj2017 = ("2017" in weightfile_hj)
         hjLegacy = ("legacy" in weightfile_hj)
 
-        self.run = ROOT.BDT_EventReco(weightfile_bloose,weightfile_btight,weightfile_hj,hj2017,hjLegacy,weightfile_hjj,weightfile_rTT,weightfile_httTT,kinfitfile_httTT,algo,csv_looseWP,csv_mediumWP)
+        self.run = ROOT.BDT_EventReco(weightfile_bloose,weightfile_btight,weightfile_hj,hj2017,hjLegacy,weightfile_hjj,weightfile_rTT,weightfile_httTT,kinfitfile_httTT,algo)
         self.run.setDebug(False)
 
         if algo==ROOT.k_BDTv8_Hj:
@@ -100,7 +98,7 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
             "H_Wmass",
             "H_mass",
             ]
-        self.outbranches = [ "BDT%s_eventReco_%s"%(self.prefix,k)+self.systsJEC[var].replace("{year}",year) for k in self.branches for var in self.systsJEC ]
+        self.outbranches = [ "BDT%s_eventReco_%s"%(self.prefix,k)+self.systsJEC[var] for k in self.branches for var in self.systsJEC ]
 
     # old interface
     def listBranches(self):
@@ -126,7 +124,9 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
         leps = [all_leps[chosen[i]] for i in xrange(nFO)]
         for var in self.systsJEC:
             _var = var
-            if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
+            if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel):
+                print 'variable', "nJet25"+self.systsJEC[var]+self.inputlabel, 'not found'
+                _var = 0
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
 
             jetptcut = 25
@@ -167,8 +167,6 @@ if __name__ == '__main__':
                                     weightfile_httTT = '../../data/kinMVA/tth/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml',
                                     kinfitfile_httTT = '../../data/kinMVA/tth/TF_jets_kinfit_httTT.root',
                                     algostring = 'k_rTT_Hj',
-                                    csv_looseWP = 0.5426,
-                                    csv_mediumWP = 0.8484,
                                     selection = [ lambda leps,jets,event : len(leps)>=2 and len(jets)>=3,
                                                   lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,],
                                     )
