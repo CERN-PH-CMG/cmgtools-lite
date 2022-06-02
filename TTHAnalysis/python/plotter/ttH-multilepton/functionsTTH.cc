@@ -768,10 +768,10 @@ std::map<TString, TH1*> hRecoToLoose;
 float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, int year, int suberaid){
   
   if (!fRecoToLoose.size()){
-    for (auto& theyear : {"2016","2016apv", "2017", "2018"}){
-      fRecoToLoose[TString::Format("%s_el_2lss",theyear)]=TFile::Open(TString::Format("../../data/leptonSF/UL/results_final/TnP_EFT_ele_%s_2lss/passtight/egammaEffi.txt_EGM2D.root",theyear));
-      fRecoToLoose[TString::Format("%s_el_3l",theyear)]=TFile::Open(TString::Format("../../data/leptonSF/UL/results_final/TnP_EFT_ele_%s_3l/passtight/egammaEffi.txt_EGM2D.root",theyear));
-      fRecoToLoose[TString::Format("%s_mu_3l",theyear)]=TFile::Open(TString::Format("../../data/leptonSF/UL/results_final/TnP_EFT_muon_%s_3l/passtight/egammaEffi.txt_EGM2D.root",theyear));
+    for (auto& theyear : {"2016","2016APV", "2017", "2018"}){
+      fRecoToLoose[TString::Format("%s_el_2lss",theyear)]=TFile::Open(TString::Format("../../data/leptonSF/elecNEWmva/egammaEffi%s_2lss_EGM2D.root",theyear));
+      fRecoToLoose[TString::Format("%s_el_3l",theyear)]=TFile::Open(TString::Format("../../data/leptonSF/elecNEWmva/egammaEffi%s_3l_EGM2D.root",theyear));
+      fRecoToLoose[TString::Format("%s_mu_3l",theyear)]=TFile::Open(TString::Format("../../data/leptonSF/muon/egammaEffi%s_EGM2D.root",theyear));
     }
 
     for (auto const & x : fRecoToLoose){
@@ -780,7 +780,7 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, i
 
   }
 
-  TString yearString= TString::Format("%d",year) + (( year == 2016 && suberaid == 0) ? "apv" : "");
+  TString yearString= TString::Format("%d",year) + (( year == 2016 && suberaid == 0) ? "APV" : "");
   TString pdgstring  = (abs(pdgid) == 11) ? "el" : "mu";
   TString lepstring = (nlep == 2 && abs(pdgid) == 11 ) ? "2lss" : "3l";
 
