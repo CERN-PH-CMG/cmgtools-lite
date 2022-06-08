@@ -34,27 +34,27 @@ class finalMVA_DNN(Module):
 
         for var in self.systsJEC: 
             self._MVAs.append( TFTool('DNN_2lss%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017samples_xmasupdates_tH_selection.pb',
-                               self.getVarsForVariation(self.systsJEC[var]), cats_2lss, varorder))
+                                      self.getVarsForVariation(self.systsJEC[var]), cats_2lss, varorder, outputNodename="dense_17/Softmax"))
 
             self.outVars.extend( ['DNN_2lss%s_'%self.systsJEC[var] + x for x in cats_2lss])
 
 
         vars_2lss_unclUp = deepcopy(self.getVarsForVariation(''))
-        vars_2lss_unclUp["metLD"            ] =  lambda ev : (ev.MET_pt_unclustEnUp if ev.year != 2017 else ev.METFixEE2017_pt_unclustEnUp) *0.6 + ev.mhtJet25_Recl*0.4
+        vars_2lss_unclUp["metLD"            ] =  lambda ev : (ev.MET_T1_pt_unclustEnUp ) *0.6 + ev.mhtJet25_Recl*0.4
         vars_2lss_unclUp["mT_lep1"          ] =  lambda ev : ev.MT_met_lep1_unclustEnUp
         vars_2lss_unclUp["mT_lep2"          ] =  lambda ev : ev.MT_met_lep2_unclustEnUp
         self.outVars.extend( ['DNN_2lss_unclUp_' + x for x in cats_2lss])
 
         vars_2lss_unclDown = deepcopy(self.getVarsForVariation(''))
-        vars_2lss_unclDown["metLD"            ] =  lambda ev : (ev.MET_pt_unclustEnDown if ev.year != 2017 else ev.METFixEE2017_pt_unclustEnDown) *0.6 + ev.mhtJet25_Recl*0.4
+        vars_2lss_unclDown["metLD"            ] =  lambda ev : (ev.MET_T1_pt_unclustEnDown) *0.6 + ev.mhtJet25_Recl*0.4
         vars_2lss_unclDown["mT_lep1"          ] =  lambda ev : ev.MT_met_lep1_unclustEnDown
         vars_2lss_unclDown["mT_lep2"          ] =  lambda ev : ev.MT_met_lep2_unclustEnDown
         self.outVars.extend( ['DNN_2lss_unclDown_' + x for x in cats_2lss])
 
         worker_2lss_unclUp        = TFTool('DNN_2lss_unclUp', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017samples_xmasupdates_tH_selection.pb',
-                                           vars_2lss_unclUp, cats_2lss, varorder)
+                                           vars_2lss_unclUp, cats_2lss, varorder, outputNodename="dense_17/Softmax")
         worker_2lss_unclDown      = TFTool('DNN_2lss_unclDown', os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/2017samples_xmasupdates_tH_selection.pb',
-                                           vars_2lss_unclDown, cats_2lss, varorder)
+                                           vars_2lss_unclDown, cats_2lss, varorder, outputNodename="dense_17/Softmax")
         
         self._MVAs.extend( [worker_2lss_unclUp, worker_2lss_unclDown])
 
@@ -93,7 +93,7 @@ class finalMVA_DNN(Module):
                  "jet4_eta"         : lambda ev : abs(ev.JetSel_Recl_eta[3]) if getattr(ev,'nJet25%s_Recl'%var) > 3 else 9,
                  "nBJetMedium"      : lambda ev : getattr(ev,'nBJetMedium25%s_Recl'%var),
                  "Dilep_pdgId"      : lambda ev : (28 - abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[0])]) - abs(ev.LepGood_pdgId[int(ev.iLepFO_Recl[1])]))/2,
-                 "metLD"            : lambda ev : (getattr(ev,'MET_pt%s'%var) if ev.year != 2017 else getattr(ev,'METFixEE2017_pt%s'%var)) *0.6 + getattr(ev,'mhtJet25%s_Recl'%var)*0.4,
+                 "metLD"            : lambda ev : (getattr(ev,'MET_pt') if var == '' else getattr(ev,'MET_T1_pt%s'%var)) *0.6 + getattr(ev,'mhtJet25%s_Recl'%var)*0.4,
                  "jet3_phi"         : lambda ev : ev.JetSel_Recl_phi[2] if getattr(ev,'nJet25%s_Recl'%var) >= 3 else -9,
                  "maxeta"           : lambda ev : max( [abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]), abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])])]),
                  "jet1_eta"         : lambda ev : abs(ev.JetSel_Recl_eta[0]) if getattr(ev,'nJet25%s_Recl'%var) > 0 else 9,
