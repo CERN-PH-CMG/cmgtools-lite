@@ -167,6 +167,27 @@ class ComponentCreator(object):
         component.splitFactor = 100
         return component
 
+    def getFilesFromJSON(self, jsonF, prefix):
+        import json 
+        with open(jsonF) as f:
+            files=json.loads(f.read())['files']
+            f.close()
+        return [prefix + '/' + x for x in files] 
+        
+
+    def makeMCComponentFromJSON(self,name,dataset,jsonF,xSec=1,prefix=''):
+        component = cfg.MCComponent(
+            dataset=dataset,
+            name = name,
+            files = self.getFilesFromJSON(jsonF, prefix),
+            xSection = xSec,
+            nGenEvents = 1,
+            triggers = [],
+            effCorrFactor = 1,
+        )
+        component.splitFactor = 100
+        return component
+
     def makeDataComponent(self,name,dataset,user,pattern,json=None,run_range=None,triggers=[],vetoTriggers=[],useAAA=False,jsonFilter=False):
         component = cfg.DataComponent(
             #dataset = dataset,

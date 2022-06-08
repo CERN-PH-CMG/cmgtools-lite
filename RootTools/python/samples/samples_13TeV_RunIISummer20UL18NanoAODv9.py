@@ -1,6 +1,7 @@
 # COMPONENT CREATOR
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
+import os 
 
 # # QCD_Pt
 # QCD_Pt80to120 = kreator.makeMCComponent("QCD_Pt80to120", "/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/NANOAODSIM", "CMS", ".*root", 2.345e+06*1.17805)
@@ -423,8 +424,17 @@ Higgs = [
 
 # # ----------------------------- summary ----------------------------------------
 
+TTH_EFT = kreator.makeMCComponentFromJSON("TTH_EFT", "/TTH_EFT/RunIISummer20UL18NanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL18_ttHJet_b1.json',0.5071, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+THQ_EFT = kreator.makeMCComponentFromJSON("THQ_EFT", "/THQ_EFT/RunIISummer20UL18NanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL18_tHq_b1.json',0.07096, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TllQ_EFT = kreator.makeMCComponentFromJSON("TllQ_EFT", "/TllQ_EFT/RunIISummer20UL18NanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL18_tllq_b1.json',0.0758, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TTll_EFT = kreator.makeMCComponentFromJSON("TTll_EFT", "/TTll_EFT/RunIISummer20UL18NanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL18_ttllJet_b1.json',0.2529, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TTln_EFT = kreator.makeMCComponentFromJSON("TTln_EFT", "/TTll_EFT/RunIISummer20UL18NanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL18_ttlnuJet_b1.json',0.2043, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TTTT_EFT = kreator.makeMCComponentFromJSON("TTTT_EFT", "/TTTT_EFT/RunIISummer20UL18NanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL18_tttt_b4.json', 0.009103, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
 
-mcSamples =  Ws + DYs +  TTs + Ts + TTXs + TTXXs + DiBosons + TriBosons + Higgs + QCD_bcToE + QCD_EMs + QCD_Mus # VJetsQQHT +
+EFT = [TTH_EFT, THQ_EFT, TllQ_EFT, TTll_EFT, TTln_EFT, TTTT_EFT]
+
+
+mcSamples =  Ws + DYs +  TTs + Ts + TTXs + TTXXs + DiBosons + TriBosons + Higgs + QCD_bcToE + QCD_EMs + QCD_Mus + EFT # VJetsQQHT +
 
 
 samples = mcSamples

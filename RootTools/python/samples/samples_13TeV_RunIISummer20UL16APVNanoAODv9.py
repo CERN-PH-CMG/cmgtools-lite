@@ -1,6 +1,7 @@
 # COMPONENT CREATOR
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
+import os 
 
 # # QCD_Pt
 # QCD_Pt80to120 = kreator.makeMCComponent("QCD_Pt80to120", "/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv4-Nano14Dec2018_102X_upgrade2018_realistic_v16-v1/NANOAODSIM", "CMS", ".*root", 2.345e+06*1.17805)
@@ -133,7 +134,7 @@ QCD_bcToE = [
 ]
 
 # # ====== W + Jets ======
-#WJetsToLNu_LO = kreator.makeMCComponent("WJetsToLNu_LO","/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 3* 20508.9)
+WJetsToLNu_LO = kreator.makeMCComponent("WJetsToLNu_LO","/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-20UL16APVJMENano_106X_mcRun2_asymptotic_preVFP_v11-v2/NANOAODSIM", "CMS", ".*root", 3* 20508.9) # using jme nano...
                                                           
 # ## LO XSec from genXSecAna times NNLO/LO XSec for inclusive W+jets
 #W1JetsToLNu_LO = kreator.makeMCComponent("W1JetsToLNu_LO","/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM", "CMS", ".*root", 8123*1.17)
@@ -164,7 +165,7 @@ WJetsToLNuHT = [
 WJetsToLNu_012JetsNLO_34JetsLO = kreator.makeMCComponent("WJetsToLNu_012JetsNLO_34JetsLO","/WJetsToLNu_012JetsNLO_34JetsLO_EWNLOcorr_13TeV-sherpa/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM",  "CMS", ".*root", 6.228e+04)
 
 Ws = [ 
-    #WJetsToLNu_LO, # has to be checked
+    WJetsToLNu_LO,
     #W1JetsToLNu_LO,
     #W2JetsToLNu_LO,
     #W3JetsToLNu_LO,
@@ -324,7 +325,7 @@ TZQToLL  = kreator.makeMCComponent("TZQToLL","/tZq_ll_4f_ckm_NLO_TuneCP5_13TeV-a
 
 TTXs = [ TTGJets, TGJets_lep,
          TTWToLNu_fxfx, TTW_LO,  
-         TTZToLLNuNu_amc,TTZToLLNuNu_m1to10,  # TTZ_LO, needs to be recovered# 
+         TTZToLLNuNu_amc,TTZToLLNuNu_m1to10,   TTZ_LO,
          TZQToLL, TTH_ctcvcp, THQ_ctcvcp, THW_ctcvcp, # tWll, 
          TTHnobb_pow,
          TTHnobb_fxfx,
@@ -419,9 +420,17 @@ Higgs = [
 ]
 
 # # ----------------------------- summary ----------------------------------------
+TTH_EFT = kreator.makeMCComponentFromJSON("TTH_EFT", "/TTH_EFT/RunIISummer20UL16APVNanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL16APV_ttHJet_b1.json',0.5071, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+THQ_EFT = kreator.makeMCComponentFromJSON("THQ_EFT", "/THQ_EFT/RunIISummer20UL16APVNanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL16APV_tHq_b1.json',0.07096, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TllQ_EFT = kreator.makeMCComponentFromJSON("TllQ_EFT", "/TllQ_EFT/RunIISummer20UL16APVNanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL16APV_tllq_b1.json',0.0758, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TTll_EFT = kreator.makeMCComponentFromJSON("TTll_EFT", "/TTll_EFT/RunIISummer20UL16APVNanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL16APV_ttllJet_b1.json',0.2529, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TTln_EFT = kreator.makeMCComponentFromJSON("TTln_EFT", "/TTll_EFT/RunIISummer20UL16APVNanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL16APV_ttlnuJet_b1.json',0.2043, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+TTTT_EFT = kreator.makeMCComponentFromJSON("TTTT_EFT", "/TTTT_EFT/RunIISummer20UL16APVNanoAODv9-Dummy/NANOAODSIM", os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/json/UL16APV_tttt_b1.json', 0.009103, prefix='/pnfs/psi.ch/cms/trivcat/store/user/sesanche/NanoAOD_ULv9_jan21/')
+
+EFT = [TTH_EFT, THQ_EFT, TllQ_EFT, TTll_EFT, TTln_EFT, TTTT_EFT]
 
 
-mcSamples =  Ws + DYs +  TTs + Ts + TTXs + TTXXs + DiBosons + TriBosons + Higgs + QCD_bcToE + QCD_EMs + QCD_Mus # VJetsQQHT +
+mcSamples =  Ws + DYs +  TTs + Ts + TTXs + TTXXs + DiBosons + TriBosons + Higgs + QCD_bcToE + QCD_EMs + QCD_Mus + EFT  # VJetsQQHT +
 
 
 
