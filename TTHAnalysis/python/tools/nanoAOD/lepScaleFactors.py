@@ -108,7 +108,7 @@ class lepScaleFactors(Module):
                 if (comb == 26): channel = 'sf_2l_mm'
 
                 hist_2lss=self.triggerSF['%s %s'%(year,channel)]
-                thebin=hist_2lss.FindBin( leps[0].conePt, leps[1].conePt ) 
+                thebin=hist_2lss.FindBin( min(199.,leps[0].pt), min(199.,leps[1].pt) ) 
                 shift= 0 if var == '' else 1 if 'up' in var else -1 
                 self.out.fillBranch('triggerSF_2lss%s'%var, hist_2lss.GetBinContent(thebin) + shift*hist_2lss.GetBinContent(thebin))
             else:
@@ -123,7 +123,7 @@ class lepScaleFactors(Module):
                 if (comb == 39): channel = 'sf_3l_mmm'
 
                 hist_3l=self.triggerSF['%s %s'%(year,channel)]
-                thebin=hist_3l.FindBin( leps[0].conePt, abs(leps[0].eta ) )
+                thebin=hist_3l.FindBin( max(200,leps[0].pt), abs(leps[0].eta ) )
                 shift= 0 if var == '' else 1 if 'up' in var else -1 
                 self.out.fillBranch('triggerSF_3l%s'%var, hist_3l.GetBinContent(thebin) + shift*hist_2lss.GetBinContent(thebin))
             else:
