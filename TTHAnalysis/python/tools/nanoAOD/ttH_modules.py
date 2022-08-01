@@ -125,9 +125,9 @@ recleaner_step2_mc_allvariations = lambda : fastCombinedObjectRecleaner(label="R
 
 recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                                           cleanTausWithLooseLeptons=True,
-                                                          cleanJetsWithFOTaus=True,
+                                                          cleanJetsWithFOTaus=False,
                                                           doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
-                                                          jetPts=[25,40],
+                                                          jetPts=[25,30],
                                                           jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
                                                           btagL_thr=99, # they are set at runtime 
                                                           btagM_thr=99,
@@ -138,7 +138,7 @@ recleaner_step2_data = lambda : fastCombinedObjectRecleaner(label="Recl", inlabe
                                          cleanTausWithLooseLeptons=True,
                                          cleanJetsWithFOTaus=True,
                                          doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
-                                         jetPts=[25,40],
+                                         jetPts=[25,30],
                                          jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
                                          btagL_thr=-99., # they are set at runtime  
                                          btagM_thr=-99., # they are set at runtime  
@@ -164,6 +164,10 @@ countTaus = [countTaus_veto,countTaus_FO,countTaus_2lss1tau_Veto,countTaus_2lss1
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars               = lambda : EventVars2LSS('','Recl', tauTight_2lss_1tau=tauTight_2lss_1tau)
 eventVars_allvariations = lambda : EventVars2LSS('','Recl',variations = jevariations, tauTight_2lss_1tau=tauTight_2lss_1tau)
+
+from CMGTools.TTHAnalysis.tools.foVars import foVars
+FOvars = lambda : foVars()
+
 
 from CMGTools.TTHAnalysis.tools.hjDummCalc import HjDummyCalc
 hjDummy = lambda : HjDummyCalc(variations  = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'])
