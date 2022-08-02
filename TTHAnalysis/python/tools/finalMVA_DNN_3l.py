@@ -31,7 +31,7 @@ class finalMVA_DNN_3l(Module):
                 
         for var in self.systsJEC: 
             self._MVAs.append( TFTool('DNN_3l%s'%self.systsJEC[var], os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb',
-                                      self.getVarsForVariation(self.systsJEC[var]), cats_3l, varorder))
+                                      self.getVarsForVariation(self.systsJEC[var]), cats_3l, varorder, outputNodename="dense_5/Softmax"))
 
             self.outVars.extend( ['DNN_3l%s_'%self.systsJEC[var] + x for x in cats_3l])
 
@@ -41,8 +41,8 @@ class finalMVA_DNN_3l(Module):
         vars_3l_unclEnDown = deepcopy(self.getVarsForVariation(''))
         vars_3l_unclEnDown['met_LD'                 ] =  lambda ev : (ev.MET_pt_unclustEnDown if ev.year != 2017 else ev.METFixEE2017_pt_unclustEnDown) *0.6 + ev.mhtJet25_Recl*0.4
 
-        worker_3l_unclUp   = TFTool("DNN_3l_unclUp", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb', vars_3l_unclEnUp, cats_3l, varorder)
-        worker_3l_unclDown = TFTool("DNN_3l_unclDown", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb', vars_3l_unclEnDown,cats_3l,  varorder)
+        worker_3l_unclUp   = TFTool("DNN_3l_unclUp", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb', vars_3l_unclEnUp, cats_3l, varorder, outputNodename="dense_5/Softmax")
+        worker_3l_unclDown = TFTool("DNN_3l_unclDown", os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/kinMVA/tth/test_sig_2_rest_2_th_2_withWZ_2.pb', vars_3l_unclEnDown,cats_3l,  varorder, outputNodename="dense_5/Softmax")
 
         self._MVAs.extend( [ worker_3l_unclUp, worker_3l_unclDown])
         self.outVars.extend( ['DNN_3l_unclUp_' + x for x in cats_3l] +  ['DNN_3l_unclDown_' + x for x in cats_3l])
