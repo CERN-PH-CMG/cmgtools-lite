@@ -165,8 +165,7 @@ from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 eventVars               = lambda : EventVars2LSS('','Recl', tauTight_2lss_1tau=tauTight_2lss_1tau)
 eventVars_allvariations = lambda : EventVars2LSS('','Recl',variations = jevariations, tauTight_2lss_1tau=tauTight_2lss_1tau)
 
-from CMGTools.TTHAnalysis.tools.foVars import foVars
-FOvars = lambda : foVars()
+
 
 
 from CMGTools.TTHAnalysis.tools.hjDummCalc import HjDummyCalc
