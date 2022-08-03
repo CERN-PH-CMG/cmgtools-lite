@@ -26,6 +26,7 @@ class lepScaleFactors(Module):
         for year in '2016APV,2016,2017,2018'.split(','):
             for channel in ['sf_2l_ee','sf_2l_em', 'sf_2l_mm', 'sf_3l_eee','sf_3l_eem', 'sf_3l_emm','sf_3l_mmm']:
                 self.triggerSF['%s %s'%(year,channel)]=self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/triggerSF/triggerScaleFactors_%s.root'%year,channel )
+                
                                 
 
                                       
@@ -123,9 +124,11 @@ class lepScaleFactors(Module):
                 if (comb == 39): channel = 'sf_3l_mmm'
 
                 hist_3l=self.triggerSF['%s %s'%(year,channel)]
-                thebin=hist_3l.FindBin( max(200,leps[0].pt), abs(leps[0].eta ) )
+                thebin=hist_3l.FindBin( min(299.,leps[0].pt), abs(leps[0].eta ) )
                 shift= 0 if var == '' else 1 if 'up' in var else -1 
-                self.out.fillBranch('triggerSF_3l%s'%var, hist_3l.GetBinContent(thebin) + shift*hist_2lss.GetBinContent(thebin))
+
+
+                self.out.fillBranch('triggerSF_3l%s'%var, hist_3l.GetBinContent(thebin) + shift*hist_3l.GetBinContent(thebin))
             else:
                 self.out.fillBranch('triggerSF_3l%s'%var, 1)
 
