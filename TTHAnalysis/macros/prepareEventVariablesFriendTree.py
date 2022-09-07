@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os, re, types, sys, subprocess
 from collections import defaultdict
+import random 
 
 ## Need to catch upfront if it's run with -t NanoAOD, even before parsing other options
 def _getarg(opts,default):
@@ -189,17 +190,9 @@ if options.checkchunks:
         size = int(fields[4])
         fname = fields[8]
         basepattern = options.outPattern % r"(\w+)"
-        m1 = re.match(basepattern + r"%s.chunk(\d+).sub(\d+).root" % (), fname);
-        m2 = re.match(basepattern + r"%s.chunk(\d+).root", fname);
+        m2 = re.match(basepattern + r".chunk(\d+).root", fname);
         good = (size > 2048)
-        if m1:
-            sample = m1.group(1)
-            chunk = int(m1.group(2))
-            sub = int(m1.group(3))
-            if good: done_subchunks[(sample,chunk)].add(sub)
-            #done_chunks[sample].discard(chunk)
-            chunks_with_subs[sample].add(chunk)
-        elif m2:
+        if m2:
             sample = m2.group(1)
             chunk = int(m2.group(2))
             sub = None
@@ -260,6 +253,7 @@ if options.checkaliens:
         if not os.path.exists(totest):
             print "Alien friend found? %s with no %s" % (fname, totest)
             continue
+
 jobs = []
 for D in sorted(glob(args[0]+"/*")):
     if isNano:
@@ -313,7 +307,9 @@ for D in sorted(glob(args[0]+"/*")):
                     if not options.quiet: print "Component %s has to be remade, output tree is invalid or corrupted" % (short, entries, t2.GetEntries())
                 else:
                     t2 = f2.Get("Friends" if isNano else (options.treeDir+"/t"))
-                    if t2.GetEntries() != entries:
+                    if not t2: 
+                        if not options.quiet: print "Component %s has to be remade, there's no friend tree" % (short)
+                    elif t2.GetEntries() != entries:
                         if not options.quiet: print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t2.GetEntries())
                         f2.Close()
                     else:
@@ -475,6 +471,7 @@ if options.queue:
       if not options.pretend:
          os.system("condor_submit "+options.subfile)
     else:
+      random.shuffle(jobs)
       for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
