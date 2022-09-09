@@ -1,5 +1,6 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
+from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import loadHisto
 from copy import deepcopy
 import ROOT
 import os 
@@ -12,33 +13,25 @@ class lepScaleFactors(Module):
         self.triggerSF     = {}
 
         for year in '2016APV,2016,2017,2018'.split(','):
-            self.looseToTight['%s,mu'%year] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/muon/egammaEffi%s_EGM2D.root'%year, 'EGamma_SF2D')
-            self.recoToLoose['%s,mu'%year]= self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/muon/egammaEffi%s_iso_EGM2D.root'%(year), 'EGamma_SF2D')
+            self.looseToTight['%s,mu'%year] = loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/muon/egammaEffi%s_EGM2D.root'%year, 'EGamma_SF2D')
+            self.recoToLoose['%s,mu'%year]= loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/muon/egammaEffi%s_iso_EGM2D.root'%(year), 'EGamma_SF2D')
         for year in '2016APV,2016,2017,2018'.split(','):
             for chan in '2lss,3l'.split(','):
-                self.looseToTight['%s,%s,el'%(year,chan)] = self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elecNEWmva/egammaEffi%s_%s_EGM2D.root'%(year,chan), 'EGamma_SF2D')
-            self.recoToLoose['%s,e'%year]= self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_iso_EGM2D.root'%(year), 'EGamma_SF2D')
-            self.recoToLoose['%s,e,extra'%year]= self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_recoToloose_EGM2D.root'%(year), 'EGamma_SF2D')
+                self.looseToTight['%s,%s,el'%(year,chan)] = loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elecNEWmva/egammaEffi%s_%s_EGM2D.root'%(year,chan), 'EGamma_SF2D')
+            self.recoToLoose['%s,e'%year]= loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_iso_EGM2D.root'%(year), 'EGamma_SF2D')
+            self.recoToLoose['%s,e,extra'%year]= loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_recoToloose_EGM2D.root'%(year), 'EGamma_SF2D')
 
-            self.electronReco [year] = [self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_ptAbove20_EGM2D.root'%year, "EGamma_SF2D"),
-                        self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_ptAbove20_EGM2D.root'%year, "EGamma_SF2D")] # first Et > 20, second Et < 20
+            self.electronReco [year] = [loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_ptAbove20_EGM2D.root'%year, "EGamma_SF2D"),
+                        loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/leptonSF/elec/egammaEffi%s_ptAbove20_EGM2D.root'%year, "EGamma_SF2D")] # first Et > 20, second Et < 20
 
         for year in '2016APV,2016,2017,2018'.split(','):
             for channel in ['sf_2l_ee','sf_2l_em', 'sf_2l_mm', 'sf_3l_eee','sf_3l_eem', 'sf_3l_emm','sf_3l_mmm']:
-                self.triggerSF['%s %s'%(year,channel)]=self.loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/triggerSF/triggerScaleFactors_%s.root'%year,channel )
+                self.triggerSF['%s %s'%(year,channel)]=loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/triggerSF/triggerScaleFactors_%s.root'%year,channel )
                 
                                 
 
                                       
 
-    def loadHisto(self, fil, hist):
-        tf = ROOT.TFile.Open(fil)
-        if not tf: raise RuntimeError("No such file %s"%fil)
-        hist = tf.Get(hist)
-        if not hist: raise RuntimeError("No such object %s in %s"%(hist,fil))
-        ret = deepcopy(hist)
-        tf.Close()
-        return ret
 
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -126,9 +119,12 @@ class lepScaleFactors(Module):
                 hist_3l=self.triggerSF['%s %s'%(year,channel)]
                 thebin=hist_3l.FindBin( min(299.,leps[0].pt), abs(leps[0].eta ) )
                 shift= 0 if var == '' else 1 if 'up' in var else -1 
+                if channel == 'sf_3l_eee' and year == '2016APV' and leps[0].pt < 80 and abs(leps[0].eta) > 1.4:
+                    scale_factor=1
+                else:
+                    scale_factor=hist_3l.GetBinContent(thebin) + shift*hist_3l.GetBinContent(thebin)
+                self.out.fillBranch('triggerSF_3l%s'%var, scale_factor)
 
-
-                self.out.fillBranch('triggerSF_3l%s'%var, hist_3l.GetBinContent(thebin) + shift*hist_3l.GetBinContent(thebin))
             else:
                 self.out.fillBranch('triggerSF_3l%s'%var, 1)
 

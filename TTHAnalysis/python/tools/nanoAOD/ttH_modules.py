@@ -85,9 +85,12 @@ def smoothBFlav(jetpt,ptmin,ptmax,year, subera,scale_loose=1.0):
     x = min(max(0.0, jetpt - ptmin)/(ptmax-ptmin), 1.0)
     return x*wploose[year-2016][subera]*scale_loose + (1-x)*wpmedium[year-2016][subera]
 
+from CMGTools.TTHAnalysis.tools.foVars import foVars
+FOvars = lambda : foVars()
+
 def clean_and_FO_selection_TTH(lep,year, subera):
     bTagCut = ([0.2598,0.2489], [0.3040], [0.2783])[year-2016][subera]
-    return lep.conept>10 and lep.jetBTagDeepFlav<bTagCut and (abs(lep.pdgId)!=11 or (ttH_idEmu_cuts_E3(lep) and lep.convVeto and lep.lostHits == 0)) \
+    return lep.conept>10 and lep.jetBTagDeepFlav<bTagCut and (abs(lep.pdgId)!=11 or (ttH_idEmu_cuts_E3(lep) )) \
         and (lep.mvaTTHUL>(0.85 if abs(lep.pdgId)==13 else 0.90) or \
              (abs(lep.pdgId)==13 and lep.jetBTagDeepFlav< smoothBFlav(0.9*lep.pt*(1+lep.jetRelIso), 20, 45, year, subera) and lep.jetRelIso < 0.50) or \
              (abs(lep.pdgId)==11 and lep.mvaFall17V2noIso_WP90 and lep.jetBTagDeepFlav< smoothBFlav(0.9*lep.pt*(1+lep.jetRelIso), 20, 45, year, subera)and lep.jetRelIso < 1.0 ))
@@ -125,7 +128,7 @@ recleaner_step2_mc_allvariations = lambda : fastCombinedObjectRecleaner(label="R
 
 recleaner_step2_mc = lambda : fastCombinedObjectRecleaner(label="Recl", inlabel="_InternalRecl",
                                                           cleanTausWithLooseLeptons=True,
-                                                          cleanJetsWithFOTaus=False,
+                                                          cleanJetsWithFOTaus=True,
                                                           doVetoZ=False, doVetoLMf=False, doVetoLMt=False,
                                                           jetPts=[25,30],
                                                           jetPtsFwd=[25,60], # second number for 2.7 < abseta < 3, the first for the rest
@@ -375,6 +378,7 @@ BDThttTT_allvariations =  lambda : BDT_eventReco(os.environ["CMSSW_BASE"]+'/src/
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN import finalMVA_DNN
 finalMVA = lambda : finalMVA_DNN() # use this for data
 finalMVA_allVars = lambda : finalMVA_DNN( variations = jevariations)
+finalMVA_input = lambda : finalMVA_DNN(doSystJEC=False, fillInputs=True) # use this for training
 
 from CMGTools.TTHAnalysis.tools.finalMVA_DNN_3l import finalMVA_DNN_3l
 finalMVA3L = lambda : finalMVA_DNN_3l() # use this for data
@@ -522,3 +526,7 @@ MVAcp_2lss1tau = lambda : mvaCP_2lss1tau(variations = []) # for data
 MVAcp_2lss1tau_allvars = lambda : mvaCP_2lss1tau(variations = [ 'jes%s'%v for v in jecGroups] + ['jer%s'%x for x in ['barrel','endcap1','endcap2highpt','endcap2lowpt' ,'forwardhighpt','forwardlowpt']  ]  + ['HEM'])
 
 
+from CMGTools.TTHAnalysis.tools.nanoAOD.selectParticleAndPartonInfo import selectParticleAndPartonInfo
+ttW_diff_gen_info = lambda : selectParticleAndPartonInfo( dresslepSel_ = lambda x : x.pt>20 and abs(x.eta) < 2.4,
+                                                          dressjetSel_ = lambda x : x.pt>25 and abs(x.eta) < 2.4 ) 
+                                               

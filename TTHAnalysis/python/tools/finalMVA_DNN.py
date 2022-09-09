@@ -1,8 +1,8 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
-from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection as NanoAODCollection 
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 
-from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
-from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
+from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput, loadHisto
+
 from CMGTools.TTHAnalysis.tools.tfTool import TFTool
 import os 
 from copy import deepcopy
@@ -11,14 +11,20 @@ class finalMVA_DNN(Module):
     def __init__(self, variations=[], doSystJEC=True, fillInputs=False):
         self.outVars = []
         self._MVAs   = [] 
-        fillInputs = True
+        self.fillInputs = fillInputs
         varorder = ["jet3_pt","jet3_eta","lep1_eta","jet2_pt","jet1_pt","jetFwd1_eta","mT_lep1","mT_lep2","jet4_phi","lep2_conePt","hadTop_BDT","jet1_phi","jet2_eta","n_presel_jetFwd","n_presel_jet","lep1_charge","avg_dr_jet","lep1_phi","Hj_tagger_hadTop","nBJetLoose","jet4_pt","mindr_lep1_jet","lep1_conePt","jetFwd1_pt","lep2_phi","jet2_phi","lep2_eta","mbb","mindr_lep2_jet","jet4_eta","nBJetMedium","Dilep_pdgId","metLD","jet3_phi","maxeta","jet1_eta"]
         cats_2lss = ['predictions_ttH','predictions_Rest','predictions_ttW','predictions_tHQ']
 
         if fillInputs:
             self.outVars.extend(varorder+['nEvent'])
+            self.outVars.append('frWeight')
             self.inputHelper = self.getVarsForVariation('')
             self.inputHelper['nEvent'] = lambda ev : ev.event
+            self.fakerate={}
+            for year in '2016APV_2016,2017,2018'.split(','):
+                self.fakerate[year]={}
+                self.fakerate[year][11]=loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/fakerate/fr_%s.root'%year, 'FR_mva090_el_TT')
+                self.fakerate[year][13]=loadHisto(os.environ['CMSSW_BASE'] + '/src/CMGTools/TTHAnalysis/data/fakerate/fr_%s.root'%year, 'FR_mva085_mu_TT')
 
         self.systsJEC = {0:"",\
                          1:"_jesTotalCorrUp"  , -1:"_jesTotalCorrDown",\
@@ -107,12 +113,37 @@ class finalMVA_DNN(Module):
     def analyze(self,event):
         myvars = [event.iLepFO_Recl[0],event.iLepFO_Recl[1],event.iLepFO_Recl[2]]
         ret = []
-        if self.inputHelper:
+
+        # if we want to train we wont take all the inputs
+        if self.fillInputs:
             for var in self.inputHelper:
                 ret.append( (var, self.inputHelper[var](event)))
+
+            all_leps = [l for l in Collection(event,"LepGood")]
+            nFO = getattr(event,"nLepFO_Recl")
+            chosen = getattr(event,"iLepFO_Recl")
+            leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+
+            if len(leps) < 2: return False
+            if leps[0].pdgId*leps[1].pdgId < 0: return False
+            if event.nJet25_Recl < 3: return False
+
+            # we scale fake leptons by the fake rate so we reproduce better the kinematics
+            frWeight=1 
+            year=str(event.year) if event.year in [2017,2018] else '2016APV_2016'
+            for l in leps[:2]:
+                if l.mcMatchId: continue # dont scale prompt or flips, we assume similar kinematics in FO and SR
+                thebin=self.fakerate[year][abs(l.pdgId)].FindBin( l.conePt, abs(l.eta))
+                frWeight*=self.fakerate[year][abs(l.pdgId)].GetBinContent(thebin)
+            ret.append( ('frWeight', frWeight))
+
+
         for worker in self._MVAs:
             name = worker.name
             if ( not hasattr(event,"nJet25_jerUp_Recl") and not hasattr(event, "nJet25_jesBBEC1_yearDown_Recl")) and ('_jes' in name or  '_jer' in name or '_uncl' in name): continue # using jer bc components wont change
             ret.extend( [(x,y) for x,y in worker(event).iteritems()])
         writeOutput(self, dict(ret))
+            
+            
+
         return True
