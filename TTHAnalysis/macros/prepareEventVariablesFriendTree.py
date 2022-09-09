@@ -255,7 +255,9 @@ if options.checkaliens:
             continue
 
 jobs = []
+print 'gets here'
 for D in sorted(glob(args[0]+"/*")):
+    if "1_" in D: continue
     if isNano:
         treename = "Events"
         if os.path.isfile(D) and D.endswith(".root"):
