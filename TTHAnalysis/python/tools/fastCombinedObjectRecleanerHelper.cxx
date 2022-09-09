@@ -210,10 +210,13 @@ public:
       std::vector<float> vetos_phi;
       std::vector<int>   vetos_indices;
       for (int iL = 0, nL = *nLep_; iL < nL; ++iL) if (sel_leps[iL]) {vetos_eta.push_back((*Lep_eta_)[iL]); vetos_phi.push_back((*Lep_phi_)[iL]); if (Lep_jet_) vetos_indices.push_back((*Lep_jet_)[iL]);}
-      for (int iT = 0, nT = *nTau_; iT < nT; ++iT) if (sel_taus[iT]) {vetos_eta.push_back((*Tau_eta_)[iT]); vetos_phi.push_back((*Tau_phi_)[iT]); if (Tau_jet_) vetos_indices.push_back((*Tau_jet_)[iT]);}
+      if ( cleanJetsWithFOTaus_){
+	for (int iT = 0, nT = *nTau_; iT < nT; ++iT) if (sel_taus[iT]) {vetos_eta.push_back((*Tau_eta_)[iT]); vetos_phi.push_back((*Tau_phi_)[iT]); if (Tau_jet_) vetos_indices.push_back((*Tau_jet_)[iT]);}
+      }
       std::unique_ptr<bool[]> good;
       good.reset(new bool[*nJet_]);
       std::fill_n(good.get(),*nJet_,true);
+
       if (cleanWithRef_){
 	for (uint iV=0; iV<vetos_indices.size(); iV++) {
 	  if (vetos_indices[iV] > -1) good[vetos_indices[iV]] = false;
