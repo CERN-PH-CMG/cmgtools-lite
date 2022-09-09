@@ -1,5 +1,4 @@
 dropmatch FatJet_.*
-dropmatch GenDressedLepton_.*
 dropmatch L1_.*
 dropmatch SoftActivityJet_.*
 dropmatch SV_.*
