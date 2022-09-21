@@ -85,8 +85,6 @@ def smoothBFlav(jetpt,ptmin,ptmax,year, subera,scale_loose=1.0):
     x = min(max(0.0, jetpt - ptmin)/(ptmax-ptmin), 1.0)
     return x*wploose[year-2016][subera]*scale_loose + (1-x)*wpmedium[year-2016][subera]
 
-from CMGTools.TTHAnalysis.tools.foVars import foVars
-FOvars = lambda : foVars()
 
 def clean_and_FO_selection_TTH(lep,year, subera):
     bTagCut = ([0.2598,0.2489], [0.3040], [0.2783])[year-2016][subera]
