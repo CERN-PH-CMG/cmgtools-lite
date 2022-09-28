@@ -792,32 +792,6 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, i
 }
 
 
-float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, int year, int suberaid){
-
-  // float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
-  float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep, year, suberaid);
-  float res = looseToTight;
-  if (!(res>0)) {std::cout << "ERROR in leptonSF " << res << " " << pdgid << " " << pt << " " << eta << std::endl; std::abort();}
-  return res;
-}
-
-float leptonSF_ttH_2l(int pdgid1, float pt1, float eta1, int pdgid2, float pt2, float eta2,int year, int suberaid){
-
-  float sf1 = leptonSF_ttH(pdgid1, pt1, eta1,2, year, suberaid);
-  float sf2 = leptonSF_ttH(pdgid2, pt2, eta2,2, year, suberaid);
-  return sf1*sf2;
-}
-
-float leptonSF_ttH_3l(int pdgid1, float pt1, float eta1, int pdgid2, float pt2, float eta2, int pdgid3, float pt3, float eta3,int year, int suberaid){
-
-  float sf1 = leptonSF_ttH(pdgid1, pt1, eta1,3, year, suberaid);
-  float sf2 = leptonSF_ttH(pdgid2, pt2, eta2,3, year, suberaid);
-  float sf3 = leptonSF_ttH(pdgid3, pt3, eta3,3, year, suberaid);
-  return sf1*sf2*sf3;
-}
-
-
-
 float ttH_2lss_ifflav(int LepGood1_pdgId, int LepGood2_pdgId, float ret_ee, float ret_em, float ret_mm){
   if (abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11) return ret_ee;
   if ((abs(LepGood1_pdgId) != abs(LepGood2_pdgId)))       return ret_em;
@@ -960,53 +934,3 @@ float ttH_3l_clasifier(float nJet25,float nBJetMedium25){
 }
 
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, int year, int var=0){
-  if (nlep == 2){
-    if (abs(pdgid1*pdgid2) == 121){
-      if (year == 2016){
-	if (pt2 < 25){
-	  return 0.98*(1 + var*0.02);
-	}
-      else return 1.*(1 + var*0.02);
-      }
-      if (year == 2017){
-	if (pt2<40) return 0.98*(1 + var*0.01);
-	else return 1*(1 + var*0.01);
-      }
-      if (year == 2018){
-	if (pt2<25){
-	return 0.98*(1 + var*0.01);
-	}
-	else return 1.*(1 + var*0.01);
-      }
-    }
-    
-    else if ( abs(pdgid1*pdgid2) == 143){
-      if (year == 2016) return 1.*(1 + var*0.01);
-      if (year == 2017){
-	if (pt2<40) return 0.98*(1 + var*0.01);
-	else return 0.99*(1 + var*0.01);
-      }
-      if (year == 2018){
-	if (pt2<25) return 0.98*(1 + var*0.01);
-	else        return 1*(1 + var*0.01);
-      }
-    }
-    else{
-      if (year == 2016) return 0.99*(1 + var*0.01);
-      if (year == 2017){
-	if (pt2 < 40) return 0.97*(1 + var*0.02);
-	else if (pt2 < 55 && pt2>40) return 0.995*(1 + var*0.02);
-	else if (pt2 < 70 && pt2>55) return 0.96*(1 + var*0.02);
-	else                         return 0.94*(1 + var*0.02);
-      }
-      if (year == 2018){
-	if (pt1 < 40) return 1.01*(1 + var*0.01);
-	if (pt1 < 70) return 0.995*(1 + var*0.01);
-	else return 0.98*(1 + var*0.01);
-      }
-    }
-    
-  }
-  else return 1.;
-}
