@@ -1,0 +1,6 @@
+# vim: syntax=sh
+data : DoubleMuon_Run2018A_UL18+DoubleMuon_Run2018B_UL18+DoubleMuon_Run2018C_UL18+DoubleMuon_Run2018D_UL18 ; FillColor=ROOT.kBlack, Label="Data"
+data : SingleMuon_Run2018A_UL18+SingleMuon_Run2018B_UL18+SingleMuon_Run2018C_UL18+SingleMuon_Run2018D_UL18; FillColor=ROOT.kBlack, Label="Data"
+data : EGamma_Run2018A_UL18+EGamma_Run2018B_UL18+EGamma_Run2018C_UL18+EGamma_Run2018D_UL18; FillColor=ROOT.kBlack, Label="Data"
+
+incl_mc : + ; IncludeMca="ttH-multilepton/lepton-fr/mca-qcd1l-mc.txt"

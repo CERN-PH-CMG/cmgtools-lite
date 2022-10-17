@@ -1,0 +1,6 @@
+# vim: syntax=sh
+minimal: LepGood_awayJet_pt > 25 && LepGood_awayJet_jetId > 0
+mu : abs(LepGood_pdgId)!=13 || ( LepGood_mvaTTH > 0.85 || ( LepGood_jetBTagDeepFlav < smoothBFlav(0.9*LepGood_pt*(1+LepGood_jetRelIso), 20, 45, year) && LepGood_jetRelIso < 0.50 ) )
+el : abs(LepGood_pdgId)!=11 || LepGood_idEmu3 && (LepGood_mvaTTH > 0.80 || ( LepGood_mvaFall17V2noIso_WP80 && LepGood_jetRelIso < 0.70 ) ) 
+dfM : LepGood_jetBTagDeepFlav < deepFlavB_WPMedium(year)
+pvdof : PV_ndof > 100

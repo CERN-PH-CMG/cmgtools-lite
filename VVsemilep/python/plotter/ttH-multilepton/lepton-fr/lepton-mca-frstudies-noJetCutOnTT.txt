@@ -1,0 +1,15 @@
+change: abs\(LepGood_awayJet_\w+\)\s*(>|<|>=|<=)\s*\d+\.?\d* : 1
+change: LepGood_awayJet_\w+\s*(>|<|>=|<=|==)\s*\d+\.?\d* : 1
+change: LepGood_away\w*Jet\w*\s*(>|<|>=|<=|==)\s*\d+\.?\d* : 1
+#change: Jet_\w+\[LepGood_awayJet_index\]\s*(>|<|>=|<=|==)\s*\d+\.?\d* : 1
+change: Jet_btagDeepFlavB\[LepGood_awayJet_index\]\s*(>|<|>=|<=|==)\s*deepFlavB_WP\w+\(year\) : 1
+change: LepGood_awayJet_pt/\(LepGood_pt/LepGood_jetPtRatiov2\)\s*>\s*\d+\.?\d* : 1
+change: abs\(deltaPhi\(LepGood_phi,\s*LepGood_awayJet_phi\)\)\s*>\s*\d+\.?\d* : 1
+change: abs\(deltaPhi\(LepGood_awayJet_phi,\s*LepGood_phi\)\)\s*>\s*\d+\.?\d* : 1
+change: LepGood_awayHTJet\d+\s*>=\s*\S*\(LepGood_pt/LepGood_jetPtRatiov2\) : 1
+change: nLepGood == 1 : minMllAFAS > 12
+change: HLT_Ele12_CaloIdM_TrackIdM_PFJet30 : 1
+change: HLT_Mu8 : 1
+change: HLT_Mu17 : 1
+change: PV_ndof : 200
+weight: (LepGood_otherLeptonSelection == 1)

@@ -1,0 +1,37 @@
+change: MET_pt\b: MET_pt_jerDown
+change: METFixEE2017_pt\b: METFixEE2017_pt_jerDown
+change: nJet25_Recl\b: nJet25_jerDown_Recl
+change: htJet25j_Recl\b: htJet25j_jerDown_Recl
+change: mhtJet25_Recl\b: mhtJet25_jerDown_Recl
+change: nJet40_Recl\b: nJet40_jerDown_Recl
+change: htJet40j_Recl\b: htJet40j_jerDown_Recl
+change: mhtJet40_Recl\b: mhtJet40_jerDown_Recl
+change: nBJetLoose25_Recl\b: nBJetLoose25_jerDown_Recl
+change: nBJetMedium25_Recl\b: nBJetMedium25_jerDown_Recl
+change: nBJetTight25_Recl\b: nBJetTight25_jerDown_Recl
+change: nBJetLoose40_Recl\b: nBJetLoose40_jerDown_Recl
+change: nBJetMedium40_Recl\b: nBJetMedium40_jerDown_Recl
+change: nBJetTight40_Recl\b: nBJetTight40_jerDown_Recl
+change: DNN_2lss_predictions_ttH\b: DNN_2lss_jerDown_predictions_ttH
+change: DNN_2lss_predictions_ttW\b: DNN_2lss_jerDown_predictions_ttW
+change: DNN_2lss_predictions_rest\b: DNN_2lss_jerDown_predictions_rest
+change: DNN_2lss_predictions_tH\b: DNN_2lss_jerDown_predictions_tH
+change: kinMVA_2lss_ttbar\b : kinMVA_2lss_ttbar_jerDown
+change: kinMVA_2lss_ttbar_withBDTv8\b : kinMVA_2lss_ttbar_withBDTv8_jerDown
+change: kinMVA_2lss_ttbar_withBDTrTT\b : kinMVA_2lss_ttbar_withBDTrTT_jerDown
+change: kinMVA_2lss_ttbar_withBDThttTT\b : kinMVA_2lss_ttbar_withBDThttTT_jerDown
+change: kinMVA_2lss_ttV\b : kinMVA_2lss_ttV_jerDown
+change: kinMVA_2lss_ttV_withHj_v8\b : kinMVA_2lss_ttV_withHj_v8_jerDown
+change: kinMVA_2lss_ttV_withHj_rTT\b : kinMVA_2lss_ttV_withHj_rTT_jerDown
+change: kinMVA_2lss_ttV_withHj_httTT\b : kinMVA_2lss_ttV_withHj_httTT_jerDown
+change: kinMVA_3l_ttbar\b : kinMVA_3l_ttbar_jerDown
+change: kinMVA_3l_ttbar_withMEM\b : kinMVA_3l_ttbar_withMEM_jerDown
+change: kinMVA_3l_ttV\b : kinMVA_3l_ttV_jerDown
+change: kinMVA_3l_ttV_withMEM\b : kinMVA_3l_ttV_withMEM_jerDown
+change: kinMVA_2lss_MultiClass_ttH\b : kinMVA_2lss_MultiClass_jerDown_ttH
+change: kinMVA_2lss_MultiClass_ttV\b : kinMVA_2lss_MultiClass_jerDown_ttV
+change: kinMVA_2lss_MultiClass_ttbar\b : kinMVA_2lss_MultiClass_jerDown_ttbar
+change: kinMVA_3l_MultiClass_ttH\b : kinMVA_3l_MultiClass_jerDown_ttH
+change: kinMVA_3l_MultiClass_ttV\b : kinMVA_3l_MultiClass_jerDown_ttV
+change: kinMVA_3l_MultiClass_ttbar\b : kinMVA_3l_MultiClass_jerDown_ttbar
+weight: 1

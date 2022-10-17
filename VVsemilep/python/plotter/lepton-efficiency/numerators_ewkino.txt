@@ -1,0 +1,65 @@
+SoftJetLessDY   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT      : 2000,-1.1,1.1 ; Title="SoftMVA"          , LineColor=ROOT.kRed, LineStyle=ROOT.kDashed
+SoftMoriondDY   : LepGood_mvaSoftALaMoriond16_sigDY_bkgTT      : 2000,-1.1,1.1 ; Title="LepMVA"          , LineColor=ROOT.kGreen, LineStyle=ROOT.kDashed
+
+forMoriond16_sigTTH_bkgTT : LepGood_mvaforMoriond16_sigTTH_bkgTT : 2000,-1.1,1.1 ; Title="MVA TTH", LineColor=ROOT.kGreen
+forMoriond16_sigTT_bkgTT : LepGood_mvaforMoriond16_sigTT_bkgTT : 2000,-1.1,1.1 ; Title="MVA TT", LineColor=ROOT.kRed
+forMoriond16_sigWZ_bkgTT : LepGood_mvaforMoriond16_sigWZ_bkgTT : 2000,-1.1,1.1 ; Title="MVA WZ(3L)", LineColor=ROOT.kBlue
+forMoriond16_sigTTZ_bkgTT : LepGood_mvaforMoriond16_sigTTZ_bkgTT : 2000,-1.1,1.1 ; Title="MVA TTZ", LineColor=ROOT.kGray+2
+forMoriond16_sigWZ2Q_bkgTT : LepGood_mvaforMoriond16_sigWZ2Q_bkgTT : 2000,-1.1,1.1 ; Title="MVA WZ(2Q)", LineColor=ROOT.kMagenta
+
+#CB_forMoriond16_sigTTH_bkgTT : LepGood_mvaforMoriond16_sigTTH_bkgTT>if3(abs(LepGood_pdgId)==11,0.6,0.3) : 2000,-1.1,1.1 ; Title="Mor16 TTH tr.", MarkerColor=ROOT.kGreen
+#CB_forMoriond16_sigTT_bkgTT : LepGood_mvaforMoriond16_sigTT_bkgTT>if3(abs(LepGood_pdgId)==11,0.6,0.3) : 2000,-1.1,1.1 ; Title="Mor16 TT tr.", MarkerColor=ROOT.kRed
+#CB_forMoriond16_fixRange_sigTT_bkgTT : LepGood_mvaforMoriond16_fixRange_sigTT_bkgTT>if3(abs(LepGood_pdgId)==11,0.6,0.3) : 2000,-1.1,1.1 ; Title="Mor16 TT tr. R", MarkerColor=ROOT.kRed+2
+#CB_forMoriond16_sigWZ_bkgTT : LepGood_mvaforMoriond16_sigWZ_bkgTT>if3(abs(LepGood_pdgId)==11,0.6,0.3) : 2000,-1.1,1.1 ; Title="Mor16 WZ tr.", MarkerColor=ROOT.kBlue
+
+#CB_SoftJetLessDY_A   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.2      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_B   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.1      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_C   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.0      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_D   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.1      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_E   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.2      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_F   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.3      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_F2   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.4      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_F3   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.5      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_F4   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.6      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_F5   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.7      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_F6   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.8      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_F7   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.9      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+CB_SoftJetLessDY_F8   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>0.95      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kCyan, MarkerStyle=8, MarkerSize=1.2
+
+#CB_SoftJetLessDY_G   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.3      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_H   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.4      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_I   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.5      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kBlue, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_L   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.6      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_M   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.7      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_N   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.8      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+#CB_SoftJetLessDY_O   : LepGood_mvaSoftJetLessIVF_sigDY_bkgTT>-0.9      : 2,0.5,1.5 ; Title="SoftMVA WP" , MarkerColor=ROOT.kRed, MarkerStyle=8, MarkerSize=1.2
+
+CB_forMoriond16_sigTTZ_bkgTT_VL : LepGood_mvaforMoriond16_sigTTZ_bkgTT>if3(abs(LepGood_pdgId)==11,-0.3,-0.9) : 2000,-1.1,1.1 ; Title="MVA TTZ VL", MarkerColor=ROOT.kGreen, MarkerSize=1.8
+CB_forMoriond16_sigTTZ_bkgTT_L : LepGood_mvaforMoriond16_sigTTZ_bkgTT>if3(abs(LepGood_pdgId)==11,0.25,-0.6) : 2000,-1.1,1.1 ; Title="MVA TTZ L", MarkerColor=ROOT.kGreen+2, MarkerSize=1.8
+CB_forMoriond16_sigTTZ_bkgTT_M : LepGood_mvaforMoriond16_sigTTZ_bkgTT>if3(abs(LepGood_pdgId)==11,0.5,-0.2) : 2000,-1.1,1.1 ; Title="MVA TTZ M", MarkerColor=ROOT.kCyan, MarkerSize=1.8
+CB_forMoriond16_sigTTZ_bkgTT_T : LepGood_mvaforMoriond16_sigTTZ_bkgTT>if3(abs(LepGood_pdgId)==11,0.65,0.15) : 2000,-1.1,1.1 ; Title="MVA TTZ T", MarkerColor=ROOT.kGreen+1, MarkerSize=1.8
+CB_forMoriond16_sigTTZ_bkgTT_VT : LepGood_mvaforMoriond16_sigTTZ_bkgTT>if3(abs(LepGood_pdgId)==11,0.75,0.45) : 2000,-1.1,1.1 ; Title="MVA TTZ VT", MarkerColor=ROOT.kAzure+1, MarkerSize=1.8
+CB_forMoriond16_sigTTZ_bkgTT_XT : LepGood_mvaforMoriond16_sigTTZ_bkgTT>if3(abs(LepGood_pdgId)==11,0.85,0.65) : 2000,-1.1,1.1 ; Title="MVA TTZ XT", MarkerColor=ROOT.kRed+2, MarkerSize=1.8
+
+
+reliso   : LepGood_relIso03             : 2000,-1.1,1.1 ; Title="relIso (0.3\,EA)", LineColor=ROOT.kGreen+1
+mini     : LepGood_miniRelIso           : 2000,-1.1,1.1 ; Title="mini-Iso"        , LineColor=ROOT.kAzure+1
+multi_L  : multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,1) > 0 : 2,0.5,1.5 ; Title="multi-Iso L" , MarkerColor=ROOT.kOrange-3, MarkerStyle=8, MarkerSize=1.8
+multi_M  : multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,2) > 0 : 2,0.5,1.5 ; Title="multi-Iso M" , MarkerColor=ROOT.kGreen, MarkerStyle=8, MarkerSize=1.8
+multi_T  : multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,3) > 0 : 2,0.5,1.5 ; Title="multi-Iso T" , MarkerColor=ROOT.kAzure+1, MarkerStyle=8, MarkerSize=1.8
+multi_VT : multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,4) > 0 : 2,0.5,1.5 ; Title="multi-Iso VT", MarkerColor=ROOT.kViolet-4, MarkerStyle=8, MarkerSize=1.8
+
+RA5t	 : LepGood_sip3d < 4 && (abs(LepGood_pdgId) != 11 || (LepGood_passTeleIDMVA && LepGood_convVeto && LepGood_lostHits==0)) && LepGood_tightCharge>1 && multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,if3(abs(LepGood_pdgId)==11,3,2)) > 0 : 2,-0.5,1.5    ; Title="RA5 tight ID", MarkerColor=ROOT.kMagenta+2, MarkerStyle=34, MarkerSize=1.8
+RA7t	 : LepGood_sip3d < 4 && (abs(LepGood_pdgId) != 11 || (LepGood_passTeleIDMVA && LepGood_convVeto && LepGood_lostHits==0)) && multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,if3(abs(LepGood_pdgId)==11,2,1)) > 0 : 2,-0.5,1.5    ; Title="RA7 tight ID", MarkerColor=ROOT.kRed+1, MarkerStyle=34, MarkerSize=1.8
+
+NROSt    : (abs(LepGood_pdgId) != 11 || ((abs(LepGood_etaSc) < 1.479 && LepGood_sigmaIEtaIEta < 0.0101 && abs(LepGood_dEtaScTrkIn) < 0.00926 && abs(LepGood_dPhiScTrkIn) < 0.0336 && LepGood_hadronicOverEm < 0.0597 && LepGood_relIso03 < 0.0354 && LepGood_eInvMinusPInv < 0.012 && abs(LepGood_dxy) < 0.0111 && abs(LepGood_dz) < 0.0466 && LepGood_lostHits <= 2 && LepGood_convVeto > 0) || (abs(LepGood_etaSc) > 1.479 && LepGood_sigmaIEtaIEta < 0.0279 && abs(LepGood_dEtaScTrkIn) < 0.00724 && abs(LepGood_dPhiScTrkIn) < 0.0918 && LepGood_hadronicOverEm < 0.0615 && LepGood_relIso03 < 0.0646 && LepGood_eInvMinusPInv < 0.00999 && abs(LepGood_dxy) < 0.0351 && abs(LepGood_dz) < 0.417 && LepGood_lostHits <= 1 && LepGood_convVeto > 0))) && (abs(LepGood_pdgId) != 13 || (((LepGood_pt < 20 && abs(LepGood_dxy) < 0.01) || (LepGood_pt > 20 && abs(LepGood_dxy) < 0.02)) && LepGood_relIso03 < 0.15 && abs(LepGood_dz) < 0.1 && LepGood_mediumMuonId > 0)) : 2,-0.5,1.5; Title="n.r. OS tight ID", MarkerColor=ROOT.kGreen+3, MarkerStyle=22, MarkerSize=1.8
+
+OSt      : abs(LepGood_dxy) < 0.05 && abs(LepGood_dz) < 0.1 && (abs(LepGood_pdgId) != 11 || (LepGood_miniRelIso < 0.1 && LepGood_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood_eta)>0.8)+(+0.17-0.60)*(abs(LepGood_eta)>1.479) && LepGood_convVeto > 0 && LepGood_lostHits == 0)) && (abs(LepGood_pdgId) != 13 || (LepGood_miniRelIso < 0.2 && LepGood_mediumMuonId > 0)): 2,-0.5,1.5; Title="OS tight ID", MarkerColor=ROOT.kMagenta, MarkerStyle=22, MarkerSize=1.8 
+
+TTHt     : LepGood_mvaTTHMoriond16 > 0.75 && (abs(LepGood_pdgId) == 11 || LepGood_mediumMuonId > 0) : 2,-0.5,1.5 ; Title="mvaTTH ID", MarkerColor=ROOT.kViolet-6, MarkerStyle=20, MarkerSize=1.8
+
+SLsoft      : (abs(LepGood_pdgId) != 11 || (LepGood_miniRelIso < 0.4 && ((abs(LepGood_etaSc) < 1.479 && LepGood_sigmaIEtaIEta < 0.0103 && abs(LepGood_dEtaScTrkIn) < 0.0105 && abs(LepGood_dPhiScTrkIn) < 0.115 && LepGood_hadronicOverEm < 0.104 && LepGood_eInvMinusPInv < 0.102 && abs(LepGood_dxy) < 0.0261 && abs(LepGood_dz) < 0.41 && LepGood_lostHits <= 2 && LepGood_convVeto > 0) || (abs(LepGood_etaSc) > 1.479 && LepGood_sigmaIEtaIEta < 0.0301 && abs(LepGood_dEtaScTrkIn) < 0.00814 && abs(LepGood_dPhiScTrkIn) < 0.182 && LepGood_hadronicOverEm < 0.0897 && LepGood_eInvMinusPInv < 0.126 && abs(LepGood_dxy) < 0.118 && abs(LepGood_dz) < 0.822 && LepGood_lostHits <= 1 && LepGood_convVeto > 0)))) && LepGood_miniRelIso<0.1 && LepGood_relIso03<0.2 && (abs(LepGood_pdgId) != 13 || (abs(LepGood_dxy) < 0.02 && abs(LepGood_dz) < 0.02)) : 2,-0.5,1.5; Title="SL soft ID", MarkerColor=ROOT.kGreen, MarkerStyle=22, MarkerSize=1.8
+SLsoft2      : (abs(LepGood_pdgId) != 11 || (LepGood_mvaIdSpring15 >=-0.265+(-0.556+0.265)*(abs(LepGood_eta)>0.8)+(-0.551+0.556)*(abs(LepGood_eta)>1.479))) && LepGood_miniRelIso<0.1 && LepGood_relIso03<0.2 && (abs(LepGood_pdgId) != 13 || (abs(LepGood_dxy) < 0.02 && abs(LepGood_dz) < 0.02)) : 2,-0.5,1.5; Title="SL soft ID w/MVA HZZ", MarkerColor=ROOT.kRed, MarkerStyle=22, MarkerSize=1.8
+
+sosID: abs(LepGood_dxy) < 0.01 && abs(LepGood_dz) < 0.01 && (abs(LepGood_pdgId) != 13 || LepGood_softMuonId>0) && (abs(LepGood_pdgId) != 11 || (LepGood_pt<=10.0 && ((fabs(LepGood_etaSc)<0.8 && LepGood_mvaIdSpring15>-0.265) || (fabs(LepGood_etaSc)>=0.8 && fabs(LepGood_etaSc)<1.479 && LepGood_mvaIdSpring15>-0.556) || (fabs(LepGood_etaSc)>=1.479 && LepGood_mvaIdSpring15 > -0.551))) || (LepGood_pt>10.0 && ((fabs(LepGood_etaSc)<0.8 && LepGood_mvaIdSpring15>-0.072)||(fabs(LepGood_etaSc)>=0.8 && fabs(LepGood_etaSc)<1.479 && LepGood_mvaIdSpring15>-0.286)||(fabs(LepGood_etaSc)>=1.479 && LepGood_mvaIdSpring15 >-0.267)))) && LepGood_relIso03 < 0.5 && (LepGood_relIso03*LepGood_pt)<5 :  2,-0.5,1.5;   Title="PF+SOS ID", MarkerColor=ROOT.kOrange,  MarkerStyle=21, MarkerSize=1.8
+

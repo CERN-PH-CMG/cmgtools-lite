@@ -1,0 +1,5 @@
+alwaystrue: 1
+lep: nLepFO>=2
+sign: (nLepFO>=3) || (LepGood1_charge*LepGood2_charge > 0) # now acting also on data
+2lep_promptrightcharge: (!isData) && LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Disable=True
+3lep_prompt: (!isData) && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; Disable=True

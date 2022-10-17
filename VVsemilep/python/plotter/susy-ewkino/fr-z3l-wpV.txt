@@ -1,0 +1,16 @@
+Trig: Triggers_ee || Triggers_mm 
+3l: nLepGood == 3
+Z1: 60 < mZ1 && mZ1 < 120
+tightZ1: 80 < mZ1; Disable=True 
+tight12: LepGood_mvaTTH[0] > 0.75 && LepGood_mvaTTH[1] > 0.75
+cleanup: minMllAFOS >= 4
+zVeto1: LepGood_pdgId[2] + LepGood_pdgId[0] != 0 || abs(mass_2(LepGood_pt[2],LepGood_eta[2],LepGood_phi[2],LepGood_mass[2], LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0])-90) > 30
+zVeto2: LepGood_pdgId[2] + LepGood_pdgId[1] != 0 || abs(mass_2(LepGood_pt[2],LepGood_eta[2],LepGood_phi[2],LepGood_mass[2], LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1])-90) > 30
+presel: LepGood_sip3d[2] < 8
+mu : abs(LepGood_pdgId[2])==13 && LepGood_mediumMuonId[2] > 0; Disable=True
+el : abs(LepGood_pdgId[2])==11 && LepGood_convVeto[2] && LepGood_lostHits[2] == 0 ; Disable=True
+restrDen: LepGood_mvaSUSY[2] > if3(abs(LepGood_pdgId[2])==13,0.45,0.75) || (LepGood_jetPtRatiov2[2] > 0.3 && LepGood_jetBTagCSV[2] < 0.3 && LepGood_mvaIdSpring16GP[2]>if3(abs(LepGood_eta[2])<1.479,0,0.3))
+recoPt10Den: LepGood_pt[2]>10
+idEmuCut: LepGood3_idEmu2
+num : LepGood_mediumMuonId[2] > 0 && LepGood_mvaSUSY[2] > if3(abs(LepGood_pdgId[2])==13,0.45,0.75) ; Disable=True
+conePt10 : LepGood_pt[2]*if3(LepGood_mvaSUSY[2]>if3(abs(LepGood_pdgId[2])==13,0.45,0.75) && LepGood_mediumMuonId[2]>0, 1.0, if3(abs(LepGood_pdgId[2])==13,0.80,0.90)/LepGood_jetPtRatiov2[2]) > 10

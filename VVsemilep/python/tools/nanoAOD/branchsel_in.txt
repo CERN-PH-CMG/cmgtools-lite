@@ -1,0 +1,4 @@
+drop FatJet_*
+drop L1_*
+drop SoftActivityJet_*
+drop SV_*

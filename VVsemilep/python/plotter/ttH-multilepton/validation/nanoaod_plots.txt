@@ -1,0 +1,59 @@
+nLep: nLepGood: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="N(lep)"
+nLep10: Sum$(LepGood_pt > 10): [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="N(lep)"
+nLep20: Sum$(LepGood_pt > 20): [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="N(lep)"
+met:   MET_pt: 16,0,400    ; XTitle="E_{T}^{miss}  [GeV]"
+met_phi:   MET_phi: 8,-3.15,3.15    ; XTitle="phi of E_{T}^{miss}"
+lep1pt:  LepGood1_pt: 15,0,250; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR'
+lep2pt:  LepGood2_pt: 15,0,100; XTitle="Second lepton p_{T}  [GeV]", Legend='TR'
+lep3pt:  LepGood3_pt: 10,0,50; XTitle="Third lepton p_{T}  [GeV]", Legend='TR'
+#lep4pt:  LepGood4_pt: 10,0,50; XTitle="Fourth lepton p_{T}  [GeV]", Legend='TR'
+lep1relIso03:  LepGood1_pfRelIso03_all: 15,0,.5;  Legend='TR'
+lep2relIso03:  LepGood2_pfRelIso03_all: 15,0,.5;  Legend='TR'
+lep1miniRelIso:  LepGood1_miniPFRelIso_all: 15,0,.5;  Legend='TR'
+lep2miniRelIso:  LepGood2_miniPFRelIso_all: 15,0,.5;  Legend='TR'
+lep1jetPtRatiov2:  1/(1+LepGood1_jetRelIso): 15,0,1.5;  Legend='TL'
+lep2jetPtRatiov2:  1/(1+LepGood2_jetRelIso): 15,0,1.5;  Legend='TL'
+lep1sip3d:  LepGood1_sip3d: 15,0,5;  Legend='TR'
+lep2sip3d:  LepGood2_sip3d: 15,0,5;  Legend='TR'
+#lep1tightId:  LepGood1_tightId: [-0.5,0.5,1.5];  Legend='TL'
+#lep2tightId:  LepGood2_tightId: [-0.5,0.5,1.5];  Legend='TL'
+lep1mvaTTH:  LepGood1_mvaTTH: 20,-1,1;  Legend='TL'
+lep2mvaTTH:  LepGood2_mvaTTH: 20,-1,1;  Legend='TL'
+#lep1mcMatchId:  abs(LepGood1_mcMatchId): 28,-1.5,26.5;  Legend='TR'
+#lep2mcMatchId:  abs(LepGood2_mcMatchId): 28,-1.5,26.5;  Legend='TR'
+lep1mcMatchId_bool:  LepGood1_genPartFlav == 1 || LepGood1_genPartFlav == 15: [-0.5,0.5,1.5];  Legend='TL'
+lep2mcMatchId_bool:  LepGood2_genPartFlav == 1 || LepGood2_genPartFlav == 15: [-0.5,0.5,1.5];  Legend='TL'
+#lep1mcMatchAny:  LepGood1_mcMatchAny: [-1.5,-0.5,0.5,1.5,2.5,3.5];  Legend='TR'
+#lep2mcMatchAny:  LepGood2_mcMatchAny: [-1.5,-0.5,0.5,1.5,2.5,3.5];  Legend='TR'
+nJet25 : Sum$((Jet_pt>25)*(abs(Jet_eta)<2.4)) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5] ; XTitle='N(jet\, p_{T} > 25)'
+nJet40 : Sum$((Jet_pt>40)*(abs(Jet_eta)<2.4)) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5] ; XTitle='N(jet\, p_{T} > 40)'
+jet1pt:  Jet1_pt: 15,0,400; XTitle="Leading jet p_{T}  [GeV]", Legend='TR'
+jet2pt:  Jet2_pt: 15,0,200; XTitle="Second jet p_{T}  [GeV]", Legend='TR'
+jet3pt:  Jet3_pt: 10,0,150; XTitle="Third jet p_{T}  [GeV]", Legend='TR'
+jet4pt:  Jet4_pt: 10,0,100; XTitle="Fourth jet p_{T}  [GeV]", Legend='TR'
+jet1rawPt:  Jet1_pt*(1+Jet1_rawFactor): 15,0,400;  Legend='TR'
+jet2rawPt:  Jet2_pt*(1+Jet1_rawFactor): 15,0,200;  Legend='TR'
+jet1btagCSV:  Jet1_btagCSVV2: 12,0.0,1.5;  Legend='TR'
+jet2btagCSV:  Jet2_btagCSVV2: 12,0.0,1.5;  Legend='TR'
+jet1mcPt:  Alt$(GenJet_pt[Jet1_genJetIdx],0): 15,0,400;  Legend='TR'
+jet2mcPt:  Alt$(GenJet_pt[Jet1_genJetIdx],0): 15,0,200;  Legend='TR'
+jet1mcFlavour:  Jet1_hadronFlavour: 29,-6.5,22.5;  Legend='TR'
+jet2mcFlavour:  Jet2_hadronFlavour: 29,-6.5,22.5;  Legend='TR'
+#jet1mcMatchId:  abs(Jet1_mcMatchId): 28,-1.5,26.5;  Legend='TR'
+#jet2mcMatchId:  abs(Jet2_mcMatchId): 28,-1.5,26.5;  Legend='TR'
+htJet25:   Sum$(Jet_pt*(Jet_pt>25)*(abs(Jet_eta)<2.4))+Sum$(LepGood_pt): 15,0,2000    ; XTitle="H_{T}(lep + jet p_{T} > 25)  [GeV]"
+htJet40:   Sum$(Jet_pt*(Jet_pt>40)*(abs(Jet_eta)<2.4))+Sum$(LepGood_pt): 15,0,2000    ; XTitle="H_{T}(lep + jet p_{T} > 40)  [GeV]"
+htJet40j:   Sum$(Jet_pt*(Jet_pt>40)*(abs(Jet_eta)<2.4)): 15,0,2000    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
+#mhtJet25:   mhtJet25: 15,0,800    ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 25)  [GeV]"
+#mhtJet40:   mhtJet40: 15,0,800    ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 40)  [GeV]"
+nBJet25 : Sum$((Jet_pt>25)*(abs(Jet_eta)<2.4)*(Jet_btagDeepB>0.4941)): [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(b-jet\, p_{T} > 25\, CSVM)'
+nBJet40 : Sum$((Jet_pt>40)*(abs(Jet_eta)<2.4)*(Jet_btagDeepB>0.4941)) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(b-jet\, p_{T} > 40\, CSVM)'
+minMllAFAS: minMllAFAS: 20,0,200; XTitle="min m(ll')  [GeV]"
+minMllAFOS: minMllAFOS: 20,0,200; XTitle="min m(ll')  [GeV]"
+minMllSFOS: minMllSFOS: 20,0,200; XTitle="min m(ll')  [GeV]"
+mZ1: mZ1: 20,0,200; XTitle="best mZ1  [GeV]"
+mZ2: mZ2: 20,0,200; XTitle="best mZ2  [GeV]"
+mZ1ss: mZ1SFSS: 20,0,200; XTitle="best mZ1ss  [GeV]"
+m2l: m2l: 20,0,200; XTitle="m2l  [GeV]"
+m3l: m3l: 20,0,200; XTitle="m3l  [GeV]"
+m4l: m4l: 20,0,200; XTitle="m4l  [GeV]"

@@ -1,0 +1,2 @@
+dilep : Trigger_2lss: 2,-0.5,1.5;   Title="Dilepton trigger"
+trilep : Trigger_3l : 2,-0.5,1.5;   Title="Trilepton trigger"

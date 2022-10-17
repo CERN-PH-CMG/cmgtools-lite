@@ -1,0 +1,4 @@
+incl_fake : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt-more.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0))", Label="TT fakes", FillColor=ROOT.kGray+2, PostFix="_fake"
+
+incl_FR_TT : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt-more.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0 || LepGood3_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-3l-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue, PostFix="_FR_TT"
+incl_FR_QCD : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt-more.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0 || LepGood3_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed, PostFix="_FR_QCD"

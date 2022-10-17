@@ -1,0 +1,28 @@
+nJet25 : nJet25 : [-0.5,0.5,1.5,2.5,3.5] ; XTitle='N(jet\, p_{T} > 25)'
+nBJetLoose25  : nBJetLoose25  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 25\, CVS Loose)',XNDiv=505
+nBJetMedium25 : nBJetMedium25 : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 25\, CVS Medium)',XNDiv=505
+#met:     met_pt: 40,0,100    ; XTitle="E_{T}^{miss}  [GeV]"
+met_log: met_pt: 40,0,100    ; XTitle="E_{T}^{miss}  [GeV]",Logy
+mZ1:        mZ1: 30,60,120   ; XTitle="best m(l^{+}l^{-})  [GeV]", Legend='TL'
+m3l:        m3l: 60,00,180   ; XTitle="m(3l)  [GeV]", Legend='TL'
+minmll: minMllAFOS: 60,0,120; XTitle="min m(ll)  [GeV]", Legend='TR'
+#l1Pt:  LepGood_pt[0]: 40,0,200; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR'
+#l2Pt:  LepGood_pt[1]: 24,0,120; XTitle="Subleading lepton p_{T}  [GeV]", Legend='TR'
+l3Pt:  LepGood_pt[2]: 20,0,100; XTitle="Third lepton p_{T}  [GeV]", Legend='TR'
+l3Sip3D:  LepGood_sip3d[2]: 32,0,8; XTitle="Third lepton S_{IP3D}  [GeV]", Legend='TR'
+l3CPt:    LepGood_pt[2]*if3(LepGood_mvaTTH[2]>0.90&&LepGood_mediumMuonId[2]>0, 1.0, 0.80/LepGood_jetPtRatiov2[2]): 20,0,50; XTitle="Third lepton p_{T}^{corr}  [GeV]", Legend='TR'
+l3CPt_f:  LepGood_pt[2]*if3(LepGood_mvaTTH[2]>0.90&&LepGood_mediumMuonId[2]>0, 1.0, 0.80/LepGood_jetPtRatiov2[2]): [ 0,5,7,10,12.5,15,17.5,20,25,30,45 ]; XTitle="Third lepton p_{T}^{corr80}  [GeV]", Legend='TR'
+l3CPt_c:  LepGood_pt[2]*if3(LepGood_mvaTTH[2]>0.90&&LepGood_mediumMuonId[2]>0, 1.0, 0.80/LepGood_jetPtRatiov2[2]): [ 0,5,10,15,20,30,45 ]; XTitle="Third lepton p_{T}^{corr80}  [GeV]", Legend='TR'
+l3CPt_2:  LepGood_pt[2]*if3(LepGood_mvaTTH[2]>0.90&&LepGood_mediumMuonId[2]>0, 1.0, 0.80/LepGood_jetPtRatiov2[2]): [ 10,15,30,45 ]; XTitle="Third lepton p_{T}^{corr80}  [GeV]", Legend='TR'
+l3CPt_1:  LepGood_pt[2]*if3(LepGood_mvaTTH[2]>0.90&&LepGood_mediumMuonId[2]>0, 1.0, 0.80/LepGood_jetPtRatiov2[2]): [ 10,20,30 ]; XTitle="Third lepton p_{T}^{corr80}  [GeV]", Legend='TR'
+ptJIMIX4_2:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 10,15,30,45 ]; XTitle="Third lepton p_{T}^{corr}  [GeV]", Legend='TR'
+ptJIMIX4_1:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 10,20,30 ]; XTitle="Third lepton p_{T}^{corr}  [GeV]", Legend='TR'
+ptJIMIX3_2:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 10,15,30,45 ]; XTitle="Third lepton p_{T}^{corr}  [GeV]", Legend='TR'
+ptJIMIX3_1:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 10,20,30 ]; XTitle="Third lepton p_{T}^{corr}  [GeV]", Legend='TR'
+
+mtW3: mt_2(LepGood_pt[2],LepGood_phi[2],met,met_phi)  : 20,0,140 ; XTitle="M_{T}(W#rightarrowlv)", Legend='TR'
+mtW3R: mt_2(35.0,LepGood_phi[2],met,met_phi)  : 20,0,140 ; XTitle="M_{T}^{fix}(W#rightarrowlv)", Legend='TR'
+#mtW: (abs(mZ1-mass_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1])) < 0.01)*mt_2(LepGood_pt[2],LepGood_phi[2],met,met_phi) + (abs(mZ1-mass_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[2],LepGood_eta[2],LepGood_phi[2],LepGood_mass[2])) < 0.01)*mt_2(LepGood_pt[1],LepGood_phi[1],met,met_phi) + (abs(mZ1-mass_2(LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1],LepGood_pt[2],LepGood_eta[2],LepGood_phi[2],LepGood_mass[2])) < 0.01)*mt_2(LepGood_pt[0],LepGood_phi[0],met,met_phi) : 36,0,180 ; XTitle="M_{T}(W#rightarrowlv)", Legend='TR'
+#mtW_w: (abs(mZ1-mass_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1])) < 0.01)*mt_2(LepGood_pt[2],LepGood_phi[2],met,met_phi) + (abs(mZ1-mass_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[2],LepGood_eta[2],LepGood_phi[2],LepGood_mass[2])) < 0.01)*mt_2(LepGood_pt[1],LepGood_phi[1],met,met_phi) + (abs(mZ1-mass_2(LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1],LepGood_pt[2],LepGood_eta[2],LepGood_phi[2],LepGood_mass[2])) < 0.01)*mt_2(LepGood_pt[0],LepGood_phi[0],met,met_phi) : 20,0,300 ; XTitle="M_{T}(W#rightarrowlv)", Legend='TR'
+
+nvtx : nVert: 60,-0.5,59.5; XTitle="N(vtx)"

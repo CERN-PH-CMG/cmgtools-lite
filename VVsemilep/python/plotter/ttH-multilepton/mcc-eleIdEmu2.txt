@@ -1,0 +1,8 @@
+# NanoAOD version
+LepGood_idEmu3: LepGood_hoe < 0.10 && LepGood_eInvMinusPInv > -0.04 && LepGood_sieie < (0.011+0.019*(abs(LepGood_eta+LepGood_deltaEtaSC)>1.479)) ; AlsoData
+LepGood(\d)_idEmu3: LepGood\1_hoe < 0.10 && LepGood\1_eInvMinusPInv > -0.04 && LepGood\1_sieie < (0.011+0.019*(abs(LepGood\1_eta+LepGood\1_deltaEtaSC)>1.479)) ; AlsoData
+# CMGTools version
+LepGood_oldIdEmu2: LepGood_hadronicOverEm < (0.10-0.03*(abs(LepGood_etaSc)>1.479)) && abs(LepGood_dEtaScTrkIn) < (0.01-0.002*(abs(LepGood_etaSc)>1.479)) && abs(LepGood_dPhiScTrkIn) < (0.04+0.03*(abs(LepGood_etaSc)>1.479))  && LepGood_eInvMinusPInv > -0.05 && LepGood_eInvMinusPInv < (0.01-0.005*(abs(LepGood_etaSc)>1.479)) && LepGood_sigmaIEtaIEta < (0.011+0.019*(abs(LepGood_etaSc)>1.479)) ; AlsoData
+LepGood(\d)_oldIdEmu2: LepGood\1_hadronicOverEm < (0.10-0.03*(abs(LepGood\1_etaSc)>1.479)) && abs(LepGood\1_dEtaScTrkIn) < (0.01-0.002*(abs(LepGood\1_etaSc)>1.479)) && abs(LepGood\1_dPhiScTrkIn) < (0.04+0.03*(abs(LepGood\1_etaSc)>1.479))  && LepGood\1_eInvMinusPInv > -0.05 && LepGood\1_eInvMinusPInv < (0.01-0.005*(abs(LepGood\1_etaSc)>1.479)) && LepGood\1_sigmaIEtaIEta < (0.011+0.019*(abs(LepGood\1_etaSc)>1.479)) ; AlsoData
+LepGood_oldIdEmu3: LepGood_hadronicOverEm < 0.10 && LepGood_eInvMinusPInv > -0.04 && LepGood_sigmaIEtaIEta < (0.011+0.019*(abs(LepGood_etaSc)>1.479)) ; AlsoData
+LepGood(\d)_oldIdEmu3: LepGood\1_hadronicOverEm < 0.10 && LepGood\1_eInvMinusPInv > -0.04 && LepGood\1_sigmaIEtaIEta < (0.011+0.019*(abs(LepGood\1_etaSc)>1.479)) ; AlsoData

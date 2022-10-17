@@ -1,0 +1,16 @@
+data : DoubleMuon_Run2018A_17Sep2018
+data : DoubleMuon_Run2018B_17Sep2018
+data : DoubleMuon_Run2018C_17Sep2018
+data : DoubleMuon_Run2018D_PromptReco_v2
+data : EGamma_Run2018A_17Sep2018
+data : EGamma_Run2018B_17Sep2018
+data : EGamma_Run2018C_17Sep2018
+data : EGamma_Run2018D_PromptReco_v2
+data : MuonEG_Run2018A_17Sep2018
+data : MuonEG_Run2018B_17Sep2018
+data : MuonEG_Run2018C_17Sep2018
+data : MuonEG_Run2018D_PromptReco_v2
+data : SingleMuon_Run2018A_17Sep2018
+data : SingleMuon_Run2018B_17Sep2018
+data : SingleMuon_Run2018C_17Sep2018
+data : SingleMuon_Run2018D_PromptReco_v2

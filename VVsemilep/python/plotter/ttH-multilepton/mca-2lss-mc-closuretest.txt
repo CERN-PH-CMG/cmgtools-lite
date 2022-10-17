@@ -1,0 +1,24 @@
+incl_all : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", Label="TT fakes+convs", FillColor=ROOT.kBlack, PostFix="_all"
+
+incl_fake : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0))", Label="TT fakes", FillColor=ROOT.kGray+2, PostFix="_fake"
+incl_gamma : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1))", Label="Convs", FillColor=ROOT.kOrange, PostFix="_gamma"
+incl_gamma_appl : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1))",  Label="Convs in appl.", FillColor=ROOT.kOrange-3, FakeRate="ttH-multilepton/fakeRate-2lss-appl.txt", PostFix="_gamma_appl"
+
+incl_FR_TT : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue, PostFix="_FR_TT"
+
+incl_FR_TT_elonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt-elfake.txt", Label="FR (TTe)", FillColor=ROOT.kGreen+2, PostFix="_FR_TT_elonly"
+incl_FR_TT_elonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) && if3(abs(LepGood1_pdgId)==11\,LepGood1_mcMatchId!=0\,LepGood1_mcMatchId==0) && if3(abs(LepGood2_pdgId)==11\,LepGood2_mcMatchId!=0\,LepGood2_mcMatchId==0) && if3(abs(LepGood1_pdgId)!=11\,LepGood1_mcMatchId==0\,LepGood1_mcMatchId!=0) && if3(abs(LepGood2_pdgId)!=11\,LepGood2_mcMatchId==0\,LepGood2_mcMatchId!=0)", Label="FR (TTe)", FillColor=ROOT.kGreen+2, PostFix="_FR_TT_elonly"
+
+incl_FR_TT_muonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt-mufake.txt", Label="FR (TTm)", FillColor=ROOT.kMagenta, PostFix="_FR_TT_muonly"
+incl_FR_TT_muonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) && if3(abs(LepGood1_pdgId)==13\,LepGood1_mcMatchId!=0\,LepGood1_mcMatchId==0) && if3(abs(LepGood2_pdgId)==13\,LepGood2_mcMatchId!=0\,LepGood2_mcMatchId==0) && if3(abs(LepGood1_pdgId)!=13\,LepGood1_mcMatchId==0\,LepGood1_mcMatchId!=0) && if3(abs(LepGood2_pdgId)!=13\,LepGood2_mcMatchId==0\,LepGood2_mcMatchId!=0)", Label="FR (TTm)", FillColor=ROOT.kMagenta, PostFix="_FR_TT_muonly"
+
+
+incl_FR_QCD : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed, PostFix="_FR_QCD"
+
+incl_FR_QCD_elonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd-elfake.txt", Label="FR (QCDe)", FillColor=ROOT.kGreen, PostFix="_FR_QCD_elonly"
+incl_FR_QCD_elonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) && if3(abs(LepGood1_pdgId)==11\,LepGood1_mcMatchId!=0\,LepGood1_mcMatchId==0) && if3(abs(LepGood2_pdgId)==11\,LepGood2_mcMatchId!=0\,LepGood2_mcMatchId==0) && if3(abs(LepGood1_pdgId)!=11\,LepGood1_mcMatchId==0\,LepGood1_mcMatchId!=0) && if3(abs(LepGood2_pdgId)!=11\,LepGood2_mcMatchId==0\,LepGood2_mcMatchId!=0)", Label="FR (QCDe)", FillColor=ROOT.kGreen, PostFix="_FR_QCD_elonly"
+
+incl_FR_QCD_muonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="(LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0)", FakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd-mufake.txt", Label="FR (QCDm)", FillColor=ROOT.kOrange, PostFix="_FR_QCD_muonly"
+incl_FR_QCD_muonly : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt.txt", AddWeight="((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) && if3(abs(LepGood1_pdgId)==13\,LepGood1_mcMatchId!=0\,LepGood1_mcMatchId==0) && if3(abs(LepGood2_pdgId)==13\,LepGood2_mcMatchId!=0\,LepGood2_mcMatchId==0) && if3(abs(LepGood1_pdgId)!=13\,LepGood1_mcMatchId==0\,LepGood1_mcMatchId!=0) && if3(abs(LepGood2_pdgId)!=13\,LepGood2_mcMatchId==0\,LepGood2_mcMatchId!=0)", Label="FR (QCDm)", FillColor=ROOT.kOrange, PostFix="_FR_QCD_muonly"
+
+

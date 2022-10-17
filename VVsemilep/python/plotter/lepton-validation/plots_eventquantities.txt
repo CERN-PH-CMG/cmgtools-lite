@@ -1,0 +1,14 @@
+nvtx: nVert: 40,-0.5,39.5 ; XTitle="N(vertices)", Legend='TR'
+nJet25:         nJet25                                  : [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDdiv=505, xBinLabels="2\,3\,4\,5\,6\,#geq 7"
+nBJetLoose25:   nBJetLoose25                            : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 25 GeV\, CSVL)', XNDdiv=505
+nBJetMedium25:  nBJetMedium25                           : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 25 GeV\, CSVM)', XNDdiv=505
+nJet40 : nJet40 : 8,-0.5,7.5 ; XTitle='N(jet\, p_{T} > 40)', Legend='TR', LegendCutoff=1e-4, Logy
+htJet40j: htJet40j: 20,0,800; XTitle="H_{T}  [GeV]", Legend='TR', LegendCutoff=1e-4, Logy
+met: met_pt: 40,0,400 ; XTitle="E_{T}^{miss} [GeV]",Logy, LegendCutoff=1e-4, Logy
+mZ1: mZ1: 120,0,120 ; XTitle="best m(l^{+}l^{-}) [GeV]", Legend='TR', LegendCutoff=1e-2, MoreY=1.5
+minMllAFAS: minMllAFAS: 120,0,120 ; XTitle="minMllAFAS [GeV]", Legend='TR', LegendCutoff=1e-2, MoreY=1.5
+lep1_pt: LepGood1_pt: 20,0,100; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
+lep2_pt: LepGood2_pt: 20,0,100; XTitle="Subleading lepton p_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
+lep1_eta: LepGood1_eta: 25,-2.5,2.5; XTitle="Leading lepton #eta", Legend='TR', LegendCutoff=1e-2
+lep2_eta: LepGood2_eta: 25,-2.5,2.5; XTitle="Subleading lepton #eta", Legend='TR', LegendCutoff=1e-2
+2lep_flav: if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11) : [-0.5,0.5,1.5,2.5]; XTitle="l_{1}l_{2}: ee/e#mu/#mu#mu", XNDdiv=505, MoreY=2.0

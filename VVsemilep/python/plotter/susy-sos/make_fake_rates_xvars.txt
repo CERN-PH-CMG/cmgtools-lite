@@ -1,0 +1,35 @@
+# vim: syntax=sh
+pt_vfine: LepGood_pt: [ 3.5,5,7.5,10,12.5,15,17.5,20,22.5,25,27.5,30 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+pt_fine: LepGood_pt: [ 3.5,5.0,7.5,10,15,20,30 ] ; XTitle="lepton p_{T} (GeV)", Density=True, Logy
+pt_fine_ext: LepGood_pt: [ 3.5,5.0,7.5,10,15,20,30,35 ] ; XTitle="lepton p_{T} (GeV)", Density=True, Logy
+#etaj_fine: abs(LepGood_awayJet_eta): 20,0,5.0 ; XTitle="lepton p_{T} (GeV)", Density=True, Logy
+
+lep_pt: LepGood_pt: 30,0,30; XTitle="Lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
+lep_eta: abs(LepGood_eta): 12,0,2.5; XTitle="Lepton #eta", Legend='TR', LegendCutoff=1e-2, MoreY=1.5
+lep_relIso03: LepGood_relIso03: 20,0,2 ; XTitle="Lepton relIso(0.3)", Legend='TR', LegendCutoff=1e-2
+lep_absIso03: LepGood_relIso03*LepGood_pt: 20,0,12 ; XTitle="Lepton absIso(0.3)", Legend='TR', LegendCutoff=1e-2
+lep_sip3d: LepGood_sip3d: 20,0,8 ; XTitle="Lepton SIP_{3D}", Legend='TR', LegendCutoff=1e-2
+lep_sip3d_log: LepGood_sip3d: 20,0,8 ; Logy, XTitle="Lepton SIP_{3D}", Legend='TR', LegendCutoff=1e-2
+#lep_dxy: abs(LepGood_dxy)*10000: 20,0.0,100. ; XTitle="Lepton d_{xy} [#mum]", Legend='TR', LegendCutoff=1e-2
+lep_dxy_log: abs(LepGood_dxy)*10000: 20,0.0,600. ; XTitle="Lepton d_{xy} [#mum]",Logy , Legend='TR', LegendCutoff=1e-2
+#lep_dz: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]", Legend='TR', LegendCutoff=1e-2
+lep_dz_log: abs(LepGood_dz)*10000: 20,0.0,1000. ; XTitle="Lepton d_{z} [#mum]",Logy ,Legend='TR', LegendCutoff=1e-2
+#el_mvaIdSpring15: LepGood_mvaIdSpring15: 20,-1,1; XTitle="Electron mvaIdSpring15", Legend='TR', LegendCutoff=1e-2
+el_mvaIdSpring15_log: LepGood_mvaIdSpring15: 20,-1,1; Logy, XTitle="Electron mvaIdSpring15", Legend='TL', LegendCutoff=1e-2, MoreY=3.5
+lep_lostHits: LepGood_lostHits: 3,-0.5,2.5; XTitle="Lost hits on inner track", Legend='TR', LegendCutoff=1e-2
+lep_miniRelIso: LepGood_miniRelIso: 12,0,.4; XTitle="Lepton Isolation", LegendCutoff=1e-2
+lep_mcMatchAny : abs(LepGood_mcMatchAny)+6*(LepGood_mcPromptGamma==1) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="abs(LepGood_mcMatchAny)", Legend='TR', LegendCutoff=1e-2, MoreY=1.5
+lep_mcMatchId : abs(LepGood_mcMatchId) : [-0.5,0.5,1.5]; XTitle="abs(LepGood_mcMatchAny)", Legend='TR', LegendCutoff=1e-2, MoreY=1.5
+#
+ev_met_log: met_pt: 40,0,100    ; XTitle="E_{T}^{miss}  [GeV]",Logy
+ev_mZ1:        mZ1: 30,60,120   ; XTitle="best m(l^{+}l^{-})  [GeV]", Legend='TL'
+nvtx : nVert: 60,-0.5,59.5; XTitle="N(vtx)"
+ev_nJet25 : nJet25 : [-0.5,0.5,1.5,2.5,3.5] ; XTitle='N(jet\, p_{T} > 25)'
+ev_nBJetLoose25  : nBJetLoose25  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 25\, CVS Loose)',XNDiv=505
+ev_nBJetMedium25 : nBJetMedium25 : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 25\, CVS Medium)',XNDiv=505
+mtW3: mt_2(LepGood_pt,LepGood_phi,met,met_phi)  : 20,0,140 ; XTitle="M_{T}(W#rightarrowlv)", Legend='TR'
+mtW3R: mt_2(35.0,LepGood_phi,met,met_phi)  : 20,0,140 ; XTitle="M_{T}^{fix}(W#rightarrowlv)", Legend='TR'
+
+awayJet_pt : LepGood_awayJet_pt : 20,0,200; XTitle="away jet p_{T}  (GeV)"
+awayJet_eta : abs(LepGood_awayJet_eta) : 20,0.0,4.7; XTitle="away jet #eta"
+awayJet_btagCSV : LepGood_awayJet_btagCSV : 20,0,1; XTitle="away jet b-tag"

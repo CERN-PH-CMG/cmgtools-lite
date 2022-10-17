@@ -1,0 +1,57 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerStopSoftB"
+#T2cc_mStop300_mChi290+            : T2cc_mStop300_mChi290             : xsec : 1 ; FillColor=ROOT.kGreen+1, Label="cc 300/10"
+#T2cc_mStop300_mChi295+             : T2cc_mStop300_mChi295             : xsec : 1 ; FillColor=ROOT.kGreen+2, Label="cc 300/5"
+#T2cc_mStop350_mChi340+            : T2cc_mStop350_mChi340             : xsec : 1 ; FillColor=ROOT.kAzure+1, Label="cc 350/10"
+#T2cc_mStop350_mChi345+             : T2cc_mStop350_mChi345             : xsec : 1 ; FillColor=ROOT.kAzure+2, Label="cc 350/5"
+T2ttDeg_mStop350_mChi330+ : T2ttDeg_mStop350_mChi330_4bodydec : xsec : 1 ; FillColor=ROOT.kRed+1, Label="T2tt 350"
+T2ttDeg_mStop425_mChi405+ : T2ttDeg_mStop425_mChi405_4bodydec : xsec : 1 ; FillColor=ROOT.kPink+10, Label="T2tt 425", FakeRate="susy-sos-castello/mca-2los-noFilters.txt"
+
+
+TT : TT_pow: xsec: 1 ; FillColor=ROOT.kOrange-7, Label="tt"
+
+Zvv : ZJetsToNuNu_HT100to200: xsec : 1 ; FillColor=ROOT.kGreen+1, Label="Z \#nu\#nu "
+Zvv : ZJetsToNuNu_HT200to400: xsec : 1
+Zvv : ZJetsToNuNu_HT400to600: xsec : 1
+Zvv : ZJetsToNuNu_HT600to800: xsec : 1
+Zvv : ZJetsToNuNu_HT800t1200: xsec : 1
+Zvv : ZJetsToNuNu_HT1200to2500: xsec : 1
+Zvv : ZJetsToNuNu_HT2500toInf: xsec : 1
+
+Zll : DYJetsToLL_M50_HT100to200: xsec : 1 ; FillColor=ROOT.kCyan+0, Label="Z ll"
+Zll : DYJetsToLL_M50_HT200to400: xsec : 1
+Zll : DYJetsToLL_M50_HT400to600: xsec : 1
+Zll : DYJetsToLL_M50_HT600toInf: xsec : 1
+Zll : DYJetsToLL_M5to50_HT100to200: xsec : 1
+Zll : DYJetsToLL_M5to50_HT200to400: xsec : 1
+Zll : DYJetsToLL_M5to50_HT400to600: xsec : 1
+Zll : DYJetsToLL_M5to50_HT600toInf: xsec : 1
+
+Wlv : WJetsToLNu_HT100to200: xsec : 1 ; FillColor=ROOT.kBlue-7, Label="W l\#nu"
+Wlv : WJetsToLNu_HT200to400: xsec : 1
+Wlv : WJetsToLNu_HT400to600: xsec : 1
+Wlv : WJetsToLNu_HT600to800: xsec : 1
+Wlv : WJetsToLNu_HT800to1200: xsec : 1
+Wlv : WJetsToLNu_HT1200to2500: xsec : 1
+Wlv : WJetsToLNu_HT2500toInf: xsec : 1
+
+QCD : QCD_HT200to300: xsec : 1 ; FillColor=ROOT.kGray+1, Label="QCD"
+QCD : QCD_HT300to500: xsec : 1
+QCD : QCD_HT500to700: xsec : 1
+QCD : QCD_HT700to1000: xsec : 1
+QCD : QCD_HT1000to1500: xsec : 1
+QCD : QCD_HT1500to2000: xsec : 1
+QCD : QCD_HT2000toInf: xsec : 1
+
+#QCD2 : QCD_HT200to300: xsec : 1; FillColor=ROOT.kRed
+#QCD3 : QCD_HT300to500: xsec : 1; FillColor= ROOT.kGreen+2
+#QCD5 : QCD_HT500to700: xsec : 1; FillColor= ROOT.kBlue
+#QCD7 : QCD_HT700to1000: xsec : 1; FillColor= ROOT.kMagenta+1
+#QCD10 : QCD_HT1000to1500: xsec : 1; FillColor= ROOT.kOrange+7
+#QCD15 : QCD_HT1500to2000: xsec : 1; FillColor= ROOT.kCyan+1
+#QCD20 : QCD_HT2000toInf: xsec : 1; FillColor= ROOT.kGray+2
+
+data : MET_Run2016B_PromptReco_v2
+data : MET_Run2016C_PromptReco_v2
+data : MET_Run2016D_PromptReco_v2
+

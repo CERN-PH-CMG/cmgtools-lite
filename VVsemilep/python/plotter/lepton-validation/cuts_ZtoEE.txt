@@ -1,0 +1,8 @@
+filters : Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter $DATA{&& Flag_eeBadScFilter}
+trigger : Triggers_ee
+2L SF/OS : nLepFO >= 2 && LepGood1_pdgId == -LepGood2_pdgId
+pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
+electron: abs(LepGood_pdgId[iChosen])==11 
+best mll[60,120] : (60 < mZ1 && mZ1 < 120)
+lepton: LepGood_pt[!(iChosen)]>30 && LepGood_relIso03[!(iChosen)]<0.2 && abs(LepGood_eta[!(iChosen)])<=2.1
+lep15: LepGood_pt[iChosen]>15

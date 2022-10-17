@@ -1,0 +1,2 @@
+HLT_FR_Mu27: 1
+HLT_FR_Mu50: 1

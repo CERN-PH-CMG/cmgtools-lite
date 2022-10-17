@@ -1,0 +1,3 @@
+cut-change: METfilters  : Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseIsoFilter && Flag_HBHENoiseFilter && Flag_eeBadScFilter && Flag_goodVertices && Flag_globalTightHalo2016Filter && Flag_badChargedHadronFilter && Flag_badMuonFilter
+cut-change: Triggers_2l : (HLT_BIT_HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v || HLT_BIT_HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v)
+cut-change: Triggers_2t : (HLT_BIT_HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v || HLT_BIT_HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v)

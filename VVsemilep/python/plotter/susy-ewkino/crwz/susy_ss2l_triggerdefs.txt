@@ -1,0 +1,4 @@
+Triggers_ee\b: HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Ele23_WPLoose_Gsf_v ; AlsoData
+Triggers_mm\b: HLT_DoubleMu || HLT_BIT_HLT_IsoMu20_v || HLT_BIT_HLT_IsoTkMu20_v ; AlsoData
+Triggers_em\b: HLT_BIT_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_IsoMu20_v || HLT_BIT_HLT_IsoTkMu20_v || HLT_BIT_HLT_Ele23_WPLoose_Gsf_v ; AlsoData
+Triggers_3l\b: HLT_TripleMu || HLT_TripleEl || HLT_DoubleMuEl || HLT_DoubleElMu || HLT_BIT_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Ele23_WPLoose_Gsf_v || HLT_DoubleMu || HLT_BIT_HLT_IsoMu20_v || HLT_BIT_HLT_IsoTkMu20_v || HLT_BIT_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v ; AlsoData

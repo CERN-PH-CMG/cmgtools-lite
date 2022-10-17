@@ -1,0 +1,5 @@
+mva06: LepGood_mvaTTH[2]>0.60&&LepGood_mediumMuonId[2]>0 : 2,-0.5,0.5 ; XTitle="Pass MVA"
+mva075: LepGood_mvaTTH[2]>0.75&&LepGood_mediumMuonId[2]>0 : 2,-0.5,0.5 ; XTitle="Pass MVA"
+mva090: LepGood_mvaTTH[2]>0.90&&LepGood_mediumMuonId[2]>0 : 2,-0.5,0.5 ; XTitle="Pass MVA"
+mvaSusy_sMi: LepGood_mvaSUSY[2] > if3(abs(LepGood_pdgId[2])==13,-0.2,0.5) && LepGood_mediumMuonId[2] > 0:  2,-0.5,1.5; XTitle="Pass MVA"
+mvaSusy_sVi: LepGood_mvaSUSY[2] > if3(abs(LepGood_pdgId[2])==13,0.45,0.75) && LepGood_mediumMuonId[2] > 0:  2,-0.5,1.5; XTitle="Pass MVA"

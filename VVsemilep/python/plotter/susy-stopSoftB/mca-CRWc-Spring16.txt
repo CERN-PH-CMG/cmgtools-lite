@@ -1,0 +1,25 @@
+
+# vim: syntax=sh
+* ; TreeName="treeProducerStopSoftB"
+
+WJets : WJetsToLNu_reHLT_part2 + WJetsToLNu_reHLT_part3 : xsec : 1
+#WJets : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : 1 ; FillColor=ROOT.kGray+1, Label="W+jets" #, NormSystematic=0.5
+#WJets_cSV : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest == 4 ; FillColor=ROOT.kAzure+1, Label="W+j\, c" #, NormSystematic=0.5
+#WJets_bcSV : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest >= 5 && SV_mcFlavFirst == 4 ; FillColor=ROOT.kViolet+1,   Label="W+j\, b\#rightarrowc" #, NormSystematic=0.5
+#WJets_bSV : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest >= 5 && SV_mcFlavFirst > 4 ; FillColor=ROOT.kRed+1,   Label="W+j\, b" #, NormSystematic=0.5
+#WJets_oSV : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : SV_mcMatchFraction <=0.66 || SV_mcFlavHeaviest <  4 ; FillColor=ROOT.kGray+0,  Label="W+j\, other" #, NormSystematic=0.5
+#WJets_cJ : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : abs(JetGood_hadronFlavour[0]) == 4; FillColor=ROOT.kViolet+1,   Label="W+j\, c" #, NormSystematic=0.5
+#WJets_bJ : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : abs(JetGood_hadronFlavour[0]) == 5; FillColor=ROOT.kRed+1,   Label="W+j\, b" #, NormSystematic=0.5
+#WJets_oJ : WJetsToLNu_LO_reHLT_part1 + WJetsToLNu_LO_reHLT_part2 + WJetsToLNu_LO_reHLT_part3 + WJetsToLNu_LO_reHLT_part4 + WJetsToLNu_LO_reHLT_part5: xsec : abs(JetGood_hadronFlavour[0]) != 4 && abs(JetGood_hadronFlavour[0]) != 5; FillColor=ROOT.kGray+0,  Label="W+j\, other" #, NormSystematic=0.5
+
+TT : TTJets   : xsec : 1 ; FillColor=ROOT.kGreen+1, Label="tt"
+
+DY : DYJetsToLL_M10to50 : xsec : 1 ; FillColor=ROOT.kGray+2, Label="Z+jets" #, NormSystematic=0.5
+DY : DYJetsToLL_M50     : xsec : 1 ; FillColor=ROOT.kGray+2, Label="Z+jets" #, NormSystematic=0.5
+
+QCD : QCD_Mu15 : xsec : 1 ; FillColor=ROOT.kOrange-3, Label="QCD"
+
+#data : SingleElectron_Run2016G_23Sep2016_part0 + SingleElectron_Run2016G_23Sep2016_part1 + SingleElectron_Run2016G_23Sep2016_part2 + SingleElectron_Run2016G_23Sep2016_part3 + SingleElectron_Run2016G_23Sep2016_part4 + SingleElectron_Run2016G_23Sep2016_part5
+#data : SingleElectron_Run2016H_PromptReco_v2_part0 + SingleElectron_Run2016H_PromptReco_v2_part1 + SingleElectron_Run2016H_PromptReco_v2_part2 + SingleElectron_Run2016H_PromptReco_v2_part3 + SingleElectron_Run2016H_PromptReco_v2_part4
+data : SingleMuon_Run2016G_23Sep2016_part1 + SingleMuon_Run2016G_23Sep2016_part2 + SingleMuon_Run2016G_23Sep2016_part3 + SingleMuon_Run2016G_23Sep2016_part4 + SingleMuon_Run2016G_23Sep2016_part5 + SingleMuon_Run2016G_23Sep2016_part6 + SingleMuon_Run2016G_23Sep2016_part7 + SingleMuon_Run2016G_23Sep2016_part8 + SingleMuon_Run2016G_23Sep2016_part9 + SingleMuon_Run2016G_23Sep2016_part10
+#data : SingleMuon_Run2016H_PromptReco_v2_part0 + SingleMuon_Run2016H_PromptReco_v2_part1 + SingleMuon_Run2016H_PromptReco_v2_part2 + SingleMuon_Run2016H_PromptReco_v2_part3 + SingleMuon_Run2016H_PromptReco_v2_part4 + SingleMuon_Run2016H_PromptReco_v2_part5 + SingleMuon_Run2016H_PromptReco_v2_part6 + SingleMuon_Run2016H_PromptReco_v2_part7 + SingleMuon_Run2016H_PromptReco_v2_part8 + SingleMuon_Run2016H_PromptReco_v2_part9

@@ -1,0 +1,4 @@
+Wjets    : WJetsToLNu_LO    : xsec : LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny < 4  ;  FillColor=ROOT.kBlue-8, Label="W + j\#rightarrowl"
+Wc       : WJetsToLNu_LO    : xsec : LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny == 4  ;  FillColor=ROOT.kBlue-2, Label="W + c\#rightarrowl"
+Wb       : WJetsToLNu_LO    : xsec : LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny == 5  ;  FillColor=ROOT.kBlue-5, Label="W + b\#rightarrowl"
+Wprompt  : WJetsToLNu_LO      : xsec : LepGood2_mcMatchId != 0;  FillColor=ROOT.kBlue-10, Label="W (prompt)"

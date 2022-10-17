@@ -1,0 +1,5 @@
+dropmatch FatJet_.*
+dropmatch L1_.*
+dropmatch SoftActivityJet_.*
+dropmatch SV_.*
+dropmatch Electron_.*

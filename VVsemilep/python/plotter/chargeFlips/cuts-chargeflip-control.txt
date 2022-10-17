@@ -1,0 +1,13 @@
+filters      : Flag_HBHENoiseFilter==1 && Flag_HBHENoiseIsoFilter==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
+trigger      : $DATA{HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_eta2p1_WPLoose_Gsf_v} $MC{1}
+
+3rdlepveto   : nLepTight == 2
+pt2510       : LepGood1_conePt>25 && LepGood2_conePt>10
+
+elel         : abs(LepGood_pdgId) == 11 && abs(LepGood2_pdgId) == 11
+
+tighttight   : LepGood1_isLepTight && LepGood2_isLepTight
+
+minMllAFAS   : (minMllAFAS > 60 && minMllAFAS < 120)
+tight-charge : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
+conv-veto    : (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2) && (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2)

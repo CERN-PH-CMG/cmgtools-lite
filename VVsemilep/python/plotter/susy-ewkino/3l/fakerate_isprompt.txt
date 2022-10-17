@@ -1,0 +1,1 @@
+allprompt: isPrompt(3, LepSel_mcUCSX[0], LepSel_mcUCSX[1], LepSel_mcUCSX[2])

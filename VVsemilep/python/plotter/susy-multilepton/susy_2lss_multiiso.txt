@@ -1,0 +1,10 @@
+alwaystrue: 1
+haspair: hasTT || hasTF || hasFF
+anyll: abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0
+trigger: (abs(LepGood1_pdgId) != 11 || abs(LepGood2_pdgId) != 11 || Triggers_ee) && (abs(LepGood1_pdgId) != 13 || abs(LepGood2_pdgId) != 13 || Triggers_mm) && (abs(LepGood1_pdgId)==abs(LepGood2_pdgId) || Triggers_em)
+lep1_pt25: LepGood1_conePt > 25 
+lep2_pt25: LepGood2_conePt > 25 
+ht: htJet40j > 80
+met: met_pt > 30 || htJet40j > 500
+njet: nJet40 >=2
+nBjet: nBJetMedium25 >= 0

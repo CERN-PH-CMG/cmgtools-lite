@@ -1,0 +1,96 @@
+
+## flat uncertainties
+
+fakes   : fakes_.*                                     : .* : 1.3
+convs   : convs                                        : .* : 1.25
+WZ      : prompt_WZ                                    : .* : 1.25
+normZZH : prompt_ZZH                                   : .* : 1.25
+normVVV : rares_VVV|rares_ttX|rares_ttW|rares_ttZ      : .* : 1.5
+sig     : sig_.*|TChi.*                                : .* : 1.25
+
+
+
+## statistical uncertainties
+
+stat2lsssig   : sig_.*          : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssWZ    : prompt_WZ       : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssZZH   : prompt_ZZH      : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssttW   : rares_ttW       : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssttZ   : rares_ttZ       : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssttX   : rares_ttX       : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssVVV   : rares_VVV       : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssconvs : convs           : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssfakes : fakes_.*        : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+stat2lssflips : flips_.*        : .*2lss.* : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lA1sig   : sig_.*          : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1WZ    : prompt_WZ       : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1ZZH   : prompt_ZZH      : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1ttW   : rares_ttW       : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1ttZ   : rares_ttZ       : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1ttX   : rares_ttX       : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1VVV   : rares_VVV       : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1convs : convs           : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA1fakes : fakes_appldata  : .*3lA1.* : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lA2sig   : sig_.*          : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2WZ    : prompt_WZ       : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2ZZH   : prompt_ZZH      : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2ttW   : rares_ttW       : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2ttZ   : rares_ttZ       : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2ttX   : rares_ttX       : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2VVV   : rares_VVV       : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2convs : convs           : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+stat3lA2fakes : fakes_appldata  : .*3lA2.* : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lBsig    : sig_.*          : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBWZ     : prompt_WZ       : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBZZH    : prompt_ZZH      : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBttW    : rares_ttW       : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBttZ    : rares_ttZ       : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBttX    : rares_ttX       : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBVVV    : rares_VVV       : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBconvs  : convs           : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lBfakes  : fakes_appldata  : .*3lB.*  : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lCsig    : sig_.*          : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCWZ     : prompt_WZ       : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCZZH    : prompt_ZZH      : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCttW    : rares_ttW       : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCttZ    : rares_ttZ       : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCttX    : rares_ttX       : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCVVV    : rares_VVV       : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCconvs  : convs           : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lCfakes  : fakes_appldata  : .*3lC.*  : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lDsig    : sig_.*          : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDWZ     : prompt_WZ       : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDZZH    : prompt_ZZH      : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDttW    : rares_ttW       : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDttZ    : rares_ttZ       : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDttX    : rares_ttX       : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDVVV    : rares_VVV       : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDconvs  : convs           : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lDfakes  : fakes_appldata  : .*3lD.*  : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lEsig    : sig_.*          : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEWZ     : prompt_WZ       : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEZZH    : prompt_ZZH      : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEttW    : rares_ttW       : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEttZ    : rares_ttZ       : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEttX    : rares_ttX       : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEVVV    : rares_VVV       : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEconvs  : convs           : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lEfakes  : fakes_appldata  : .*3lE.*  : 1.0 : stat_foreach_shape_bins : .*
+
+stat3lFsig    : sig_.*          : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFWZ     : prompt_WZ       : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFZZH    : prompt_ZZH      : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFttW    : rares_ttW       : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFttZ    : rares_ttZ       : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFttX    : rares_ttX       : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFVVV    : rares_VVV       : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFconvs  : convs           : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+stat3lFfakes  : fakes_appldata  : .*3lF.*  : 1.0 : stat_foreach_shape_bins : .*
+
+

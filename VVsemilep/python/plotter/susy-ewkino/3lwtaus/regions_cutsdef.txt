@@ -1,0 +1,14 @@
+
+vetolowmassres12 : (LepGood1_charge*LepGood2_charge < 0) && mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass) > 12  ; AlsoData
+
+vetoZwindow15 : abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass) - 90) > 15; AlsoData 
+
+# Baseline 
+geq2tightleptons : nLepGood >=2 && LepGood1_tightId == 1 && LepGood2_tightId == 1 && LepGood1_pt > 20 && LepGood2_pt > 15; AlsoData
+
+geq1tauwithoutid: nTauOther >=1 && TauGood1_pt > 20 && abs(TauGood1_eta)<=2.3 && TauGood1_idDecayMode != 0 ; AlsoData
+geq1tauwithid : nTauOther >=1 && TauGood1_pt > 20 && abs(TauGood1_eta)<=2.3 && TauGood1_idDecayMode !=0 && TauGood1_idMVA != 0; AlsoData
+
+eq1tauwithoutid: nTauGood ==1 && TauGood1_pt > 20 && abs(TauGood1_eta)<=2.3 && TauGood1_idDecayMode != 0; AlsoData
+eq1tauwithid   : nTauGood ==1 && TauGood1_pt > 20 && abs(TauGood1_eta)<=2.3 && TauGood1_idDecayMode !=0 && TauGood1_idMVA != 0; AlsoData
+

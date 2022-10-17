@@ -1,0 +1,10 @@
+TT      : TTLep_pow : xsec ; FillColor=ROOT.kGray
+TT      : TTSemi_pow : xsec ; FillColor=ROOT.kGray
+DY      : DYJetsToLL_M10to50_LO: 18610.0  ; FillColor=ROOT.kCyan
+DY      : DYJetsToLL_M50: 6025.2  ; FillColor=ROOT.kCyan
+WJets   : WJetsToLNu_LO  : xsec  ; FillColor=ROOT.kCyan+2
+SingleTop: TBar_tWch_noFullyHad: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: T_tWch_noFullyHad: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+#SingleTop: T_sch_lep: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+# t channel SingleTop: T_tWch_noFullyHad: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+WW: WWTo2L2Nu : xsec  ; FillColor=ROOT.kGray+1

@@ -1,0 +1,6 @@
+cut-change: LepGood_charge\[iLepFO_Recl\[1\]\]: (-LepGood_charge[iLepFO_Recl[1]])
+weight: chargeFlipWeight_2lss_i(max(25,LepGood1_pt),LepGood1_eta,LepGood1_pdgId,max(25,LepGood2_pt),LepGood2_eta,LepGood2_pdgId,year, suberaId)
+load-histo: QF_el_1 : $DATA/fakerate/fliprates_frommc_UL16APV_recorrected.root : chargeMisId : 2016APV
+load-histo: QF_el_2 : $DATA/fakerate/fliprates_frommc_UL16_recorrected.root : chargeMisId : 2016
+load-histo: QF_el_3 : $DATA/fakerate/fliprates_frommc_UL17_recorrected.root : chargeMisId : 2017
+load-histo: QF_el_4 : $DATA/fakerate/fliprates_frommc_UL18_recorrected.root : chargeMisId : 2018

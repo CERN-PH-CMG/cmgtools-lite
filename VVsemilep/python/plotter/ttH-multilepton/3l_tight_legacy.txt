@@ -1,0 +1,38 @@
+alwaystrue: 1
+trilep: nLepFO>=3
+exclusive: nLepTight <= 3
+cleanup: minMllAFAS > 12
+trigger: Trigger_3l
+filters: Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && (Flag_ecalBadCalibFilter || (year == 2016))  $DATA{&& Flag_eeBadScFilter}
+pt251515: LepGood1_conePt>25 && LepGood2_conePt>15 && LepGood3_conePt>10
+TTT: LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight
+Zveto: abs(mZ1-91.2) > 10
+q1: abs(LepGood1_charge + LepGood2_charge + LepGood3_charge) == 1
+
+ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0)) && (abs(LepGood3_pdgId)!=11 || (LepGood3_convVeto && LepGood3_lostHits==0))
+
+jet_bjets: (nJet25>=2 && (nBJetLoose25 >= 2 || nBJetMedium25 >= 1) && (nJet25 >= 4 || MET_pt*0.6 + mhtJet25*0.4 > 30 + 15*(mZ1 > 0))) || (nBJetMedium25 >= 1 && (nJet25+nFwdJet-nBJetLoose25) > 0)
+vetottHZZ: !(mZ2>0 && m4l<140)
+
+tauveto: nTauTight==0
+
+x2j: nJet25==2 ; Disable=True
+4j: nJet25>=4 ; Disable=True
+gt2b: nBJetLoose25 >= 2 ; Disable=True
+1B: nBJetMedium25 >= 1 ; Disable=True
+2B: nBJetMedium25 >= 2 ; Disable=True
+BLoose: nBJetMedium25 < 2 ; Disable=True
+BTight: nBJetMedium25 >= 2 ; Disable=True
+Bveto: nBJetMedium25 == 0 ; Disable=True
+tightMVA075: LepGood1_mvaTTH>0.75 && LepGood2_mvaTTH>0.75 && LepGood3_mvaTTH>0.75 ; Disable=True
+b3l_bl_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2 ; Disable=True
+b3l_bl_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2 ; Disable=True
+b3l_bt_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2 ; Disable=True
+b3l_bt_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2 ; Disable=True
+3lep_prompt: $DATA{1} $MC{LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0}; Disable=True
+underflowVeto3l: ttH_3l_clasifier(nJet25, nBJetMedium25) > 0 ; Disable=True
+#chanels
+eee : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 33 ; Disable=True
+eem :(abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 35 ; Disable=True
+emm : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 37 ; Disable=True
+mmm : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 39; Disable=True

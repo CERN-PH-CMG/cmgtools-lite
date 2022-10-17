@@ -1,0 +1,12 @@
+filters : Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter $DATA{&& Flag_eeBadScFilter}
+trigger : Triggers_ee || Triggers_mm || Triggers_em
+pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
+veto_prompt_2nd: LepGood_mvaTTH[iChosen]<0.8
+2L : nLepFO >= 2
+same-sign : LepGood1_charge*LepGood2_charge > 0
+mllv : minMllAFAS > 12
+miniIso : LepGood1_miniRelIso < 0.05
+sip : LepGood1_sip3d < 4
+tight charge : LepGood1_tightCharge > (abs(LepGood1_pdgId) == 11)
+lep_tight : ((abs(LepGood1_pdgId) == 11 && LepGood1_pt > 30 ) || ( abs(LepGood1_pdgId) == 13  && LepGood1_pt > 20 ) )&& abs(LepGood1_eta) < 2.1
+nJet/bJet : nJet25>=3 && nJet25<=4 && nBJetMedium25 == 1

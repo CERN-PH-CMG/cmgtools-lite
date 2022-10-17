@@ -1,0 +1,96 @@
+incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt"
+incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt"
+incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt"
+incl_mcfakes   : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-mcfakes.txt"
+
+incl_data : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt"
+
+incl_sigprompt_jec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True, PostFix="_jec_Up"
+incl_sigprompt_jec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True, PostFix="_jec_Dn"
+
+incl_sigprompt_bTag_LF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Up"
+incl_sigprompt_bTag_LF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Dn"
+
+incl_sigprompt_bTag_HF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Up"
+incl_sigprompt_bTag_HF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Dn"
+
+incl_sigprompt_bTag_HFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Up"
+incl_sigprompt_bTag_HFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Dn"
+
+incl_sigprompt_bTag_HFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Up"
+incl_sigprompt_bTag_HFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Dn"
+
+incl_sigprompt_bTag_LFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Up"
+incl_sigprompt_bTag_LFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Dn"
+
+incl_sigprompt_bTag_LFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Up"
+incl_sigprompt_bTag_LFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Dn"
+
+incl_sigprompt_bTag_cErr1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Up"
+incl_sigprompt_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Dn"
+
+incl_sigprompt_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
+incl_sigprompt_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
+
+incl_sigprompt_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_sigprompt_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-splitdecays.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
+
+incl_sigprompt_jec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True, PostFix="_jec_Up"
+incl_sigprompt_jec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True, PostFix="_jec_Dn"
+
+incl_sigprompt_bTag_LF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Up"
+incl_sigprompt_bTag_LF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Dn"
+
+incl_sigprompt_bTag_HF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Up"
+incl_sigprompt_bTag_HF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Dn"
+
+incl_sigprompt_bTag_HFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Up"
+incl_sigprompt_bTag_HFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Dn"
+
+incl_sigprompt_bTag_HFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Up"
+incl_sigprompt_bTag_HFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Dn"
+
+incl_sigprompt_bTag_LFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Up"
+incl_sigprompt_bTag_LFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Dn"
+
+incl_sigprompt_bTag_LFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Up"
+incl_sigprompt_bTag_LFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Dn"
+
+incl_sigprompt_bTag_cErr1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Up"
+incl_sigprompt_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Dn"
+
+incl_sigprompt_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
+incl_sigprompt_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
+
+incl_sigprompt_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_sigprompt_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-ctcv-BSM-splitdecays.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
+
+incl_convs_jec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True, PostFix="_jec_Up"
+incl_convs_jec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True, PostFix="_jec_Dn"
+
+incl_convs_bTag_LF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Up"
+incl_convs_bTag_LF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Dn"
+
+incl_convs_bTag_HF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Up"
+incl_convs_bTag_HF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Dn"
+
+incl_convs_bTag_HFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Up"
+incl_convs_bTag_HFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Dn"
+
+incl_convs_bTag_HFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Up"
+incl_convs_bTag_HFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Dn"
+
+incl_convs_bTag_LFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Up"
+incl_convs_bTag_LFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Dn"
+
+incl_convs_bTag_LFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Up"
+incl_convs_bTag_LFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Dn"
+
+incl_convs_bTag_cErr1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Up"
+incl_convs_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Dn"
+
+incl_convs_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
+incl_convs_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
+
+incl_convs_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_convs_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"

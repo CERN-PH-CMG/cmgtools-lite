@@ -1,0 +1,17 @@
+alwaystrue        : 1
+denominator       : 1
+#in SR             : SRlight_Loop > 1
+>=3 loose leptons : nLepGood >= 3
+pt 20/xx/5        : LepGood1_pt > 20 && LepGood3_pt > 5 && ((abs(LepGood2_pdgId) == 15 && LepGood2_pt > 20) || (abs(LepGood2_pdgId) == 11 && LepGood2_pt > 15) || (abs(LepGood2_pdgId) == 13 && LepGood2_pt > 10))
+#pt 20/15/10       : LepGood1_pt > 20 && LepGood2_pt > 15 && LepGood3_pt > 10
+3 tight leptons   : nTriples_Loop == 1 && hasTTT_Loop
+#sanity pdgId      : abs(LepGood1_pdgId) > 0 && abs(LepGood2_pdgId) > 0 && abs(LepGood3_pdgId) > 0
+#sanity pt         : LepGood1_pt > 20 && LepGood2_pt > 15 && LepGood3_pt > 10
+dilepton triggers : Triggers_ee || Triggers_mm || Triggers_em
+#sanity jets       : nJet30 >= 0
+bJetVeto          : nBJetMedium25 == 0
+MET > 50          : met_pt > 50
+#OSSF              : hasOSSF_Loop == 1
+#OSOF              : hasOSOF_Loop == 1
+#no OS pair        : hasOSSF_Loop == 1 && hasOSOF_Loop == 1
+#in SR             : SRlight_Loop > 1 

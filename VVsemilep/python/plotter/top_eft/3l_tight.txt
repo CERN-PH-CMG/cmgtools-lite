@@ -1,0 +1,19 @@
+alwaystrue: 1
+trilep: nLepFO>=3
+eee : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 33 ; Disable=True
+eem :(abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 35 ; Disable=True
+emm : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 37 ; Disable=True
+mmm : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) + abs(LepGood3_pdgId)) == 39; Disable=True
+exclusive: nLepTight <= 3
+cleanup: minMllAFAS > 12
+trigger: Trigger_3l
+filters: Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter && (Flag_ecalBadCalibFilter || (year == 2016))  $DATA{&& Flag_eeBadScFilter}
+pt251515: LepGood1_conePt>25 && LepGood2_conePt>15 && LepGood3_conePt>if3(abs(LepGood3_pdgId) == 11, 15, 10)
+TTT: LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight
+q1: abs(LepGood1_charge + LepGood2_charge + LepGood3_charge) == 1
+
+ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0)) && (abs(LepGood3_pdgId)!=11 || (LepGood3_convVeto && LepGood3_lostHits==0))
+njet : nJet30 > 1
+nbjemd : nBJetMedium30 > 0
+
+

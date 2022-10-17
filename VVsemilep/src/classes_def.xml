@@ -1,0 +1,9 @@
+<lcgdict>
+    <class name="SignedImpactParameter" transient="true" />
+    <class name="DistributionRemapper" transient="true" />
+    <class name="PdfWeightProducerTool" transient="true" />
+    <class name="SetupIgProfDumpHook" transient="true" />
+    <class name="CollectionSkimmer" transient="true" />
+    <class name="CombinedObjectTags" transient="true" />
+    <class name="TensorFlowInterface" transient="true" />
+</lcgdict>

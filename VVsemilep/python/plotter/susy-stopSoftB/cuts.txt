@@ -1,0 +1,17 @@
+met200     : met_pt > 200
+ht200j40  : htJet40j > 200
+mht200j40  : mhtJet40 > 200
+isr        : ISRJet_pt > 0
+dPhiISRMET : abs(deltaPhi(ISRJet_phi,met_phi)) > 2
+lepVeto    : nLepGood == 0
+tauVeto    : nTauGood == 0
+MET/HT     : met_pt/sqrt(htJet20j) > 10
+pT ISR     : ISRJet_pt > 250
+ISRjet     : ISRJet_id == 5 
+dPhiJ123MET: abs(dphiJet1Met) > 0.5 && abs(dphiJet2Met) > 0.15 && abs(dphiJet3Met) > 0.15
+ht300      : htJet20j > 300
+#oneSoftB   : nBJetsMedium20 >= 1
+#MTB        : min(mtB1,mtB2)  < 100
+#oneIVF     : Sum$(abs(SV_dxy) < 3 && SV_cosTheta > 0.98 && SV_jetPt < 20 && SV_ntracks >=3 && SV_sip3d > 4) >= 1
+#oneIVF     : Sum$(abs(SV_dxy) < 3 && SV_cosTheta > 0.98 && SV_jetPt < 20 && SV_ntracks >=3) >= 1
+event-filters: Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonFilter>=1 

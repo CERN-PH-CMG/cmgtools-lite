@@ -1,0 +1,25 @@
+LepGood(\d*)_miniPFRelIso_all : LepGood\1_miniRelIso; AlsoData
+LepGood(\d*)_pfRelIso03_all : LepGood\1_relIso03; AlsoData
+LepGood(\d)_jetRelIso : (1/LepGood\1_jetPtRatiov2 - 1); AlsoData
+LepGood_jetRelIso\[(\w+(\[\d\]?))\] : (1/LepGood_jetPtRatiov2[\1] - 1); AlsoData
+LepGood_jetRelIso : (1/LepGood_jetPtRatiov2 - 1); AlsoData
+LepGood(\d*)_mediumId : LepGood\1_mediumMuonId; AlsoData
+LepGood(\d*)_segmentComp : LepGood\1_segmentCompatibility; AlsoData
+LepGood(\d*)_eta\s*\+\s*LepGood\1_deltaEtaSC : LepGood\1_etaSc; AlsoData
+LepGood(\d*)_sieie : LepGood\1_sigmaIEtaIEta; AlsoData
+LepGood(\d*)_hoe : LepGood\1_hadronicOverEm
+LepGood(\d*)_mvaFall17V1noIso : LepGood\1_mvaIdFall17noIso; AlsoData
+LepGood_genPartFlav\s*!=\s*1\s*&&\s*LepGood_genPartFlav\s*!=\s*15 : LepGood_mcMatchId == 0; AlsoData
+LepGood_genPartFlav\s*(!=|==)\s*22 : LepGood_mcPromptGamma \1 1; AlsoData
+LepGood_genPartFlav\s*(!=|==)\s*([45]) : LepGood_mcMatchAny \1 \2; AlsoData
+LepGood(\d*)_genPartFlav\s*==\s*1\b : (LepGood\1_mcMatchId != 0 && LepGood\1_mcMatchTau == 0); AlsoData
+LepGood(\d*)_genPartFlav\s*==\s*15 : (LepGood\1_mcMatchId != 0 && LepGood\1_mcMatchTau); AlsoData
+LepGood(\d*)_genPartFlav\s*==\s*15 : (LepGood\1_mcMatchId != 0 && LepGood\1_mcMatchTau); AlsoData
+Jet(\d)_rawFactor : (Jet\1_rawPt/Jet\1_pt-1); AlsoData
+Jet_rawFactor\[(\w+(\[\d+\])?)\] : (Jet_rawPt[\1]/Jet_pt[\1]-1); AlsoData
+Jet_rawFactor : (Jet_rawPt/Jet_pt-1); AlsoData
+Jet(\d*)_btagCSVV2 : Jet\1_btagCSV; AlsoData
+Jet(\d*)_btagDeepB : Jet\1_btagDeepCSV; AlsoData
+MET_(\w+) : met_\1; AlsoData
+GenJet_pt\[\s*Jet(\d*)_genJetIdx\s*] : Jet\1_mcPt; AlsoData
+HLT_(\w+) : HLT_BIT_HLT_\1_v ; AlsoData

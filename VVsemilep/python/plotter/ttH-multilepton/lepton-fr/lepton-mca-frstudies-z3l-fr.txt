@@ -1,0 +1,6 @@
+change: abs\(LepGood_awayJet_\w+\)\s*(>|<|>=|<=)\s*\w+ : 1
+change: LepGood_awayJet_\w+\s*(>|<|>=|<=)\s*\w+ : 1
+change: LepGood_away\w*Jet\w*\s*(>|<|>=|<=)\s*\w+ : 1
+change: nLepGood == 1 : 1
+weight: 1
+cut-file: ttH-multilepton/lepton-fr/lepton-mca-frstudies-z3l.txt

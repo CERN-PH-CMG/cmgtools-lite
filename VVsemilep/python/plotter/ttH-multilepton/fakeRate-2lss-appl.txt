@@ -1,0 +1,3 @@
+cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[0\]\]: 1
+cut-change: LepGood_isLepTight_Recl\[iLepFO_Recl\[1\]\]: 1
+weight: !(LepGood1_isLepTight_Recl && LepGood2_isLepTight_Recl)

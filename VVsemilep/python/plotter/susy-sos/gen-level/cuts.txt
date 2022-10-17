@@ -1,0 +1,2 @@
+base : nLepGood == 2
+M50 : m2l > 50

@@ -1,0 +1,17 @@
+# vim: syntax=sh
+# contrarily to ttH-multilepton, we try to unroll LepGood to be more consistent with make_fake_rates_MC.sh
+#Trig: Triggers_ee || Triggers_mm 
+3l: nLepGood == 3
+Z1: 85 < mZ1 && mZ1 < 120
+#tightZ1: 85 < mZ1; Disable=True 
+#tight12: LepGood_mvaTTH[0] > 0.75 && LepGood_mvaTTH[1] > 0.75
+cleanup: minMllAFOS >= 4
+zVeto1: (LepGood_pdgId + LepGood1_pdgId != 0 || abs(mass_2(LepGood_pt,LepGood_eta,LepGood_phi,LepGood_mass, LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass)-90)>30)
+zVeto2: (LepGood_pdgId + LepGood2_pdgId != 0 || abs(mass_2(LepGood_pt,LepGood_eta,LepGood_phi,LepGood_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-90)>30)
+zVeto3: (LepGood_pdgId + LepGood3_pdgId != 0 || abs(mass_2(LepGood_pt,LepGood_eta,LepGood_phi,LepGood_mass, LepGood3_pt,LepGood3_eta,LepGood3_phi,LepGood3_mass)-90)>30)
+dr1: LepGood_pt == LepGood1_pt || deltaR(LepGood_eta,LepGood_phi, LepGood1_eta,LepGood1_phi) > 0.8
+dr2: LepGood_pt == LepGood2_pt || deltaR(LepGood_eta,LepGood_phi, LepGood2_eta,LepGood2_phi) > 0.8
+dr3: LepGood_pt == LepGood3_pt || deltaR(LepGood_eta,LepGood_phi, LepGood3_eta,LepGood3_phi) > 0.8
+mu : abs(LepGood_pdgId)==13 ; Disable=True
+el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0  && eleWPVVL(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15); Disable=True
+num : (abs(LepGood_pdgId)==13 && LepGood_ICHEPsoftMuonId || abs(LepGood_pdgId)==11 && eleWPT(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15)) && (abs(LepGood_dxy)<0.01 && abs(LepGood_dz)<0.01) && (LepGood_relIso03<0.5 && (LepGood_relIso03*LepGood_pt)<5.) ; Disable=True

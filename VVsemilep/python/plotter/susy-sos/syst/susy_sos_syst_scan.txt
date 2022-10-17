@@ -1,0 +1,61 @@
+# Luminosity
+lumi_13TeV	      : DYJets|TT|VV|TW|sig_.* : .* : 1.062
+#pileUp_13TeV	      : DYJets|TT|VV|TW|sig_.* : .* : 1.02
+
+Float_TT              : TT : .* : 2.0 : lnU
+Float_DY              : DYJets : .* : 2.0 : lnU
+
+
+# Lepton efficiencies and trigger (flat)
+CMS_sos_triggerEff    : DYJets|TT|VV|TW|sig_.*: .* : 1.05
+
+# JES (add signal)
+CMS_sos_JES	      : DYJets|TT|VV|TW|sig_.* : .* : jec : templates 
+
+CMS_btag_SF_LF                : DYJets|TT|VV|TW : .* : bTag_LF : templates
+CMS_btag_SF_LFStats1          : DYJets|TT|VV|TW : .* : bTag_LFStats1 : templates
+CMS_btag_SF_LFStats2          : DYJets|TT|VV|TW : .* : bTag_LFStats2 : templates
+CMS_btag_SF_HF                : DYJets|TT|VV|TW : .* : bTag_HF : templates
+CMS_btag_SF_HFStats1          : DYJets|TT|VV|TW : .* : bTag_HFStats1 : templates
+CMS_btag_SF_HFStats2          : DYJets|TT|VV|TW : .* : bTag_HFStats2 : templates
+CMS_btag_SF_cErr1             : DYJets|TT|VV|TW : .* : bTag_cErr1 : templates
+CMS_btag_SF_cErr2             : DYJets|TT|VV|TW : .* : bTag_cErr2 : templates
+
+CMS_lepton_SF	      : DYJets|TT|VV|TW|sig_.* : .* : lepSF : templates
+
+# TT Spin correlation
+CMS_sos_TTspin		: TT: .* : Spin : templates
+
+# TT polarization
+CMS_sos_TTWpol		: TT: .* : Wpol : templates
+
+# TT TopPt
+CMS_sos_TTPt		: TT: .* : TopPt : templates
+
+# Flat background
+#CMS_sos_DY_closure     : DYJets : .* : 1.3
+CMS_sos_fake_closure    : fakes_data|fakes_mc : .* : 1.3 
+CMS_sos_VV_xsec         : VV : .* : 1.5
+CMS_sos_TW_xsec         : TW : .* : 2.0
+
+
+# Statistical uncertainty bin-by-bin
+CMS_sos_templstat1      : fakes_data  : .* : 1.0 : stat_foreach_shape_bins : .*
+CMS_sos_templstat2      : DYJets  : .* : 1.0 : stat_foreach_shape_bins : .*
+CMS_sos_templstat3      : TT  : .* : 1.0 : stat_foreach_shape_bins : .*
+CMS_sos_templstat4      : VV  : .* : 1.0 : stat_foreach_shape_bins : .*
+CMS_sos_templstat5      : TW  : .* : 1.0 : stat_foreach_shape_bins : .*
+
+# DY Resolution (from George)
+
+# FastSim only uncertainties
+
+LepSF_FastSim           : sig_.* : .* : 1.04
+CMS_btag_SF_FastSim     : sig_.* : .* : bTag_SF_FastSim : templates
+CMS_sos_met_FastSim     : sig_.* : .* : met : templates
+CMS_sos_ISR_FastSim     : sig_.* : .* : ISR : templates
+CMS_sos_Q2_FastSim      : sig_.* : .* : 1.03
+
+# Other signal uncertainties
+#pdf_gg         : TTZ   : .* : 0.966
+#pdf_qqbar      : TTW   : .* : 1.04

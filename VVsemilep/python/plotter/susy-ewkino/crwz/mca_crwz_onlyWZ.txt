@@ -1,0 +1,4 @@
+#dummy: WZTo3LNu: 0: 0; FillColor=ROOT.kWhite
+
+WZ_pow+         : WZTo3LNu          : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && LepGood3_isMatchRightCharge ; FillColor=ROOT.kOrange, Label="WZ (POWHEG)"
+WZ_amcatnlo+    : WZTo3LNu_amcatnlo : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && LepGood3_isMatchRightCharge ; FillColor=ROOT.kOrange+10, Label="WZ (aMC@NLO)" 

@@ -1,0 +1,365 @@
+# vim: syntax=sh
+# * ; LegendCutoff=1e-5
+tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
+era: hashBasedRunPeriod2017($DATA{1}$MC{0},run,luminosityBlock,event,year) : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5]; XTitle = "Data taking era", Legend='TR', MoreY=2.0,  xBinLabels="2016B\,2016C\,2016D\,2016E\,2016F\,2016G\,2016H\,2017B\,2017C\,2017D\,2017E\,2017F\,2018A\,2018B\,2018C\,2018D"
+
+debug_nL1PrefiringCandidate : Sum$(abs(genLep_pdgId)==11 && genLep_pt>25 && abs(genLep_eta)>2.4 && abs(genLep_eta)<3.0) + Sum$(abs(genLepFromTau_pdgId)==11 && genLepFromTau_pt>25 && abs(genLepFromTau_eta)>2.4 && abs(genLepFromTau_eta)<3.0) : [-0.5,0.5,1.5,2.5]; XTitle = "nL1PrefiringCandidate", Legend='TR', Logy
+debug_higgsDecayMode : GenHiggsDecayMode : 30,-0.5,29.5 ; XTitle="Decay mode", Logy, MoreY=20
+
+#debug_triggerFired_1e : HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
+#debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
+#debug_triggerFired_3e : HLT_TripleEl : 2,-0.5,1.5; XTitle = "Fired 3e trigger"
+#debug_triggerFired_em : HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired em trigger"
+#debug_triggerFired_1m : HLT_BIT_HLT_IsoMu24_v || HLT_BIT_HLT_IsoTkMu24_v || HLT_BIT_HLT_IsoMu22_eta2p1_v || HLT_BIT_HLT_IsoTkMu22_eta2p1_v : 2,-0.5,1.5; XTitle = "Fired 1m trigger"
+#debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
+#debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
+#debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
+#debug_scaleFactor_lepton_2l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2) : 120,0.6,1.4; XTitle="lepSF 2l"
+#debug_scaleFactor_lepton_3l : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3) : 120,0.6,1.4; XTitle="lepSF 3l"
+debug_scaleFactor_trigger_2l : ((Trigger_2lss!=0)*triggerSF_ttH(LepGood1_pdgId, LepGood1_conePt, LepGood2_pdgId, LepGood2_conePt, 2, year) + (Trigger_2lss==0)*1) : 120,0.88,1.12; XTitle="triggerSF 2l"
+#debug_scaleFactor_trigger_3l : triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3) : 120,0.88,1.12; XTitle="triggerSF 3l"
+#debug_scaleFactor_btag : (nTrueInt>-1)*eventBTagSF : 120,0.6,1.4; XTitle="btagSF"
+#debug_scaleFactor_PU : puw2016_nTrueInt_36fb(nTrueInt) : 120,0.6,1.4; XTitle="PU weight"
+
+debug_badMuonFilter : Flag_badMuonMoriond2017 || Flag_badCloneMuonMoriond2017 : 2,-0.5,1.5; XTitle = "Bad muon event", Logy
+nJet25_from0:	    	nJet25					: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDiv=5, xBinLabels="2\,3\,4\,5\,6\,#geq 7"
+nJet25:	    	nJet25					: [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDiv=5, xBinLabels="2\,3\,4\,5\,6\,#geq 7"
+2lep_nJet25_from4:  	nJet25					: [3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDiv=5, xBinLabels="4\,5\,6\,#geq 7"
+3lep_nJet25:	    	nJet25					: [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDiv=5, xBinLabels="2\,3\,4\,5\,6\,#geq 7"
+4lep_nJet25:	    	nJet25					: [1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDiv=5, xBinLabels="2\,3\,4\,#geq 5"
+nBJetLoose25:	nBJetLoose25				: [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 25 GeV\, CSVL)', XNDiv=5, xBinLabels="0\,1\,2\,3\,#geq 4", MoreY=1.7
+nBJetMedium25:	nBJetMedium25				: [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 25 GeV\, CSVM)', XNDiv=5, xBinLabels="0\,1\,2\,3\,#geq 4", MoreY=1.7
+SVA_2lss : mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass) : [10.,40.0,55.0,70.0,80.0,95.0,110.0,140.0,180.,800.0] ; XTitle='m_{ll} (GeV)'
+SVA_3l : mass_3_cheap(LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,LepGood2_phi-LepGood1_phi,LepGood3_pt,LepGood3_eta,LepGood3_phi-LepGood1_phi) : [20.,100.,140.,190.,250.,1000.] ; XTitle='m_{3l} (GeV)'
+SVA_4l : m4l : [70.,200.0,300.0,1000.] ; XTitle='m_{4l} (GeV)'
+2lep_nTight: 	if3(nLepFO>1,LepGood1_isLepTight+LepGood2_isLepTight,-99)                                          : [-0.5,0.5,1.5,2.5]; XTitle="Tight leptons among the first two", XNDdiv=505, Legend='TL', IncludeOverflows=False
+2lep_charge:  	if3(nLepFO>1,LepGood1_charge,-99) 	     	     	      		     : [-2,0,2]; XTitle='lepton charge', XNDiv=205, Legend='TR', IncludeOverflows=False, MoreY=2.0, xBinLabels="#minus #minus\,+ +"
+2lep_flav:    	if3(nLepFO>1,if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11),-99)     : [-0.5,0.5,1.5,2.5]; XTitle="lepton flavour", XNDiv=505, MoreY=2.0, xBinLabels="ee\,e#mu\,#mu#mu"
+2lep_bestMVA:	max(LepGood1_mvaTTH,LepGood2_mvaTTH)										 : 32,0.6,1; XTitle="Best lepMVA in 2l", Legend='TL'
+2lep_worseMVA:	min(LepGood1_mvaTTH,LepGood2_mvaTTH)										 : 32,0.6,1; XTitle="Worse lepMVA in 2l", Legend='TL'
+2lep_worsedz:   max(abs(LepGood1_dz),abs(LepGood2_dz))*10000	 : 40,0.0,200.; XTitle="Max lepton dz [#mum]"
+2lep_mll:	if3(nLepFO>1,mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass),-99) : 40,0,400; XTitle="m(ll) (GeV)"
+2lep_mll_onZ:	if3(nLepFO>1,mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass),-99) : 80,60,120; XTitle="m(ll) (GeV)"
+2lep_mtWmin: 	if3(nLepFO>1,min(mt_2(LepGood1_conePt,LepGood1_phi,MET_pt,MET_phi),mt_2(LepGood2_conePt,LepGood2_phi,MET_pt,MET_phi)),-99) 		  : 40,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) (GeV)"
+2lep_htllv:	if3(nLepFO>1,LepGood1_conePt+LepGood2_conePt+MET_pt,-99)										  : 40,0,600; XTitle="l_{1} p_{T} + l_{2} p_{T} + E_{T}^{miss} (GeV)"
+2lep_MT2llv:    mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,MET_pt,MET_phi) : 40,0,200 ; XTitle="M_{T2} (GeV)"
+#2lep_catIndex: ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle="", MoreY=2.0, \
+    xBinLabels="#splitline{ee}{ #minus}\,#splitline{ee}{ +}\,#splitline{e#mu}{bl#minus}\,#splitline{e#mu}{bl+}\,#splitline{e#mu}{bt#minus}\,#splitline{e#mu}{bt+}\,#splitline{#mu#mu}{bl#minus}\,#splitline{#mu#mu}{bl+}\,#splitline{#mu#mu}{bt#minus}\,#splitline{#mu#mu}{bt+}"
+
+2lep_catIndex_v2: ttH_catIndex_2lss_v2(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]; XTitle="", MoreY=2.0,  xBinLabels="#splitline{ee}{ bl#minus}\,#splitline{ee}{bl+}\,#splitline{ee}{ bt#minus}\,#splitline{ee}{bt+}\,#splitline{e#mu}{bl#minus}\,#splitline{e#mu}{bl+}\,#splitline{e#mu}{bt#minus}\,#splitline{e#mu}{bt+}\,#splitline{#mu#mu}{bl#minus}\,#splitline{#mu#mu}{bl+}\,#splitline{#mu#mu}{bt#minus}\,#splitline{#mu#mu}{bt+}"
+
+2lep_catIndex_nosign: ttH_catIndex_2lss_nosign(LepGood1_pdgId,LepGood2_pdgId,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="", xBinLabels="ee\,e#mu bl\,e#mu bt\,#mu#mu bl\,#mu#mu bt", MoreY=2.0, XLabel="final state"
+
+nT_2lep_conePt: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_conePt,LepGood1_conePt),-99) : 60,0,80; XTitle="Lepton cone p_{T} (GeV) in TL ev."
+nT_2lep_pdgId: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_pdgId,LepGood1_pdgId),-99) : [-13.5,-12,-10.5,0,10.5,12,13.5]; XTitle="Lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+}) in TL ev.", IncludeOverflows=False
+nT_2lep_abseta: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,abs(LepGood2_eta),abs(LepGood1_eta)),-99) : 60,0,2.5; XTitle="Lepton |#eta| in TL ev."
+nT_2lep_mvaTTH: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_mvaTTH,LepGood1_mvaTTH),-99) : 60,-1,1; XTitle="Lepton MVA in TL ev."
+nT_2lep_jetBTagCSV: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_jetBTagCSV,LepGood1_jetBTagCSV),-99) : 60,0,1; XTitle="Lepton jetBTagCSV in TL ev."
+nT_2lep_miniIso: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_miniPFRelIso_all,LepGood1_miniPFRelIso_all),-99) : 60,0,0.4; XTitle="Lepton miniIso in TL ev."
+nT_2lep_dxy: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,abs(LepGood2_dxy)*10000,abs(LepGood1_dxy)*10000),-99) : 60,0,100; XTitle="Lepton miniIso in TL ev."
+nT_2lep_dz: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,abs(LepGood2_dz)*10000,abs(LepGood1_dz)*10000),-99) : 60,0,100; XTitle="Lepton miniIso in TL ev."
+
+nT_3lep_conePt: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2),if3(LepGood1_isLepTight==0,LepGood1_conePt,if3(LepGood2_isLepTight==0,LepGood2_conePt,LepGood3_conePt)),-99) : 60,0,80; XTitle="Lepton cone p_{T} (GeV) in TTL ev."
+nT_3lep_abseta: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2),if3(LepGood1_isLepTight==0,abs(LepGood1_eta),if3(LepGood2_isLepTight==0,abs(LepGood2_eta),abs(LepGood3_eta))),-99) : 60,0,2.5; XTitle="Lepton cone p_{T} (GeV) in TTL ev."
+nT_3lep_mvaTTH: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2),if3(LepGood1_isLepTight==0,LepGood1_mvaTTH,if3(LepGood2_isLepTight==0,LepGood2_mvaTTH,LepGood3_mvaTTH)),-99) : 60,-1,1; XTitle="Lepton cone p_{T} (GeV) in TTL ev."
+nT_3lep_jetBTagCSV: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2),if3(LepGood1_isLepTight==0,LepGood1_jetBTagCSV,if3(LepGood2_isLepTight==0,LepGood2_jetBTagCSV,LepGood3_jetBTagCSV)),-99) : 60,0,1; XTitle="Lepton cone p_{T} (GeV) in TTL ev."
+nT_3lep_miniIso: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2),if3(LepGood1_isLepTight==0,LepGood1_miniPFRelIso_all,if3(LepGood2_isLepTight==0,LepGood2_miniPFRelIso_all,LepGood3_miniPFRelIso_all)),-99) : 60,0,0.4; XTitle="Lepton cone p_{T} (GeV) in TTL ev."
+
+3lep_nPrompt:   if3(nLepFO>2,(LepGood1_mcMatchId!=0)+(LepGood2_mcMatchId!=0)+(LepGood3_mcMatchId!=0),-99) : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Number of prompt leptons (gen level)", XNDiv=4, Legend='TL', IncludeOverflows=False
+3lep_nTight: 	if3(nLepFO>2,LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight,-99)                            : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Tight leptons among the first three", XNDiv=4, Legend='TL', IncludeOverflows=False
+3lep_charge:  	if3(nLepFO>2,LepGood1_charge+LepGood2_charge+LepGood3_charge,-99) 	     	      	        : [-1.5,-0.5,0.5,1.5]; XTitle='q(l_{1}\,l_{2}\,l_{3})', XNDiv=3, Legend='TR', IncludeOverflows=False, MoreY=2.0
+3lep_n_ele:   	if3(nLepFO>2,(abs(LepGood1_pdgId)==11)+(abs(LepGood2_pdgId)==11)+(abs(LepGood3_pdgId)==11),-99)	: [-0.5,0.5,1.5,2.5,3.5]; XTitle='Number of electrons', XNDiv=5, IncludeOverflows=False
+3lep_n_mu:    	if3(nLepFO>2,(abs(LepGood1_pdgId)==13)+(abs(LepGood2_pdgId)==13)+(abs(LepGood3_pdgId)==13),-99)	: [-0.5,0.5,1.5,2.5,3.5]; XTitle='Number of muons', XNDiv=5, IncludeOverflows=False
+3lep_worseIso:	max(LepGood1_miniPFRelIso_all,max(LepGood2_miniPFRelIso_all,LepGood3_miniPFRelIso_all))				: 40,0,0.2; XTitle="Worse miniIso in 3l"
+3lep_worseSip:	max(LepGood1_sip3d,max(LepGood2_sip3d,LepGood3_sip3d))				                : 40,0,8; XTitle="Worse sip3d in 3l"
+3lep_worseMVA:	min(LepGood1_mvaTTH,min(LepGood2_mvaTTH,LepGood3_mvaTTH))					: 32,0.6,1; XTitle="Worse lepMVA in 3l", Legend='TL'
+3lep_mtW: 	bestMTW3l: 40,0,240 ; XTitle="M_{T}(W#rightarrowlv) in 3l", Legend='TR'
+3lep_m3l: mass_3_cheap(LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,LepGood2_phi-LepGood1_phi,LepGood3_pt,LepGood3_eta,LepGood3_phi-LepGood1_phi): 40,0,400; XTitle="M_{3l} (GeV)"
+
+4lep_nTight: 	if3(nLepFO>3,LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight+LepGood4_isLepTight,-99)           : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle="Tight leptons among the first four", XNDdiv=500, Legend='TL', IncludeOverflows=False
+4lep_charge:  	if3(nLepFO>3,LepGood1_charge+LepGood2_charge+LepGood3_charge+LepGood4_charge,-99) 	     	      	        : [-2.5,-1.5,-0.5,0.5,1.5,2.5]; XTitle='q(l_{1}\,l_{2}\,l_{3}\,l_{4})', XNDdiv=500, Legend='TR', IncludeOverflows=False, MoreY=2.0
+4lep_n_ele:   	if3(nLepFO>3,(abs(LepGood1_pdgId)==11)+(abs(LepGood2_pdgId)==11)+(abs(LepGood3_pdgId)==11)+(abs(LepGood4_pdgId)==11),-99)	: [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle='Number of electrons', XNDdiv=500, IncludeOverflows=False
+4lep_n_mu:    	if3(nLepFO>3,(abs(LepGood1_pdgId)==13)+(abs(LepGood2_pdgId)==13)+(abs(LepGood3_pdgId)==13)+(abs(LepGood4_pdgId)==13),-99)	: [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle='Number of muons', XNDdiv=500, IncludeOverflows=False
+4lep_worseIso:	max(LepGood1_miniPFRelIso_all,max(LepGood2_miniPFRelIso_all,max(LepGood3_miniPFRelIso_all,LepGood4_miniPFRelIso_all)))				: 40,0,0.2; XTitle="Worse miniIso in 4l"
+4lep_worseSip:	max(LepGood1_sip3d,max(LepGood2_sip3d,max(LepGood3_sip3d,LepGood4_sip3d)))				                : 40,0,8; XTitle="Worse sip3d in 4l"
+4lep_worseMVA:	min(LepGood1_mvaTTH,min(LepGood2_mvaTTH,min(LepGood3_mvaTTH,LepGood4_mvaTTH)))					: 32,0.6,1; XTitle="Worse lepMVA in 4l", Legend='TL'
+4lep_max_Lep_eta: max(LepGood1_eta,max(abs(LepGood2_eta),max(abs(LepGood3_eta),abs(LepGood4_eta)))) : 40,0,2.5 ; XTitle="max lepton |#eta|"
+4lep_pt4l_noRecl: pt4l										    : 60,0,360 ; XTitle="p_{T}(4l) (GeV)"
+4lep_m4l_noRecl	: m4l										    : 80,0,560 ; XTitle="m(4l) (GeV)"
+4lep_mZ2_noRecl:	mZ2					: 80,50,130; XTitle="Best second Z candidate mass (GeV)"
+
+nBJetLoose40:	nBJetLoose40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVL)', XNDiv=6
+nBJetMedium40:	nBJetMedium40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVM)', XNDiv=6
+nTauFO:	    	nTauFO					: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau FO\, p_{T} > 20 GeV)', XNDiv=3
+#nTauTight:    	nTauTight				: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau tight\, p_{T} > 20 GeV)', XNDiv=3
+#debug_tau1_isPrompt:  if3(TauSel_Recl_reclTauId[0]>1,TauSel_Recl_mcMatchId[0]!=0,-1) : [-1.5,-0.5,0.5,1.5] ; XTitle='First tau is mcMatchId not 0'
+
+kinMVA_4l : ttH_mva_4l(FinalMVA_4L_BDTG) : 100,0,1 ; XTitle='4l BDT'
+kinMVA_4l_log : TMath::Log(ttH_mva_4l(FinalMVA_4L_BDTG)) : 100,-1,0 ; XTitle='4l BDT', Legend="TL"
+kinMVA_4l_binned : ttH_catIndex_4l(FinalMVA_4L_BDTG) : [0.5,1.5,2.5] ; XTitle='4l BDT'
+kinMVA_4l_lep1_conePt : LepGood1_pt : 40,15,200; XTitle="1st lepton p_{T} (GeV)"
+kinMVA_4l_lep2_conePt : LepGood2_pt : 40,15,200; XTitle="2nd lepton p_{T} (GeV)"
+kinMVA_4l_lep3_conePt : LepGood3_pt : 40,15,200; XTitle="3rd lepton p_{T} (GeV)"
+kinMVA_4l_lep4_conePt : LepGood4_pt : 40,15,200; XTitle="4th lepton p_{T} (GeV)"
+kinMVA_4l_massL4      : m4l : 40,0,200; XTitle="m_{4l} (GeV)"
+kinMVA_4l_met_LD      : MET_pt*0.6 + mhtJet25 : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
+
+
+htJet25j:   	htJet25j 				: 40,0,1000 ; XTitle="H_{T}(jet p_{T} > 25) (GeV)"
+mhtJet25:   	mhtJet25 				: 40,0,400 ; XTitle="H_{T}^{miss}(p_{T} > 25) (GeV)"
+met: 		MET_pt					: 40,0,400 ; XTitle="E_{T}^{miss} (GeV)"
+metLD:		MET_pt*0.6 + mhtJet25*0.4  	        : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
+minMllAFAS:	minMllAFAS				: 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+minMllAFOS:     minMllAFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+minMllSFOS:     minMllSFOS                              : 20,0,200; XTitle="min M_{ll} (GeV)", Legend='TR'
+mZ1:		mZ1					: 80,50,130; XTitle="Best Z candidate mass (GeV)"
+mH1mm:		mH1mm					: 60,110,140; XTitle="Best H #rightarrow #mu #mu candidate mass (GeV)", IncludeOverflows=False, MoreY=2.0
+nVert:		PV_npvsGood				: 240,0.5,60.5; XTitle="N_{vtx}"
+
+kinMVA_2lss_score_ttH : DNN_2lss_predictions_ttH : 40,0,1; XTitle="2lss DNN score (ttH node)"
+kinMVA_2lss_score_rest : DNN_2lss_predictions_Rest : 40,0,1; XTitle="2lss DNN score (rest node)"
+kinMVA_2lss_score_ttW : DNN_2lss_predictions_ttW : 40,0,1; XTitle="2lss DNN score (ttW node)"
+kinMVA_2lss_score_tHq : DNN_2lss_predictions_tHQ : 40,0,1; XTitle="2lss DNN score (tHq node)"
+kinMVA_2lss_discCats : ttH_catIndex_2lss( LepGood1_pdgId, LepGood2_pdgId, DNN_2lss_predictions_ttH , DNN_2lss_predictions_ttW , DNN_2lss_predictions_tHQ , DNN_2lss_predictions_Rest) : 12,0.5,12.5; XTitle="2lss DNN classes"
+kinMVA_2lss_MVA : ttH_catIndex_2lss_MVA( LepGood1_pdgId, LepGood2_pdgId, DNN_2lss_predictions_ttH , DNN_2lss_predictions_ttW , DNN_2lss_predictions_tHQ , DNN_2lss_predictions_Rest) : 120,0.5,120.5; XTitle="2lss DNN classes"
+kinMVA_2lss_score_max : max(max(DNN_2lss_predictions_ttH,DNN_2lss_predictions_Rest),max(DNN_2lss_predictions_ttW,DNN_2lss_predictions_tHQ)) : 10,0.25,1; XTitle="2lss maximum DNN score"
+kinMVA_2lss_input_jet3_pt        : if3( nJet25_Recl > 2, JetSel_Recl_pt[2],-9)                                                : 40,25,200 	                ; XTitle="jet3_pt", CutString="nJet25_Recl>2"
+kinMVA_2lss_input_jet3_eta       : if3( nJet25_Recl > 2, abs(JetSel_Recl_eta[2]), -9)                                         : 40,-2.4,2.4	                ; XTitle="jet3_eta", CutString="nJet25_Recl>2"
+kinMVA_2lss_input_lep1_eta       : LepGood_eta[int(iLepFO_Recl[0])] 		    	                                        : 40,-2.4,2.4	                ; XTitle="lep1_eta"        
+kinMVA_2lss_input_jet2_pt        : if3(nJet25_Recl > 1,JetSel_Recl_pt[1], -9)		                                        : 40,25,200	                ; XTitle="jet2_pt"         
+kinMVA_2lss_input_jet1_pt        : if3(nJet25_Recl > 0,JetSel_Recl_pt[0], -9)		                                        : 40,25,200 	                ; XTitle="jet1_pt"         
+kinMVA_2lss_input_jetFwd1_eta    : if3(nFwdJet != 0,  abs(FwdJet1_eta_Recl), 9)	                                        : 40,0,5	                        ; XTitle="jetFwd1_eta",CutString="nFwdJet>0"     
+kinMVA_2lss_input_mT_lep1        : MT_met_lep1					                                        : 40,25,200	                        ; XTitle="mT_lep1"         
+kinMVA_2lss_input_mT_lep2        : MT_met_lep2					                                        : 40,25,200 	                        ; XTitle="mT_lep2"         
+kinMVA_2lss_input_jet4_phi       : if3( nJet25_Recl > 3, JetSel_Recl_phi[3], -9)	                                        : 40,-3.14,3.14	                ; XTitle="jet4_phi"        
+kinMVA_2lss_input_lep2_conePt    : LepGood_conePt[int(iLepFO_Recl[1])]       		                                        : 40,0,200	                ; XTitle="lep2_conePt"     
+kinMVA_2lss_input_hadTop_BDT     : BDThttTT_eventReco_mvaValue			                                        : 40,0,1	                        ; XTitle="hadTop_BDT"      
+kinMVA_2lss_input_jet1_phi       : if3( nJet25_Recl > 0 , JetSel_Recl_phi[0] , -9)	                                        : 40,-3.14,3.14	                ; XTitle="jet1_phi"        
+kinMVA_2lss_input_jet2_eta       : if3(nJet25_Recl > 1, abs(JetSel_Recl_eta[1]),-9)	                                        : 40,-2.4,2.4	                ; XTitle="jet2_eta"        
+kinMVA_2lss_input_n_presel_jetFwd: nFwdJet					                                        : 4,-0.5,3.5                            ; XTitle="n_presel_jetFwd",CutString="nFwdJet>0" 
+kinMVA_2lss_input_n_presel_jet   : nJet25_Recl					                                        : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="n_presel_jet"    
+kinMVA_2lss_input_lep1_charge    : LepGood_charge[int(iLepFO_Recl[0])]		                                        : 3,-1.5,1.5	                        ; XTitle="lep1_charge"     
+kinMVA_2lss_input_avg_dr_jet     : avg_dr_jet						                                        : 40,0,4	                ; XTitle="avg_dr_jet"      
+kinMVA_2lss_input_lep1_phi       : if3(nLepFO_Recl >= 1, LepGood_phi[int(iLepFO_Recl[0])],-9)                                 : 40,-3.14,3.14	                ; XTitle="lep1_phi"        
+kinMVA_2lss_input_Hj_tagger_hadTo: BDThttTT_eventReco_Hj_score			                                        : 50,0,1	                        ; XTitle="Hj_tagger_hadTo" 
+kinMVA_2lss_input_nBJetLoose     : nBJetLoose25_Recl					                                        : 4,-0.5,3.5	                ; XTitle="nBJetLoose"      
+kinMVA_2lss_input_jet4_pt        : if3(nJet25_Recl > 3, JetSel_Recl_pt[3], -9)	                                        : 40,0,200	                        ; XTitle="jet4_pt"         
+kinMVA_2lss_input_mindr_lep1_jet : mindr_lep1_jet    	  		     		                                        : 40,0,4	                ; XTitle="mindr_lep1_jet"  
+kinMVA_2lss_input_lep1_conePt    : LepGood_conePt[int(iLepFO_Recl[0])] 		                                        : 40,0,200	                        ; XTitle="lep1_conePt"     
+kinMVA_2lss_input_jetFwd1_pt     : if3(nFwdJet != 0, FwdJet1_pt_Recl,-9)		                                        : 40,0,200	                ; XTitle="jetFwd1_pt",CutString="nFwdJet>0"      
+kinMVA_2lss_input_lep2_phi       : if3(nLepFO_Recl >= 2, (LepGood_phi[int(iLepFO_Recl[1])]), -9)                              : 40,-3.14,3.14	                ; XTitle="lep2_phi"        
+kinMVA_2lss_input_jet2_phi       : if3( nJet25_Recl >= 2, JetSel_Recl_phi[1], -9)	                                        : 40,-3.14,3.14	                ; XTitle="jet2_phi"        
+kinMVA_2lss_input_lep2_eta       : if3(nLepFO_Recl >= 2, LepGood_eta[int(iLepFO_Recl[1])], -9)                                : 40,-2.4,2.4	                ; XTitle="lep2_eta"        
+kinMVA_2lss_input_mbb            : mbb_medium	     	   				                                        : 40, 0,200 	                ; XTitle="mbb"             
+kinMVA_2lss_input_mindr_lep2_jet : mindr_lep2_jet                   			                                        : 40, 0,4	                ; XTitle="mindr_lep2_jet"  
+kinMVA_2lss_input_jet4_eta       : if3(  nJet25_Recl > 3, abs(JetSel_Recl_eta[3]), -9)                                        : 40, -2.4,2.4	                ; XTitle="jet4_eta"        
+kinMVA_2lss_input_nBJetMedium    : nBJetMedium25_Recl	    			     	                                        : 4,-0.5,3.5	                ; XTitle="nBJetMedium"     
+kinMVA_2lss_input_Dilep_pdgId    : (28 - abs(LepGood_pdgId[int(iLepFO_Recl[0])]) - abs(LepGood_pdgId[int(iLepFO_Recl[1])]))/2 : [0.5,1.5,2.5,3.5]              	; XTitle="Dilep_pdgId"     
+kinMVA_2lss_input_metLD          : MET_pt*0.6 + mhtJet25_Recl*0.4  			: 40,0,200	                                                        ; XTitle="metLD"           			               
+kinMVA_2lss_input_jet3_phi       : if3( nJet25_Recl>2, JetSel_Recl_phi[2] , -9)	  					: 40,-3.14,3.14	                ; XTitle="jet3_phi", CutString="nJet25_Recl>2"
+kinMVA_2lss_input_maxeta         : max(abs(LepGood_eta[int(iLepFO_Recl[0])]), abs(LepGood_eta[int(iLepFO_Recl[1])]))          : 40,0,2.4	                ; XTitle="maxeta"          
+kinMVA_2lss_input_jet1_eta       : if3(nJet25_Recl > 0, abs(JetSel_Recl_eta[0]),  -9)				                : 40,0,2.4                      ; XTitle="jet1_eta"        
+
+kinMVA_3l_score_max  : max(max(DNN_3l_predictions_ttH,DNN_3l_predictions_tH),DNN_3l_predictions_rest) : 10,0.33,1; XTitle="3l maximum DNN score"
+kinMVA_3l_score_ttH  : DNN_3l_predictions_ttH  : 40,0,1; XTitle="3l DNN score (ttH node)"
+kinMVA_3l_score_tH   : DNN_3l_predictions_tH   : 40,0,1; XTitle="3l DNN score (tH node)"
+kinMVA_3l_score_rest : DNN_3l_predictions_rest : 40,0,1; XTitle="3l DNN score (rest node)"
+kinMVA_3l_score_catBinIndex : ttH_catIndex_3l(DNN_3l_predictions_ttH, DNN_3l_predictions_tH, DNN_3l_predictions_rest, LepGood1_pdgId, LepGood2_pdgId, LepGood3_pdgId, nBJetMedium25 ) : 8,0.5,8.5 ; XTitle="3l category"
+kinMVA_3l_catBinIndex_MVA : ttH_catIndex_3l_MVA(DNN_3l_predictions_ttH, DNN_3l_predictions_tH, DNN_3l_predictions_rest, LepGood1_pdgId, LepGood2_pdgId, LepGood3_pdgId, nBJetMedium25 ) : 38,0.5,38.5 ; XTitle="3l category"
+
+kinMVA_3l_input_avg_dr_jet : avg_dr_jet : 40,0,4;   XTitle="avg_dr_jet"					   
+kinMVA_3l_input_min_dr_Lep : min(min(drlep12, drlep13), drlep23) : 40,0,4; XTitle="min_dr_Lep"					   
+kinMVA_3l_input_jet1_pt: if3(nJet25_Recl > 0,JetSel_Recl_pt[0],0) : 40,25,200;  XTitle="jet1_pt"					   
+kinMVA_3l_input_lep1_conePt: LepGood_conePt[int(iLepFO_Recl[0])] : 40,25,200;   XTitle="lep1_conePt"					   
+kinMVA_3l_input_mindr_lep1_jet : mindr_lep1_jet : 40,0,4;   XTitle="mindr_lep1_jet"					   
+kinMVA_3l_input_jet2_pt: if3(nJet25_Recl > 1, JetSel_Recl_pt[1],0) : 40,25,200; XTitle="jet2_pt"					   
+kinMVA_3l_input_leadFwdJet_pt  : if3(nFwdJet, FwdJet1_pt_Recl,0) : 40,25,200;  XTitle="leadFwdJet_pt",CutString="nFwdJet>0"					   
+kinMVA_3l_input_lep3_conePt: LepGood_conePt[int(iLepFO_Recl[2])] : 40,20,200;   XTitle="lep3_conePt"					   
+kinMVA_3l_input_mindr_lep2_jet : mindr_lep2_jet : 40,0,4;   XTitle="mindr_lep2_jet"					   
+kinMVA_3l_input_nBJetMedium: nBJetMedium25_Recl : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5];   XTitle="nBJetMedium"					   
+kinMVA_3l_input_mindr_lep3_jet : mindr_lep3_jet: 40,0,4;XTitle="mindr_lep3_jet"					   
+kinMVA_3l_input_mbb_loose  : mbb_loose : 40,0,200;  XTitle="mbb_loose"					   
+kinMVA_3l_input_met_LD : MET_pt*0.6 + mhtJet25_Recl*0.4 : 40,0,200; XTitle="met_LD"						   
+kinMVA_3l_input_lep2_conePt: LepGood_conePt[int(iLepFO_Recl[1])] : 40,0,200;XTitle="lep2_conePt"					   
+kinMVA_3l_input_jet1_eta   : if3(nJet25_Recl > 0, abs(JetSel_Recl_eta[0]), 0) : 40,0,2.4;   XTitle="jet1_eta"					   
+kinMVA_3l_input_jet3_pt: if3(nJet25_Recl > 2, JetSel_Recl_pt[2], 0) : 40,0,200; XTitle="jet3_pt", CutString="nJet25_Recl>2"
+kinMVA_3l_input_HadTop_pt  : if3(BDThttTT_eventReco_mvaValue > 0, BDThttTT_eventReco_HadTop_pt, 0) : 40,0,1;XTitle="HadTop_pt"					   
+kinMVA_3l_input_has_SFOS   : hasOSSF3l : [-0.5,0.5,1.5];XTitle="has_SFOS"					   
+kinMVA_3l_input_sum_Lep_charge : if3(nLepFO_Recl >= 3,(LepGood_charge[int(iLepFO_Recl[0])]+LepGood_charge[int(iLepFO_Recl[1])]+LepGood_charge[int(iLepFO_Recl[2])]) ,0) : [-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5];XTitle="sum_Lep_charge"					   
+kinMVA_3l_input_nJet   : nJet25_Recl ; [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5];  XTitle="nJet"						   
+kinMVA_3l_input_lep3_eta   : if3(nLepFO_Recl >= 3,abs(LepGood_eta[int(iLepFO_Recl[2])]), 0) : 40,0,2.4;XTitle="lep3_eta"					   
+kinMVA_3l_input_res_HTT: if3(BDThttTT_eventReco_mvaValue > 0, BDThttTT_eventReco_mvaValue, 0) : 40,0,1;XTitle="res_HTT"					   
+kinMVA_3l_input_lep1_eta   : if3(nLepFO_Recl >= 1, abs(LepGood_eta[int(iLepFO_Recl[0])]), 0) : 40,0,2.4;   XTitle="lep1_eta"					   
+kinMVA_3l_input_lep2_eta   : if3(nLepFO_Recl >= 2, abs(LepGood_eta[int(iLepFO_Recl[1])]), 0) : 40,0,2.4;   XTitle="lep2_eta"					   
+kinMVA_3l_input_lep3_eta   : if3(nLepFO_Recl >= 3, abs(LepGood_eta[int(iLepFO_Recl[2])]), 0) : 40,0,2.4;   XTitle="lep3_eta"					   
+kinMVA_3l_input_min_Deta_leadFwdJet_jet: min_Deta_leadfwdJet_jet : 40,0,8; XTitle="min_Deta_leadfwdJet_jet",CutString="nFwdJet>0"			   
+kinMVA_3l_input_jet2_phi   : if3(nJet25_Recl >= 2, JetSel_Recl_phi[1] , 0) : 40,-3.14,3.14;  XTitle="jet2_phi"					   
+kinMVA_3l_input_jet1_phi   : if3(nJet25_Recl >= 1, JetSel_Recl_phi[0] , 0) : 40,-3.14,3.14;  XTitle="jet1_phi"					   
+kinMVA_3l_input_lep3_phi   : if3(nLepFO_Recl >= 3, (LepGood_phi[int(iLepFO_Recl[2])]), 0) : 40,-3.14,3.14;   XTitle="lep3_phi"					   
+kinMVA_3l_input_lep2_phi   : if3(nLepFO_Recl >= 2, (LepGood_phi[int(iLepFO_Recl[1])]), 0) : 40,-3.14,3.14 ;  XTitle="lep2_phi"					   
+kinMVA_3l_input_leadFwdJet_eta : if3(nFwdJet, abs(FwdJet1_eta_Recl) , 0 ): 40,0,5;  XTitle="leadFwdJet_eta",CutString="nFwdJet>0"					   
+kinMVA_3l_input_jet3_eta   : if3(nJet25_Recl >= 3, abs(JetSel_Recl_eta[2]), 0): 40,0,2.4;  XTitle="jet3_eta", CutString="nJet25_Recl>2"
+kinMVA_3l_input_jet2_eta   : if3(nJet25_Recl >= 2, abs(JetSel_Recl_eta[1]), 0): 40,0,2.4;  XTitle="jet2_eta"					   
+kinMVA_3l_input_nElectron  : ((abs(LepGood_pdgId[int(iLepFO_Recl[0])]) == 11) + (abs(LepGood_pdgId[int(iLepFO_Recl[1])]) == 11) + (abs(LepGood_pdgId[int(iLepFO_Recl[2])]) == 11)): [-0.5,0.5,1.5,2.5,3.5];  XTitle="nElectron"					   
+kinMVA_3l_input_lep1_phi   : (LepGood_phi[int(iLepFO_Recl[0])]) : 40,-3.14,3.14; XTitle="lep1_phi"					   
+kinMVA_3l_input_jet3_phi   : if3( nJet25_Recl >= 3, JetSel_Recl_phi[2], 0) : 40,-3.14,3.14;  XTitle="jet3_phi", CutString="nJet25_Recl>2"					   
+kinMVA_3l_input_nBJetLoose : nBJetLoose25_Recl  : [-0.5,0.5,1.5,2.5,3.5];  XTitle="nBJetLoose"					   
+kinMVA_3l_input_nJetForward: nFwdJet  : [-0.5,0.5,1.5,2.5,3.5];   XTitle="nJetForward"   
+kinMVA_3l_input_mT_lep1        : MT_met_lep1					                                        : 40,25,200	     ; XTitle="mT_lep1"
+kinMVA_3l_input_mT_lep2        : MT_met_lep2					                                        : 40,25,200 	     ; XTitle="mT_lep2"
+
+kinMVA_4l_catBinIndex : ttH_catIndex_4l() : 2,0.5,2.5 ; XTitle="4l category" 
+kinMVA_4l_input_lep1_conePt : LepGood1_conePt : 40,0,200; XTitle="Leading lepton cone p_{T} (GeV)"
+kinMVA_4l_input_lep2_conePt : LepGood2_conePt : 40,0,200; XTitle="Leading lepton cone p_{T} (GeV)"
+kinMVA_4l_input_lep3_conePt : LepGood3_conePt : 40,0,200; XTitle="Leading lepton cone p_{T} (GeV)"
+kinMVA_4l_input_lep4_conePt : LepGood4_conePt : 40,0,200; XTitle="Leading lepton cone p_{T} (GeV)"
+kinMVA_4l_input_met_LD  : MET_pt*0.6 + mhtJet25*0.4 : 40,0,400; XTitle="E_{T}^{miss} LD (GeV)"
+
+nLepFO:  nLepFO: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of fakeable leptons", XNDdiv=505
+nLepTight:   nLepTight : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of tight leptons", XNDdiv=505
+
+lep1_pt: 	 LepGood1_pt					 : 40,0,200; XTitle="Leading lepton p_{T} (GeV)"
+lep1_conePt: 	 LepGood1_conePt				 : 40,0,120; XTitle="Leading lepton cone p_{T} (GeV)"
+lep1_eta: 	 LepGood1_eta					 : 15,-2.5,2.5; XTitle="Leading lepton #eta"
+lep1_phi: 	 LepGood1_phi					 : 20,-3.14,3.14; XTitle="Leading lepton #phi"
+lep1_pdgId:	 0.5*LepGood1_pdgId/abs(LepGood1_pdgId)*(abs(LepGood1_pdgId)-10) : [-2,-1,0,1,2]; XTitle="Leading lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+})", XNDdiv=505
+lep1_charge:	 LepGood1_charge				 : 40,0,120; XTitle="Leading lepton charge", XNDdiv=505, Legend='TL', MoreY=2.0
+lep1_mvaTTH:	 LepGood1_mvaTTH				 : 40,-1,1; XTitle="Leading lepton MVA value", Legend='TL', Logy
+lep1_miniIso:	 LepGood1_miniPFRelIso_all			 : 40,0,0.4; XTitle="Leading lepton miniIso", Logy
+lep1_miniIsoCh:	 LepGood1_miniPFRelIso_chg			 : 40,0,0.4; XTitle="Leading lepton charged miniIso", Logy
+lep1_miniIsoNeu: LepGood1_miniPFRelIso_all-LepGood1_miniPFRelIso_chg : 40,0,0.4; XTitle="Leading lepton neutral miniIso", Logy
+lep1_sip3d:	 LepGood1_sip3d					 : 40,0,8; XTitle="Leading lepton S_{IP} 3D"
+lep1_dxy:	 abs(LepGood1_dxy)*10000			 : 40,0.0,100.; XTitle="Leading lepton dxy [#mum]"
+lep1_dz:	 abs(LepGood1_dz)*10000			 	 : 40,0.0,100.; XTitle="Leading lepton dz [#mum]"
+lep1_ptratio:	 LepGood1_jetRelIso				 : 40,0,1.2; XTitle="Leading lepton jetRelIso", Legend='TL'
+lep1_ptrel:	 LepGood1_jetPtRelv2				 : 40,0,40; XTitle="Leading lepton ptRel", Legend='TL'
+lep1_jetBTagDeepFlav: LepGood1_jetBTagDeepFlav				 : 40,0,1; XTitle="Leading lepton deep jet of nearest jet"
+lep1_segcomp:	 if3(abs(LepGood1_pdgId)==13,LepGood1_segmentComp,-99) : 40,0,1; XTitle="Leading lepton segment compat.", Legend='TL', IncludeOverflows=False
+lep1_lostHits:	 LepGood1_lostHits				 : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Leading lepton lost hits", XNDdiv=505, Logy
+lep1_convVeto:	 LepGood1_convVeto				 : [-0.5,0.5,1.5]; XTitle="Leading lepton conv. veto", XNDdiv=505, Legend='TL', Logy
+lep1_tCharge:	 LepGood1_tightCharge				 : [-0.5,0.5,1.5,2.5]; XTitle="Leading lepton tightCharge", XNDdiv=505, Logy, Legend='TL'
+lep1_elIdMVA:	 -0.05*log((1-LepGood1_mvaFall17V2noIso)/(1+LepGood1_mvaFall17V2noIso))				 : 40,0,1; XTitle="Leading lepton electron ID MVA", Legend='TL', Logy
+lep1_relIso04:	 LepGood1_relIso04				 : 40,0,0.5; XTitle="Leading lepton relIso04", Legend='TR', Logy
+lep1_relIso03:	 LepGood1_relIso03				 : 40,0,0.5; XTitle="Leading lepton relIso03", Legend='TR', Logy
+
+lep2_pt: 	 LepGood2_pt					 : 40,0,200; XTitle="Sub-leading lepton p_{T} (GeV)"
+lep2_conePt: 	 LepGood2_conePt				 : [15,20,25,40,55,70,100]; XTitle="Sub-leading lepton cone p_{T} (GeV)"
+lep2_eta: 	 LepGood2_eta					 : 15,-2.5,2.5; XTitle="Sub-leading lepton #eta"
+lep2_phi: 	 LepGood2_phi					 : 20,-3.14,3.14; XTitle="Sub-leading lepton #phi"
+lep2_pdgId:	 0.5*LepGood2_pdgId/abs(LepGood2_pdgId)*(abs(LepGood2_pdgId)-10) : [-2,-1,0,1,2]; XTitle="Sub-leading lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+})", XNDdiv=505
+lep2_charge:	 LepGood2_charge				 : [-1.5,-0.5,0.5,1.5]; XTitle="Sub-leading lepton charge", XNDdiv=505, Legend='TL', MoreY=2.0
+lep2_mvaTTH:	 LepGood2_mvaTTH				 : 40,-1,1; XTitle="Sub-leading lepton MVA value", Legend='TL', Logy
+lep2_miniIso:	 LepGood2_miniPFRelIso_all			 : 40,0,0.4; XTitle="Sub-leading lepton miniIso", Logy
+lep2_miniIsoCh:	 LepGood2_miniPFRelIso_chg			 : 40,0,0.4; XTitle="Sub-leading lepton charged miniIso", Logy
+lep2_miniIsoNeu: LepGood2_miniPFRelIso_all-LepGood1_miniPFRelIso_chg : 40,0,0.4; XTitle="Sub-leading lepton neutral miniIso", Logy
+lep2_sip3d:	 LepGood2_sip3d					 : 40,0,8; XTitle="Sub-leading lepton S_{IP} 3D"
+lep2_dxy:	 abs(LepGood2_dxy)*10000			 : 40,0.0,100.; XTitle="Sub-leading lepton dxy [#mum]"
+lep2_dz:	 abs(LepGood2_dz)*10000			 	 : 40,0.0,100.; XTitle="Sub-leading lepton dz [#mum]"
+lep2_ptratio:	 LepGood2_jetRelIso				 : 40,0,1.2; XTitle="Sub-leading lepton jetRelIso", Legend='TL'
+lep2_ptrel:	 LepGood2_jetPtRelv2				 : 40,0,40; XTitle="Sub-leading lepton ptRel", Legend='TL'
+lep2_jetBTagDeepFlav: LepGood2_jetBTagDeepFlav				 : 40,0,1; XTitle="Sub-leading lepton deep jet of nearest jet"
+lep2_segcomp:	 if3(abs(LepGood2_pdgId)==13,LepGood2_segmentComp,-99) : 40,0,1; XTitle="Sub-leading lepton segment compat.", Legend='TL', IncludeOverflows=False
+lep2_lostHits:	 LepGood2_lostHits				 : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Sub-leading lepton lost hits", XNDdiv=505, Logy
+lep2_convVeto:	 LepGood2_convVeto				 : [-0.5,0.5,1.5]; XTitle="Sub-leading lepton conv. veto", XNDdiv=505, Legend='TL', Logy
+lep2_tCharge:	 LepGood2_tightCharge				 : [-0.5,0.5,1.5,2.5]; XTitle="Sub-leading lepton tightCharge", XNDdiv=505, Logy, Legend='TL'
+lep2_elIdMVA:	 -0.05*log((1-LepGood2_mvaFall17V2noIso)/(1+LepGood2_mvaFall17V2noIso))				 : 40,0,1; XTitle="Sub-leading lepton electron ID MVA", Legend='TL', Logy
+lep2_relIso04:	 LepGood2_relIso04				 : 40,0,0.5; XTitle="Sub-leading lepton relIso04", Legend='TR', Logy
+lep2_relIso03:	 LepGood2_relIso03				 : 40,0,0.5; XTitle="Sub-leading lepton relIso03", Legend='TR', Logy
+
+lep3_pt: 	 LepGood3_pt					 : 40,0,120; XTitle="Third lepton p_{T} (GeV)"
+lep3_conePt: 	 LepGood3_conePt				 : 40,0,120; XTitle="Third lepton cone p_{T} (GeV)"
+lep3_eta: 	 LepGood3_eta					 : 40,-2.5,2.5; XTitle="Third lepton #eta"
+lep3_phi: 	 LepGood3_phi					 : 20,-3.14,3.14; XTitle="Third lepton #phi"
+lep3_pdgId:	 0.5*LepGood3_pdgId/abs(LepGood3_pdgId)*(abs(LepGood3_pdgId)-10) : [-2,-1,0,1,2]; XTitle="Third lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+})", XNDdiv=505
+lep3_charge:	 LepGood3_charge				 : [-1.5,-0.5,0.5,1.5]; XTitle="Third lepton charge", XNDdiv=505, Legend='TL', MoreY=2.0
+lep3_mvaTTH:	 LepGood3_mvaTTH				 : 40,-1,1; XTitle="Third lepton MVA value", Legend='TL', Logy
+lep3_miniIso:	 LepGood3_miniPFRelIso_all			 : 40,0,0.4; XTitle="Third lepton miniIso", Logy
+lep3_miniIsoCh:	 LepGood3_miniPFRelIso_chg			 : 40,0,0.4; XTitle="Third lepton charged miniIso", Logy
+lep3_miniIsoNeu: LepGood3_miniPFRelIso_all-LepGood1_miniPFRelIso_chg : 40,0,0.4; XTitle="Third lepton neutral miniIso", Logy
+lep3_sip3d:	 LepGood3_sip3d					 : 40,0,8; XTitle="Third lepton S_{IP} 3D"
+lep3_dxy:	 abs(LepGood3_dxy)*10000			 : 40,0.0,100.; XTitle="Third lepton dxy [#mum]"
+lep3_dz:	 abs(LepGood3_dz)*10000			 	 : 40,0.0,100.; XTitle="Third lepton dz [#mum]"
+lep3_ptratio:	 LepGood3_jetRelIso				 : 40,0,1.2; XTitle="Third lepton jetRelIso", Legend='TL'
+lep3_ptrel:	 LepGood3_jetPtRelv2				 : 40,0,40; XTitle="Third lepton ptRel", Legend='TL'
+lep3_jetBTagDeepFlav: LepGood3_jetBTagDeepFlav				 : 40,0,1; XTitle="Third lepton deep jet of nearest jet"
+lep3_segcomp:	 if3(abs(LepGood3_pdgId)==13,LepGood3_segmentComp,-99) : 40,0,1; XTitle="Third lepton segment compat.", Legend='TL', IncludeOverflows=False
+lep3_lostHits:	 LepGood3_lostHits				 : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Third lepton lost hits", XNDdiv=505, Logy
+lep3_convVeto:	 LepGood3_convVeto				 : [-0.5,0.5,1.5]; XTitle="Third lepton conv. veto", XNDdiv=505, Legend='TL', Logy
+lep3_tCharge:	 LepGood3_tightCharge				 : [-0.5,0.5,1.5,2.5]; XTitle="Third lepton tightCharge", XNDdiv=505, Logy, Legend='TL'
+lep3_elIdMVA:	 -0.5*log((1-LepGood3_mvaFall17V2noIso)/(1+LepGood3_mvaFall17V2noIso))				 : 40,0,1; XTitle="Third lepton electron ID MVA", Legend='TR', Logy
+lep3_relIso04:	 LepGood3_relIso04				 : 40,0,0.5; XTitle="Third lepton relIso04", Legend='TR', Logy
+lep3_relIso03:	 LepGood3_relIso03				 : 40,0,0.5; XTitle="Third lepton relIso03", Legend='TR', Logy
+
+lep4_pt: 	 LepGood4_pt					 : 40,0,120; XTitle="Fourth lepton p_{T} (GeV)"
+lep4_conePt: 	 LepGood4_conePt				 : 40,0,120; XTitle="Fourth lepton cone p_{T} (GeV)"
+lep4_eta: 	 LepGood4_eta					 : 40,-2.5,2.5; XTitle="Fourth lepton #eta"
+lep4_phi: 	 LepGood4_phi					 : 20,-3.14,3.14; XTitle="Fourth lepton #phi"
+lep4_pdgId:	 0.5*LepGood4_pdgId/abs(LepGood4_pdgId)*(abs(LepGood4_pdgId)-10) : [-2,-1,0,1,2]; XTitle="Fourth lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+})", XNDdiv=505
+lep4_charge:	 LepGood4_charge				 : [-1.5,-0.5,0.5,1.5]; XTitle="Fourth lepton charge", XNDdiv=505, Legend='TL', MoreY=2.0
+lep4_mvaTTH:	 LepGood4_mvaTTH				 : 40,-1,1; XTitle="Fourth lepton MVA value", Legend='TL', Logy
+lep4_miniIso:	 LepGood4_miniPFRelIso_all			 : 40,0,0.4; XTitle="Fourth lepton miniIso", Logy
+lep4_miniIsoCh:	 LepGood4_miniPFRelIso_chg			 : 40,0,0.4; XTitle="Fourth lepton charged miniIso", Logy
+lep4_miniIsoNeu: LepGood4_miniPFRelIso_all-LepGood1_miniPFRelIso_chg : 40,0,0.4; XTitle="Fourth lepton neutral miniIso", Logy
+lep4_sip3d:	 LepGood4_sip3d					 : 40,0,8; XTitle="Fourth lepton S_{IP} 3D"
+lep4_dxy:	 abs(LepGood4_dxy)*10000			 : 40,0.0,100.; XTitle="Fourth lepton dxy [#mum]"
+lep4_dz:	 abs(LepGood4_dz)*10000			 	 : 40,0.0,100.; XTitle="Fourth lepton dz [#mum]"
+lep4_ptratio:	 LepGood4_jetRelIso				 : 40,0,1.2; XTitle="Fourth lepton jetRelIso", Legend='TL'
+lep4_ptrel:	 LepGood4_jetPtRelv2				 : 40,0,40; XTitle="Fourth lepton ptRel", Legend='TL'
+lep4_jetBTagDeepFlav: LepGood4_jetBTagDeepFlav				 : 40,0,1; XTitle="Fourth lepton deep jet of nearest jet"
+lep4_segcomp:	 if3(abs(LepGood4_pdgId)==13,LepGood4_segmentComp,-99) : 40,0,1; XTitle="Fourth lepton segment compat.", Legend='TL', IncludeOverflows=False
+lep4_lostHits:	 LepGood4_lostHits				 : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Fourth lepton lost hits", XNDdiv=505, Logy
+lep4_convVeto:	 LepGood4_convVeto				 : [-0.5,0.5,1.5]; XTitle="Fourth lepton conv. veto", XNDdiv=505, Legend='TL', Logy
+lep4_tCharge:	 LepGood4_tightCharge				 : [-0.5,0.5,1.5,2.5]; XTitle="Fourth lepton tightCharge", XNDdiv=505, Logy, Legend='TL'
+lep4_elIdMVA:	 -0.5*log((1-LepGood4_mvaFall17V2noIso)/(1+LepGood4_mvaFall17V2noIso))	: 40,0,1; XTitle="Fourth lepton electron ID MVA", Legend='TR', Logy
+lep4_relIso04:	 LepGood4_relIso04				 : 40,0,0.5; XTitle="Fourth lepton relIso04", Legend='TR', Logy
+lep4_relIso03:	 LepGood4_relIso03				 : 40,0,0.5; XTitle="Fourth lepton relIso03", Legend='TR', Logy
+
+
+# Jet variables
+jet1_pt: 	 JetSel_Recl_pt[0]			: 40,0,400; XTitle="1st jet p_{T} (GeV)"
+jet1_btagCSV: 	 JetSel_Recl_btagCSV[0]			: 40,0,1.0; XTitle="1st jet btag CSV"
+jet1_eta: 	 abs(JetSel_Recl_eta[0])		: 40,0,2.5; XTitle="1st jet |#eta|"
+jet2_pt: 	 JetSel_Recl_pt[1]			: 40,0,200; XTitle="2nd jet p_{T} (GeV)"
+jet2_btagCSV: 	 JetSel_Recl_btagCSV[1]			: 40,0,1.0; XTitle="2nd jet btag CSV"
+jet2_eta: 	 abs(JetSel_Recl_eta[1])		: 40,0,2.5; XTitle="2nd jet |#eta|"
+jet3_pt: 	 JetSel_Recl_pt[2]			: 40,0,120; XTitle="3rd jet p_{T} (GeV)"
+jet3_btagCSV: 	 JetSel_Recl_btagCSV[2]			: 40,0,1.0; XTitle="3rd jet btag CSV"
+jet3_eta: 	 abs(JetSel_Recl_eta[2])		: 40,0,2.5; XTitle="3rd jet |#eta|"
+jet4_pt: 	 JetSel_Recl_pt[3]			: 40,0,120; XTitle="4th jet p_{T} (GeV)"
+jet4_btagCSV: 	 JetSel_Recl_btagCSV[3]			: 40,0,1.0; XTitle="4th jet btag CSV"
+jet4_eta: 	 abs(JetSel_Recl_eta[3])		: 40,0,2.5; XTitle="4th jet |#eta|"
+#jet123_lowestCSV:  min(min(JetSel_Recl_btagCSV[0],JetSel_Recl_btagCSV[1]),JetSel_Recl_btagCSV[2]): 40,0,1.0; XTitle="lowest b-tag of the first 3 jets"
+
+met_phi : MET_phi : 40,-3.14,3.14; XTitle="MET #phi"
+
+# MC variables for closure
+#mc_GenTop_ptLead : if3(nGenTop>0,GenTop_pt[0],-99) : 60,0,600; XTitle="gen leading top pt"
+#mc_GenTop_ptSubLead : if3(nGenTop>1,GenTop_pt[1],-99) : 40,0,200; XTitle="gen subleading top pt"
+#mc_GenTop_etaLead : if3(nGenTop>0,GenTop_eta[0],-99) : 60,-3,3; XTitle="gen leading top eta"
+#mc_GenTop_etaSubLead : if3(nGenTop>1,GenTop_eta[1],-99) : 60,-3,3; XTitle="gen subleading top eta"
+
+# Some variables to debug 3-jet CR events with the assumption that it's ttbar with one top going to b(=j1) l(=l1), v(=met) and the other to b(=l2) jj(=j2,j3)
+#rec3j_mtW1: mt_2(LepGood1_pt,LepGood1_phi,MET_pt,MET_phi) : 40,0,200; XTitle="M_{T}(l1\,E_{T}^{miss}) (GeV)"
+#rec3j_mtl1j1v: mt_llv(LepGood1_pt,LepGood1_phi,JetSel_Recl_pt[0],JetSel_Recl_phi[0],MET_pt,MET_phi) : 60,0,600; XTitle="M_{T}(l1\,j1\,E_{T}^{miss}) (GeV)"
+#rec3j_mj2j3: mass_2(JetSel_Recl_pt[1],JetSel_Recl_eta[1],JetSel_Recl_phi[1],JetSel_Recl_mass[1],JetSel_Recl_pt[2],JetSel_Recl_eta[2],JetSel_Recl_phi[2],JetSel_Recl_mass[2]) : 60,0,300; XTitle="M(j2\,j3) (GeV)"
+#rec3j_ml2j2j3: mass_2(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass,\
+#pt_2(JetSel_Recl_pt[1],JetSel_Recl_phi[1],JetSel_Recl_pt[2],JetSel_Recl_phi[2]),\
+#eta_2(JetSel_Recl_pt[1],JetSel_Recl_eta[1],JetSel_Recl_phi[1],JetSel_Recl_mass[1],JetSel_Recl_pt[2],JetSel_Recl_eta[2],JetSel_Recl_phi[2],JetSel_Recl_mass[2]),\
+#phi_2(JetSel_Recl_pt[1],JetSel_Recl_phi[1],JetSel_Recl_pt[2],JetSel_Recl_phi[2]),\
+#mass_2(JetSel_Recl_pt[1],JetSel_Recl_eta[1],JetSel_Recl_phi[1],JetSel_Recl_mass[1],JetSel_Recl_pt[2],JetSel_Recl_eta[2],JetSel_Recl_phi[2],JetSel_Recl_mass[2])) : 40,0,400; XTitle="M(l2\,j2\,j3) (GeV)"
+#rec3j_j2j3_lowestCSV:  min(JetSel_Recl_btagCSV[2],JetSel_Recl_btagCSV[1]): 40,0,1.0; XTitle="lowest b-tag of j2\, j3"
+
+
+#Control regions
+cr_3l: ttH_3l_clasifier(nJet25, nBJetMedium25): [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5]; XTitle="nJet nBJet clasification",YMin=0.1 , YMax=5.0e3,  XNDdiv=505, IncludeOverflows=False, xBinLabels="1j\,2j\,3j\,>3j\,2j\,3j\,4j\,>4j\,2j\,3j\,4j\,>4j"
+cr_4l: ttH_4l_clasifier(nJet25, nBJetMedium25,mZ2): [0.5,1.5,2.5,3.5,4.5]; XTitle="4l Control Region", Logy, YMin=0.1 ,  XNDdiv=505, IncludeOverflows=False, xBinLabels="1\,2\,3\,4"
+mu_fake_origin : (abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0 )*LepGood1_genPartFlav + (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0 )*LepGood2_genPartFlav : [ -0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="Fake muon genPartFlav" 
+
+
+ele_fake_conePt : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), LepGood1_conePt, LepGood2_conePt) : 40,0,120; XTitle="Nonprompt electron p_{T} [GeV]"
+ele_fake_eta    : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), abs(LepGood1_eta), abs(LepGood2_eta)) : 40,0,2.4; XTitle="Leading electron fake |#eta|"
+ele_fake_fr     : if3( abs(LepGood1_pdgId)==11 && (LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0), fetchFR_ii(LepGood1_conePt,LepGood1_eta,LepGood1_pdgId,froffset+year-2016,froffset+year-2016), fetchFR_ii(LepGood2_conePt,LepGood2_eta,LepGood2_pdgId,froffset+year-2016,froffset+year-2016)) : 100,0,0.3; XTitle="Leading fake electron fake-rate"
+
+muo_fake_conePt : if3( abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0, LepGood1_conePt, LepGood2_conePt) : 40,0,120; XTitle="Nonprompt muon p_{T} [GeV]"
+muo_fake_eta    : if3( abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0, abs(LepGood1_eta), abs(LepGood2_eta)) : 40,0,2.4; XTitle="Leading muon fake |#eta|"
+muo_fake_fr     : if3( abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0, fetchFR_ii(LepGood1_conePt,LepGood1_eta,LepGood1_pdgId,froffset+year-2016,froffset+year-2016), fetchFR_ii(LepGood2_conePt,LepGood2_eta,LepGood2_pdgId,froffset+year-2016,froffset+year-2016)) : 100,0,0.3; XTitle="Leading fake muon fake-rate"
